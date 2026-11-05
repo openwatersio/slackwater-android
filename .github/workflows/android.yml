@@ -19,6 +19,10 @@ jobs:
         with:
           node-version: '24'
       - uses: android-actions/setup-android@v3
+        with:
+          cmdline-tools-version: '16111833'
+          log-accepted-android-sdk-licenses: false
+          packages: 'platform-tools platforms;android-37.0 build-tools;36.0.0'
       - run: node --test scripts/*.test.mjs
       - run: node scripts/sync-upstream.mjs
       - run: test -z "$(git status --porcelain --untracked-files=all -- app/src/main/assets)"
