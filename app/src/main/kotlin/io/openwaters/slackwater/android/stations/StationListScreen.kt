@@ -131,7 +131,7 @@ fun StationListScreen(
     Box(Modifier.fillMaxSize()) {
         LazyColumn(
             state = listState,
-            modifier = Modifier.fillMaxSize().safeDrawingPadding(),
+            modifier = Modifier.fillMaxSize().safeDrawingPadding().padding(bottom = 88.dp),
             contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 16.dp, vertical = 16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
@@ -154,8 +154,6 @@ fun StationListScreen(
                     onRemoved = { chooser = it }, isFavorites = false)
                 footer(onCredits, footerExtras)
             }
-            // Keeps the last row above the floating search button.
-            item { Spacer(Modifier.height(96.dp)) }
         }
         if (onMap != null) ExtendedFloatingActionButton(
             onClick = onMap, modifier = Modifier.align(Alignment.BottomEnd).safeDrawingPadding().padding(end = 16.dp, bottom = 24.dp).heightIn(min = 56.dp)
