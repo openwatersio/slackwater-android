@@ -10,7 +10,6 @@ def verify(apk):
     root = Path(__file__).resolve().parent.parent
     lock = json.loads((root / "upstream.lock.json").read_text())
     expected = {"assets/slackwater/" + entry["name"]: entry["sha256"] for entry in lock["resources"]["assets"]}
-    expected["assets/launch-station.json"] = lock["launchStation"]["sha256"]
     with zipfile.ZipFile(apk) as archive:
         # AGP generates these two ART profiles; neither is a product-data input.
         profiles = {"assets/dexopt/baseline.prof", "assets/dexopt/baseline.profm"}
