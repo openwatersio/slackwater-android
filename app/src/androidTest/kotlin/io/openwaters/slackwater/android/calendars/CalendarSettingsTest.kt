@@ -1,11 +1,9 @@
 package io.openwaters.slackwater.android.calendars
 
-import android.Manifest
 import android.content.Intent
 import android.provider.CalendarContract
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.test.platform.app.InstrumentationRegistry
 import io.openwaters.slackwater.android.MainActivity
 import io.openwaters.slackwater.android.alerts.AlertDestination
 import io.openwaters.slackwater.android.alerts.ReminderAccessStore
@@ -36,9 +34,7 @@ class CalendarSettingsTest {
             compose.onNodeWithText("Publish calendar").performClick()
             compose.onNodeWithText("Publishing a new station calendar requires Premium.").assertExists()
             assertFalse(runBlocking { repository.subscriptions.first().any { it.stationId == fridayHarbor } })
-            val automation = InstrumentationRegistry.getInstrumentation().uiAutomation
-            automation.grantRuntimePermission(app.packageName, Manifest.permission.READ_CALENDAR)
-            automation.grantRuntimePermission(app.packageName, Manifest.permission.WRITE_CALENDAR)
+            grantCalendarPermissions(app)
             runBlocking { access.update(ReminderEntitlement.Purchased) }
             compose.waitForIdle()
             compose.onNodeWithText("Publish calendar").performClick()

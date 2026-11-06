@@ -1,6 +1,5 @@
 package io.openwaters.slackwater.android.calendars
 
-import android.Manifest
 import android.app.job.JobScheduler
 import androidx.test.platform.app.InstrumentationRegistry
 import io.openwaters.slackwater.android.alerts.ReminderAccessStore
@@ -21,9 +20,7 @@ class CalendarLifecycleTest {
     @Test fun incompatibleCurrentRecipeClearsOnlyItsPublishedCalendarWithoutAWriteJournal() = runBlocking {
         val instrumentation = InstrumentationRegistry.getInstrumentation()
         val app = instrumentation.targetContext
-        for (permission in listOf(Manifest.permission.READ_CALENDAR, Manifest.permission.WRITE_CALENDAR)) {
-            instrumentation.uiAutomation.grantRuntimePermission(app.packageName, permission)
-        }
+        grantCalendarPermissions(app)
         val id = StationId("chs-active-pass")
         val access = ReminderAccessStore.get(app)
         val prior = access.current()
@@ -52,9 +49,7 @@ class CalendarLifecycleTest {
     @Test fun expiredTrialClearsFutureEventsAndKeepsTheSubscriptionForPurchase() = runBlocking {
         val instrumentation = InstrumentationRegistry.getInstrumentation()
         val app = instrumentation.targetContext
-        for (permission in listOf(Manifest.permission.READ_CALENDAR, Manifest.permission.WRITE_CALENDAR)) {
-            instrumentation.uiAutomation.grantRuntimePermission(app.packageName, permission)
-        }
+        grantCalendarPermissions(app)
         val id = StationId("noaa/9449880")
         val access = ReminderAccessStore.get(app)
         val prior = access.current()

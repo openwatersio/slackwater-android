@@ -1,6 +1,5 @@
 package io.openwaters.slackwater.android.calendars
 
-import android.Manifest
 import android.content.ContentUris
 import android.content.ContentValues
 import android.net.Uri
@@ -32,9 +31,7 @@ class StationCalendarProviderTest {
     private val zone = ZoneId.of("America/Vancouver")
 
     @Before fun grantAccess() {
-        for (permission in listOf(Manifest.permission.READ_CALENDAR, Manifest.permission.WRITE_CALENDAR)) {
-            instrumentation.uiAutomation.grantRuntimePermission(app.packageName, permission)
-        }
+        grantCalendarPermissions(app)
     }
 
     private fun sync(uri: Uri) = uri.buildUpon().appendQueryParameter(CalendarContract.CALLER_IS_SYNCADAPTER, "true")
