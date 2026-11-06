@@ -42,13 +42,17 @@ object SunWindows {
 
     fun eclipseContacts(span: TimeSpan, latitude: Double, longitude: Double): List<Instant> {
         val observer = observer(latitude, longitude) ?: return emptyList()
+        return visibleLunarEclipses(span, observer).map { it.u1 ?: it.p1 }
+    }
+
+    internal fun visibleLunarEclipses(span: TimeSpan, observer: Observer): List<LunarEclipse> {
         // Almanac searches by peak. Include peaks just beyond the range whose first contact is inside.
-        return lunarEclipses(span.start, span.end.plusSeconds(86_400)).mapNotNull { eclipse ->
+        return lunarEclipses(span.start, span.end.plusSeconds(86_400)).filter { eclipse ->
             val visibility = lunarEclipseVisibility(eclipse, observer)
             val contacts = visibility.contactsVisible
             val visible = visibility.visibleAtPeak || contacts.p1 || contacts.p4 ||
                 listOf(contacts.u1, contacts.u2, contacts.u3, contacts.u4).any { it == true }
-            (eclipse.u1 ?: eclipse.p1).takeIf { visible && it in span }
+            visible && (eclipse.u1 ?: eclipse.p1) in span
         }
     }
 

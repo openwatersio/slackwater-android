@@ -1,0 +1,15 @@
+<resources>
+    <string name="reminder_notify_blocked">Alerte enregistrée. Autorisez les notifications dans les paramètres Android pour la recevoir.</string>
+    <string name="reminder_inexact_saved">Alerte enregistrée. Android peut retarder les rappels sur cet appareil.</string>
+    <string name="reminder_back_to_stations">Revenir aux stations</string>
+    <string name="reminder_my_alerts">Mes alertes</string>
+    <string name="reminder_reset_height">Saisir une nouvelle hauteur</string>
+    <string name="reminder_status_off">Désactivé</string>
+    <string name="reminder_premium_required">Premium requis</string>
+    <string name="reminder_notifications_blocked">Notifications bloquées</string>
+    <string name="reminder_no_scheduled">Aucun rappel à venir</string>
+    <string name="reminder_inexact">Android peut retarder l’envoi</string>
+    <string name="reminder_save_premium">L’enregistrement d’une alerte nécessite Premium.</string>
+    <string name="reminder_through">Rappels programmés jusqu’au %1$s</string>
+    <string name="reminder_write_failed">Impossible d’enregistrer l’alerte. Réessayez.</string>
+</resources>

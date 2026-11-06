@@ -1,0 +1,17 @@
+<resources>
+    <string name="table_sheet_title">Printable tables</string>
+    <string name="table_sheet_week">Week</string>
+    <string name="table_sheet_month">Month</string>
+    <string name="table_sheet_share">Share PDF</string>
+    <string name="table_sheet_print">Print</string>
+    <string name="table_sheet_done">Done</string>
+    <string name="table_sheet_page">Page %1$d of %2$d</string>
+    <string name="table_sheet_failed">Couldn’t prepare the PDF.</string>
+    <string name="table_sheet_export_failed">Couldn’t open the PDF for printing or sharing.</string>
+    <string name="table_sheet_retry">Try again</string>
+    <string name="table_sheet_locked">Printable tables require Premium.</string>
+    <string name="table_sheet_download_current">More days can be printed once their current predictions are downloaded.</string>
+    <string name="table_sheet_download_tide">Printing more days requires the full tide predictions for this station.</string>
+    <string name="table_sheet_letter">Fixed US Letter layout (8.5 × 11 in). Choose matching paper for the previewed size.</string>
+    <string name="table_sheet_a4">Fixed A4 layout (210 × 297 mm). Choose matching paper for the previewed size.</string>
+</resources>

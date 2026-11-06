@@ -1,0 +1,10 @@
+<resources>
+    <string name="schedule_title">Horaire</string>
+    <string name="schedule_earlier">Semaine précédente</string>
+    <string name="schedule_later">Semaine suivante</string>
+    <string name="schedule_table_action">Tableaux à imprimer</string>
+    <string name="schedule_premium_message">L’impression et le partage des tables nécessitent Premium. Vous pouvez consulter l’horaire ici.</string>
+    <string name="schedule_unavailable">Aucune prévision disponible pour ces jours.</string>
+    <string name="schedule_support_title">Soutenir Slackwater</string>
+    <string name="schedule_reset">Revenir à la semaine sélectionnée</string>
+</resources>

@@ -1,0 +1,22 @@
+<resources>
+    <string name="station_calendars_title">Calendriers des stations</string>
+    <string name="station_calendars_about">Publiez les événements des 90 prochains jours dans un calendrier sur cet appareil. Ils restent sur cet appareil et ne comportent aucun rappel.</string>
+    <string name="station_calendar_subscribe">Publier le calendrier</string>
+    <string name="station_calendar_remove">Supprimer le calendrier</string>
+    <string name="station_calendar_remove_title">Supprimer %1$s?</string>
+    <plurals name="station_calendar_remove_count">
+        <item quantity="one">Slackwater supprimera %1$d événement publié. Les événements personnels et ceux en cours seront conservés.</item>
+        <item quantity="other">Slackwater supprimera %1$d événements publiés. Les événements personnels et ceux en cours seront conservés.</item>
+    </plurals>
+    <string name="station_calendar_offline_needed">Téléchargez les prévisions avant de publier le calendrier.</string>
+    <string name="station_calendar_pending">Des modifications sont en attente. Les événements publiés peuvent rester visibles jusqu’à la prochaine mise à jour du calendrier.</string>
+    <string name="station_calendar_permission">Autorisez l’accès au calendrier pour que Slackwater puisse retrouver et mettre à jour ses événements.</string>
+    <string name="station_calendar_settings">Ouvrir les paramètres de l’application</string>
+    <string name="station_calendar_premium">La publication d’un nouveau calendrier de station nécessite Premium.</string>
+    <string name="station_calendar_trial">Publication pendant votre journée gratuite.</string>
+    <string name="station_calendar_stopped">Arrêté — nécessite Premium</string>
+    <string name="station_calendar_active">Abonnement actif</string>
+    <string name="station_calendar_failed">Impossible de mettre à jour le calendrier. Vérifiez les autorisations et réessayez.</string>
+    <string name="station_calendar_cancel">Annuler</string>
+    <string name="station_calendar_pending_remove">Suppression en attente</string>
+</resources>

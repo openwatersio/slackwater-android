@@ -1,0 +1,17 @@
+<resources>
+    <string name="table_sheet_title">Tableaux à imprimer</string>
+    <string name="table_sheet_week">Semaine</string>
+    <string name="table_sheet_month">Mois</string>
+    <string name="table_sheet_share">Partager le PDF</string>
+    <string name="table_sheet_print">Imprimer</string>
+    <string name="table_sheet_done">Terminé</string>
+    <string name="table_sheet_page">Page %1$d sur %2$d</string>
+    <string name="table_sheet_failed">Impossible de préparer le PDF.</string>
+    <string name="table_sheet_export_failed">Impossible d’ouvrir le PDF pour l’imprimer ou le partager.</string>
+    <string name="table_sheet_retry">Réessayer</string>
+    <string name="table_sheet_locked">Les tables imprimables nécessitent Premium.</string>
+    <string name="table_sheet_download_current">Téléchargez les prévisions de courant pour imprimer d’autres jours.</string>
+    <string name="table_sheet_download_tide">Pour imprimer d’autres jours, téléchargez les prévisions de marée complètes de cette station.</string>
+    <string name="table_sheet_letter">Format lettre fixe (8,5 × 11 po). Choisissez ce papier pour conserver les dimensions de l’aperçu.</string>
+    <string name="table_sheet_a4">Format A4 fixe (210 × 297 mm). Choisissez ce papier pour conserver les dimensions de l’aperçu.</string>
+</resources>
