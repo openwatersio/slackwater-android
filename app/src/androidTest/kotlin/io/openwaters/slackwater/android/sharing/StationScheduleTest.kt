@@ -7,6 +7,7 @@ import io.openwaters.slackwater.android.alerts.ReminderAccessStore
 import io.openwaters.slackwater.android.core.planning.*
 import io.openwaters.slackwater.android.core.station.*
 import io.openwaters.slackwater.android.data.*
+import io.openwaters.slackwater.android.openStation
 import java.time.Instant
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.*
@@ -21,6 +22,7 @@ class StationScheduleTest {
         val previous = runBlocking { access.current() }
         try {
             runBlocking { access.update(ReminderEntitlement.Free) }
+            compose.openStation("Friday Harbor", "San Juan Island")
             compose.waitUntil(30_000) { compose.onAllNodesWithTag("printable-tables-row").fetchSemanticsNodes().isNotEmpty() }
             compose.onNodeWithText("Schedule").performScrollTo().assertIsDisplayed()
             compose.onNodeWithText("Next week").performScrollTo().performClick()

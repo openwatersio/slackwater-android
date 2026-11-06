@@ -1,29 +1,63 @@
 package io.openwaters.slackwater.android
-import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.onNodeWithText
+import android.content.pm.PackageManager
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasContentDescription
+import androidx.compose.ui.test.hasScrollAction
+import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.junit4.createEmptyComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollToNode
+import androidx.test.core.app.ActivityScenario
+import androidx.test.platform.app.InstrumentationRegistry
 import io.openwaters.slackwater.android.core.FixtureSmoke
+import org.junit.After
+import org.junit.Assert.assertFalse
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.junit.Assert.assertFalse
-import android.content.pm.PackageManager
+
 class LaunchTest {
-    @get:Rule val compose = createAndroidComposeRule<MainActivity>()
+    @get:Rule val compose = createEmptyComposeRule()
+    private lateinit var scenario: ActivityScenario<MainActivity>
+
+    // SlackwaterTestRunner has already recorded the location ask, so no system dialog covers the list.
+    @Before fun launch() {
+        scenario = ActivityScenario.launch(MainActivity::class.java)
+    }
+
+    @After fun close() = scenario.close()
+
     @Test fun engineAndAstronomyMatchFixtures() { FixtureSmoke.verify() }
+
     @Test fun readsBundledCredits() {
+        // The catalog loads once per process; on a cold emulator that can take most of a minute.
+        val nearMe = InstrumentationRegistry.getInstrumentation().targetContext.getString(R.string.list_near_me)
+        compose.waitUntil(60_000) { compose.onAllNodesWithText(nearMe, substring = true, ignoreCase = true).fetchSemanticsNodes().isNotEmpty() ||
+            compose.onAllNodesWithText("Chesapeake Bay", substring = true, ignoreCase = true).fetchSemanticsNodes().isNotEmpty() }
+        compose.onNode(hasScrollAction()).performScrollToNode(hasText("Data and licenses"))
         compose.onNodeWithText("Data and licenses").performClick()
         compose.onNodeWithText("Data credits").assertIsDisplayed()
         compose.onNodeWithText("Norwegian stations:", substring = true).assertExists()
         compose.onNodeWithText("Close").performClick()
         compose.onNodeWithText("Data credits").assertDoesNotExist()
     }
-    @Test fun launchesWithoutNetwork() {
-        val permissions = compose.activity.packageManager.getPackageInfo(compose.activity.packageName, PackageManager.GET_PERMISSIONS).requestedPermissions.orEmpty()
+
+    @Test fun launchesWithoutNetworkAndReadsTheBundledStations() {
+        lateinit var permissions: Array<out String>
+        scenario.onActivity {
+            permissions = it.packageManager.getPackageInfo(it.packageName, PackageManager.GET_PERMISSIONS).requestedPermissions.orEmpty()
+        }
         assertFalse(permissions.contains("android.permission.INTERNET"))
-        compose.onNodeWithText("Slackwater").assertIsDisplayed()
-        compose.waitUntil(10000) { compose.onAllNodesWithText("Friday Harbor").fetchSemanticsNodes().isNotEmpty() }
-        compose.onNodeWithText("Friday Harbor").assertIsDisplayed()
+        // Near Me cards show live readings computed from the bundled database, wherever the list is anchored.
+        compose.waitUntil(60_000) {
+            val context = InstrumentationRegistry.getInstrumentation().targetContext
+            listOf(R.string.card_rising, R.string.card_falling, R.string.card_flooding, R.string.card_ebbing, R.string.card_slack)
+                .map(context::getString).any { word ->
+                // Each card is one element whose spoken description carries its reading.
+                compose.onAllNodes(hasContentDescription(word, substring = true, ignoreCase = true)).fetchSemanticsNodes().isNotEmpty()
+            }
+        }
     }
 }

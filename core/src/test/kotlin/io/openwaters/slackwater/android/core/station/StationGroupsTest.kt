@@ -103,6 +103,16 @@ class StationGroupsTest {
         assertFalse(sections(fix = null).showsDistances)
     }
 
+    @Test fun aRankingIsAskedForTheAnchorItIsUsedFrom() {
+        val asked = mutableListOf<Coordinate>()
+        val s = stationListSections(catalog, fix, emptyList(), emptyList(), emptySet(), null) { stations, at ->
+            asked += at
+            rankByDistance(stations, at)
+        }
+        assertEquals(listOf(fix), asked)
+        assertEquals(sections(), s)
+    }
+
     @Test fun firstLaunchRanksFromAnnapolis() {
         // §14.8
         val s = sections(fix = null)

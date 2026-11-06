@@ -1,6 +1,6 @@
 # Slackwater for Android
 
-Native Android app for offline tide and current predictions. The first Compose target loads a pinned Friday Harbor record and evaluates the Kotlin prediction and astronomy libraries without network permission. The app declares coarse and fine location for the station list, with location hardware optional. Station browsing and forecast screens are tracked separately.
+Native Android app for offline tide and current predictions. It opens on the station list: your location, favorites, nearby stations and recents, each with a live reading, plus search across the bundled catalog, all without network permission. The app asks for coarse and fine location once for the list, with location hardware optional. The full station detail and forecast screens are tracked separately.
 
 ## Build
 
@@ -17,11 +17,11 @@ python3 scripts/check-apk.py app/build/outputs/apk/debug/app-debug.apk
 ./gradlew :app:connectedDebugAndroidTest
 ```
 
-The device check requires an attached emulator/device. CI runs it on API 26 and API 37.0. Test fixtures exercise NOAA tide events and Almanac solar positions on both JVM and Android; the launch test verifies the application has no Internet permission and loads the bundled station.
+The device check requires an attached emulator/device. CI runs it on API 26 and API 37.0. Test fixtures exercise NOAA tide events and Almanac solar positions on both JVM and Android; the launch test verifies the application has no Internet permission and that the list's cards read predictions from the bundled database. `SlackwaterTestRunner` records the list's one location ask before any test, so the system prompt never covers a test's activity.
 
 `upstream.lock.json` pins source repositories, product documentation, data and recipe provenance separately. `vendor/` contains ignored exact-SHA checkouts. Sync fails on changed or untracked dependency files or a different revision; inspect and preserve local work before replacing a checkout. `--check` performs no network requests and rejects changed/missing/unexpected packaged assets. Generated catalogs are committed; `stations.tcdb` stays uncompressed. Canadian files contain identity/evidence only, with no user predictions or fitted models.
 
-The launch screen maps the uncompressed tide database directly from the APK and looks up Friday Harbor by station ID with the pinned Kotlin database reader. Runtime clock injection lives in the pure core; the shell does not yet ask for location or load Canadian models, so permission/location/model seed behavior belongs with those feature consumers. Test data never enters the release APK.
+Cards map the uncompressed tide database directly from the APK and look up each station by ID with the pinned Kotlin database reader. Runtime clock injection lives in the pure core. Test data never enters the release APK.
 
 Gradle checks the source pins and packaged inputs during configuration, including Android Studio sync. Kotlin compiler scratch files under `kotlin/.kotlin/` are excluded from the source cleanliness check. CI audits the debug, release and optimized benchmark APKs.
 

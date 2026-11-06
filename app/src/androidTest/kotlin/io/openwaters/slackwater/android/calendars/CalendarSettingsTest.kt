@@ -9,6 +9,7 @@ import io.openwaters.slackwater.android.alerts.AlertDestination
 import io.openwaters.slackwater.android.alerts.ReminderAccessStore
 import io.openwaters.slackwater.android.core.planning.ReminderEntitlement
 import io.openwaters.slackwater.android.core.station.StationId
+import io.openwaters.slackwater.android.openStation
 import java.time.Instant
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
@@ -29,6 +30,7 @@ class CalendarSettingsTest {
         val previous = runBlocking { access.current() }
         try {
             runBlocking { access.update(ReminderEntitlement.Free) }
+            compose.openStation("Friday Harbor", "San Juan Island")
             compose.onNodeWithText("Station calendars").performScrollTo().performClick()
             compose.waitUntil(20_000) { compose.onAllNodes(hasText("Publish calendar") and isEnabled()).fetchSemanticsNodes().isNotEmpty() }
             compose.onNodeWithText("Publish calendar").performClick()

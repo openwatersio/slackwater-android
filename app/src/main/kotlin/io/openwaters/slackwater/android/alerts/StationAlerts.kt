@@ -26,7 +26,11 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 @Composable
-internal fun StationAlerts(destination: AlertDestination?, onCloseDestination: () -> Unit) {
+internal fun StationAlerts(
+    destination: AlertDestination?,
+    station: StationId,
+    onCloseDestination: () -> Unit,
+) {
     val context = LocalContext.current.applicationContext
     val catalog = remember { BundledStationCatalog(context.assets) }
     val predictions = remember { AndroidPredictionRepository(context) }
@@ -48,7 +52,7 @@ internal fun StationAlerts(destination: AlertDestination?, onCloseDestination: (
         message = if (!granted) context.getString(R.string.reminder_notify_blocked)
             else if (!scheduler.access().exactAllowed) context.getString(R.string.reminder_inexact_saved) else null
     }
-    val id = destination?.station ?: StationId("noaa/9449880")
+    val id = destination?.station ?: station
     val moment = destination?.event ?: now
     val settings by remember { ReadingPreferencesStore.get(context).preferences }.collectAsState(Result.success(ReadingPreferences()))
     val threshold = settings.getOrNull()?.effectiveThresholdKn(id) ?: 0.5

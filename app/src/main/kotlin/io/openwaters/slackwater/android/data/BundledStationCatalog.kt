@@ -14,7 +14,9 @@ import org.json.JSONArray
 import org.json.JSONObject
 
 class BundledStationCatalog(private val assets: AssetManager) : StationCatalog {
-    private val index by lazy { load() }
+    // Parsed once per process from the first AssetManager given: every caller passes the app's own assets, which
+    // hold the one bundled catalog. A failed load is not cached, so the next call tries again.
+    private val index get() = shared ?: synchronized(BundledStationCatalog) { shared ?: load().also { shared = it } }
 
     override suspend fun identities(): List<StationIdentity> = withContext(Dispatchers.IO) { index.identities }
 
@@ -65,5 +67,9 @@ class BundledStationCatalog(private val assets: AssetManager) : StationCatalog {
             )
         }
         return StationIdentityIndex(identities, successors)
+    }
+
+    private companion object {
+        @Volatile private var shared: StationIdentityIndex? = null
     }
 }

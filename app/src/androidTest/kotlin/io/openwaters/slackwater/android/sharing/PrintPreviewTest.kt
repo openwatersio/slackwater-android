@@ -7,6 +7,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import io.openwaters.slackwater.android.MainActivity
 import io.openwaters.slackwater.android.alerts.ReminderAccessStore
 import io.openwaters.slackwater.android.core.planning.ReminderEntitlement
+import io.openwaters.slackwater.android.openStation
 import java.io.File
 import java.time.Instant
 import kotlinx.coroutines.runBlocking
@@ -19,6 +20,7 @@ class PrintPreviewTest {
     @get:Rule val compose = createAndroidComposeRule<MainActivity>()
 
     private fun openSheet() {
+        compose.openStation("Friday Harbor", "San Juan Island")
         compose.waitUntil(30_000) { compose.onAllNodesWithTag("printable-tables-row").fetchSemanticsNodes().isNotEmpty() }
         compose.onNodeWithTag("printable-tables-row").performScrollTo().performClick()
     }
