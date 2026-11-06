@@ -1,5 +1,8 @@
 package io.openwaters.slackwater.android
 
+import io.openwaters.slackwater.android.shortcuts.ShortcutKind
+import io.openwaters.slackwater.android.shortcuts.ShortcutRequest
+import io.openwaters.slackwater.android.shortcuts.ShortcutPublisher
 import android.content.Intent
 import android.provider.CalendarContract
 import io.openwaters.slackwater.android.calendars.CalendarRepository
@@ -56,6 +59,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             MaterialTheme {
+                LaunchedEffect(Unit) { withContext(Dispatchers.IO) { ShortcutPublisher.publish(this@MainActivity) } }
                 var station by remember { mutableStateOf<Pair<String, String>?>(null) }
                 var stationUnavailable by remember { mutableStateOf(false) }
                 var showCredits by remember { mutableStateOf(false) }
@@ -104,6 +108,18 @@ class MainActivity : ComponentActivity() {
                                 Text(attribution, style = MaterialTheme.typography.bodySmall)
                             }
                             Text(stringResource(R.string.source_notice), style = MaterialTheme.typography.bodySmall)
+                            var showQueries by remember { mutableStateOf(false) }
+                            Box {
+                                OutlinedButton(onClick = { showQueries = true }) { Text(stringResource(R.string.prediction_shortcuts)) }
+                                DropdownMenu(expanded = showQueries, onDismissRequest = { showQueries = false }) {
+                                    ShortcutKind.entries.forEach { kind ->
+                                        DropdownMenuItem(text = { Text(stringResource(kind.label)) }, onClick = {
+                                            showQueries = false
+                                            startActivity(ShortcutPublisher.intent(this@MainActivity, ShortcutRequest(kind)))
+                                        })
+                                    }
+                                }
+                            }
                             TextButton(onClick = { showCredits = true }) { Text(stringResource(R.string.data_and_licenses)) }
                         }
                         key(destination) {

@@ -52,3 +52,9 @@ Removing a favorite keeps its calendar subscription. Removing the subscription a
 Read a station’s seven-day schedule for free. With Premium or an active free day, open **Printable tables** to preview a week starting on the schedule’s selected day or the calendar month containing that day. Share exports the preview as a PDF, and Print opens Android’s print dialog. The document uses the station’s time zone, the selected reading units and local Letter or A4 paper sizing.
 
 Tables use predictions already on the device. For online current gates and Canadian tide previews, the PDF identifies the covered dates within the requested period. Sharing grants the receiving app read access to that PDF.
+
+## Prediction shortcuts
+
+Open Slackwater once, then touch and hold its launcher icon for **Next low tide**, **Next high tide**, or **Next slack window**. The launcher controls how many actions it shows. All three are also available under **Prediction shortcuts** in the app. Choose a place or date in the result screen; on a supported launcher you can pin the configured query to your home screen.
+
+A query without a place needs authorized device location. A named query stays at the selected station and uses predictions available offline. A date means the whole calendar day at that station, even when your device uses another time zone. An undated slack query looks ahead 48 hours using your comfort-current setting.
