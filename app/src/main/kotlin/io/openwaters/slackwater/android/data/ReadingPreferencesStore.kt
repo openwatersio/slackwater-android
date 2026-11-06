@@ -1,5 +1,9 @@
 package io.openwaters.slackwater.android.data
 
+import io.openwaters.slackwater.android.core.settings.ReadingSettings
+import io.openwaters.slackwater.android.core.station.StationId
+import io.openwaters.slackwater.android.core.station.StationCatalog
+import androidx.datastore.core.DataMigration
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
@@ -38,9 +42,12 @@ data class ReadingPreferences(
     val setFormat: SetFormat = SetFormat.COMPASS,
     /** The comfort current: the speed that bounds a slack window. Zero turns the window off. */
     val slackWindowKnots: Double = DEFAULT_SLACK_WINDOW_KNOTS,
+    val stationDeltasKn: Map<StationId, Double> = emptyMap(),
 ) {
     fun heightUnits(locale: Locale = Locale.getDefault()): HeightUnits =
         savedHeightUnits ?: if (locale.country == "US") HeightUnits.IMPERIAL else HeightUnits.METRIC
+
+    fun effectiveThresholdKn(id: StationId) = ReadingSettings(slackWindowKnots, stationDeltasKn).effectiveThresholdKn(id)
 
     val slackWindowOff: Boolean get() = slackWindowKnots <= 0
 
@@ -61,6 +68,7 @@ data class ReadingPreferences(
 private val heightUnitsKey = stringPreferencesKey("heightUnits")
 private val speedUnitKey = stringPreferencesKey("speedUnit")
 private val setFormatKey = stringPreferencesKey("setFormat")
+private const val DELTA_PREFIX = "slackWindowDelta/"
 private val slackWindowKey = doublePreferencesKey("slackWindowKnots")
 
 // A value this build cannot read (a newer build's unit, a wrong type) reads as the default
@@ -71,6 +79,10 @@ private fun <E> Preferences.choice(key: Preferences.Key<String>, values: List<E>
     value<String>(key)?.let { saved -> values.firstOrNull { stored(it) == saved } }
 
 private fun Preferences.readPreferences() = ReadingPreferences(
+    stationDeltasKn = asMap().mapNotNull { (key, value) ->
+        if (key.name.startsWith(DELTA_PREFIX) && value is Double && value.isFinite() && value in -10.0..10.0)
+            StationId(key.name.removePrefix(DELTA_PREFIX)) to value else null
+    }.toMap(),
     savedHeightUnits = choice(heightUnitsKey, HeightUnits.entries) { it.stored },
     speedUnit = choice(speedUnitKey, SpeedUnit.entries) { it.stored } ?: SpeedUnit.KNOTS,
     setFormat = choice(setFormatKey, SetFormat.entries) { it.stored } ?: SetFormat.COMPASS,
@@ -80,7 +92,7 @@ private fun Preferences.readPreferences() = ReadingPreferences(
 )
 
 /** How readings are shown: units, set format and the comfort current. Device-local, in the no-backup directory. */
-class ReadingPreferencesStore private constructor(private val data: DataStore<Preferences>) {
+class ReadingPreferencesStore private constructor(private val data: DataStore<Preferences>, private val catalog: StationCatalog?) {
     /**
      * A failed read, such as a file the app cannot open, emits a failure and ends the flow; collect again to retry.
      * Readings can show `getOrDefault(ReadingPreferences())` meanwhile.
@@ -92,6 +104,14 @@ class ReadingPreferencesStore private constructor(private val data: DataStore<Pr
             emit(Result.failure(error))
         }
         .distinctUntilChanged()
+
+    /** Null restores inheritance from the global setting. Keys retain the complete station ID. */
+    suspend fun setStationThresholdDeltaKn(id: StationId, delta: Double?) {
+        require(delta == null || (delta.isFinite() && delta in -10.0..10.0))
+        val canonical = catalog?.resolve(id)?.id ?: id
+        val key = doublePreferencesKey(DELTA_PREFIX + canonical.value)
+        data.edit { if (delta == null) it.remove(key) else it[key] = delta }
+    }
 
     suspend fun setHeightUnits(units: HeightUnits) = data.edit { it[heightUnitsKey] = units.stored }
 
@@ -116,16 +136,35 @@ class ReadingPreferencesStore private constructor(private val data: DataStore<Pr
             return shared ?: open(
                 File(app.noBackupFilesDir, "reading_preferences.preferences_pb"),
                 CoroutineScope(SupervisorJob() + Dispatchers.IO),
+                BundledStationCatalog(app.assets),
             ).also { shared = it }
         }
 
-        internal fun open(file: File, scope: CoroutineScope) = ReadingPreferencesStore(
+        internal fun open(file: File, scope: CoroutineScope, catalog: StationCatalog? = null) = ReadingPreferencesStore(
             PreferenceDataStoreFactory.create(
                 // Unreadable settings are cheap to choose again; replacing them keeps the settings writable.
                 corruptionHandler = ReplaceFileCorruptionHandler { emptyPreferences() },
+                migrations = if (catalog == null) emptyList() else listOf(object : DataMigration<Preferences> {
+                    override suspend fun shouldMigrate(currentData: Preferences) =
+                        currentData.asMap().keys.any { it.name.startsWith(DELTA_PREFIX) }
+
+                    override suspend fun migrate(currentData: Preferences): Preferences {
+                        val next = currentData.toMutablePreferences()
+                        for ((id, delta) in currentData.readPreferences().stationDeltasKn.entries.sortedBy { it.key.value }) {
+                            val canonical = catalog.resolve(id).id
+                            if (canonical == id) continue
+                            val key = doublePreferencesKey(DELTA_PREFIX + canonical.value)
+                            // A choice already saved at the successor wins a collision.
+                            if (!next.contains(key)) next[key] = delta
+                            next.remove(doublePreferencesKey(DELTA_PREFIX + id.value))
+                        }
+                        return next
+                    }
+                    override suspend fun cleanUp() = Unit
+                }),
                 scope = scope,
                 produceFile = { file },
-            ),
+            ), catalog,
         )
     }
 }
