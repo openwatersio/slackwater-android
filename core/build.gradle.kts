@@ -6,4 +6,11 @@ dependencies {
     testFixturesImplementation("io.openwaters:slackwater-engine:0.1.0")
     testFixturesImplementation("io.openwaters:almanac:0.12.2")
     testImplementation(libs.junit)
+    testImplementation("com.google.code.gson:gson:2.11.0")
+}
+
+tasks.test {
+    val fixtures = rootProject.file("vendor/slackwater/fixtures")
+    inputs.files(fileTree(fixtures) { include("*.json") })
+    systemProperty("predictionFixtures", fixtures.absolutePath)
 }

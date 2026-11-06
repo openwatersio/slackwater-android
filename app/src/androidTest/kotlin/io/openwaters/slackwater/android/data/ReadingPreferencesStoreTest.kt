@@ -32,6 +32,22 @@ class ReadingPreferencesStoreTest {
         try { block(file) } finally { file.delete() }
     }
 
+    @Test fun stationDeltaSurvivesSuccessorAndCanBeClearedUsingFormerId() = withFile { file ->
+        val former = io.openwaters.slackwater.android.core.station.StationId("noaa/8218617")
+        val current = io.openwaters.slackwater.android.core.station.StationId("chs-mill-bay")
+        withScope { scope ->
+            ReadingPreferencesStore.open(file, scope).setStationThresholdDeltaKn(former, 0.4)
+        }
+        withScope { scope ->
+            val store = ReadingPreferencesStore.open(file, scope, BundledStationCatalog(context.assets))
+            val prefs = store.preferences.first().getOrThrow()
+            assertEquals(0.9,prefs.effectiveThresholdKn(current),0.0)
+            assertFalse(former in prefs.stationDeltasKn)
+            store.setStationThresholdDeltaKn(former,null)
+            assertEquals(0.5,store.preferences.first().getOrThrow().effectiveThresholdKn(current),0.0)
+        }
+    }
+
     @Test fun defaultsFollowTheRegionUntilChosen() = withFile { file ->
         withScope { scope ->
             val preferences = ReadingPreferencesStore.open(file, scope).preferences.first().getOrThrow()
