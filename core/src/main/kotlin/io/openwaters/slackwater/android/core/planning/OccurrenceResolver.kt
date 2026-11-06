@@ -21,6 +21,12 @@ data class AlertOccurrence(
     /** Original lead time when a save made this reminder immediately due. */
     val originalFire: Instant? = null,
 ) {
+    val atEventTime: Boolean get() = (originalFire ?: fire) == event
+
+    /** A zero-lead alert names the whole event minute. An advance reminder ends at the event instant. */
+    fun isDeliverableAt(now: Instant): Boolean =
+        if (atEventTime) now.truncatedTo(ChronoUnit.MINUTES) <= event else now <= event
+
     val key: String get() = "${ruleId}.${event.epochSecond}"
 }
 

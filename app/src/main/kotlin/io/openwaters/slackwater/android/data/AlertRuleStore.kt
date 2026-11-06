@@ -21,6 +21,7 @@ import java.util.UUID
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
@@ -73,7 +74,7 @@ class AlertRuleStore private constructor(private val data: DataStore<Preferences
 
     suspend fun expire(now: Instant) = edit { rows -> rows.removeAll { decodeAlertRule(it)?.isExpired(now) == true } }
 
-    private suspend fun edit(change: (MutableList<String>) -> Unit) {
+    private suspend fun edit(change: (MutableList<String>) -> Unit): Unit = alertInputLock.withLock {
         data.edit { prefs ->
             val previous = prefs.records()
             val next = previous.toMutableList().apply(change)

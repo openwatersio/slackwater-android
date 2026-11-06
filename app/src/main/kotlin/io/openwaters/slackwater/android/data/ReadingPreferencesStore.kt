@@ -4,6 +4,7 @@ import io.openwaters.slackwater.android.core.settings.ReadingSettings
 import io.openwaters.slackwater.android.core.station.StationId
 import io.openwaters.slackwater.android.core.station.StationCatalog
 import androidx.datastore.core.DataMigration
+import kotlinx.coroutines.sync.withLock
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
@@ -110,7 +111,7 @@ class ReadingPreferencesStore private constructor(private val data: DataStore<Pr
         require(delta == null || (delta.isFinite() && delta in -10.0..10.0))
         val canonical = catalog?.resolve(id)?.id ?: id
         val key = doublePreferencesKey(DELTA_PREFIX + canonical.value)
-        data.edit { if (delta == null) it.remove(key) else it[key] = delta }
+        alertInputLock.withLock { data.edit { if (delta == null) it.remove(key) else it[key] = delta } }
     }
 
     suspend fun setHeightUnits(units: HeightUnits) = data.edit { it[heightUnitsKey] = units.stored }
@@ -124,7 +125,7 @@ class ReadingPreferencesStore private constructor(private val data: DataStore<Pr
         require(knots.isFinite()) { "Comfort current must be finite: $knots" }
         val range = ReadingPreferences.SLACK_WINDOW_KNOTS_RANGE
         val clamped = knots.coerceIn(range.start, range.endInclusive)
-        data.edit { it[slackWindowKey] = ReadingPreferences.normalizedSlackWindowKnots(clamped) }
+        alertInputLock.withLock { data.edit { it[slackWindowKey] = ReadingPreferences.normalizedSlackWindowKnots(clamped) } }
     }
 
     companion object {

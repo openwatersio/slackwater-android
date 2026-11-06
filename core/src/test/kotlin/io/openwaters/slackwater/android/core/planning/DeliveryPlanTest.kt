@@ -31,6 +31,35 @@ class DeliveryPlanTest {
         assertEquals(refilled, refilled.refill(setOf(events[1].key), events[1].fire, purchased))
     }
 
+    @Test fun foregroundPreservesAnInexactAlarmStillWaitingInAndroid() {
+        val early = rule.copy(leadSeconds = 1800)
+        val event = occurrence(60, early)
+        val first = deliveryPlan(listOf(early), listOf(event), emptyList(), now, purchased)
+        val afterFire = event.fire.plusSeconds(10)
+        assertEquals(listOf(event), deliveryPlan(listOf(early), listOf(event), emptyList(), afterFire,
+            purchased, previous = first).notifications)
+        assertTrue(deliveryPlan(listOf(early), listOf(event), emptyList(), afterFire,
+            purchased, previous = first, deliveredKeys = setOf(event.key)).notifications.isEmpty())
+    }
+
+    @Test fun aScheduledZeroLeadCanArriveOnlyWithinItsEventMinute() {
+        val once = rule.copy(once = now)
+        val event = occurrence(0, once)
+        val plan = deliveryPlan(listOf(once), listOf(event), emptyList(), now, purchased)
+        val last = now.plusSeconds(60).minusNanos(1)
+        fun rebuild(at: Instant, access: ReminderEntitlement = purchased) =
+            deliveryPlan(listOf(once), listOf(event), emptyList(), at, access, previous = plan).notifications
+        assertFalse(once.isExpired(last))
+        assertTrue(once.isExpired(now.plusSeconds(60)))
+        assertEquals(listOf(event), rebuild(last))
+        assertTrue(rebuild(now.plusSeconds(60)).isEmpty())
+        assertTrue(rebuild(last, ReminderEntitlement.FreeDay(last)).isEmpty())
+        assertEquals(listOf(event), plan.refill(emptySet(), last, purchased, keepDueBroadcasts = true).notifications)
+        assertTrue(plan.refill(emptySet(), now.plusSeconds(60), purchased, keepDueBroadcasts = true).notifications.isEmpty())
+        assertFalse(event.copy(fire = now.minusSeconds(60)).isDeliverableAt(now.plusNanos(1)))
+        assertFalse(event.copy(originalFire = now.minusSeconds(60)).isDeliverableAt(now.plusNanos(1)))
+    }
+
     @Test fun staleOverflowCannotFireAfterTheHorizonAndForegroundCanExtendIt() {
         val edge = 14L * 24 * 60
         val events = listOf(occurrence(edge), occurrence(edge + 1))

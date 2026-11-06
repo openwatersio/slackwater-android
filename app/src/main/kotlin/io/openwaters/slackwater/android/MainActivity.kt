@@ -1,5 +1,8 @@
 package io.openwaters.slackwater.android
 
+import android.content.Intent
+import io.openwaters.slackwater.android.alerts.AlertDestination
+import io.openwaters.slackwater.android.alerts.StationAlerts
 import java.io.IOException
 import io.openwaters.slackwater.database.InvalidStationDatabaseException
 import android.os.Bundle
@@ -24,6 +27,14 @@ import io.openwaters.slackwater.android.data.BundledTideDatabase
 import io.openwaters.slackwater.android.core.station.StationId
 
 class MainActivity : ComponentActivity() {
+    private var destination by mutableStateOf<AlertDestination?>(null)
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        destination = AlertDestination.read(intent)
+    }
+
     override fun onStart() {
         super.onStart()
         AlertReconciliation.get(this).foreground()
@@ -31,6 +42,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        destination = AlertDestination.read(intent)
         enableEdgeToEdge()
         setContent {
             MaterialTheme {
@@ -71,17 +83,25 @@ class MainActivity : ComponentActivity() {
                     )
                 }
                 Surface(Modifier.fillMaxSize()) {
-                    Column(Modifier.safeDrawingPadding().padding(24.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                    Column(Modifier.safeDrawingPadding().verticalScroll(rememberScrollState()).padding(24.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
                         Text(stringResource(R.string.app_name), style = MaterialTheme.typography.headlineLarge)
-                        Text(stringResource(R.string.shell_message))
-                        Text(stringResource(R.string.shell_status))
-                        if (stationUnavailable) Text(stringResource(R.string.station_unavailable))
-                        station?.let { (name, attribution) ->
-                            Text(name)
-                            Text(attribution, style = MaterialTheme.typography.bodySmall)
+                        if (destination == null) {
+                            Text(stringResource(R.string.shell_message))
+                            Text(stringResource(R.string.shell_status))
+                            if (stationUnavailable) Text(stringResource(R.string.station_unavailable))
+                            station?.let { (name, attribution) ->
+                                Text(name)
+                                Text(attribution, style = MaterialTheme.typography.bodySmall)
+                            }
+                            Text(stringResource(R.string.source_notice), style = MaterialTheme.typography.bodySmall)
+                            TextButton(onClick = { showCredits = true }) { Text(stringResource(R.string.data_and_licenses)) }
                         }
-                        Text(stringResource(R.string.source_notice), style = MaterialTheme.typography.bodySmall)
-                        TextButton(onClick = { showCredits = true }) { Text(stringResource(R.string.data_and_licenses)) }
+                        key(destination) {
+                            StationAlerts(destination) {
+                                setIntent(Intent(this@MainActivity, MainActivity::class.java))
+                                destination = null
+                            }
+                        }
                     }
                 }
             }

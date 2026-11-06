@@ -2,6 +2,9 @@ package io.openwaters.slackwater.android.data
 
 import android.content.Context
 import android.util.Log
+import io.openwaters.slackwater.android.alerts.AlarmScheduler
+import io.openwaters.slackwater.android.alerts.ReminderAccessStore
+import io.openwaters.slackwater.android.alerts.activeAt
 import io.openwaters.slackwater.android.core.planning.*
 import io.openwaters.slackwater.android.core.prediction.TimeSpan
 import io.openwaters.slackwater.android.core.station.StationResolution
@@ -60,31 +63,35 @@ class AlertReconciliation private constructor(context: Context) {
     private val catalog = BundledStationCatalog(context.assets)
     private val predictions = AndroidPredictionRepository(context, models)
     private val plans = DeliveryPlanStore.get(context)
-    private val entitlement = MutableStateFlow<ReminderEntitlement>(ReminderEntitlement.Free)
+    private val entitlement = ReminderAccessStore.get(context)
+    private val alarms = AlarmScheduler.get(context)
     private val passes = AlertPassQueue(scope, ::reconcile)
 
     init {
         scope.launch {
             val settings = preferences.preferences.map { it.getOrThrow() }.retryAlertReads()
-            combine(rules.rules.retryAlertReads(), settings, models.revision, entitlement) { _, _, _, _ -> Unit }
+            combine(rules.rules.retryAlertReads(), settings, models.revision, entitlement.changes.retryAlertReads()) { _, _, _, _ -> Unit }
                 .collect { passes.request() }
         }
     }
 
     fun foreground() = passes.request()
 
-    fun entitlementChanged(access: ReminderEntitlement) { entitlement.value = access }
+    suspend fun entitlementChanged(access: ReminderEntitlement) = entitlement.update(access)
 
-    suspend fun save(rule: AlertRule) {
-        rules.upsert(rule)
+    suspend fun save(rule: AlertRule, confirmHeight: Boolean = false): Boolean {
+        if (!entitlement.current().activeAt(clock.instant())) return false
+        val crossing = rule.trigger as? AlertTrigger.TideCrossing
+        if (confirmHeight && crossing != null) rules.confirmHeight(rule, crossing.heightM) else rules.upsert(rule)
         passes.request(rule.id)
+        return true
     }
 
     private suspend fun reconcile(newRules: Set<UUID>) {
         val now = clock.instant()
         rules.expire(now)
         val active = rules.rules.first().filter { it.enabled && !it.heightNeedsReview }
-        val access = entitlement.value
+        val access = entitlement.current()
         val occurrences = mutableListOf<AlertOccurrence>()
         if (active.isNotEmpty() && access != ReminderEntitlement.Free) {
             val settings = preferences.preferences.first().getOrThrow()
@@ -92,7 +99,8 @@ class AlertReconciliation private constructor(context: Context) {
                 val station = (catalog.resolve(rule.stationId) as? StationResolution.Live)?.identity ?: continue
                 val zone = station.timezone?.let { runCatching { ZoneId.of(it) }.getOrNull() } ?: ZoneOffset.UTC
                 val searchSeconds = NOTIFICATION_HORIZON.seconds + rule.leadSeconds.coerceAtMost(CALENDAR_HORIZON.seconds)
-                val span = TimeSpan(now, now.plusSeconds(minOf(searchSeconds, CALENDAR_HORIZON.seconds)))
+                val start = if (rule.leadSeconds == 0L) now.truncatedTo(java.time.temporal.ChronoUnit.MINUTES) else now
+                val span = TimeSpan(start, now.plusSeconds(minOf(searchSeconds, CALENDAR_HORIZON.seconds)))
                 try {
                     occurrences += OccurrenceResolver.resolve(rule, predictions, span, zone,
                         station.latitude, station.longitude, settings.effectiveThresholdKn(station.id))
@@ -104,6 +112,7 @@ class AlertReconciliation private constructor(context: Context) {
             }
         }
         plans.rebuild(active, occurrences, emptyList(), now, access, newRules)
+        alarms.syncLatest()
     }
 
     companion object {
