@@ -35,3 +35,22 @@ test('Canadian assets contain only reviewed identity and recipe fields', async (
         scan(JSON.parse(await readFile(new URL(`app/src/main/assets/slackwater/${file}`, root))));
     }
 });
+
+test('live station IDs are unique and disjoint from restricted identities', async () => {
+    const read = async name => JSON.parse(await readFile(new URL(
+        `app/src/main/assets/slackwater/${name}.json`, root)));
+    const index = await read('station-index');
+    const live = index.tides.map(row => row.id);
+    for (const row of index.currents) {
+        assert.ok(!row.id.startsWith('current:'), `Already namespaced: ${row.id}`);
+        live.push(`current:${row.id}`);
+    }
+    for (const name of ['chs-stations', 'chs-gates', 'chs-current-gates']) {
+        live.push(...(await read(name)).map(row => row.id));
+    }
+    const ids = new Set(live);
+    assert.equal(ids.size, live.length);
+    for (const row of await read('unavailable-stations')) {
+        assert.ok(!ids.has(row.id), `Restricted station in live catalog: ${row.id}`);
+    }
+});
