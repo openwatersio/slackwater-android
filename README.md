@@ -4,7 +4,9 @@ Native Android app for offline tide and current predictions. The first Compose t
 
 ## Build
 
-Use JDK 17, Node 24.2 or later, Python 3, Git, and Android SDK platform 37. Set `ANDROID_HOME` or add `sdk.dir` to an ignored `local.properties` file. Gradle needs Node on its PATH; for Android Studio launched outside a shell, set `nodeExecutable=/absolute/path/to/node` in your user Gradle properties (`~/.gradle/gradle.properties`), or pass `-PnodeExecutable=/absolute/path/to/node` on the command line.
+Install JDK 17 so Gradle can discover it for both Android Studio sync and command-line builds. If Gradle cannot find your installation, set `org.gradle.java.installations.paths=/absolute/path/to/jdk-17` in `~/.gradle/gradle.properties`, using the JDK home that contains `bin/java`.
+
+Use Node 24.2 or later, Python 3, Git, and Android SDK platform 37. Set `ANDROID_HOME` or add `sdk.dir` to an ignored `local.properties` file. Gradle needs Node on its PATH; for Android Studio launched outside a shell, set `nodeExecutable=/absolute/path/to/node` in your user Gradle properties (`~/.gradle/gradle.properties`), or pass `-PnodeExecutable=/absolute/path/to/node` on the command line.
 
 ```sh
 node scripts/sync-upstream.mjs
@@ -23,7 +25,7 @@ The launch screen maps the uncompressed tide database directly from the APK and 
 
 Gradle checks the source pins and packaged inputs during configuration, including Android Studio sync. Kotlin compiler scratch files under `kotlin/.kotlin/` are excluded from the source cleanliness check. CI audits both debug and release APKs.
 
-Dependency checksums are in `gradle/verification-metadata.xml`; the wrapper has a distribution checksum. Review dependency changes before intentionally regenerating verification metadata. Upstream fixture provenance is recorded in the shared test fixture; data credits and third-party notices are available from the launch screen.
+Dependency checksums are in `gradle/verification-metadata.xml`; the wrapper has a distribution checksum. CI resolves published source variants for the debug app and tests. After updating Gradle or a dependency, sync the project in Android Studio to check the additional archives requested by the IDE. Verify any new sources, samples and Javadoc archives against the publisher before adding their SHA-256 pins. A wrapper update also needs the matching Gradle source ZIP checksum. Keep Studio’s generated .idea directory local. Upstream fixture provenance is recorded in the shared test fixture; data credits and third-party notices are available from the launch screen.
 
 ## Development plan
 

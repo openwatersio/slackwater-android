@@ -31,3 +31,26 @@ dependencies {
     androidTestImplementation(libs.test.junit)
     debugImplementation(libs.compose.test.manifest)
 }
+
+tasks.register("checkStudioSources") {
+    group = "verification"
+    description = "Resolve published source variants for the app and its debug tests."
+    val classpaths = listOf(
+        "debugCompileClasspath", "debugRuntimeClasspath",
+        "debugUnitTestCompileClasspath", "debugUnitTestRuntimeClasspath",
+        "debugAndroidTestCompileClasspath", "debugAndroidTestRuntimeClasspath",
+    )
+    for (classpath in classpaths) {
+        val sources = configurations.getByName(classpath).incoming.artifactView {
+            withVariantReselection()
+            componentFilter { it is ModuleComponentIdentifier }
+            attributes {
+                attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.DOCUMENTATION))
+                attribute(DocsType.DOCS_TYPE_ATTRIBUTE, objects.named(DocsType.SOURCES))
+                attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
+            }
+        }
+        inputs.files(sources.files)
+    }
+    doLast { logger.lifecycle("Verified ${inputs.files.files.size} dependency source archives.") }
+}
