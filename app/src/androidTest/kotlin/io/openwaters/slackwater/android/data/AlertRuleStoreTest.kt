@@ -62,7 +62,7 @@ class AlertRuleStoreTest {
                 val store = AlertRuleStore.open(file, catalog, scope)
                 assertEquals(AlertTrigger.TideCrossing(1.1, true), store.rules.first().single().trigger)
                 assertTrue(store.rules.first().single().enabled)
-                store.expire(now.plusNanos(1))
+                store.expire(now.plusSeconds(60))
                 assertTrue(store.rules.first().isEmpty())
                 store.remove(id)
             }

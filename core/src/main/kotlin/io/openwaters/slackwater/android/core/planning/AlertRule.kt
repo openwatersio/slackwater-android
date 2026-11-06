@@ -28,7 +28,10 @@ data class AlertRule(
 ) {
     init { require(leadSeconds >= 0) }
 
-    fun isExpired(now: Instant): Boolean = once?.isBefore(now) == true
+    fun isExpired(now: Instant): Boolean {
+        val selected = once ?: return false
+        return if (leadSeconds == 0L) selected < now.truncatedTo(java.time.temporal.ChronoUnit.MINUTES) else selected < now
+    }
 
     fun onSuccessor(successor: StationResolution.Successor): AlertRule {
         require(stationId == successor.savedId)

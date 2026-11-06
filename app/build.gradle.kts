@@ -15,6 +15,7 @@ android {
     compileOptions { sourceCompatibility = JavaVersion.VERSION_17; targetCompatibility = JavaVersion.VERSION_17 }
 }
 dependencies {
+    testImplementation(libs.junit)
     implementation(project(":core"))
     implementation("io.openwaters:slackwater-database:0.1.0")
     implementation(platform(libs.compose.bom))

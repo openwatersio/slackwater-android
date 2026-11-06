@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import io.openwaters.slackwater.android.core.planning.AlertRule
+import io.openwaters.slackwater.android.core.planning.allows
 import io.openwaters.slackwater.android.core.planning.deliveryPlan
 import io.openwaters.slackwater.android.core.planning.AlertOccurrence
 import io.openwaters.slackwater.android.core.planning.DeliveryPlan
@@ -20,6 +21,9 @@ import org.json.JSONArray
 import org.json.JSONObject
 
 private val planKey = stringPreferencesKey("deliveryPlan.v1")
+
+// Keep a zero-lead claim through its event minute, including subsequent foreground rebuilds.
+private val AlertOccurrence.keepClaimThrough: Instant get() = if (atEventTime) event.plusSeconds(60) else event
 
 private val deliveredKey = stringPreferencesKey("deliveredReminders.v1")
 
@@ -86,17 +90,36 @@ class DeliveryPlanStore internal constructor(private val data: DataStore<Prefere
         }
     }
 
-    suspend fun refill(deliveredKeys: Set<String>, now: Instant, entitlement: ReminderEntitlement): DeliveryPlan? {
+    suspend fun refill(
+        deliveredKeys: Set<String>, now: Instant, entitlement: ReminderEntitlement, keepDueBroadcasts: Boolean = false,
+    ): DeliveryPlan? {
         val updated = data.edit { prefs ->
             val previous = prefs[planKey]?.decodePlan() ?: return@edit
             val delivered = prefs.delivered(now)
             for (entry in previous.notifications) {
-                if (entry.key in deliveredKeys && entry.event >= now) delivered[entry.key] = entry.event
+                if (entry.key in deliveredKeys && entry.isDeliverableAt(now)) delivered[entry.key] = entry.keepClaimThrough
             }
             prefs[deliveredKey] = JSONObject(delivered.mapValues { it.value.toString() }).toString()
-            prefs[planKey] = previous.refill(deliveredKeys, now, entitlement).encode()
+            prefs[planKey] = previous.refill(deliveredKeys, now, entitlement, keepDueBroadcasts).encode()
         }
         return updated[planKey]?.decodePlan()
+    }
+
+    /** Claim exactly the plan entry we validated. Duplicate broadcasts and stale reads lose the claim. */
+    internal suspend fun consume(
+        expected: AlertOccurrence, now: Instant, entitlement: ReminderEntitlement, valid: Boolean,
+    ): Boolean {
+        var claimed = false
+        data.edit { prefs ->
+            val previous = prefs[planKey]?.decodePlan() ?: return@edit
+            if (expected !in previous.notifications || expected.fire > now) return@edit
+            val delivered = prefs.delivered(now)
+            claimed = valid && expected.isDeliverableAt(now) && entitlement.allows(now) && expected.key !in delivered
+            if (claimed) delivered[expected.key] = expected.keepClaimThrough
+            prefs[deliveredKey] = JSONObject(delivered.mapValues { it.value.toString() }).toString()
+            prefs[planKey] = previous.refill(setOf(expected.key), now, entitlement, keepDueBroadcasts = true).encode()
+        }
+        return claimed
     }
 
     companion object {

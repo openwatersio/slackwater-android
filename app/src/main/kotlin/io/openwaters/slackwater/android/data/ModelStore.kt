@@ -21,7 +21,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import org.json.JSONException
@@ -65,7 +64,6 @@ sealed interface StoredModel {
  * a power loss.
  */
 class ModelStore internal constructor(private val directory: File) {
-    private val writes = Mutex()
     private var sweptTemporaries = false
     private val _revision = MutableStateFlow(0L)
 
@@ -92,7 +90,7 @@ class ModelStore internal constructor(private val directory: File) {
     suspend fun write(id: StationId, kind: ModelKind, record: JSONObject) {
         val bytes = encode(id, record)
         withContext(Dispatchers.IO) {
-            writes.withLock {
+            alertInputLock.withLock {
                 prepare()
                 replace(fileFor(id, kind), bytes)
             }
@@ -105,7 +103,7 @@ class ModelStore internal constructor(private val directory: File) {
      */
     suspend fun update(id: StationId, kind: ModelKind, change: (StoredModel) -> JSONObject?) {
         withContext(Dispatchers.IO) {
-            writes.withLock {
+            alertInputLock.withLock {
                 val next = change(readFile(id, kind)) ?: return@withLock
                 val bytes = encode(id, next)
                 prepare()
@@ -128,7 +126,7 @@ class ModelStore internal constructor(private val directory: File) {
 
     suspend fun remove(id: StationId, kind: ModelKind) {
         withContext(Dispatchers.IO) {
-            writes.withLock {
+            alertInputLock.withLock {
                 val file = fileFor(id, kind)
                 if (!file.delete()) {
                     if (file.exists()) throw IOException("Cannot remove $file")

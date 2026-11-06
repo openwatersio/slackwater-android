@@ -1,0 +1,15 @@
+<resources>
+    <string name="reminder_notify_blocked">Your alert is saved. Allow notifications in Android settings to receive it.</string>
+    <string name="reminder_inexact_saved">Your alert is saved. Android may delay reminders on this device.</string>
+    <string name="reminder_back_to_stations">Back to stations</string>
+    <string name="reminder_my_alerts">My alerts</string>
+    <string name="reminder_reset_height">Set a new height</string>
+    <string name="reminder_status_off">Off</string>
+    <string name="reminder_premium_required">Premium required</string>
+    <string name="reminder_notifications_blocked">Notifications blocked</string>
+    <string name="reminder_no_scheduled">No upcoming reminder scheduled</string>
+    <string name="reminder_inexact">Android may delay delivery</string>
+    <string name="reminder_save_premium">Saving an alert requires Premium.</string>
+    <string name="reminder_through">Scheduled through %1$s</string>
+    <string name="reminder_write_failed">Could not save your alert. Try again.</string>
+</resources>

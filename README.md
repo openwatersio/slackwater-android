@@ -28,3 +28,11 @@ Dependency checksums are in `gradle/verification-metadata.xml`; the wrapper has 
 ## Development plan
 
 The [implementation plan](docs/superpowers/plans/2026-11-05-android-development.md) and [parity ledger](docs/ios-parity.md) define the remaining work against iOS PR #900. Work is tracked in [repository issues](https://github.com/openwatersio/slackwater-android/issues).
+
+## Android reminders
+
+The alert editor previews station events offline. Saving a reminder requires a current Premium entitlement or active free day. The first save on Android 13 or later asks for notification permission. A denial keeps the rule available in My alerts. Enable notifications for Slackwater and its Station reminders channel in Android settings to resume delivery.
+
+Android may defer reminders in Doze or when exact alarms are unavailable. The app uses one-shot alarms and rechecks the station prediction, notification access and entitlement before posting. Tapping a notification opens the station at the event time. Android can restart a closed app to deliver an alarm. After a user force-stop, open Slackwater to rebuild the schedule. Reboot, package replacement and clock changes restore eligible entries within the saved horizon.
+
+The release manifest requests notification and boot access. Declaring special exact-alarm access requires a separate release policy review. [Android alarm guidance](https://developer.android.com/develop/background-work/services/alarms) and [notification permissions](https://developer.android.com/develop/ui/compose/notifications/notification-permission).
