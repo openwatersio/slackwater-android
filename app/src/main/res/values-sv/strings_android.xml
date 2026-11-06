@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generated from scripts/translations/android/sv.json. Edit the JSON source. -->
+<resources>
+    <string name="alert_plot_tide">"Tidvattenhöjd (%1$s)"</string>
+    <string name="alert_plot_current">"Strömhastighet (kn)"</string>
+    <string name="alert_plot_derived">"Förutsagda strömkantringar"</string>
+    <string name="alert_plot_range">"%1$s till %2$s"</string>
+    <string name="alert_plot_reset_event">"Tillbaka till händelsen"</string>
+    <string name="alert_rise">"stigande förbi %1$s m"</string>
+    <string name="alert_fall">"fallande förbi %1$s m"</string>
+    <string name="alert_edit">"Redigera larm"</string>
+    <string name="alert_on_time">"Vid tidpunkten"</string>
+    <string name="alert_15min">"15 minuter före"</string>
+    <string name="alert_30min">"30 minuter före"</string>
+    <string name="alert_1hour">"1 timme före"</string>
+    <string name="alert_3hours">"3 timmar före"</string>
+    <string name="alert_1day">"1 dag före"</string>
+    <string name="alert_seconds">"%1$d sekunder före"</string>
+    <string name="alert_overdue">"Tiden för påminnelsen har passerat. När du sparar skickas den nu."</string>
+    <string name="alert_review_height">"Ange höjden igen (meter)"</string>
+    <string name="alert_height">"Höjd (meter)"</string>
+    <string name="alert_screen_empty">"Inga larm ännu. Skapa ett larm från en station."</string>
+    <plurals name="alert_plot_markers">
+        <item quantity="one">"%1$d markerat larm"</item>
+        <item quantity="other">"%1$d markerade larm"</item>
+    </plurals>
+    <string name="alert_plot_previous">"Föregående händelse, %1$s, %2$s"</string>
+    <string name="alert_plot_next">"Nästa händelse, %1$s, %2$s"</string>
+    <string name="alert_plot_earlier">"Fem minuter tidigare"</string>
+    <string name="alert_plot_later">"Fem minuter senare"</string>
+    <string name="alert_show_events">"Visa händelser i diagrammet"</string>
+    <string name="alert_hide_events">"Dölj händelser i diagrammet"</string>
+    <string name="alert_event_speed">"%1$s · %2$.1f kn"</string>
+    <string name="station_calendars_title">"Stationskalendrar"</string>
+    <string name="station_calendars_about">"Lägg stationens händelser för de kommande 90 dagarna i en kalender på den här enheten. Händelserna saknar påminnelser och stannar på den här enheten."</string>
+    <string name="station_calendar_subscribe">"Publicera kalender"</string>
+    <string name="station_calendar_remove">"Ta bort kalender"</string>
+    <string name="station_calendar_remove_title">"Ta bort %1$s?"</string>
+    <plurals name="station_calendar_remove_count">
+        <item quantity="one">"Slackwater tar bort %1$d händelse som appen har publicerat. Personliga händelser och händelser som redan har börjat finns kvar i Kalender."</item>
+        <item quantity="other">"Slackwater tar bort %1$d händelser som appen har publicerat. Personliga händelser och händelser som redan har börjat finns kvar i Kalender."</item>
+    </plurals>
+    <string name="station_calendar_offline_needed">"Kräver nedladdning före publicering."</string>
+    <string name="station_calendar_pending">"Kalenderändringar väntar. Redan publicerade händelser kan finnas kvar tills Slackwater kan uppdatera Kalender."</string>
+    <string name="station_calendar_permission">"Tillåt kalenderåtkomst så att Slackwater kan hitta och uppdatera sina händelser."</string>
+    <string name="station_calendar_premium">"Publicering av en ny stationskalender kräver Premium."</string>
+    <string name="station_calendar_trial">"Publicerar under din kostnadsfria dag."</string>
+    <string name="station_calendar_active">"Prenumererar"</string>
+    <string name="station_calendar_failed">"Kalendern kunde inte uppdateras. Kontrollera åtkomsten och försök igen."</string>
+    <string name="station_calendar_pending_remove">"Borttagning väntar"</string>
+    <plurals name="chart_minutes">
+        <item quantity="one">"%1$d minut"</item>
+        <item quantity="other">"%1$d minuter"</item>
+    </plurals>
+    <plurals name="chart_hours">
+        <item quantity="one">"%1$d timme"</item>
+        <item quantity="other">"%1$d timmar"</item>
+    </plurals>
+    <string name="detail_related_currents">"Ström vid %1$s"</string>
+    <string name="detail_namesakes">"Andra platser (%1$d)"</string>
+    <string name="detail_position">"Position"</string>
+    <string name="detail_zone">"Tidszon"</string>
+    <string name="detail_reference">"Referens"</string>
+    <string name="detail_datum">"Sjökortets referensnivå"</string>
+    <string name="detail_datum_note">"Höjder mäts från sjökortets referensnivå. Ett negativt värde förutsäger mindre vatten än det angivna sjökortsdjupet."</string>
+    <string name="detail_shape_note">"Kurvan mellan strömkantringarna är vägledande. Endast dess nollgenomgångar anger förutsagda tidpunkter."</string>
+    <string name="detail_lags">"Strömkantringens fördröjning"</string>
+    <string name="detail_lag_value">"%1$d min efter högvatten · %2$d min efter lågvatten"</string>
+    <string name="detail_prediction">"Prognos"</string>
+    <string name="detail_fitted">"Beräknad på den här enheten från sparade observationer"</string>
+    <string name="detail_official">"Officiella CHS-prognoser nedladdade för offlinebruk"</string>
+    <string name="detail_derived">"Endast uppskattade tider för strömkantring. Ingen hastighetsprognos finns för det här sundet."</string>
+    <string name="detail_harmonic">"Harmonisk prognos"</string>
+    <string name="detail_subordinate">"Prognos från referensstationen med korrigeringar för sekundärstationen"</string>
+    <string name="detail_bound">"Strömkantring vid %1$s kan avvika med upp till %2$d minuter från CHS-prognosen."</string>
+    <string name="detail_gap">"Slackwater har inga prognoser för den här stationen."</string>
+    <string name="detail_queued">"Nedladdning begärd"</string>
+    <string name="detail_no_week">"Inga sparade prognoser täcker den här veckan."</string>
+    <string name="detail_no_data">"Inga sparade prognoser finns för den här stationen."</string>
+    <string name="detail_loading">"Läser in prognoser"</string>
+    <string name="detail_copied">"Din rapport kopierades. Skicka den till slackwater@openwaters.io."</string>
+    <string name="detail_flow">"Medelström"</string>
+    <string name="detail_license">"Licens"</string>
+    <string name="detail_source">"Källa"</string>
+    <string name="detail_datum_source">"Sjökortets referensnivå från %1$s."</string>
+    <string name="detail_noaa_tide">"Harmonisk tidvattenprognos från NOAA."</string>
+    <string name="detail_noaa_sub">"Baserat på tidvatten vid %1$s och publicerade NOAA-korrigeringar, beräknat på den här enheten."</string>
+    <string name="detail_publisher">"Harmoniska konstanter från %1$s."</string>
+    <string name="detail_chs_fit">"Nedladdat från CHS (IWLS), sedan anpassat och beräknat på den här enheten. Dessa prognoser är inte publicerade av CHS."</string>
+    <string name="detail_chs_preview">"Officiella CHS-tidvattenprognoser nedladdade till den här enheten. Höjderna är över referensnivån LLWLT."</string>
+    <string name="detail_noaa_current">"Harmonisk strömprognos från NOAA."</string>
+    <string name="detail_sub_current">"Strömkantringar och maxima vid referensstationen korrigeras med publicerade NOAA-korrigeringar."</string>
+    <string name="detail_flood">"Flodström sätter mot %1$d°T."</string>
+    <string name="detail_derived_source">"Slackwater uppskattar strömkantring vid %1$s från hög- och lågvatten vid %2$s. CHS publicerar inga strömprognoser för det här sundet."</string>
+    <string name="detail_map">"Visa på karta"</string>
+    <string name="detail_invalid_link">"Den här stationslänken kunde inte öppnas."</string>
+    <string name="detail_chart_settings">"Diagraminställningar"</string>
+    <string name="panel_reference">"Uppskattat från referenstidvatten"</string>
+    <string name="panel_daylight">"%1$d h %2$d min dagsljus"</string>
+    <string name="panel_lit">"%1$d%% belyst"</string>
+    <string name="panel_moonrise">"Månuppgång"</string>
+    <string name="panel_moonset">"Månnedgång"</string>
+    <string name="panel_earth_distance">"Avstånd från jorden · %1$s km"</string>
+    <string name="panel_at">"%1$s kl. %2$s"</string>
+    <string name="panel_biggest">"De två veckornas största"</string>
+    <string name="panel_marked">"Utöver det normala här"</string>
+    <string name="panel_hardest">"Starkaste %1$s · %2$s"</string>
+    <string name="panel_strong">"Stark %1$s · %2$s"</string>
+    <string name="panel_swing_rank">"Större än alla utom %1$d av dessa två veckors %2$d tidvattenskillnader."</string>
+    <string name="panel_max_rank">"Starkare än alla utom %1$d av dessa två veckors %2$d maxima i den här riktningen."</string>
+    <string name="panel_biggest_day">"Varje stapel är en dags största tidvattenskillnad."</string>
+    <string name="panel_max_day">"Varje stapel är en dags starkaste %1$s."</string>
+    <string-array name="panel_phases">
+        <item>"Nymåne"</item>
+        <item>"Tilltagande månskära"</item>
+        <item>"Första kvarteret"</item>
+        <item>"Tilltagande måne"</item>
+        <item>"Fullmåne"</item>
+        <item>"Avtagande måne"</item>
+        <item>"Sista kvarteret"</item>
+        <item>"Avtagande månskära"</item>
+    </string-array>
+    <string name="panel_full">"Nästa fullmåne"</string>
+    <string name="panel_new">"Nästa nymåne"</string>
+    <string name="panel_last_lunar">"Senaste synliga månförmörkelse"</string>
+    <string name="panel_last_solar">"Senaste synliga solförmörkelse"</string>
+    <string name="panel_rise_def">"Solens övre kant kommer över en fri horisont."</string>
+    <string name="panel_set_def">"Solens övre kant sjunker under en fri horisont."</string>
+    <string name="panel_noon_def">"Solen passerar den lokala meridianen."</string>
+    <string name="panel_twilight_rising">"Den uppgående solen når %1$d° under horisonten."</string>
+    <string name="panel_twilight_setting">"Den nedgående solen når %1$d° under horisonten."</string>
+    <string name="panel_edge_def">"Solens centrum passerar %1$d° i förhållande till horisonten."</string>
+    <string name="panel_next_total">"Nästa totala månförmörkelse"</string>
+    <string name="panel_next_partial">"Nästa partiella månförmörkelse"</string>
+    <string name="panel_next_penumbral">"Nästa halvskuggemånförmörkelse"</string>
+    <string name="panel_mostly">"Mestadels säsongsbundet"</string>
+    <string name="panel_partly">"Delvis säsongsbundet"</string>
+    <string name="panel_ends">"Jämfört med stationens egna ytterligheter"</string>
+    <string name="panel_season_large">"Den årliga förändringen är mycket större än det dagliga tidvattnet."</string>
+    <string name="panel_hat">"Högsta astronomiska tidvatten · %1$s"</string>
+    <string name="panel_lat">"Lägsta astronomiska tidvatten · %1$s"</string>
+    <string name="panel_turn">"Vald vändpunkt · %1$s"</string>
+    <string name="panel_ratio">"Årlig förändring · %1$.1f× det dagliga tidvattnet"</string>
+    <string name="panel_slack_compared">"Strömstilla varar %1$d minuter kring detta maximum, jämfört med ungefär %2$d minuter här i vanliga fall."</string>
+    <string name="panel_swing_explain">"Skillnaden mellan hög- och lågvatten i denna tidvattensvängning, %1$s."</string>
+    <string name="panel_springs_follow">"Springflod följer ny- och fullmåne."</string>
+    <string name="panel_orbit_scale">"Omloppsbanans form är överdriven för att visa förändringen i avstånd."</string>
+    <string name="panel_hat_label">"Högsta astronomiska tidvatten"</string>
+    <string name="panel_lat_label">"Lägsta astronomiska tidvatten"</string>
+    <string name="panel_high_label">"De två veckornas högsta högvatten"</string>
+    <string name="panel_low_label">"De två veckornas lägsta lågvatten"</string>
+    <string name="panel_turn_label">"Vald vändpunkt"</string>
+    <string name="panel_explain">"Om %1$s"</string>
+    <string name="panel_season_equal">"Den årliga förändringen är ungefär lika stor som det dagliga tidvattnet."</string>
+    <string name="panel_season_river">"Vattnet vid %1$s varierar mycket mer över ett år än över ett dygn. Avrinning, regn och vind kan höja eller sänka hela det dagliga tidvattnet."</string>
+    <string name="panel_season_tide">"Vattnet vid %1$s följer ett dagligt tidvatten och en årscykel av jämförbar storlek. Tidpunkterna för hög- och lågvatten förblir förutsägbara när säsongsnivån ändras."</string>
+    <string name="panel_spring_explain">"Solen och månen drar längs samma linje. Deras sammanlagda effekt ökar vanligtvis tidvattenskillnaden."</string>
+    <string name="panel_neap_explain">"Vid halvmåne drar solen och månen vinkelrätt mot varandra. Tidvattenskillnaden blir vanligtvis mindre."</string>
+    <string name="panel_perigee_explain">"Månen är nära sin närmaste punkt till jorden, där dess tidvattenkraft är starkare."</string>
+    <string name="panel_apogee_explain">"Månen är nära sin mest avlägsna punkt från jorden, där dess tidvattenkraft är svagare."</string>
+    <string-array name="panel_phase_explanation">
+        <item>"Månen ligger nästan mellan jorden och solen."</item>
+        <item>"En växande skära av månens solbelysta halva vetter mot jorden."</item>
+        <item>"Månen har färdats en fjärdedel av sin fascykel."</item>
+        <item>"Mer än halva den synliga skivan är belyst och det belysta området växer."</item>
+        <item>"Månen står mitt emot solen på vår himmel."</item>
+        <item>"Mer än halva den synliga skivan är belyst och det belysta området krymper."</item>
+        <item>"Månen har färdats tre fjärdedelar av sin fascykel."</item>
+        <item>"En allt smalare skära återstår före nästa nymåne."</item>
+    </string-array>
+    <string name="prediction_shortcuts">"Prognosgenvägar"</string>
+    <string name="pdf_daylight">"Soluppgång %1$s · Solnedgång %2$s"</string>
+    <string name="pdf_kmh">"km/h"</string>
+    <string name="pdf_ms">"m/s"</string>
+    <string name="pdf_flood_set">"Flodström %1$s"</string>
+    <string name="pdf_ebb_set">"Ebbström %1$s"</string>
+    <string name="pdf_page">"%1$d / %2$d"</string>
+    <string-array name="pdf_compass">
+        <item>"N"</item>
+        <item>"NNO"</item>
+        <item>"NO"</item>
+        <item>"ONO"</item>
+        <item>"O"</item>
+        <item>"OSO"</item>
+        <item>"SO"</item>
+        <item>"SSO"</item>
+        <item>"S"</item>
+        <item>"SSV"</item>
+        <item>"SV"</item>
+        <item>"VSV"</item>
+        <item>"V"</item>
+        <item>"VNV"</item>
+        <item>"NV"</item>
+        <item>"NNV"</item>
+    </string-array>
+    <string name="table_sheet_share">"Dela PDF"</string>
+    <string name="table_sheet_print">"Skriv ut"</string>
+    <string name="table_sheet_page">"Sida %1$d av %2$d"</string>
+    <string name="table_sheet_failed">"Kunde inte förbereda PDF-filen."</string>
+    <string name="table_sheet_export_failed">"Kunde inte öppna PDF-filen för utskrift eller delning."</string>
+    <string name="table_sheet_locked">"Utskrivbara tabeller kräver Premium."</string>
+    <string name="table_sheet_download_current">"Fler dagar kan skrivas ut när deras strömprognoser har laddats ned."</string>
+    <string name="table_sheet_download_tide">"Utskrift av fler dagar kräver fullständiga tidvattenprognoser för den här stationen."</string>
+    <string name="table_sheet_letter">"Fast US Letter-layout (8.5 × 11 in). Välj motsvarande papper för storleken i förhandsvisningen."</string>
+    <string name="table_sheet_a4">"Fast A4-layout (210 × 297 mm). Välj motsvarande papper för storleken i förhandsvisningen."</string>
+    <string name="query_invalid">"Den här prognosgenvägen kunde inte läsas."</string>
+    <string name="query_nearby_hint">"Lämna tomt för att använda din position."</string>
+    <string name="query_date_hint">"Ange YYYY-MM-DD eller lämna tomt för nästa händelse."</string>
+    <string name="query_show">"Visa prognos"</string>
+    <string name="query_missing">"Kunde inte hitta %1$s. Kontrollera platsnamnet i Slackwater."</string>
+    <string name="query_location">"En aktuell position behövs. Använd din position eller ange en plats ovan."</string>
+    <string name="query_use_location">"Använd min position"</string>
+    <string name="query_choose">"Välj en station"</string>
+    <string name="query_pin">"Fäst den här genvägen"</string>
+    <string name="query_pin_failed">"Startappen kunde inte fästa den här genvägen."</string>
+    <string name="query_off">"Perioder med svag ström är avstängda i dina inställningar för bekväm strömhastighet."</string>
+    <string name="query_none_date">"Ingen matchande händelse den %1$s."</string>
+    <string name="query_none_window">"Ingen period med svag ström under de kommande 48 timmarna."</string>
+    <string name="query_none_tide">"Inget matchande tidvatten under de kommande 48 timmarna."</string>
+    <string name="query_tide_ft">"%1$s · %2$.1f ft"</string>
+    <string name="query_tide_m">"%1$s · %2$.2f m"</string>
+    <string name="query_window">"%1$s till %2$s"</string>
+    <string name="query_window_from">"Öppnar %1$s. Sluttid okänd."</string>
+    <string name="query_window_until">"Stänger %1$s. Starttid okänd."</string>
+    <string name="query_window_at">"Inom din bekväma strömhastighet kl. %1$s. Start- och sluttider okända."</string>
+    <string name="query_curve_extent">"%1$s – %2$s"</string>
+    <string name="query_high_day">"Högvatten"</string>
+    <string name="query_low_day">"Lågvatten"</string>
+    <string name="query_slack_day">"Perioder med svag ström"</string>
+    <string name="query_tide_wait">"Om ungefär %1$s."</string>
+    <string name="query_open">"Öppen nu."</string>
+    <string name="query_remaining">"Öppen nu, med ungefär %1$s kvar."</string>
+    <string name="query_opens">"Öppnar om ungefär %1$s."</string>
+    <string name="query_opens_duration">"Öppnar om ungefär %1$s och varar ungefär %2$s."</string>
+    <string name="reminder_notify_blocked">"Ditt larm har sparats. Tillåt aviseringar i Android-inställningarna för att få det."</string>
+    <string name="reminder_inexact_saved">"Ditt larm har sparats. Android kan fördröja påminnelser på den här enheten."</string>
+    <string name="reminder_back_to_stations">"Tillbaka till stationer"</string>
+    <string name="reminder_my_alerts">"Mina larm"</string>
+    <string name="reminder_reset_height">"Ange en ny höjd"</string>
+    <string name="reminder_premium_required">"Premium krävs"</string>
+    <string name="reminder_notifications_blocked">"Aviseringar blockerade"</string>
+    <string name="reminder_no_scheduled">"Ingen kommande påminnelse schemalagd"</string>
+    <string name="reminder_inexact">"Android kan fördröja leveransen"</string>
+    <string name="reminder_save_premium">"Det krävs Premium för att spara ett larm."</string>
+    <string name="reminder_through">"Schemalagt till och med %1$s"</string>
+    <string name="reminder_write_failed">"Kunde inte spara ditt larm. Försök igen."</string>
+    <string name="schedule_title">"Tidsschema"</string>
+    <string name="schedule_earlier">"Föregående vecka"</string>
+    <string name="schedule_later">"Nästa vecka"</string>
+    <string name="schedule_premium_message">"Utskrift och delning av tabeller kräver Premium. Du kan läsa tidsschemat här."</string>
+    <string name="schedule_reset">"Tillbaka till vald vecka"</string>
+    <string name="list_region_distance">"%1$s • %2$s"</string>
+    <string name="card_unavailable">"Inga prognoser nu"</string>
+    <string name="card_value_unit_approximate">"~%1$s %2$s"</string>
+    <string name="card_spoken_reading">"%1$s %2$s, %3$s"</string>
+    <string name="card_spoken_set">"mot %1$s"</string>
+    <string name="search_truncated">"De närmaste 60 — fortsätt skriva för att avgränsa"</string>
+    <string name="list_catalog_unavailable">"Stationsdata är inte tillgängliga på den här enheten."</string>
+    <string name="card_spoken_approximate">"ungefär %1$s"</string>
+    <string name="data_and_licenses">"Data och licenser"</string>
+    <string name="data_credits">"Datakällor"</string>
+    <string name="reminder_channel">"Stationspåminnelser"</string>
+    <string name="notification_window_opens">"Perioden med svag ström börjar"</string>
+    <string name="notification_eclipse_begins">"Förmörkelsen börjar"</string>
+    <string name="notification_rise">"Stigande förbi %1$s m"</string>
+    <string name="notification_fall">"Fallande förbi %1$s m"</string>
+</resources>

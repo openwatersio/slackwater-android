@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generated from scripts/translations/android/en.json. Edit the JSON source. -->
+<resources>
+    <string name="alert_plot_tide">"Tide height (%1$s)"</string>
+    <string name="alert_plot_current">"Current speed (kn)"</string>
+    <string name="alert_plot_derived">"Predicted slacks"</string>
+    <string name="alert_plot_range">"%1$s to %2$s"</string>
+    <string name="alert_plot_reset_event">"Return to event"</string>
+    <string name="alert_rise">"rising past %1$s m"</string>
+    <string name="alert_fall">"falling past %1$s m"</string>
+    <string name="alert_edit">"Edit alert"</string>
+    <string name="alert_on_time">"At the time"</string>
+    <string name="alert_15min">"15 minutes before"</string>
+    <string name="alert_30min">"30 minutes before"</string>
+    <string name="alert_1hour">"1 hour before"</string>
+    <string name="alert_3hours">"3 hours before"</string>
+    <string name="alert_1day">"1 day before"</string>
+    <string name="alert_seconds">"%1$d seconds before"</string>
+    <string name="alert_overdue">"The reminder time has passed. Saving sends it now."</string>
+    <string name="alert_review_height">"Set the height again (metres)"</string>
+    <string name="alert_height">"Height (metres)"</string>
+    <string name="alert_screen_empty">"No alerts yet. Set an alert from a station."</string>
+    <plurals name="alert_plot_markers">
+        <item quantity="one">"%1$d marked alert"</item>
+        <item quantity="other">"%1$d marked alerts"</item>
+    </plurals>
+    <string name="alert_plot_previous">"Previous event, %1$s, %2$s"</string>
+    <string name="alert_plot_next">"Next event, %1$s, %2$s"</string>
+    <string name="alert_plot_earlier">"Earlier by five minutes"</string>
+    <string name="alert_plot_later">"Later by five minutes"</string>
+    <string name="alert_show_events">"Show chart events"</string>
+    <string name="alert_hide_events">"Hide chart events"</string>
+    <string name="alert_event_speed">"%1$s · %2$.1f kn"</string>
+    <string name="station_calendars_title">"Station calendars"</string>
+    <string name="station_calendars_about">"Publish the next 90 days of station events to a calendar on this device. Events have no reminders and stay on this device."</string>
+    <string name="station_calendar_subscribe">"Publish calendar"</string>
+    <string name="station_calendar_remove">"Remove calendar"</string>
+    <string name="station_calendar_remove_title">"Remove %1$s?"</string>
+    <plurals name="station_calendar_remove_count">
+        <item quantity="one">"Slackwater will remove %1$d event it published. Personal events and events already underway stay in Calendar."</item>
+        <item quantity="other">"Slackwater will remove %1$d events it published. Personal events and events already underway stay in Calendar."</item>
+    </plurals>
+    <string name="station_calendar_offline_needed">"Needs a download before it can publish."</string>
+    <string name="station_calendar_pending">"Calendar changes are pending. Events already published can remain until Slackwater can update Calendar."</string>
+    <string name="station_calendar_permission">"Allow calendar access so Slackwater can find its events and update them."</string>
+    <string name="station_calendar_premium">"Publishing a new station calendar requires Premium."</string>
+    <string name="station_calendar_trial">"Publishes during your free day."</string>
+    <string name="station_calendar_active">"Subscribed"</string>
+    <string name="station_calendar_failed">"Calendar could not be updated. Check access and try again."</string>
+    <string name="station_calendar_pending_remove">"Removal pending"</string>
+    <plurals name="chart_minutes">
+        <item quantity="one">"%1$d minute"</item>
+        <item quantity="other">"%1$d minutes"</item>
+    </plurals>
+    <plurals name="chart_hours">
+        <item quantity="one">"%1$d hour"</item>
+        <item quantity="other">"%1$d hours"</item>
+    </plurals>
+    <string name="detail_related_currents">"Currents at %1$s"</string>
+    <string name="detail_namesakes">"Other locations (%1$d)"</string>
+    <string name="detail_position">"Position"</string>
+    <string name="detail_zone">"Time zone"</string>
+    <string name="detail_reference">"Reference"</string>
+    <string name="detail_datum">"Chart datum"</string>
+    <string name="detail_datum_note">"Heights are measured from chart datum. A negative value predicts less water than the charted depth."</string>
+    <string name="detail_shape_note">"The curve between slack times is a guide. Only its zero crossings represent predicted times."</string>
+    <string name="detail_lags">"Slack lags"</string>
+    <string name="detail_lag_value">"%1$d min after high water · %2$d min after low water"</string>
+    <string name="detail_prediction">"Prediction"</string>
+    <string name="detail_fitted">"Calculated on this device from saved observations"</string>
+    <string name="detail_official">"Official CHS predictions downloaded for offline use"</string>
+    <string name="detail_derived">"Estimated slack times only. No speed prediction is available for this pass."</string>
+    <string name="detail_harmonic">"Harmonic prediction"</string>
+    <string name="detail_subordinate">"Prediction from the reference station with subordinate offsets"</string>
+    <string name="detail_bound">"Slack at %1$s can differ from the CHS prediction by up to %2$d minutes."</string>
+    <string name="detail_gap">"Slackwater has no predictions for this station."</string>
+    <string name="detail_queued">"Download requested"</string>
+    <string name="detail_no_week">"No saved predictions cover this week."</string>
+    <string name="detail_no_data">"No saved predictions are available for this station."</string>
+    <string name="detail_loading">"Loading predictions"</string>
+    <string name="detail_copied">"Your report was copied. Send it to slackwater@openwaters.io."</string>
+    <string name="detail_flow">"Mean flow"</string>
+    <string name="detail_license">"Licence"</string>
+    <string name="detail_source">"Source"</string>
+    <string name="detail_datum_source">"%1$s chart datum."</string>
+    <string name="detail_noaa_tide">"NOAA harmonic tide prediction."</string>
+    <string name="detail_noaa_sub">"Based on tides at %1$s and published NOAA offsets, computed on this device."</string>
+    <string name="detail_publisher">"Harmonic constants from %1$s."</string>
+    <string name="detail_chs_fit">"Downloaded from CHS (IWLS), then fitted and computed on this device. These are not CHS-published predictions."</string>
+    <string name="detail_chs_preview">"Official CHS tide predictions downloaded to this device. Heights are above LLWLT chart datum."</string>
+    <string name="detail_noaa_current">"NOAA harmonic current prediction."</string>
+    <string name="detail_sub_current">"Slacks and maxima at the reference station are corrected by published NOAA offsets."</string>
+    <string name="detail_flood">"Flood sets %1$d°T."</string>
+    <string name="detail_derived_source">"Slackwater estimates slack at %1$s from high and low water at %2$s. CHS does not publish current predictions for this pass."</string>
+    <string name="detail_map">"View on map"</string>
+    <string name="detail_invalid_link">"This station link could not be opened."</string>
+    <string name="detail_chart_settings">"Chart settings"</string>
+    <string name="panel_reference">"Estimated from reference tides"</string>
+    <string name="panel_daylight">"%1$d h %2$d min daylight"</string>
+    <string name="panel_lit">"%1$d%% lit"</string>
+    <string name="panel_moonrise">"Moonrise"</string>
+    <string name="panel_moonset">"Moonset"</string>
+    <string name="panel_earth_distance">"Distance from Earth · %1$s km"</string>
+    <string name="panel_at">"%1$s at %2$s"</string>
+    <string name="panel_biggest">"The fortnight’s biggest"</string>
+    <string name="panel_marked">"Beyond normal here"</string>
+    <string name="panel_hardest">"Hardest %1$s · %2$s"</string>
+    <string name="panel_strong">"Strong %1$s · %2$s"</string>
+    <string name="panel_swing_rank">"Bigger than all but %1$d of this fortnight’s %2$d swings."</string>
+    <string name="panel_max_rank">"Harder than all but %1$d of this fortnight’s %2$d maxima in this direction."</string>
+    <string name="panel_biggest_day">"Each bar is one day’s biggest swing."</string>
+    <string name="panel_max_day">"Each bar is one day’s hardest %1$s."</string>
+    <string-array name="panel_phases">
+        <item>"New Moon"</item>
+        <item>"Waxing Crescent"</item>
+        <item>"First Quarter"</item>
+        <item>"Waxing Gibbous"</item>
+        <item>"Full Moon"</item>
+        <item>"Waning Gibbous"</item>
+        <item>"Last Quarter"</item>
+        <item>"Waning Crescent"</item>
+    </string-array>
+    <string name="panel_full">"Next full Moon"</string>
+    <string name="panel_new">"Next new Moon"</string>
+    <string name="panel_last_lunar">"Last visible lunar eclipse"</string>
+    <string name="panel_last_solar">"Last visible solar eclipse"</string>
+    <string name="panel_rise_def">"The upper edge of the Sun comes above an unobstructed horizon."</string>
+    <string name="panel_set_def">"The upper edge of the Sun drops below an unobstructed horizon."</string>
+    <string name="panel_noon_def">"The Sun crosses the local meridian."</string>
+    <string name="panel_twilight_rising">"The rising Sun reaches %1$d° below the horizon."</string>
+    <string name="panel_twilight_setting">"The setting Sun reaches %1$d° below the horizon."</string>
+    <string name="panel_edge_def">"The Sun’s centre crosses %1$d° relative to the horizon."</string>
+    <string name="panel_next_total">"Next total lunar eclipse"</string>
+    <string name="panel_next_partial">"Next partial lunar eclipse"</string>
+    <string name="panel_next_penumbral">"Next penumbral lunar eclipse"</string>
+    <string name="panel_mostly">"Mostly seasonal"</string>
+    <string name="panel_partly">"Partly seasonal"</string>
+    <string name="panel_ends">"Against this station’s own ends"</string>
+    <string name="panel_season_large">"Yearly change is far larger than the daily tide."</string>
+    <string name="panel_hat">"Highest astronomical tide · %1$s"</string>
+    <string name="panel_lat">"Lowest astronomical tide · %1$s"</string>
+    <string name="panel_turn">"Selected turn · %1$s"</string>
+    <string name="panel_ratio">"Yearly change · %1$.1f× the daily tide"</string>
+    <string name="panel_slack_compared">"Slack lasts %1$d minutes around this maximum, compared with about %2$d minutes here usually."</string>
+    <string name="panel_swing_explain">"The difference between this swing’s high and low, %1$s."</string>
+    <string name="panel_springs_follow">"Springs follow the new and full moon."</string>
+    <string name="panel_orbit_scale">"The orbit’s shape is exaggerated to show the change in distance."</string>
+    <string name="panel_hat_label">"Highest astronomical tide"</string>
+    <string name="panel_lat_label">"Lowest astronomical tide"</string>
+    <string name="panel_high_label">"Fortnight’s highest high"</string>
+    <string name="panel_low_label">"Fortnight’s lowest low"</string>
+    <string name="panel_turn_label">"Selected turn"</string>
+    <string name="panel_explain">"About %1$s"</string>
+    <string name="panel_season_equal">"Yearly change is about the same size as the daily tide."</string>
+    <string name="panel_season_river">"Water at %1$s varies much more across a year than across a day. Runoff, rainfall and wind can lift or lower the entire daily tide."</string>
+    <string name="panel_season_tide">"The water at %1$s follows a daily tide and a yearly cycle of comparable size. The timing of a high or low stays predictable as the seasonal level changes."</string>
+    <string name="panel_spring_explain">"The Sun and Moon pull along the same line. Their combined effect tends to widen the tidal range."</string>
+    <string name="panel_neap_explain">"At quarter moon the Sun and Moon pull at right angles. The tidal range tends to narrow."</string>
+    <string name="panel_perigee_explain">"The Moon is near its closest point to Earth, where its tidal pull is stronger."</string>
+    <string name="panel_apogee_explain">"The Moon is near its farthest point from Earth, where its tidal pull is weaker."</string>
+    <string-array name="panel_phase_explanation">
+        <item>"The Moon lies nearly between Earth and Sun."</item>
+        <item>"A growing crescent of the Moon’s sunlit half faces Earth."</item>
+        <item>"The Moon has travelled a quarter of the way through its phase cycle."</item>
+        <item>"More than half the visible disc is lit and the lit area is growing."</item>
+        <item>"The Moon lies opposite the Sun in our sky."</item>
+        <item>"More than half the visible disc is lit and the lit area is shrinking."</item>
+        <item>"The Moon has travelled three quarters of the way through its phase cycle."</item>
+        <item>"A narrowing crescent remains before the next new moon."</item>
+    </string-array>
+    <string name="prediction_shortcuts">"Prediction shortcuts"</string>
+    <string name="pdf_daylight">"Sunrise %1$s · Sunset %2$s"</string>
+    <string name="pdf_kmh">"km/h"</string>
+    <string name="pdf_ms">"m/s"</string>
+    <string name="pdf_flood_set">"Flood %1$s"</string>
+    <string name="pdf_ebb_set">"Ebb %1$s"</string>
+    <string name="pdf_page">"%1$d / %2$d"</string>
+    <string-array name="pdf_compass">
+        <item>"N"</item>
+        <item>"NNE"</item>
+        <item>"NE"</item>
+        <item>"ENE"</item>
+        <item>"E"</item>
+        <item>"ESE"</item>
+        <item>"SE"</item>
+        <item>"SSE"</item>
+        <item>"S"</item>
+        <item>"SSW"</item>
+        <item>"SW"</item>
+        <item>"WSW"</item>
+        <item>"W"</item>
+        <item>"WNW"</item>
+        <item>"NW"</item>
+        <item>"NNW"</item>
+    </string-array>
+    <string name="table_sheet_share">"Share PDF"</string>
+    <string name="table_sheet_print">"Print"</string>
+    <string name="table_sheet_page">"Page %1$d of %2$d"</string>
+    <string name="table_sheet_failed">"Couldn’t prepare the PDF."</string>
+    <string name="table_sheet_export_failed">"Couldn’t open the PDF for printing or sharing."</string>
+    <string name="table_sheet_locked">"Printable tables require Premium."</string>
+    <string name="table_sheet_download_current">"More days can be printed once their current predictions are downloaded."</string>
+    <string name="table_sheet_download_tide">"Printing more days requires the full tide predictions for this station."</string>
+    <string name="table_sheet_letter">"Fixed US Letter layout (8.5 × 11 in). Choose matching paper for the previewed size."</string>
+    <string name="table_sheet_a4">"Fixed A4 layout (210 × 297 mm). Choose matching paper for the previewed size."</string>
+    <string name="query_invalid">"This prediction shortcut could not be read."</string>
+    <string name="query_nearby_hint">"Leave blank to use your location."</string>
+    <string name="query_date_hint">"Enter YYYY-MM-DD or leave blank for the next event."</string>
+    <string name="query_show">"Show prediction"</string>
+    <string name="query_missing">"Could not find %1$s. Check the place name in Slackwater."</string>
+    <string name="query_location">"A recent location is needed. Use your location or enter a place above."</string>
+    <string name="query_use_location">"Use my location"</string>
+    <string name="query_choose">"Choose a station"</string>
+    <string name="query_pin">"Pin this shortcut"</string>
+    <string name="query_pin_failed">"The launcher could not pin this shortcut."</string>
+    <string name="query_off">"Slack windows are turned off in your comfort current settings."</string>
+    <string name="query_none_date">"No matching event on %1$s."</string>
+    <string name="query_none_window">"No slack window in the next 48 hours."</string>
+    <string name="query_none_tide">"No matching tide in the next 48 hours."</string>
+    <string name="query_tide_ft">"%1$s · %2$.1f ft"</string>
+    <string name="query_tide_m">"%1$s · %2$.2f m"</string>
+    <string name="query_window">"%1$s to %2$s"</string>
+    <string name="query_window_from">"Opens %1$s. Closing time unknown."</string>
+    <string name="query_window_until">"Closes %1$s. Opening time unknown."</string>
+    <string name="query_window_at">"Within the comfort current at %1$s. Opening and closing times unknown."</string>
+    <string name="query_curve_extent">"%1$s – %2$s"</string>
+    <string name="query_high_day">"High tides"</string>
+    <string name="query_low_day">"Low tides"</string>
+    <string name="query_slack_day">"Slack windows"</string>
+    <string name="query_tide_wait">"In about %1$s."</string>
+    <string name="query_open">"Open now."</string>
+    <string name="query_remaining">"Open now, with about %1$s remaining."</string>
+    <string name="query_opens">"Opens in about %1$s."</string>
+    <string name="query_opens_duration">"Opens in about %1$s and lasts about %2$s."</string>
+    <string name="reminder_notify_blocked">"Your alert is saved. Allow notifications in Android settings to receive it."</string>
+    <string name="reminder_inexact_saved">"Your alert is saved. Android may delay reminders on this device."</string>
+    <string name="reminder_back_to_stations">"Back to stations"</string>
+    <string name="reminder_my_alerts">"My alerts"</string>
+    <string name="reminder_reset_height">"Set a new height"</string>
+    <string name="reminder_premium_required">"Premium required"</string>
+    <string name="reminder_notifications_blocked">"Notifications blocked"</string>
+    <string name="reminder_no_scheduled">"No upcoming reminder scheduled"</string>
+    <string name="reminder_inexact">"Android may delay delivery"</string>
+    <string name="reminder_save_premium">"Saving an alert requires Premium."</string>
+    <string name="reminder_through">"Scheduled through %1$s"</string>
+    <string name="reminder_write_failed">"Could not save your alert. Try again."</string>
+    <string name="schedule_title">"Schedule"</string>
+    <string name="schedule_earlier">"Previous week"</string>
+    <string name="schedule_later">"Next week"</string>
+    <string name="schedule_premium_message">"Printing and sharing tables requires Premium. You can read the schedule here."</string>
+    <string name="schedule_reset">"Return to selected week"</string>
+    <string name="list_region_distance">"%1$s • %2$s"</string>
+    <string name="card_unavailable">"No predictions now"</string>
+    <string name="card_value_unit_approximate">"~%1$s %2$s"</string>
+    <string name="card_spoken_reading">"%1$s %2$s, %3$s"</string>
+    <string name="card_spoken_set">"toward %1$s"</string>
+    <string name="search_truncated">"Nearest 60 — keep typing to narrow"</string>
+    <string name="list_catalog_unavailable">"Station data is unavailable on this device."</string>
+    <string name="card_spoken_approximate">"approximately %1$s"</string>
+    <string name="data_and_licenses">"Data and licenses"</string>
+    <string name="data_credits">"Data credits"</string>
+    <string name="reminder_channel">"Station reminders"</string>
+    <string name="notification_window_opens">"Slack window opens"</string>
+    <string name="notification_eclipse_begins">"Eclipse begins"</string>
+    <string name="notification_rise">"Rising past %1$s m"</string>
+    <string name="notification_fall">"Falling past %1$s m"</string>
+</resources>

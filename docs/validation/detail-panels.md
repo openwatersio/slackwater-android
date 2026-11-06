@@ -1,6 +1,6 @@
 # Detail panel conformance
 
-The reference is detail §18 at iOS commit `5b26bcd5ce0220302de3ba32be5ebf67552fb06e`. The tests below exercise the panel or its underlying data. Host navigation, sharing, download orchestration and chart gestures have separate coverage.
+The reference is detail §18 at iOS commit `02188f2a2f5ef4166cd74c373a5885736d7ef159`. The tests below exercise the panel or its underlying data. Host navigation, sharing, download orchestration and chart gestures have separate coverage.
 
 | Scenario | Android behavior and evidence |
 | --- | --- |
@@ -18,6 +18,6 @@ The reference is detail §18 at iOS commit `5b26bcd5ce0220302de3ba32be5ebf67552f
 
 ## Visual and device checks
 
-The sheet figures expose their numerical values through accessibility semantics. The daily comparison supports hold, slide and release as well as accessibility adjustment and activation. Chart, print and astronomy clocks use the station’s zone, including eclipse peaks on the following day. English and Canadian French strings accompany the controls.
+The sheet figures expose their numerical values through accessibility semantics. The daily comparison supports hold, slide and release as well as accessibility adjustment and activation. Chart, print and astronomy clocks use the station’s zone, including eclipse peaks on the following day. The 16 supported locales accompany the controls.
 
 Follow-up visual checks include the held-bar gesture inside a scrolling sheet, diagrams at maximum font scale, Moon orientation during an eclipse and day disclosure after a posture change. The tests above do not substitute for a spoken TalkBack pass.

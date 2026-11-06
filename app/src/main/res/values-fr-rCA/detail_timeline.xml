@@ -1,6 +1,0 @@
-<resources>
-    <string name="detail_timeline_tide">Chronologie des marées</string>
-    <string name="detail_timeline_current">Chronologie des courants</string>
-    <string name="detail_timeline_next">Événement suivant</string>
-    <string name="detail_timeline_previous">Événement précédent</string>
-</resources>

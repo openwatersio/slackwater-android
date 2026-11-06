@@ -8,7 +8,7 @@
 
 **Tech stack:** Kotlin, Gradle composite builds, JDK 17, Android minSdk 26, Compose/Canvas, coroutines and Flow, DataStore, MapLibre Native, Glance, WorkManager, AlarmManager, Calendar Provider, and Play Billing. Select compatible Android Gradle Plugin, Compose, and library versions in Task 1, lock them in the version catalog, and set compile/target SDK to the release requirements verified at that time.
 
-**Spec:** [iOS PR #900](https://github.com/openwatersio/slackwater-ios/pull/900), pinned to `5b26bcd5ce0220302de3ba32be5ebf67552fb06e`. The [parity ledger](../../ios-parity.md) links every source contract, defines precedence, and records Android adaptations and unresolved upstream designs. Read both documents before implementing a task.
+**Spec:** [iOS PR #900](https://github.com/openwatersio/slackwater-ios/pull/900), pinned to `02188f2a2f5ef4166cd74c373a5885736d7ef159`. The [parity ledger](../../ios-parity.md) links every source contract, defines precedence, and records Android adaptations and unresolved upstream designs. Read both documents before implementing a task.
 
 ## Global constraints
 
@@ -333,11 +333,11 @@ Each task should fit a focused PR, or a short sequence of PRs if the listed file
 
 **Issue:** [#16](https://github.com/openwatersio/slackwater-android/issues/16), cross-cutting acceptance. **Depends on:** 1; continue through each feature stage.
 
-**Files:** Create `scripts/export-strings.mjs`, `app/src/main/res/values*/strings.xml`, `strings_android.xml`, `benchmark/build.gradle.kts`, `benchmark/src/main/.../UserJourneyBenchmark.kt`, `docs/validation/android-performance.md`, `docs/validation/accessibility.md`.
+**Files:** Create `scripts/export-strings.mjs`, `app/src/main/res/values*/ios_strings.xml`, `strings_android.xml`, `benchmark/build.gradle.kts`, `benchmark/src/main/.../UserJourneyBenchmark.kt`, `docs/validation/android-performance.md`, `docs/validation/accessibility.md`.
 
 **Interfaces:** Export the pinned `Localizable.xcstrings`, relevant permission text, and reusable shortcut/result strings; keep Android-only platform copy separate. Treat pluralization, format arguments, escaping, and Apple-to-Android locale tags as typed conversion work.
 
-- [ ] Add exporter fixtures for plurals, placeholders, apostrophes, Unicode, regional locales, missing translations, and freshness against the pinned SHA. Never overwrite handwritten Android strings.
+- [x] Add exporter fixtures for plurals, placeholders, apostrophes, Unicode, regional locales, missing translations, and freshness against the pinned SHA. Never overwrite handwritten Android strings.
 - [ ] Check TalkBack reading order, chart adjustment/event navigation, named dated events, touch targets, color-independent state, font scaling, reduced motion, contrast, and landscape/tablet layout in each feature PR. A Canvas must expose semantic actions and the event table.
 - [ ] Measure optimized builds on physical devices for cold first usable list, cold/warm complete detail by capability, interactive map with/without packs, focused search, first query and repeat queries. Record hardware/OS/build/boundary, frame behavior, memory during long scrubs, and offline state. Use [Macrobenchmark metrics](https://developer.android.com/topic/performance/benchmarking/macrobenchmark-metrics); set regression budgets from Android evidence, not iOS simulator numbers.
 - [ ] Verify `rtk node scripts/export-strings.mjs --check`, normal unit/device checks, and `rtk ./gradlew :benchmark:connectedCheck` after the benchmark module exists. Review screenshots in every shipped locale, especially long and RTL text where supported.

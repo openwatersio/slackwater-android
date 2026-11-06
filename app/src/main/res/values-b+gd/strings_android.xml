@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generated from scripts/translations/android/gd.json. Edit the JSON source. -->
+<resources>
+    <string name="alert_plot_tide">"Àirde na mara (%1$s)"</string>
+    <string name="alert_plot_current">"Astar an t-srutha (kn)"</string>
+    <string name="alert_plot_derived">"Uisgeachan marbha ro-innseach"</string>
+    <string name="alert_plot_range">"%1$s gu %2$s"</string>
+    <string name="alert_plot_reset_event">"Till dhan tachartas"</string>
+    <string name="alert_rise">"ag èirigh seachad air %1$s m"</string>
+    <string name="alert_fall">"a\' tuiteam fo %1$s m"</string>
+    <string name="alert_edit">"Deasaich rabhadh"</string>
+    <string name="alert_on_time">"Aig an àm"</string>
+    <string name="alert_15min">"15 mionaidean roimhe"</string>
+    <string name="alert_30min">"30 mionaid roimhe"</string>
+    <string name="alert_1hour">"1 uair roimhe"</string>
+    <string name="alert_3hours">"3 uairean roimhe"</string>
+    <string name="alert_1day">"1 latha roimhe"</string>
+    <string name="alert_seconds">"%1$d diogan roimhe"</string>
+    <string name="alert_overdue">"Tha àm a\' chuimhneachain seachad. Thèid a chur an-dràsta ma shàbhaileas tu e."</string>
+    <string name="alert_review_height">"Suidhich an àirde a-rithist (meatairean)"</string>
+    <string name="alert_height">"Àirde (meatairean)"</string>
+    <string name="alert_screen_empty">"Chan eil rabhaidhean ann fhathast. Suidhich rabhadh bho stèisean."</string>
+    <plurals name="alert_plot_markers">
+        <item quantity="one">"Àireamh nan rabhaidhean comharraichte: %1$d"</item>
+        <item quantity="two">"Àireamh nan rabhaidhean comharraichte: %1$d"</item>
+        <item quantity="few">"Àireamh nan rabhaidhean comharraichte: %1$d"</item>
+        <item quantity="other">"Àireamh nan rabhaidhean comharraichte: %1$d"</item>
+    </plurals>
+    <string name="alert_plot_previous">"An tachartas roimhe, %1$s, %2$s"</string>
+    <string name="alert_plot_next">"An ath-thachartas, %1$s, %2$s"</string>
+    <string name="alert_plot_earlier">"Còig mionaidean nas tràithe"</string>
+    <string name="alert_plot_later">"Còig mionaidean nas anmoiche"</string>
+    <string name="alert_show_events">"Seall tachartasan na cairte"</string>
+    <string name="alert_hide_events">"Falaich tachartasan na cairte"</string>
+    <string name="alert_event_speed">"%1$s · %2$.1f kn"</string>
+    <string name="station_calendars_title">"Mìosachain stèisein"</string>
+    <string name="station_calendars_about">"Foillsich tachartasan stèisein airson nan 90 latha a tha romhainn ann am mìosachan air an uidheam seo. Chan eil cuimhneachain aig na tachartasan agus fuirichidh iad air an uidheam seo."</string>
+    <string name="station_calendar_subscribe">"Foillsich mìosachan"</string>
+    <string name="station_calendar_remove">"Thoir mìosachan air falbh"</string>
+    <string name="station_calendar_remove_title">"Thoir %1$s air falbh?"</string>
+    <plurals name="station_calendar_remove_count">
+        <item quantity="one">"Àireamh nan tachartasan a dh\'fhoillsich Slackwater agus a bheir e air falbh: %1$d. Fuirichidh tachartasan pearsanta agus tachartasan a tha air tòiseachadh sa Mhìosachan."</item>
+        <item quantity="two">"Àireamh nan tachartasan a dh\'fhoillsich Slackwater agus a bheir e air falbh: %1$d. Fuirichidh tachartasan pearsanta agus tachartasan a tha air tòiseachadh sa Mhìosachan."</item>
+        <item quantity="few">"Àireamh nan tachartasan a dh\'fhoillsich Slackwater agus a bheir e air falbh: %1$d. Fuirichidh tachartasan pearsanta agus tachartasan a tha air tòiseachadh sa Mhìosachan."</item>
+        <item quantity="other">"Àireamh nan tachartasan a dh\'fhoillsich Slackwater agus a bheir e air falbh: %1$d. Fuirichidh tachartasan pearsanta agus tachartasan a tha air tòiseachadh sa Mhìosachan."</item>
+    </plurals>
+    <string name="station_calendar_offline_needed">"Tha luchdadh a-nuas a dhìth mus gabh fhoillseachadh."</string>
+    <string name="station_calendar_pending">"Tha atharraichean a\' mhìosachain ri an dèanamh. Dh\'fhaodadh tachartasan a chaidh fhoillseachadh mu thràth fuireach gus an urrainn do Slackwater am Mìosachan ùrachadh."</string>
+    <string name="station_calendar_permission">"Ceadaich cothrom air a\' mhìosachan gus an urrainn do Slackwater na tachartasan aige a lorg agus ùrachadh."</string>
+    <string name="station_calendar_premium">"Tha Premium a dhìth gus mìosachan stèisein ùr fhoillseachadh."</string>
+    <string name="station_calendar_trial">"Thèid fhoillseachadh rè do latha an-asgaidh."</string>
+    <string name="station_calendar_active">"Fo-sgrìobhte"</string>
+    <string name="station_calendar_failed">"Cha b\' urrainn dhuinn am mìosachan ùrachadh. Thoir sùil air a\' chead-inntrigidh agus feuch ris a-rithist."</string>
+    <string name="station_calendar_pending_remove">"Ri thoirt air falbh"</string>
+    <plurals name="chart_minutes">
+        <item quantity="one">"%1$d mion"</item>
+        <item quantity="two">"%1$d mion"</item>
+        <item quantity="few">"%1$d mion"</item>
+        <item quantity="other">"%1$d mion"</item>
+    </plurals>
+    <plurals name="chart_hours">
+        <item quantity="one">"%1$d u"</item>
+        <item quantity="two">"%1$d u"</item>
+        <item quantity="few">"%1$d u"</item>
+        <item quantity="other">"%1$d u"</item>
+    </plurals>
+    <string name="detail_related_currents">"Sruthan aig %1$s"</string>
+    <string name="detail_namesakes">"Àiteachan eile (%1$d)"</string>
+    <string name="detail_position">"Ionad"</string>
+    <string name="detail_zone">"Roinn-tìde"</string>
+    <string name="detail_reference">"Iomradh"</string>
+    <string name="detail_datum">"Bun-ìre na cairte"</string>
+    <string name="detail_datum_note">"Thèid àirde a thomhas bho bhun-ìre na cairte. Tha luach àicheil a\' ro-innse nas lugha de dhoimhneachd na tha air a\' chairt."</string>
+    <string name="detail_shape_note">"\'S e stiùireadh a th\' anns an lùb eadar amannan an uisge mhairbh. Chan eil ach na puingean far an tèid i thar neoni a\' riochdachadh amannan ro-innseach."</string>
+    <string name="detail_lags">"Dàil an uisge mhairbh"</string>
+    <string name="detail_lag_value">"%1$d mion an dèidh làn mara · %2$d mion an dèidh tràighte"</string>
+    <string name="detail_prediction">"Ro-innse"</string>
+    <string name="detail_fitted">"Air àireamhachadh air an uidheam seo bho thomhasan glèidhte"</string>
+    <string name="detail_official">"Ro-innse oifigeil CHS air a luchdadh a-nuas airson cleachdadh far loidhne"</string>
+    <string name="detail_derived">"Amannan tuairmseach uisge mhairbh a-mhàin. Chan eil ro-innse astair ri fhaighinn airson a\' chaolais seo."</string>
+    <string name="detail_harmonic">"Ro-innse harmònach"</string>
+    <string name="detail_subordinate">"Ro-innse bhon stèisean iomraidh le ceartachaidhean airson an fho-stèisein"</string>
+    <string name="detail_bound">"Faodaidh uisge marbh aig %1$s a bhith suas ri %2$d mionaid eadar-dhealaichte bho ro-innse CHS."</string>
+    <string name="detail_gap">"Chan eil ro-innse aig Slackwater airson an stèisein seo."</string>
+    <string name="detail_queued">"Luchdadh a-nuas air iarraidh"</string>
+    <string name="detail_no_week">"Chan eil ro-innse glèidhte ann a tha a\' còmhdach na seachdain seo."</string>
+    <string name="detail_no_data">"Chan eil ro-innse glèidhte ri fhaighinn airson an stèisein seo."</string>
+    <string name="detail_loading">"A\' luchdadh ro-innse"</string>
+    <string name="detail_copied">"Chaidh an aithisg agad a chopaigeadh. Cuir gu slackwater@openwaters.io i."</string>
+    <string name="detail_flow">"Sruth cuibheasach"</string>
+    <string name="detail_license">"Ceadachas"</string>
+    <string name="detail_source">"Tùs"</string>
+    <string name="detail_datum_source">"Bun-ìre cairte %1$s."</string>
+    <string name="detail_noaa_tide">"Ro-innse harmònach NOAA air làn is tràigh."</string>
+    <string name="detail_noaa_sub">"Stèidhichte air làn is tràigh aig %1$s agus ceartachaidhean foillsichte NOAA, air àireamhachadh air an uidheam seo."</string>
+    <string name="detail_publisher">"Tairisichean harmònach bho %1$s."</string>
+    <string name="detail_chs_fit">"Air a luchdadh a-nuas bho CHS (IWLS), agus an uair sin air a chur ri modail agus àireamhachadh air an uidheam seo. Chan e ro-innse a dh\'fhoillsich CHS a tha seo."</string>
+    <string name="detail_chs_preview">"Ro-innse oifigeil CHS air làn is tràigh air a luchdadh a-nuas dhan uidheam seo. Tha àirde os cionn bun-ìre cairte LLWLT."</string>
+    <string name="detail_noaa_current">"Ro-innse harmònach NOAA air sruthan."</string>
+    <string name="detail_sub_current">"Thèid uisgeachan marbha agus astaran as àirde an stèisein iomraidh a cheartachadh le ceartachaidhean foillsichte NOAA."</string>
+    <string name="detail_flood">"Tha sruth an lìonaidh a\' dol gu %1$d°T."</string>
+    <string name="detail_derived_source">"Tha Slackwater a\' tuairmseachadh uisge marbh aig %1$s bho làn mara is tràigh aig %2$s. Chan eil CHS a\' foillseachadh ro-innse srutha airson a\' chaolais seo."</string>
+    <string name="detail_map">"Seall air a\' mhapa"</string>
+    <string name="detail_invalid_link">"Cha b\' urrainn dhuinn ceangal an stèisein seo fhosgladh."</string>
+    <string name="detail_chart_settings">"Roghainnean na cairte"</string>
+    <string name="panel_reference">"Air a thuairmseachadh bho làn is tràigh iomraidh"</string>
+    <string name="panel_daylight">"%1$d h %2$d min de sholas an latha"</string>
+    <string name="panel_lit">"%1$d%% air a shoillseachadh"</string>
+    <string name="panel_moonrise">"Èirigh na gealaich"</string>
+    <string name="panel_moonset">"Laighe na gealaich"</string>
+    <string name="panel_earth_distance">"Astar bhon Talamh · %1$s km"</string>
+    <string name="panel_at">"%1$s aig %2$s"</string>
+    <string name="panel_biggest">"Am fear as motha sa chola-deug"</string>
+    <string name="panel_marked">"Seachad air an àbhaist an seo"</string>
+    <string name="panel_hardest">"%1$s as treasa · %2$s"</string>
+    <string name="panel_strong">"%1$s làidir · %2$s"</string>
+    <string name="panel_swing_rank">"Nas motha na a h-uile gin ach %1$d de na %2$d raointean mara sa chola-deug seo."</string>
+    <string name="panel_max_rank">"Nas treasa na a h-uile gin ach %1$d de na %2$d astaran as àirde san rathad seo sa chola-deug seo."</string>
+    <string name="panel_biggest_day">"Tha gach bàr a\' sealltainn an raoin mara as motha ann an aon latha."</string>
+    <string name="panel_max_day">"Tha gach bàr a\' sealltainn an %1$s as treasa ann an aon latha."</string>
+    <string-array name="panel_phases">
+        <item>"Gealach ùr"</item>
+        <item>"Gealach chorranach a\' lìonadh"</item>
+        <item>"A\' chiad chairteal"</item>
+        <item>"Gealach chrotach a\' lìonadh"</item>
+        <item>"Gealach làn"</item>
+        <item>"Gealach chrotach a\' crìonadh"</item>
+        <item>"An cairteal mu dheireadh"</item>
+        <item>"Gealach chorranach a\' crìonadh"</item>
+    </string-array>
+    <string name="panel_full">"An ath ghealach làn"</string>
+    <string name="panel_new">"An ath ghealach ùr"</string>
+    <string name="panel_last_lunar">"An dubhradh gealaich faicsinneach mu dheireadh"</string>
+    <string name="panel_last_solar">"An dubhradh grèine faicsinneach mu dheireadh"</string>
+    <string name="panel_rise_def">"Tha oir uachdarach na Grèine ag èirigh os cionn fàire gun bhacadh."</string>
+    <string name="panel_set_def">"Tha oir uachdarach na Grèine a\' dol fo fhàire gun bhacadh."</string>
+    <string name="panel_noon_def">"Tha a\' Ghrian a\' dol thar na meadhan-loidhne ionadail."</string>
+    <string name="panel_twilight_rising">"Tha a\' Ghrian ag èirigh agus a\' ruigsinn %1$d° fon fhàire."</string>
+    <string name="panel_twilight_setting">"Tha a\' Ghrian a\' dol fodha agus a\' ruigsinn %1$d° fon fhàire."</string>
+    <string name="panel_edge_def">"Tha meadhan na Grèine a\' dol thar %1$d° an coimeas ris an fhàire."</string>
+    <string name="panel_next_total">"An ath dhubhradh gealaich iomlan"</string>
+    <string name="panel_next_partial">"An ath dhubhradh gealaich pàirteach"</string>
+    <string name="panel_next_penumbral">"An ath dhubhradh gealaich leth-sgàileach"</string>
+    <string name="panel_mostly">"Ràitheil sa mhòr-chuid"</string>
+    <string name="panel_partly">"Gu ìre ràitheil"</string>
+    <string name="panel_ends">"An coimeas ri cinn an stèisein fhèin"</string>
+    <string name="panel_season_large">"Tha an t-atharrachadh bliadhnail fada nas motha na an làn is tràigh làitheil."</string>
+    <string name="panel_hat">"An làn reul-eòlach as àirde · %1$s"</string>
+    <string name="panel_lat">"An tràigh reul-eòlach as ìsle · %1$s"</string>
+    <string name="panel_turn">"Tionndadh taghte · %1$s"</string>
+    <string name="panel_ratio">"Atharrachadh bliadhnail · %1$.1f× an làn is tràigh làitheil"</string>
+    <string name="panel_slack_compared">"Mairidh an t-uisge marbh %1$d mionaid timcheall air an astar as àirde seo, an coimeas ri mu %2$d mionaid an seo mar as àbhaist."</string>
+    <string name="panel_swing_explain">"An diofar eadar làn is tràigh an raoin seo, %1$s."</string>
+    <string name="panel_springs_follow">"Thig reothartan an dèidh na gealaich ùire agus na gealaich làine."</string>
+    <string name="panel_orbit_scale">"Tha cumadh na reul-cuairte air a mheudachadh gus an t-atharrachadh astair a shealltainn."</string>
+    <string name="panel_hat_label">"An làn reul-eòlach as àirde"</string>
+    <string name="panel_lat_label">"An tràigh reul-eòlach as ìsle"</string>
+    <string name="panel_high_label">"An làn as àirde sa chola-deug"</string>
+    <string name="panel_low_label">"An tràigh as ìsle sa chola-deug"</string>
+    <string name="panel_turn_label">"Tionndadh taghte"</string>
+    <string name="panel_explain">"Mu %1$s"</string>
+    <string name="panel_season_equal">"Tha an t-atharrachadh bliadhnail mu cho mòr ris an làn is tràigh làitheil."</string>
+    <string name="panel_season_river">"Tha ìre an uisge aig %1$s ag atharrachadh fada nas motha thar bliadhna na thar latha. Faodaidh sruth-uisge far na tìre, uisge agus gaoth an làn is tràigh làitheil gu lèir àrdachadh no ìsleachadh."</string>
+    <string name="panel_season_tide">"Tha an t-uisge aig %1$s a\' leantainn làn is tràigh làitheil agus cearcall bliadhnail a tha mu cho mòr ri chèile. Gabhaidh amannan làin is tràigh a ro-innse fhathast fhad \'s a tha an ìre ràitheil ag atharrachadh."</string>
+    <string name="panel_spring_explain">"Tha a\' Ghrian agus a\' Ghealach a\' tarraing air an aon loidhne. Mar as trice, nì an co-bhuaidh aca an raon mara nas motha."</string>
+    <string name="panel_neap_explain">"Aig cairteal na gealaich, tha a\' Ghrian agus a\' Ghealach a\' tarraing aig ceart-cheàrn. Mar as trice, bidh an raon mara nas lugha."</string>
+    <string name="panel_perigee_explain">"Tha a\' Ghealach faisg air a\' phuing as fhaisge oirre dhan Talamh, far a bheil a tarraing-mhara nas treasa."</string>
+    <string name="panel_apogee_explain">"Tha a\' Ghealach faisg air a\' phuing as fhaide oirre bhon Talamh, far a bheil a tarraing-mhara nas laige."</string>
+    <string-array name="panel_phase_explanation">
+        <item>"Tha a\' Ghealach cha mhòr eadar an Talamh agus a\' Ghrian."</item>
+        <item>"Tha corran a tha a\' fàs den leth den Ghealach a tha fo sholas na Grèine mu choinneamh na Talmhainn."</item>
+        <item>"Tha a\' Ghealach air cairteal de chearcall nan ceuman aice a dhèanamh."</item>
+        <item>"Tha còrr is leth na diosga faicsinnich air a shoillseachadh agus an raon soillse a\' fàs."</item>
+        <item>"Tha a\' Ghealach mu choinneamh na Grèine san adhar."</item>
+        <item>"Tha còrr is leth na diosga faicsinnich air a shoillseachadh agus an raon soillse a\' crìonadh."</item>
+        <item>"Tha a\' Ghealach air trì cairtealan de chearcall nan ceuman aice a dhèanamh."</item>
+        <item>"Tha corran a tha a\' caolachadh air fhàgail ron ath ghealach ùr."</item>
+    </string-array>
+    <string name="prediction_shortcuts">"Ath-ghoiridean ro-innse"</string>
+    <string name="pdf_daylight">"Èirigh grèine %1$s · Laighe grèine %2$s"</string>
+    <string name="pdf_kmh">"km/h"</string>
+    <string name="pdf_ms">"m/s"</string>
+    <string name="pdf_flood_set">"Sruth lìonaidh %1$s"</string>
+    <string name="pdf_ebb_set">"Sruth tràghaidh %1$s"</string>
+    <string name="pdf_page">"%1$d / %2$d"</string>
+    <string-array name="pdf_compass">
+        <item>"Tuath"</item>
+        <item>"Tuath-thuath-ear"</item>
+        <item>"Tuath-ear"</item>
+        <item>"Ear-thuath-ear"</item>
+        <item>"Ear"</item>
+        <item>"Ear-dheas-ear"</item>
+        <item>"Deas-ear"</item>
+        <item>"Deas-dheas-ear"</item>
+        <item>"Deas"</item>
+        <item>"Deas-dheas-iar"</item>
+        <item>"Deas-iar"</item>
+        <item>"Iar-dheas-iar"</item>
+        <item>"Iar"</item>
+        <item>"Iar-thuath-iar"</item>
+        <item>"Tuath-iar"</item>
+        <item>"Tuath-thuath-iar"</item>
+    </string-array>
+    <string name="table_sheet_share">"Co-roinn PDF"</string>
+    <string name="table_sheet_print">"Clò-bhuail"</string>
+    <string name="table_sheet_page">"Duilleag %1$d à %2$d"</string>
+    <string name="table_sheet_failed">"Cha b\' urrainn dhuinn am PDF ullachadh."</string>
+    <string name="table_sheet_export_failed">"Cha b\' urrainn dhuinn am PDF fhosgladh airson clò-bhualadh no co-roinneadh."</string>
+    <string name="table_sheet_locked">"Tha Premium a dhìth airson clàran a ghabhas clò-bhualadh."</string>
+    <string name="table_sheet_download_current">"Gabhaidh barrachd làithean a chlò-bhualadh nuair a thèid na ro-innsean srutha aca a luchdadh a-nuas."</string>
+    <string name="table_sheet_download_tide">"Tha làn ro-innse làin is tràigh an stèisein seo a dhìth gus barrachd làithean a chlò-bhualadh."</string>
+    <string name="table_sheet_letter">"Cruth stèidhichte US Letter (8.5 × 11 in). Tagh pàipear a fhreagras air a\' mheud san ro-shealladh."</string>
+    <string name="table_sheet_a4">"Cruth stèidhichte A4 (210 × 297 mm). Tagh pàipear a fhreagras air a\' mheud san ro-shealladh."</string>
+    <string name="query_invalid">"Cha b\' urrainn dhuinn an ath-ghoirid ro-innse seo a leughadh."</string>
+    <string name="query_nearby_hint">"Fàg bàn e gus d\' ionad a chleachdadh."</string>
+    <string name="query_date_hint">"Cuir a-steach YYYY-MM-DD no fàg bàn e airson an ath-thachartais."</string>
+    <string name="query_show">"Seall ro-innse"</string>
+    <string name="query_missing">"Cha b\' urrainn dhuinn %1$s a lorg. Thoir sùil air an ainm-àite ann an Slackwater."</string>
+    <string name="query_location">"Tha ionad o chionn ghoirid a dhìth. Cleachd d\' ionad no cuir a-steach àite gu h-àrd."</string>
+    <string name="query_use_location">"Cleachd m\' ionad"</string>
+    <string name="query_choose">"Tagh stèisean"</string>
+    <string name="query_pin">"Prìnich an ath-ghoirid seo"</string>
+    <string name="query_pin_failed">"Cha b\' urrainn dhan lòinsear an ath-ghoirid seo a phrìneachadh."</string>
+    <string name="query_off">"Tha amannan uisge mhairbh dheth sna roghainnean srutha cofhurtail agad."</string>
+    <string name="query_none_date">"Chan eil tachartas iomchaidh air %1$s."</string>
+    <string name="query_none_window">"Chan eil àm uisge mhairbh sna 48 uairean a tha romhainn."</string>
+    <string name="query_none_tide">"Chan eil làn no tràigh iomchaidh sna 48 uairean a tha romhainn."</string>
+    <string name="query_tide_ft">"%1$s · %2$.1f ft"</string>
+    <string name="query_tide_m">"%1$s · %2$.2f m"</string>
+    <string name="query_window">"%1$s gu %2$s"</string>
+    <string name="query_window_from">"Fosglaidh e aig %1$s. Chan eil fhios cuin a dhùineas e."</string>
+    <string name="query_window_until">"Dùinidh e aig %1$s. Chan eil fhios cuin a dh\'fhosglas e."</string>
+    <string name="query_window_at">"Taobh a-staigh an t-srutha chofhurtail aig %1$s. Chan eil fhios cuin a dh\'fhosglas no a dhùineas e."</string>
+    <string name="query_curve_extent">"%1$s – %2$s"</string>
+    <string name="query_high_day">"Làn mara"</string>
+    <string name="query_low_day">"Tràigh"</string>
+    <string name="query_slack_day">"Amannan uisge mhairbh"</string>
+    <string name="query_tide_wait">"Ann an timcheall air %1$s."</string>
+    <string name="query_open">"Fosgailte an-dràsta."</string>
+    <string name="query_remaining">"Fosgailte an-dràsta, le timcheall air %1$s air fhàgail."</string>
+    <string name="query_opens">"Fosglaidh e ann an timcheall air %1$s."</string>
+    <string name="query_opens_duration">"Fosglaidh e ann an timcheall air %1$s agus mairidh e mu %2$s."</string>
+    <string name="reminder_notify_blocked">"Chaidh do rabhadh a shàbhaladh. Ceadaich brathan ann an roghainnean Android gus am faigh thu e."</string>
+    <string name="reminder_inexact_saved">"Chaidh do rabhadh a shàbhaladh. Faodaidh Android dàil a chur air cuimhneachain air an uidheam seo."</string>
+    <string name="reminder_back_to_stations">"Air ais gu stèiseanan"</string>
+    <string name="reminder_my_alerts">"Na rabhaidhean agam"</string>
+    <string name="reminder_reset_height">"Suidhich àirde ùr"</string>
+    <string name="reminder_premium_required">"Tha Premium a dhìth"</string>
+    <string name="reminder_notifications_blocked">"Brathan air am bacadh"</string>
+    <string name="reminder_no_scheduled">"Chan eil cuimhneachan ri thighinn air a chlàradh"</string>
+    <string name="reminder_inexact">"Faodaidh Android dàil a chur air lìbhrigeadh"</string>
+    <string name="reminder_save_premium">"Tha Premium a dhìth gus rabhadh a shàbhaladh."</string>
+    <string name="reminder_through">"Air a chlàradh gu %1$s"</string>
+    <string name="reminder_write_failed">"Cha b\' urrainn dhuinn do rabhadh a shàbhaladh. Feuch ris a-rithist."</string>
+    <string name="schedule_title">"Clàr-ama"</string>
+    <string name="schedule_earlier">"An t-seachdain roimhe"</string>
+    <string name="schedule_later">"An ath-sheachdain"</string>
+    <string name="schedule_premium_message">"Tha Premium a dhìth gus clàran a chlò-bhualadh agus a cho-roinn. Faodaidh tu an clàr-ama a leughadh an seo."</string>
+    <string name="schedule_reset">"Till dhan t-seachdain thaghte"</string>
+    <string name="list_region_distance">"%1$s • %2$s"</string>
+    <string name="card_unavailable">"Chan eil ro-innse ann an-dràsta"</string>
+    <string name="card_value_unit_approximate">"~%1$s %2$s"</string>
+    <string name="card_spoken_reading">"%1$s %2$s, %3$s"</string>
+    <string name="card_spoken_set">"gu %1$s"</string>
+    <string name="search_truncated">"Na 60 as fhaisge — cùm ort a\' sgrìobhadh gus an rannsachadh a chaolachadh"</string>
+    <string name="list_catalog_unavailable">"Chan eil dàta stèisein ri fhaighinn air an uidheam seo."</string>
+    <string name="card_spoken_approximate">"mu %1$s"</string>
+    <string name="data_and_licenses">"Dàta agus ceadachasan"</string>
+    <string name="data_credits">"Buidheachas airson dàta"</string>
+    <string name="reminder_channel">"Cuimhneachain stèisein"</string>
+    <string name="notification_window_opens">"Tha tràth marbh-shruth a’ tòiseachadh"</string>
+    <string name="notification_eclipse_begins">"Tha an dubhar a’ tòiseachadh"</string>
+    <string name="notification_rise">"Ag èirigh seachad air %1$s m"</string>
+    <string name="notification_fall">"A\' tuiteam fo %1$s m"</string>
+</resources>

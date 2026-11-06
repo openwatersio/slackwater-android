@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generated from scripts/translations/android/fi.json. Edit the JSON source. -->
+<resources>
+    <string name="alert_plot_tide">"Vuoroveden korkeus (%1$s)"</string>
+    <string name="alert_plot_current">"Virtausnopeus (kn)"</string>
+    <string name="alert_plot_derived">"Ennustetut virrankäännöt"</string>
+    <string name="alert_plot_range">"%1$s–%2$s"</string>
+    <string name="alert_plot_reset_event">"Palaa tapahtumaan"</string>
+    <string name="alert_rise">"nousee yli %1$s m"</string>
+    <string name="alert_fall">"laskee alle %1$s m"</string>
+    <string name="alert_edit">"Muokkaa hälytystä"</string>
+    <string name="alert_on_time">"Tapahtumahetkellä"</string>
+    <string name="alert_15min">"15 minuuttia ennen"</string>
+    <string name="alert_30min">"30 minuuttia ennen"</string>
+    <string name="alert_1hour">"1 tunti ennen"</string>
+    <string name="alert_3hours">"3 tuntia ennen"</string>
+    <string name="alert_1day">"1 päivä ennen"</string>
+    <string name="alert_seconds">"%1$d sekuntia ennen"</string>
+    <string name="alert_overdue">"Muistutusaika on ohitettu. Tallentaminen lähettää sen nyt."</string>
+    <string name="alert_review_height">"Aseta korkeus uudelleen (metriä)"</string>
+    <string name="alert_height">"Korkeus (metriä)"</string>
+    <string name="alert_screen_empty">"Ei vielä hälytyksiä. Aseta hälytys aseman sivulta."</string>
+    <plurals name="alert_plot_markers">
+        <item quantity="one">"%1$d merkitty hälytys"</item>
+        <item quantity="other">"%1$d merkittyä hälytystä"</item>
+    </plurals>
+    <string name="alert_plot_previous">"Edellinen tapahtuma, %1$s, %2$s"</string>
+    <string name="alert_plot_next">"Seuraava tapahtuma, %1$s, %2$s"</string>
+    <string name="alert_plot_earlier">"Viisi minuuttia aikaisemmin"</string>
+    <string name="alert_plot_later">"Viisi minuuttia myöhemmin"</string>
+    <string name="alert_show_events">"Näytä kaavion tapahtumat"</string>
+    <string name="alert_hide_events">"Piilota kaavion tapahtumat"</string>
+    <string name="alert_event_speed">"%1$s · %2$.1f kn"</string>
+    <string name="station_calendars_title">"Asemien kalenterit"</string>
+    <string name="station_calendars_about">"Julkaise aseman seuraavien 90 päivän tapahtumat tämän laitteen kalenteriin. Tapahtumilla ei ole muistutuksia, ja ne pysyvät tällä laitteella."</string>
+    <string name="station_calendar_subscribe">"Julkaise kalenteri"</string>
+    <string name="station_calendar_remove">"Poista kalenteri"</string>
+    <string name="station_calendar_remove_title">"Poistetaanko %1$s?"</string>
+    <plurals name="station_calendar_remove_count">
+        <item quantity="one">"Slackwater poistaa %1$d julkaisemansa tapahtuman. Omat tapahtumat ja jo alkaneet tapahtumat jäävät kalenteriin."</item>
+        <item quantity="other">"Slackwater poistaa %1$d julkaisemaansa tapahtumaa. Omat tapahtumat ja jo alkaneet tapahtumat jäävät kalenteriin."</item>
+    </plurals>
+    <string name="station_calendar_offline_needed">"Vaatii latauksen ennen julkaisua."</string>
+    <string name="station_calendar_pending">"Kalenterimuutokset odottavat. Jo julkaistut tapahtumat voivat säilyä, kunnes Slackwater voi päivittää kalenterin."</string>
+    <string name="station_calendar_permission">"Salli kalenterin käyttö, jotta Slackwater voi löytää tapahtumansa ja päivittää ne."</string>
+    <string name="station_calendar_premium">"Uuden asemakalenterin julkaiseminen vaatii Premiumin."</string>
+    <string name="station_calendar_trial">"Julkaisee ilmaisen päiväsi aikana."</string>
+    <string name="station_calendar_active">"Tilattu"</string>
+    <string name="station_calendar_failed">"Kalenteria ei voitu päivittää. Tarkista käyttöoikeus ja yritä uudelleen."</string>
+    <string name="station_calendar_pending_remove">"Poisto odottaa"</string>
+    <plurals name="chart_minutes">
+        <item quantity="one">"%1$d minuutti"</item>
+        <item quantity="other">"%1$d minuuttia"</item>
+    </plurals>
+    <plurals name="chart_hours">
+        <item quantity="one">"%1$d tunti"</item>
+        <item quantity="other">"%1$d tuntia"</item>
+    </plurals>
+    <string name="detail_related_currents">"Virtaukset: %1$s"</string>
+    <string name="detail_namesakes">"Muut sijainnit (%1$d)"</string>
+    <string name="detail_position">"Sijainti"</string>
+    <string name="detail_zone">"Aikavyöhyke"</string>
+    <string name="detail_reference">"Vertailuasema"</string>
+    <string name="detail_datum">"Merikartan vertailutaso"</string>
+    <string name="detail_datum_note">"Korkeudet mitataan merikartan vertailutasosta. Negatiivinen arvo ennustaa karttasyvyyttä matalampaa vettä."</string>
+    <string name="detail_shape_note">"Virrankääntöjen välinen käyrä on suuntaa antava. Vain sen nollakohdat vastaavat ennustettuja aikoja."</string>
+    <string name="detail_lags">"Virrankäännön viiveet"</string>
+    <string name="detail_lag_value">"%1$d min yläveden jälkeen · %2$d min alaveden jälkeen"</string>
+    <string name="detail_prediction">"Ennuste"</string>
+    <string name="detail_fitted">"Laskettu tällä laitteella tallennetuista havainnoista"</string>
+    <string name="detail_official">"Viralliset CHS-ennusteet ladattu offlinekäyttöön"</string>
+    <string name="detail_derived">"Vain arvioidut virrankääntöajat. Tälle salmelle ei ole virtausnopeusennustetta."</string>
+    <string name="detail_harmonic">"Harmoninen ennuste"</string>
+    <string name="detail_subordinate">"Vertailuaseman ennuste, johon on sovellettu sivuaseman korjauksia"</string>
+    <string name="detail_bound">"Virrankääntö paikassa %1$s voi poiketa CHS-ennusteesta enintään %2$d minuuttia."</string>
+    <string name="detail_gap">"Slackwaterilla ei ole ennusteita tälle asemalle."</string>
+    <string name="detail_queued">"Latausta pyydetty"</string>
+    <string name="detail_no_week">"Tallennetut ennusteet eivät kata tätä viikkoa."</string>
+    <string name="detail_no_data">"Tälle asemalle ei ole tallennettuja ennusteita."</string>
+    <string name="detail_loading">"Ladataan ennusteita"</string>
+    <string name="detail_copied">"Raporttisi kopioitiin. Lähetä se osoitteeseen slackwater@openwaters.io."</string>
+    <string name="detail_flow">"Keskimääräinen virtaus"</string>
+    <string name="detail_license">"Lisenssi"</string>
+    <string name="detail_source">"Lähde"</string>
+    <string name="detail_datum_source">"Merikartan vertailutaso: %1$s."</string>
+    <string name="detail_noaa_tide">"NOAA:n harmoninen vuorovesiennuste."</string>
+    <string name="detail_noaa_sub">"Perustuu paikan %1$s vuoroveteen ja julkaistuihin NOAA-korjauksiin, laskettu tällä laitteella."</string>
+    <string name="detail_publisher">"Harmoniset vakiot lähteestä %1$s."</string>
+    <string name="detail_chs_fit">"Ladattu CHS-palvelusta (IWLS), sitten sovitettu ja laskettu tällä laitteella. Nämä eivät ole CHS:n julkaisemia ennusteita."</string>
+    <string name="detail_chs_preview">"Viralliset CHS-vuorovesiennusteet ladattu tälle laitteelle. Korkeudet ovat LLWLT-vertailutason yläpuolella."</string>
+    <string name="detail_noaa_current">"NOAA:n harmoninen virtausennuste."</string>
+    <string name="detail_sub_current">"Vertailuaseman virrankääntöjä ja maksimeja korjataan julkaistuilla NOAA-korjauksilla."</string>
+    <string name="detail_flood">"Nousuvirran suunta on %1$d°T."</string>
+    <string name="detail_derived_source">"Slackwater arvioi virrankäännön paikassa %1$s paikan %2$s ylä- ja alaveden perusteella. CHS ei julkaise virtausennusteita tälle salmelle."</string>
+    <string name="detail_map">"Näytä kartalla"</string>
+    <string name="detail_invalid_link">"Tätä asemalinkkiä ei voitu avata."</string>
+    <string name="detail_chart_settings">"Kaavion asetukset"</string>
+    <string name="panel_reference">"Arvioitu vertailuaseman vuorovedestä"</string>
+    <string name="panel_daylight">"%1$d h %2$d min päivänvaloa"</string>
+    <string name="panel_lit">"%1$d%% valaistu"</string>
+    <string name="panel_moonrise">"Kuunnousu"</string>
+    <string name="panel_moonset">"Kuunlasku"</string>
+    <string name="panel_earth_distance">"Etäisyys Maasta · %1$s km"</string>
+    <string name="panel_at">"%1$s klo %2$s"</string>
+    <string name="panel_biggest">"Kahden viikon suurin"</string>
+    <string name="panel_marked">"Tavanomaista suurempi täällä"</string>
+    <string name="panel_hardest">"Voimakkain %1$s · %2$s"</string>
+    <string name="panel_strong">"Voimakas %1$s · %2$s"</string>
+    <string name="panel_swing_rank">"Suurempi kuin kaikki paitsi %1$d tämän kahden viikon jakson %2$d vuorovesivaihtelusta."</string>
+    <string name="panel_max_rank">"Voimakkaampi kuin kaikki paitsi %1$d tämän kahden viikon jakson %2$d maksimista tähän suuntaan."</string>
+    <string name="panel_biggest_day">"Jokainen pylväs esittää yhden päivän suurinta vuorovesivaihtelua."</string>
+    <string name="panel_max_day">"Jokainen pylväs esittää yhden päivän voimakkainta %1$s."</string>
+    <string-array name="panel_phases">
+        <item>"Uusikuu"</item>
+        <item>"Kasvava sirppi"</item>
+        <item>"Ensimmäinen neljännes"</item>
+        <item>"Kasvava kuperakuu"</item>
+        <item>"Täysikuu"</item>
+        <item>"Vähenevä kuperakuu"</item>
+        <item>"Viimeinen neljännes"</item>
+        <item>"Vähenevä sirppi"</item>
+    </string-array>
+    <string name="panel_full">"Seuraava täysikuu"</string>
+    <string name="panel_new">"Seuraava uusikuu"</string>
+    <string name="panel_last_lunar">"Viimeisin näkyvä kuunpimennys"</string>
+    <string name="panel_last_solar">"Viimeisin näkyvä auringonpimennys"</string>
+    <string name="panel_rise_def">"Auringon yläreuna nousee esteettömän horisontin yläpuolelle."</string>
+    <string name="panel_set_def">"Auringon yläreuna laskee esteettömän horisontin alapuolelle."</string>
+    <string name="panel_noon_def">"Aurinko ylittää paikallisen meridiaanin."</string>
+    <string name="panel_twilight_rising">"Nouseva Aurinko saavuttaa %1$d° horisontin alapuolella."</string>
+    <string name="panel_twilight_setting">"Laskeva Aurinko saavuttaa %1$d° horisontin alapuolella."</string>
+    <string name="panel_edge_def">"Auringon keskipiste ylittää %1$d° suhteessa horisonttiin."</string>
+    <string name="panel_next_total">"Seuraava täydellinen kuunpimennys"</string>
+    <string name="panel_next_partial">"Seuraava osittainen kuunpimennys"</string>
+    <string name="panel_next_penumbral">"Seuraava Kuun puolivarjopimennys"</string>
+    <string name="panel_mostly">"Enimmäkseen vuodenaikaista"</string>
+    <string name="panel_partly">"Osittain vuodenaikaista"</string>
+    <string name="panel_ends">"Verrattuna aseman omiin ääriarvoihin"</string>
+    <string name="panel_season_large">"Vuotuinen vaihtelu on paljon päivittäistä vuorovettä suurempaa."</string>
+    <string name="panel_hat">"Korkein tähtitieteellinen vuorovesi · %1$s"</string>
+    <string name="panel_lat">"Matalin tähtitieteellinen vuorovesi · %1$s"</string>
+    <string name="panel_turn">"Valittu käänne · %1$s"</string>
+    <string name="panel_ratio">"Vuotuinen vaihtelu · %1$.1f× päivittäinen vuorovesi"</string>
+    <string name="panel_slack_compared">"Virran tyyni vaihe kestää tämän maksimin ympärillä %1$d minuuttia, kun se täällä yleensä kestää noin %2$d minuuttia."</string>
+    <string name="panel_swing_explain">"Tämän vuorovesivaihtelun ylä- ja alaveden ero, %1$s."</string>
+    <string name="panel_springs_follow">"Suuri vuorovesivaihtelu seuraa uutta- ja täysikuuta."</string>
+    <string name="panel_orbit_scale">"Kiertoradan muotoa on liioiteltu etäisyyden muutoksen havainnollistamiseksi."</string>
+    <string name="panel_hat_label">"Korkein tähtitieteellinen vuorovesi"</string>
+    <string name="panel_lat_label">"Matalin tähtitieteellinen vuorovesi"</string>
+    <string name="panel_high_label">"Kahden viikon korkein ylävesi"</string>
+    <string name="panel_low_label">"Kahden viikon matalin alavesi"</string>
+    <string name="panel_turn_label">"Valittu käänne"</string>
+    <string name="panel_explain">"Tietoja: %1$s"</string>
+    <string name="panel_season_equal">"Vuotuinen vaihtelu on suunnilleen päivittäisen vuoroveden suuruista."</string>
+    <string name="panel_season_river">"Vedenkorkeus paikassa %1$s vaihtelee paljon enemmän vuoden kuin vuorokauden aikana. Valunta, sade ja tuuli voivat nostaa tai laskea koko päivittäistä vuorovettä."</string>
+    <string name="panel_season_tide">"Vedenkorkeus paikassa %1$s seuraa päivittäistä vuorovettä ja samansuuruista vuotuista kiertoa. Ylä- ja alaveden ajankohdat pysyvät ennustettavina vuodenaikaisen tason muuttuessa."</string>
+    <string name="panel_spring_explain">"Aurinko ja Kuu vetävät samalla linjalla. Niiden yhteisvaikutus yleensä kasvattaa vuorovesivaihtelua."</string>
+    <string name="panel_neap_explain">"Puolikuun aikaan Auringon ja Kuun vetovoimat vaikuttavat suorassa kulmassa toisiinsa. Vuorovesivaihtelu yleensä pienenee."</string>
+    <string name="panel_perigee_explain">"Kuu on lähellä Maata lähintä pistettään, jossa sen vuorovesivoima on voimakkaampi."</string>
+    <string name="panel_apogee_explain">"Kuu on lähellä Maasta kaukaisinta pistettään, jossa sen vuorovesivoima on heikompi."</string>
+    <string-array name="panel_phase_explanation">
+        <item>"Kuu on lähes Maan ja Auringon välissä."</item>
+        <item>"Kuun auringonvalaisemasta puoliskosta näkyy Maahan kasvava sirppi."</item>
+        <item>"Kuu on kulkenut neljäsosan vaihekiertoa."</item>
+        <item>"Yli puolet näkyvästä kiekosta on valaistu, ja valaistu alue kasvaa."</item>
+        <item>"Kuu on taivaallamme Aurinkoa vastapäätä."</item>
+        <item>"Yli puolet näkyvästä kiekosta on valaistu, ja valaistu alue pienenee."</item>
+        <item>"Kuu on kulkenut kolme neljäsosaa vaihekiertoa."</item>
+        <item>"Ennen seuraavaa uusikuuta jäljellä on kapeneva sirppi."</item>
+    </string-array>
+    <string name="prediction_shortcuts">"Ennusteiden pikakuvakkeet"</string>
+    <string name="pdf_daylight">"Auringonnousu %1$s · Auringonlasku %2$s"</string>
+    <string name="pdf_kmh">"km/h"</string>
+    <string name="pdf_ms">"m/s"</string>
+    <string name="pdf_flood_set">"Nousuvirta %1$s"</string>
+    <string name="pdf_ebb_set">"Laskuvirta %1$s"</string>
+    <string name="pdf_page">"%1$d / %2$d"</string>
+    <string-array name="pdf_compass">
+        <item>"P"</item>
+        <item>"PKo"</item>
+        <item>"Ko"</item>
+        <item>"IKo"</item>
+        <item>"I"</item>
+        <item>"IKa"</item>
+        <item>"Ka"</item>
+        <item>"EKa"</item>
+        <item>"E"</item>
+        <item>"ELo"</item>
+        <item>"Lo"</item>
+        <item>"LLo"</item>
+        <item>"L"</item>
+        <item>"LLu"</item>
+        <item>"Lu"</item>
+        <item>"PLu"</item>
+    </string-array>
+    <string name="table_sheet_share">"Jaa PDF"</string>
+    <string name="table_sheet_print">"Tulosta"</string>
+    <string name="table_sheet_page">"Sivu %1$d / %2$d"</string>
+    <string name="table_sheet_failed">"PDF:n valmistelu epäonnistui."</string>
+    <string name="table_sheet_export_failed">"PDF:n avaaminen tulostusta tai jakamista varten epäonnistui."</string>
+    <string name="table_sheet_locked">"Tulostettavat taulukot vaativat Premiumin."</string>
+    <string name="table_sheet_download_current">"Lisää päiviä voi tulostaa, kun niiden virtausennusteet on ladattu."</string>
+    <string name="table_sheet_download_tide">"Useampien päivien tulostaminen vaatii tämän aseman täydet vuorovesiennusteet."</string>
+    <string name="table_sheet_letter">"Kiinteä US Letter -asettelu (8.5 × 11 in). Valitse esikatselukokoa vastaava paperi."</string>
+    <string name="table_sheet_a4">"Kiinteä A4-asettelu (210 × 297 mm). Valitse esikatselukokoa vastaava paperi."</string>
+    <string name="query_invalid">"Tätä ennusteen pikakuvaketta ei voitu lukea."</string>
+    <string name="query_nearby_hint">"Jätä tyhjäksi, jos haluat käyttää sijaintiasi."</string>
+    <string name="query_date_hint">"Anna YYYY-MM-DD tai jätä tyhjäksi seuraavaa tapahtumaa varten."</string>
+    <string name="query_show">"Näytä ennuste"</string>
+    <string name="query_missing">"Kohdetta %1$s ei löytynyt. Tarkista paikannimi Slackwaterissa."</string>
+    <string name="query_location">"Tarvitaan tuore sijainti. Käytä sijaintiasi tai anna paikka yllä."</string>
+    <string name="query_use_location">"Käytä sijaintiani"</string>
+    <string name="query_choose">"Valitse asema"</string>
+    <string name="query_pin">"Kiinnitä tämä pikakuvake"</string>
+    <string name="query_pin_failed">"Käynnistyssovellus ei voinut kiinnittää tätä pikakuvaketta."</string>
+    <string name="query_off">"Heikon virran aikaikkunat on poistettu käytöstä sopivan virtausnopeuden asetuksissa."</string>
+    <string name="query_none_date">"Ei vastaavaa tapahtumaa %1$s."</string>
+    <string name="query_none_window">"Ei heikon virran aikaikkunaa seuraavien 48 tunnin aikana."</string>
+    <string name="query_none_tide">"Ei vastaavaa vuorovettä seuraavien 48 tunnin aikana."</string>
+    <string name="query_tide_ft">"%1$s · %2$.1f ft"</string>
+    <string name="query_tide_m">"%1$s · %2$.2f m"</string>
+    <string name="query_window">"%1$s–%2$s"</string>
+    <string name="query_window_from">"Alkaa %1$s. Päättymisaika ei ole tiedossa."</string>
+    <string name="query_window_until">"Päättyy %1$s. Alkamisaika ei ole tiedossa."</string>
+    <string name="query_window_at">"Sopivan virtausnopeuden rajoissa klo %1$s. Alkamis- ja päättymisaika eivät ole tiedossa."</string>
+    <string name="query_curve_extent">"%1$s – %2$s"</string>
+    <string name="query_high_day">"Ylävedet"</string>
+    <string name="query_low_day">"Alavedet"</string>
+    <string name="query_slack_day">"Heikon virran aikaikkunat"</string>
+    <string name="query_tide_wait">"Noin %1$s kuluttua."</string>
+    <string name="query_open">"Avoinna nyt."</string>
+    <string name="query_remaining">"Avoinna nyt, jäljellä noin %1$s."</string>
+    <string name="query_opens">"Avautuu noin %1$s kuluttua."</string>
+    <string name="query_opens_duration">"Avautuu noin %1$s kuluttua ja kestää noin %2$s."</string>
+    <string name="reminder_notify_blocked">"Hälytyksesi on tallennettu. Salli ilmoitukset Androidin asetuksissa, jotta saat sen."</string>
+    <string name="reminder_inexact_saved">"Hälytyksesi on tallennettu. Android saattaa viivästyttää muistutuksia tällä laitteella."</string>
+    <string name="reminder_back_to_stations">"Takaisin asemiin"</string>
+    <string name="reminder_my_alerts">"Omat hälytykset"</string>
+    <string name="reminder_reset_height">"Aseta uusi korkeus"</string>
+    <string name="reminder_premium_required">"Premium vaaditaan"</string>
+    <string name="reminder_notifications_blocked">"Ilmoitukset estetty"</string>
+    <string name="reminder_no_scheduled">"Ei tulevaa ajastettua muistutusta"</string>
+    <string name="reminder_inexact">"Android saattaa viivästyttää toimitusta"</string>
+    <string name="reminder_save_premium">"Hälytyksen tallentaminen vaatii Premiumin."</string>
+    <string name="reminder_through">"Ajastettu päivään %1$s asti"</string>
+    <string name="reminder_write_failed">"Hälytystäsi ei voitu tallentaa. Yritä uudelleen."</string>
+    <string name="schedule_title">"Aikataulu"</string>
+    <string name="schedule_earlier">"Edellinen viikko"</string>
+    <string name="schedule_later">"Seuraava viikko"</string>
+    <string name="schedule_premium_message">"Taulukoiden tulostaminen ja jakaminen vaatii Premiumin. Voit lukea aikataulun täällä."</string>
+    <string name="schedule_reset">"Palaa valittuun viikkoon"</string>
+    <string name="list_region_distance">"%1$s • %2$s"</string>
+    <string name="card_unavailable">"Ei ennusteita nyt"</string>
+    <string name="card_value_unit_approximate">"~%1$s %2$s"</string>
+    <string name="card_spoken_reading">"%1$s %2$s, %3$s"</string>
+    <string name="card_spoken_set">"suuntaan %1$s"</string>
+    <string name="search_truncated">"60 lähintä — rajaa hakua jatkamalla kirjoittamista"</string>
+    <string name="list_catalog_unavailable">"Asematiedot eivät ole käytettävissä tällä laitteella."</string>
+    <string name="card_spoken_approximate">"noin %1$s"</string>
+    <string name="data_and_licenses">"Tiedot ja lisenssit"</string>
+    <string name="data_credits">"Tietolähteet"</string>
+    <string name="reminder_channel">"Asemamuistutukset"</string>
+    <string name="notification_window_opens">"Heikon virtauksen jakso alkaa"</string>
+    <string name="notification_eclipse_begins">"Pimennys alkaa"</string>
+    <string name="notification_rise">"Nousee yli %1$s m"</string>
+    <string name="notification_fall">"Laskee alle %1$s m"</string>
+</resources>

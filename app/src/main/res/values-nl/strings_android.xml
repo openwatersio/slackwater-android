@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generated from scripts/translations/android/nl.json. Edit the JSON source. -->
+<resources>
+    <string name="alert_plot_tide">"Getijhoogte (%1$s)"</string>
+    <string name="alert_plot_current">"Stroomsnelheid (kn)"</string>
+    <string name="alert_plot_derived">"Voorspelde kenteringen"</string>
+    <string name="alert_plot_range">"%1$s tot %2$s"</string>
+    <string name="alert_plot_reset_event">"Terug naar gebeurtenis"</string>
+    <string name="alert_rise">"stijgend boven %1$s m"</string>
+    <string name="alert_fall">"dalend onder %1$s m"</string>
+    <string name="alert_edit">"Melding bewerken"</string>
+    <string name="alert_on_time">"Op het tijdstip zelf"</string>
+    <string name="alert_15min">"15 minuten eerder"</string>
+    <string name="alert_30min">"30 minuten eerder"</string>
+    <string name="alert_1hour">"1 uur eerder"</string>
+    <string name="alert_3hours">"3 uur eerder"</string>
+    <string name="alert_1day">"1 dag eerder"</string>
+    <string name="alert_seconds">"%1$d seconden eerder"</string>
+    <string name="alert_overdue">"Het tijdstip van de herinnering is voorbij. Bij opslaan wordt om onmiddellijke verzending gevraagd."</string>
+    <string name="alert_review_height">"Stel de hoogte opnieuw in (meters)"</string>
+    <string name="alert_height">"Hoogte (meters)"</string>
+    <string name="alert_screen_empty">"Nog geen meldingen. Stel een melding in bij een station."</string>
+    <plurals name="alert_plot_markers">
+        <item quantity="one">"%1$d gemarkeerde melding"</item>
+        <item quantity="other">"%1$d gemarkeerde meldingen"</item>
+    </plurals>
+    <string name="alert_plot_previous">"Vorige gebeurtenis, %1$s, %2$s"</string>
+    <string name="alert_plot_next">"Volgende gebeurtenis, %1$s, %2$s"</string>
+    <string name="alert_plot_earlier">"Vijf minuten eerder"</string>
+    <string name="alert_plot_later">"Vijf minuten later"</string>
+    <string name="alert_show_events">"Gebeurtenissen in grafiek tonen"</string>
+    <string name="alert_hide_events">"Gebeurtenissen in grafiek verbergen"</string>
+    <string name="alert_event_speed">"%1$s · %2$.1f kn"</string>
+    <string name="station_calendars_title">"Stationsagenda\'s"</string>
+    <string name="station_calendars_about">"Publiceer de stationsgebeurtenissen voor de komende 90 dagen in een agenda op dit apparaat. De gebeurtenissen hebben geen herinneringen en blijven op dit apparaat."</string>
+    <string name="station_calendar_subscribe">"Agenda publiceren"</string>
+    <string name="station_calendar_remove">"Agenda verwijderen"</string>
+    <string name="station_calendar_remove_title">"%1$s verwijderen?"</string>
+    <plurals name="station_calendar_remove_count">
+        <item quantity="one">"Slackwater verwijdert %1$d gebeurtenis die het heeft gepubliceerd. Persoonlijke en al begonnen gebeurtenissen blijven in de agenda."</item>
+        <item quantity="other">"Slackwater verwijdert %1$d gebeurtenissen die het heeft gepubliceerd. Persoonlijke en al begonnen gebeurtenissen blijven in de agenda."</item>
+    </plurals>
+    <string name="station_calendar_offline_needed">"Download vereist voordat er gepubliceerd kan worden."</string>
+    <string name="station_calendar_pending">"Er staan agendawijzigingen in de wachtrij. Gepubliceerde gebeurtenissen kunnen blijven staan totdat Slackwater de agenda kan bijwerken."</string>
+    <string name="station_calendar_permission">"Geef Slackwater toegang tot de agenda om zijn gebeurtenissen te vinden en bij te werken."</string>
+    <string name="station_calendar_premium">"Voor het publiceren van een nieuwe stationsagenda is Premium vereist."</string>
+    <string name="station_calendar_trial">"Publiceert tijdens je gratis dag."</string>
+    <string name="station_calendar_active">"Geabonneerd"</string>
+    <string name="station_calendar_failed">"De agenda kon niet worden bijgewerkt. Controleer de toegang en probeer het opnieuw."</string>
+    <string name="station_calendar_pending_remove">"Verwijdering in wachtrij"</string>
+    <plurals name="chart_minutes">
+        <item quantity="one">"%1$d minuut"</item>
+        <item quantity="other">"%1$d minuten"</item>
+    </plurals>
+    <plurals name="chart_hours">
+        <item quantity="one">"%1$d uur"</item>
+        <item quantity="other">"%1$d uur"</item>
+    </plurals>
+    <string name="detail_related_currents">"Stroming bij %1$s"</string>
+    <string name="detail_namesakes">"Andere locaties (%1$d)"</string>
+    <string name="detail_position">"Positie"</string>
+    <string name="detail_zone">"Tijdzone"</string>
+    <string name="detail_reference">"Referentie"</string>
+    <string name="detail_datum">"Kaartreferentievlak"</string>
+    <string name="detail_datum_note">"Hoogten worden gemeten vanaf het kaartreferentievlak. Een negatieve waarde voorspelt minder water dan de diepte op de kaart."</string>
+    <string name="detail_shape_note">"De curve tussen kenteringen is een richtlijn. Alleen de nuldoorgangen geven voorspelde tijdstippen aan."</string>
+    <string name="detail_lags">"Vertraging van kentering"</string>
+    <string name="detail_lag_value">"%1$d min na hoogwater · %2$d min na laagwater"</string>
+    <string name="detail_prediction">"Voorspelling"</string>
+    <string name="detail_fitted">"Op dit apparaat berekend uit opgeslagen waarnemingen"</string>
+    <string name="detail_official">"Officiële CHS-voorspellingen gedownload voor offline gebruik"</string>
+    <string name="detail_derived">"Alleen geschatte kenteringstijden. Voor deze doorgang is geen snelheidsvoorspelling beschikbaar."</string>
+    <string name="detail_harmonic">"Harmonische voorspelling"</string>
+    <string name="detail_subordinate">"Voorspelling op basis van het referentiestation met correcties voor het secundaire station"</string>
+    <string name="detail_bound">"De kentering bij %1$s kan tot %2$d minuten afwijken van de CHS-voorspelling."</string>
+    <string name="detail_gap">"Slackwater heeft geen voorspellingen voor dit station."</string>
+    <string name="detail_queued">"Download aangevraagd"</string>
+    <string name="detail_no_week">"Er zijn geen opgeslagen voorspellingen voor deze week."</string>
+    <string name="detail_no_data">"Er zijn geen opgeslagen voorspellingen voor dit station."</string>
+    <string name="detail_loading">"Voorspellingen laden"</string>
+    <string name="detail_copied">"Je rapport is gekopieerd. Stuur het naar slackwater@openwaters.io."</string>
+    <string name="detail_flow">"Gemiddelde stroming"</string>
+    <string name="detail_license">"Licentie"</string>
+    <string name="detail_source">"Bron"</string>
+    <string name="detail_datum_source">"Kaartreferentievlak van %1$s."</string>
+    <string name="detail_noaa_tide">"Harmonische getijvoorspelling van NOAA."</string>
+    <string name="detail_noaa_sub">"Gebaseerd op het getij bij %1$s en gepubliceerde NOAA-correcties, berekend op dit apparaat."</string>
+    <string name="detail_publisher">"Harmonische constanten van %1$s."</string>
+    <string name="detail_chs_fit">"Gedownload van CHS (IWLS), daarna aangepast en berekend op dit apparaat. Dit zijn geen door CHS gepubliceerde voorspellingen."</string>
+    <string name="detail_chs_preview">"Officiële getijvoorspellingen van CHS gedownload op dit apparaat. Hoogten liggen boven het kaartreferentievlak LLWLT."</string>
+    <string name="detail_noaa_current">"Harmonische stroomvoorspelling van NOAA."</string>
+    <string name="detail_sub_current">"Kenteringen en maxima bij het referentiestation worden aangepast met gepubliceerde NOAA-correcties."</string>
+    <string name="detail_flood">"De vloedstroom zet naar %1$d°T."</string>
+    <string name="detail_derived_source">"Slackwater schat de kentering bij %1$s op basis van hoog- en laagwater bij %2$s. CHS publiceert geen stroomvoorspellingen voor deze doorgang."</string>
+    <string name="detail_map">"Op kaart bekijken"</string>
+    <string name="detail_invalid_link">"Deze stationslink kon niet worden geopend."</string>
+    <string name="detail_chart_settings">"Grafiekinstellingen"</string>
+    <string name="panel_reference">"Geschat uit referentiegetijden"</string>
+    <string name="panel_daylight">"%1$d h %2$d min daglicht"</string>
+    <string name="panel_lit">"%1$d%% verlicht"</string>
+    <string name="panel_moonrise">"Maanopkomst"</string>
+    <string name="panel_moonset">"Maanondergang"</string>
+    <string name="panel_earth_distance">"Afstand tot de aarde · %1$s km"</string>
+    <string name="panel_at">"%1$s om %2$s"</string>
+    <string name="panel_biggest">"Grootste van deze twee weken"</string>
+    <string name="panel_marked">"Meer dan hier gebruikelijk"</string>
+    <string name="panel_hardest">"Sterkste %1$s · %2$s"</string>
+    <string name="panel_strong">"Sterke %1$s · %2$s"</string>
+    <string name="panel_swing_rank">"Groter dan alle op %1$d na van de %2$d getijverschillen in deze twee weken."</string>
+    <string name="panel_max_rank">"Sterker dan alle op %1$d na van de %2$d maxima in deze richting in deze twee weken."</string>
+    <string name="panel_biggest_day">"Elke staaf is het grootste getijverschil van één dag."</string>
+    <string name="panel_max_day">"Elke staaf is de sterkste %1$s van één dag."</string>
+    <string-array name="panel_phases">
+        <item>"Nieuwe maan"</item>
+        <item>"Wassende maansikkel"</item>
+        <item>"Eerste kwartier"</item>
+        <item>"Wassende maan"</item>
+        <item>"Volle maan"</item>
+        <item>"Afnemende maan"</item>
+        <item>"Laatste kwartier"</item>
+        <item>"Afnemende maansikkel"</item>
+    </string-array>
+    <string name="panel_full">"Volgende volle maan"</string>
+    <string name="panel_new">"Volgende nieuwe maan"</string>
+    <string name="panel_last_lunar">"Laatste zichtbare maansverduistering"</string>
+    <string name="panel_last_solar">"Laatste zichtbare zonsverduistering"</string>
+    <string name="panel_rise_def">"De bovenrand van de zon komt boven een onbelemmerde horizon."</string>
+    <string name="panel_set_def">"De bovenrand van de zon zakt onder een onbelemmerde horizon."</string>
+    <string name="panel_noon_def">"De zon passeert de plaatselijke meridiaan."</string>
+    <string name="panel_twilight_rising">"De opkomende zon bereikt %1$d° onder de horizon."</string>
+    <string name="panel_twilight_setting">"De ondergaande zon bereikt %1$d° onder de horizon."</string>
+    <string name="panel_edge_def">"Het middelpunt van de zon passeert %1$d° ten opzichte van de horizon."</string>
+    <string name="panel_next_total">"Volgende totale maansverduistering"</string>
+    <string name="panel_next_partial">"Volgende gedeeltelijke maansverduistering"</string>
+    <string name="panel_next_penumbral">"Volgende maansverduistering in de bijschaduw"</string>
+    <string name="panel_mostly">"Vooral seizoensgebonden"</string>
+    <string name="panel_partly">"Deels seizoensgebonden"</string>
+    <string name="panel_ends">"Vergeleken met de uitersten van dit station"</string>
+    <string name="panel_season_large">"De jaarlijkse verandering is veel groter dan het dagelijkse getij."</string>
+    <string name="panel_hat">"Hoogste astronomische getij · %1$s"</string>
+    <string name="panel_lat">"Laagste astronomische getij · %1$s"</string>
+    <string name="panel_turn">"Geselecteerd keerpunt · %1$s"</string>
+    <string name="panel_ratio">"Jaarlijkse verandering · %1$.1f× het dagelijkse getij"</string>
+    <string name="panel_slack_compared">"Rond dit maximum duurt de kentering %1$d minuten, vergeleken met de gebruikelijke circa %2$d minuten hier."</string>
+    <string name="panel_swing_explain">"Het verschil tussen hoog- en laagwater van dit getij, %1$s."</string>
+    <string name="panel_springs_follow">"Springtij volgt op nieuwe en volle maan."</string>
+    <string name="panel_orbit_scale">"De vorm van de baan is overdreven om de afstandsverandering te tonen."</string>
+    <string name="panel_hat_label">"Hoogste astronomische getij"</string>
+    <string name="panel_lat_label">"Laagste astronomische getij"</string>
+    <string name="panel_high_label">"Hoogste hoogwater van deze twee weken"</string>
+    <string name="panel_low_label">"Laagste laagwater van deze twee weken"</string>
+    <string name="panel_turn_label">"Geselecteerd keerpunt"</string>
+    <string name="panel_explain">"Over %1$s"</string>
+    <string name="panel_season_equal">"De jaarlijkse verandering is ongeveer even groot als het dagelijkse getij."</string>
+    <string name="panel_season_river">"Het water bij %1$s varieert veel meer in een jaar dan in een dag. Afstroming, regen en wind kunnen het hele dagelijkse getij verhogen of verlagen."</string>
+    <string name="panel_season_tide">"Het water bij %1$s volgt een dagelijks getij en een jaarlijkse cyclus van vergelijkbare omvang. Het tijdstip van hoog- of laagwater blijft voorspelbaar terwijl het seizoensniveau verandert."</string>
+    <string name="panel_spring_explain">"De zon en de maan trekken langs dezelfde lijn. Hun gezamenlijke effect vergroot doorgaans het getijverschil."</string>
+    <string name="panel_neap_explain">"Bij halve maan trekken de zon en de maan onder een rechte hoek. Het getijverschil wordt doorgaans kleiner."</string>
+    <string name="panel_perigee_explain">"De maan bevindt zich nabij haar dichtstbijzijnde punt tot de aarde, waar haar getijdenwerking sterker is."</string>
+    <string name="panel_apogee_explain">"De maan bevindt zich nabij haar verste punt van de aarde, waar haar getijdenwerking zwakker is."</string>
+    <string-array name="panel_phase_explanation">
+        <item>"De maan staat bijna tussen de aarde en de zon."</item>
+        <item>"Een groeiende sikkel van de verlichte maanhelft is naar de aarde gericht."</item>
+        <item>"De maan heeft een kwart van haar fasencyclus doorlopen."</item>
+        <item>"Meer dan de helft van de zichtbare schijf is verlicht en het verlichte deel groeit."</item>
+        <item>"De maan staat tegenover de zon aan onze hemel."</item>
+        <item>"Meer dan de helft van de zichtbare schijf is verlicht en het verlichte deel wordt kleiner."</item>
+        <item>"De maan heeft driekwart van haar fasencyclus doorlopen."</item>
+        <item>"Een steeds smallere sikkel blijft over voor de volgende nieuwe maan."</item>
+    </string-array>
+    <string name="prediction_shortcuts">"Snelkoppelingen naar voorspellingen"</string>
+    <string name="pdf_daylight">"Zonsopkomst %1$s · Zonsondergang %2$s"</string>
+    <string name="pdf_kmh">"km/h"</string>
+    <string name="pdf_ms">"m/s"</string>
+    <string name="pdf_flood_set">"Vloedstroom %1$s"</string>
+    <string name="pdf_ebb_set">"Ebstroom %1$s"</string>
+    <string name="pdf_page">"%1$d / %2$d"</string>
+    <string-array name="pdf_compass">
+        <item>"N"</item>
+        <item>"NNO"</item>
+        <item>"NO"</item>
+        <item>"ONO"</item>
+        <item>"O"</item>
+        <item>"OZO"</item>
+        <item>"ZO"</item>
+        <item>"ZZO"</item>
+        <item>"Z"</item>
+        <item>"ZZW"</item>
+        <item>"ZW"</item>
+        <item>"WZW"</item>
+        <item>"W"</item>
+        <item>"WNW"</item>
+        <item>"NW"</item>
+        <item>"NNW"</item>
+    </string-array>
+    <string name="table_sheet_share">"PDF delen"</string>
+    <string name="table_sheet_print">"Afdrukken"</string>
+    <string name="table_sheet_page">"Pagina %1$d van %2$d"</string>
+    <string name="table_sheet_failed">"De PDF kon niet worden voorbereid."</string>
+    <string name="table_sheet_export_failed">"De PDF kon niet worden geopend om af te drukken of te delen."</string>
+    <string name="table_sheet_locked">"Voor afdrukbare tabellen is Premium vereist."</string>
+    <string name="table_sheet_download_current">"Meer dagen kunnen worden afgedrukt zodra de bijbehorende stroomvoorspellingen zijn gedownload."</string>
+    <string name="table_sheet_download_tide">"Om meer dagen af te drukken zijn de volledige getijvoorspellingen voor dit station nodig."</string>
+    <string name="table_sheet_letter">"Vaste US Letter-indeling (8.5 × 11 in). Kies papier dat overeenkomt met het voorbeeldformaat."</string>
+    <string name="table_sheet_a4">"Vaste A4-indeling (210 × 297 mm). Kies papier dat overeenkomt met het voorbeeldformaat."</string>
+    <string name="query_invalid">"Deze snelkoppeling naar een voorspelling kon niet worden gelezen."</string>
+    <string name="query_nearby_hint">"Laat leeg om je locatie te gebruiken."</string>
+    <string name="query_date_hint">"Voer YYYY-MM-DD in of laat leeg voor de volgende gebeurtenis."</string>
+    <string name="query_show">"Voorspelling tonen"</string>
+    <string name="query_missing">"%1$s kon niet worden gevonden. Controleer de plaatsnaam in Slackwater."</string>
+    <string name="query_location">"Een recente locatie is nodig. Gebruik je locatie of vul hierboven een plaats in."</string>
+    <string name="query_use_location">"Mijn locatie gebruiken"</string>
+    <string name="query_choose">"Station kiezen"</string>
+    <string name="query_pin">"Deze snelkoppeling vastmaken"</string>
+    <string name="query_pin_failed">"Het startscherm kon deze snelkoppeling niet vastmaken."</string>
+    <string name="query_off">"Kenteringsvensters zijn uitgeschakeld in je instellingen voor comfortabele stroming."</string>
+    <string name="query_none_date">"Geen overeenkomende gebeurtenis op %1$s."</string>
+    <string name="query_none_window">"Geen kenteringsvenster in de komende 48 uur."</string>
+    <string name="query_none_tide">"Geen overeenkomend getij in de komende 48 uur."</string>
+    <string name="query_tide_ft">"%1$s · %2$.1f ft"</string>
+    <string name="query_tide_m">"%1$s · %2$.2f m"</string>
+    <string name="query_window">"%1$s tot %2$s"</string>
+    <string name="query_window_from">"Opent om %1$s. Sluitingstijd onbekend."</string>
+    <string name="query_window_until">"Sluit om %1$s. Openingstijd onbekend."</string>
+    <string name="query_window_at">"Binnen de comfortabele stroming om %1$s. Openings- en sluitingstijd onbekend."</string>
+    <string name="query_curve_extent">"%1$s – %2$s"</string>
+    <string name="query_high_day">"Hoogwaters"</string>
+    <string name="query_low_day">"Laagwaters"</string>
+    <string name="query_slack_day">"Kenteringsvensters"</string>
+    <string name="query_tide_wait">"Over ongeveer %1$s."</string>
+    <string name="query_open">"Nu open."</string>
+    <string name="query_remaining">"Nu open, nog ongeveer %1$s resterend."</string>
+    <string name="query_opens">"Opent over ongeveer %1$s."</string>
+    <string name="query_opens_duration">"Opent over ongeveer %1$s en duurt ongeveer %2$s."</string>
+    <string name="reminder_notify_blocked">"Je melding is opgeslagen. Sta meldingen toe in de Android-instellingen om deze te ontvangen."</string>
+    <string name="reminder_inexact_saved">"Je melding is opgeslagen. Android kan herinneringen op dit apparaat vertragen."</string>
+    <string name="reminder_back_to_stations">"Terug naar stations"</string>
+    <string name="reminder_my_alerts">"Mijn meldingen"</string>
+    <string name="reminder_reset_height">"Nieuwe hoogte instellen"</string>
+    <string name="reminder_premium_required">"Premium vereist"</string>
+    <string name="reminder_notifications_blocked">"Meldingen geblokkeerd"</string>
+    <string name="reminder_no_scheduled">"Geen komende herinnering gepland"</string>
+    <string name="reminder_inexact">"Android kan de bezorging vertragen"</string>
+    <string name="reminder_save_premium">"Voor het opslaan van een melding is Premium vereist."</string>
+    <string name="reminder_through">"Gepland tot %1$s"</string>
+    <string name="reminder_write_failed">"Je melding kon niet worden opgeslagen. Probeer het opnieuw."</string>
+    <string name="schedule_title">"Overzicht"</string>
+    <string name="schedule_earlier">"Vorige week"</string>
+    <string name="schedule_later">"Volgende week"</string>
+    <string name="schedule_premium_message">"Voor het afdrukken en delen van tabellen is Premium vereist. Je kunt het overzicht hier bekijken."</string>
+    <string name="schedule_reset">"Terug naar geselecteerde week"</string>
+    <string name="list_region_distance">"%1$s • %2$s"</string>
+    <string name="card_unavailable">"Nu geen voorspellingen"</string>
+    <string name="card_value_unit_approximate">"~%1$s %2$s"</string>
+    <string name="card_spoken_reading">"%1$s %2$s, %3$s"</string>
+    <string name="card_spoken_set">"naar %1$s"</string>
+    <string name="search_truncated">"De 60 dichtstbijzijnde — typ verder om te verfijnen"</string>
+    <string name="list_catalog_unavailable">"Stationsgegevens zijn niet beschikbaar op dit apparaat."</string>
+    <string name="card_spoken_approximate">"ongeveer %1$s"</string>
+    <string name="data_and_licenses">"Gegevens en licenties"</string>
+    <string name="data_credits">"Bronvermelding van gegevens"</string>
+    <string name="reminder_channel">"Stationsherinneringen"</string>
+    <string name="notification_window_opens">"Het kenteringsvenster begint"</string>
+    <string name="notification_eclipse_begins">"De verduistering begint"</string>
+    <string name="notification_rise">"Stijgend boven %1$s m"</string>
+    <string name="notification_fall">"Dalend onder %1$s m"</string>
+</resources>

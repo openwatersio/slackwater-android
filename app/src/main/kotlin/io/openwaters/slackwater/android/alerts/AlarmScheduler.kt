@@ -10,6 +10,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
+import io.openwaters.slackwater.android.R
 import io.openwaters.slackwater.android.core.planning.DeliveryPlan
 import io.openwaters.slackwater.android.data.DeliveryPlanStore
 import java.io.IOException
@@ -38,7 +39,7 @@ class AlarmScheduler internal constructor(
     private val lock = Mutex()
 
     fun access(): AlarmAccess {
-        notifications.createNotificationChannel(NotificationChannel(CHANNEL_ID, "Station reminders", NotificationManager.IMPORTANCE_DEFAULT))
+        notifications.createNotificationChannel(NotificationChannel(CHANNEL_ID, app.getString(R.string.reminder_channel), NotificationManager.IMPORTANCE_DEFAULT))
         val granted = Build.VERSION.SDK_INT < 33 ||
             app.checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
         return AlarmAccess(

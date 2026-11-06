@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generated from scripts/translations/android/ja.json. Edit the JSON source. -->
+<resources>
+    <string name="alert_plot_tide">"潮位（%1$s）"</string>
+    <string name="alert_plot_current">"潮流の速さ（kn）"</string>
+    <string name="alert_plot_derived">"予測される転流"</string>
+    <string name="alert_plot_range">"%1$sから%2$s"</string>
+    <string name="alert_plot_reset_event">"イベントに戻る"</string>
+    <string name="alert_rise">"%1$s mを超えて上昇"</string>
+    <string name="alert_fall">"%1$s mを下回って下降"</string>
+    <string name="alert_edit">"通知を編集"</string>
+    <string name="alert_on_time">"その時刻"</string>
+    <string name="alert_15min">"15分前"</string>
+    <string name="alert_30min">"30分前"</string>
+    <string name="alert_1hour">"1時間前"</string>
+    <string name="alert_3hours">"3時間前"</string>
+    <string name="alert_1day">"1日前"</string>
+    <string name="alert_seconds">"%1$d秒前"</string>
+    <string name="alert_overdue">"通知時刻を過ぎています。保存すると今すぐ通知を送信します。"</string>
+    <string name="alert_review_height">"潮位を再設定（メートル）"</string>
+    <string name="alert_height">"潮位（メートル）"</string>
+    <string name="alert_screen_empty">"通知はまだありません。観測地点から通知を設定してください。"</string>
+    <plurals name="alert_plot_markers">
+        <item quantity="one">"%1$d件の通知を表示"</item>
+        <item quantity="other">"%1$d件の通知を表示"</item>
+    </plurals>
+    <string name="alert_plot_previous">"前のイベント、%1$s、%2$s"</string>
+    <string name="alert_plot_next">"次のイベント、%1$s、%2$s"</string>
+    <string name="alert_plot_earlier">"5分早める"</string>
+    <string name="alert_plot_later">"5分遅らせる"</string>
+    <string name="alert_show_events">"グラフのイベントを表示"</string>
+    <string name="alert_hide_events">"グラフのイベントを非表示"</string>
+    <string name="alert_event_speed">"%1$s · %2$.1f kn"</string>
+    <string name="station_calendars_title">"観測地点のカレンダー"</string>
+    <string name="station_calendars_about">"今後90日間の観測地点のイベントを、このデバイスのカレンダーに登録します。イベントには通知はなく、このデバイス内にのみ保存されます。"</string>
+    <string name="station_calendar_subscribe">"カレンダーに登録"</string>
+    <string name="station_calendar_remove">"カレンダーを削除"</string>
+    <string name="station_calendar_remove_title">"%1$sを削除しますか？"</string>
+    <plurals name="station_calendar_remove_count">
+        <item quantity="one">"Slackwaterが登録した%1$d件のイベントを削除します。個人の予定と開始済みのイベントはカレンダーに残ります。"</item>
+        <item quantity="other">"Slackwaterが登録した%1$d件のイベントを削除します。個人の予定と開始済みのイベントはカレンダーに残ります。"</item>
+    </plurals>
+    <string name="station_calendar_offline_needed">"登録するには、先にダウンロードが必要です。"</string>
+    <string name="station_calendar_pending">"カレンダーの変更を保留中です。Slackwaterがカレンダーを更新できるまで、登録済みのイベントが残る場合があります。"</string>
+    <string name="station_calendar_permission">"Slackwaterが登録したイベントを検索・更新できるように、カレンダーへのアクセスを許可してください。"</string>
+    <string name="station_calendar_premium">"新しい観測地点のカレンダーを登録するにはPremiumが必要です。"</string>
+    <string name="station_calendar_trial">"無料で利用できる1日の間に登録します。"</string>
+    <string name="station_calendar_active">"登録済み"</string>
+    <string name="station_calendar_failed">"カレンダーを更新できませんでした。アクセス権を確認して、もう一度お試しください。"</string>
+    <string name="station_calendar_pending_remove">"削除待ち"</string>
+    <plurals name="chart_minutes">
+        <item quantity="one">"%1$d分"</item>
+        <item quantity="other">"%1$d分"</item>
+    </plurals>
+    <plurals name="chart_hours">
+        <item quantity="one">"%1$d時間"</item>
+        <item quantity="other">"%1$d時間"</item>
+    </plurals>
+    <string name="detail_related_currents">"%1$sの潮流"</string>
+    <string name="detail_namesakes">"その他の地点（%1$d）"</string>
+    <string name="detail_position">"位置"</string>
+    <string name="detail_zone">"タイムゾーン"</string>
+    <string name="detail_reference">"基準地点"</string>
+    <string name="detail_datum">"海図基準面"</string>
+    <string name="detail_datum_note">"潮位は海図基準面からの高さです。負の値は、水深が海図記載の水深より浅くなる予測を示します。"</string>
+    <string name="detail_shape_note">"転流時刻の間の曲線は目安です。ゼロとの交点のみが予測時刻を表します。"</string>
+    <string name="detail_lags">"転流の遅れ"</string>
+    <string name="detail_lag_value">"満潮の%1$d分後 · 干潮の%2$d分後"</string>
+    <string name="detail_prediction">"予測"</string>
+    <string name="detail_fitted">"保存済みの観測値からこのデバイスで計算"</string>
+    <string name="detail_official">"オフライン利用用にダウンロードしたCHS公式予測"</string>
+    <string name="detail_derived">"推定の転流時刻のみ。この水道の流速予測はありません。"</string>
+    <string name="detail_harmonic">"調和解析による予測"</string>
+    <string name="detail_subordinate">"基準地点の予測に従属地点の補正値を適用"</string>
+    <string name="detail_bound">"%1$sの転流はCHSの予測と最大%2$d分異なる場合があります。"</string>
+    <string name="detail_gap">"この観測地点の予測はSlackwaterにありません。"</string>
+    <string name="detail_queued">"ダウンロードをリクエストしました"</string>
+    <string name="detail_no_week">"今週に対応する保存済みの予測はありません。"</string>
+    <string name="detail_no_data">"この観測地点の保存済みの予測はありません。"</string>
+    <string name="detail_loading">"予測を読み込み中"</string>
+    <string name="detail_copied">"レポートをコピーしました。slackwater@openwaters.ioに送信してください。"</string>
+    <string name="detail_flow">"平均流"</string>
+    <string name="detail_license">"ライセンス"</string>
+    <string name="detail_source">"出典"</string>
+    <string name="detail_datum_source">"%1$sの海図基準面。"</string>
+    <string name="detail_noaa_tide">"NOAAの調和解析による潮汐予測。"</string>
+    <string name="detail_noaa_sub">"%1$sの潮汐とNOAA公表の補正値に基づき、このデバイスで計算。"</string>
+    <string name="detail_publisher">"調和定数の出典：%1$s。"</string>
+    <string name="detail_chs_fit">"CHS（IWLS）からダウンロード後、このデバイスで当てはめと計算を行っています。CHSが公表した予測ではありません。"</string>
+    <string name="detail_chs_preview">"このデバイスにダウンロードしたCHS公式潮汐予測。潮位はLLWLT海図基準面からの高さです。"</string>
+    <string name="detail_noaa_current">"NOAAの調和解析による潮流予測。"</string>
+    <string name="detail_sub_current">"基準地点の転流と最強流を、NOAA公表の補正値で補正しています。"</string>
+    <string name="detail_flood">"上げ潮流の流向は%1$d°T。"</string>
+    <string name="detail_derived_source">"Slackwaterは%2$sの満潮・干潮から%1$sの転流を推定します。CHSはこの水道の潮流予測を公表していません。"</string>
+    <string name="detail_map">"地図で表示"</string>
+    <string name="detail_invalid_link">"この観測地点のリンクを開けませんでした。"</string>
+    <string name="detail_chart_settings">"グラフ設定"</string>
+    <string name="panel_reference">"基準地点の潮汐から推定"</string>
+    <string name="panel_daylight">"日照時間%1$d時間%2$d分"</string>
+    <string name="panel_lit">"照らされている割合%1$d%%"</string>
+    <string name="panel_moonrise">"月の出"</string>
+    <string name="panel_moonset">"月の入り"</string>
+    <string name="panel_earth_distance">"地球からの距離 · %1$s km"</string>
+    <string name="panel_at">"%2$sの%1$s"</string>
+    <string name="panel_biggest">"この2週間で最大"</string>
+    <string name="panel_marked">"この地点の通常範囲を超える"</string>
+    <string name="panel_hardest">"最強の%1$s · %2$s"</string>
+    <string name="panel_strong">"強い%1$s · %2$s"</string>
+    <string name="panel_swing_rank">"この2週間の%2$d回の潮差のうち、これより大きいのは%1$d回のみ。"</string>
+    <string name="panel_max_rank">"この2週間の同方向の最強流%2$d回のうち、これより強いのは%1$d回のみ。"</string>
+    <string name="panel_biggest_day">"各棒はその日の最大の潮差を表します。"</string>
+    <string name="panel_max_day">"各棒はその日の最強の%1$sを表します。"</string>
+    <string-array name="panel_phases">
+        <item>"新月"</item>
+        <item>"満ちていく三日月"</item>
+        <item>"上弦"</item>
+        <item>"満ちていく凸月"</item>
+        <item>"満月"</item>
+        <item>"欠けていく凸月"</item>
+        <item>"下弦"</item>
+        <item>"欠けていく三日月"</item>
+    </string-array>
+    <string name="panel_full">"次の満月"</string>
+    <string name="panel_new">"次の新月"</string>
+    <string name="panel_last_lunar">"前回の観測可能な月食"</string>
+    <string name="panel_last_solar">"前回の観測可能な日食"</string>
+    <string name="panel_rise_def">"太陽の上端が、遮るもののない水平線の上に出ます。"</string>
+    <string name="panel_set_def">"太陽の上端が、遮るもののない水平線の下に沈みます。"</string>
+    <string name="panel_noon_def">"太陽がその地点の子午線を通過します。"</string>
+    <string name="panel_twilight_rising">"昇る太陽が水平線の下%1$d°に達します。"</string>
+    <string name="panel_twilight_setting">"沈む太陽が水平線の下%1$d°に達します。"</string>
+    <string name="panel_edge_def">"太陽の中心が水平線を基準に%1$d°を通過します。"</string>
+    <string name="panel_next_total">"次の皆既月食"</string>
+    <string name="panel_next_partial">"次の部分月食"</string>
+    <string name="panel_next_penumbral">"次の半影月食"</string>
+    <string name="panel_mostly">"主に季節変動"</string>
+    <string name="panel_partly">"一部は季節変動"</string>
+    <string name="panel_ends">"この観測地点の両極値との比較"</string>
+    <string name="panel_season_large">"年間の変動は日々の潮汐よりはるかに大きくなります。"</string>
+    <string name="panel_hat">"最高天文潮位 · %1$s"</string>
+    <string name="panel_lat">"最低天文潮位 · %1$s"</string>
+    <string name="panel_turn">"選択した転換点 · %1$s"</string>
+    <string name="panel_ratio">"年間の変動 · 日々の潮汐の%1$.1f倍"</string>
+    <string name="panel_slack_compared">"この最強流前後の転流時間帯は%1$d分で、通常の約%2$d分と比較しています。"</string>
+    <string name="panel_swing_explain">"この潮汐の満潮と干潮の差、%1$s。"</string>
+    <string name="panel_springs_follow">"大潮は新月と満月の後に起こります。"</string>
+    <string name="panel_orbit_scale">"距離の変化を示すため、軌道の形を誇張しています。"</string>
+    <string name="panel_hat_label">"最高天文潮位"</string>
+    <string name="panel_lat_label">"最低天文潮位"</string>
+    <string name="panel_high_label">"この2週間で最も高い満潮"</string>
+    <string name="panel_low_label">"この2週間で最も低い干潮"</string>
+    <string name="panel_turn_label">"選択した転換点"</string>
+    <string name="panel_explain">"%1$sについて"</string>
+    <string name="panel_season_equal">"年間の変動は日々の潮汐とほぼ同じ大きさです。"</string>
+    <string name="panel_season_river">"%1$sの水位は、1日の間より年間ではるかに大きく変動します。流出水、降雨、風により、その日の潮位全体が上下することがあります。"</string>
+    <string name="panel_season_tide">"%1$sの水位は、同程度の大きさの日々の潮汐と年間の周期に従います。季節によって水位が変化しても、満潮・干潮の時刻は予測可能です。"</string>
+    <string name="panel_spring_explain">"太陽と月が同じ直線上で引力を及ぼし、その相乗効果で潮差が大きくなる傾向があります。"</string>
+    <string name="panel_neap_explain">"上弦・下弦の月では、太陽と月が直角方向に引力を及ぼします。潮差は小さくなる傾向があります。"</string>
+    <string name="panel_perigee_explain">"月は地球に最も近い点の付近にあり、潮汐を起こす力が強くなります。"</string>
+    <string name="panel_apogee_explain">"月は地球から最も遠い点の付近にあり、潮汐を起こす力が弱くなります。"</string>
+    <string-array name="panel_phase_explanation">
+        <item>"月は地球と太陽のほぼ中間にあります。"</item>
+        <item>"太陽に照らされた月の半球のうち、地球に向いた三日月状の部分が大きくなります。"</item>
+        <item>"月は満ち欠けの周期の4分の1を進みました。"</item>
+        <item>"見える円盤の半分以上が照らされ、その部分が大きくなっています。"</item>
+        <item>"空で月は太陽と反対側にあります。"</item>
+        <item>"見える円盤の半分以上が照らされ、その部分が小さくなっています。"</item>
+        <item>"月は満ち欠けの周期の4分の3を進みました。"</item>
+        <item>"次の新月に向けて、細くなっていく三日月が残っています。"</item>
+    </string-array>
+    <string name="prediction_shortcuts">"予測のショートカット"</string>
+    <string name="pdf_daylight">"日の出%1$s · 日の入り%2$s"</string>
+    <string name="pdf_kmh">"km/h"</string>
+    <string name="pdf_ms">"m/s"</string>
+    <string name="pdf_flood_set">"上げ潮流%1$s"</string>
+    <string name="pdf_ebb_set">"下げ潮流%1$s"</string>
+    <string name="pdf_page">"%1$d / %2$d"</string>
+    <string-array name="pdf_compass">
+        <item>"北"</item>
+        <item>"北北東"</item>
+        <item>"北東"</item>
+        <item>"東北東"</item>
+        <item>"東"</item>
+        <item>"東南東"</item>
+        <item>"南東"</item>
+        <item>"南南東"</item>
+        <item>"南"</item>
+        <item>"南南西"</item>
+        <item>"南西"</item>
+        <item>"西南西"</item>
+        <item>"西"</item>
+        <item>"西北西"</item>
+        <item>"北西"</item>
+        <item>"北北西"</item>
+    </string-array>
+    <string name="table_sheet_share">"PDFを共有"</string>
+    <string name="table_sheet_print">"印刷"</string>
+    <string name="table_sheet_page">"%2$dページ中%1$dページ"</string>
+    <string name="table_sheet_failed">"PDFを作成できませんでした。"</string>
+    <string name="table_sheet_export_failed">"印刷または共有するPDFを開けませんでした。"</string>
+    <string name="table_sheet_locked">"印刷用の表にはPremiumが必要です。"</string>
+    <string name="table_sheet_download_current">"潮流予測をダウンロードすると、さらに多くの日付を印刷できます。"</string>
+    <string name="table_sheet_download_tide">"さらに多くの日付を印刷するには、この観測地点の完全な潮汐予測が必要です。"</string>
+    <string name="table_sheet_letter">"US Letter固定レイアウト（8.5 × 11 in）。プレビューのサイズに合った用紙を選択してください。"</string>
+    <string name="table_sheet_a4">"A4固定レイアウト（210 × 297 mm）。プレビューのサイズに合った用紙を選択してください。"</string>
+    <string name="query_invalid">"この予測ショートカットを読み取れませんでした。"</string>
+    <string name="query_nearby_hint">"現在地を使用する場合は空欄にしてください。"</string>
+    <string name="query_date_hint">"YYYY-MM-DD形式で入力するか、次のイベントを表示する場合は空欄にしてください。"</string>
+    <string name="query_show">"予測を表示"</string>
+    <string name="query_missing">"%1$sが見つかりませんでした。Slackwaterで地名を確認してください。"</string>
+    <string name="query_location">"最近の位置情報が必要です。現在地を使用するか、上に地名を入力してください。"</string>
+    <string name="query_use_location">"現在地を使用"</string>
+    <string name="query_choose">"観測地点を選択"</string>
+    <string name="query_pin">"このショートカットを固定"</string>
+    <string name="query_pin_failed">"ランチャーでこのショートカットを固定できませんでした。"</string>
+    <string name="query_off">"快適な流速の設定で、転流時間帯がオフになっています。"</string>
+    <string name="query_none_date">"%1$sに該当するイベントはありません。"</string>
+    <string name="query_none_window">"今後48時間に転流時間帯はありません。"</string>
+    <string name="query_none_tide">"今後48時間に該当する潮汐はありません。"</string>
+    <string name="query_tide_ft">"%1$s · %2$.1f ft"</string>
+    <string name="query_tide_m">"%1$s · %2$.2f m"</string>
+    <string name="query_window">"%1$sから%2$s"</string>
+    <string name="query_window_from">"%1$sに開始。終了時刻は不明です。"</string>
+    <string name="query_window_until">"%1$sに終了。開始時刻は不明です。"</string>
+    <string name="query_window_at">"%1$sは快適な流速の範囲内です。開始・終了時刻は不明です。"</string>
+    <string name="query_curve_extent">"%1$s – %2$s"</string>
+    <string name="query_high_day">"満潮"</string>
+    <string name="query_low_day">"干潮"</string>
+    <string name="query_slack_day">"転流時間帯"</string>
+    <string name="query_tide_wait">"約%1$s後。"</string>
+    <string name="query_open">"現在、時間帯内です。"</string>
+    <string name="query_remaining">"現在、時間帯内です。残り約%1$s。"</string>
+    <string name="query_opens">"約%1$s後に開始。"</string>
+    <string name="query_opens_duration">"約%1$s後に開始し、約%2$s続きます。"</string>
+    <string name="reminder_notify_blocked">"通知を保存しました。受信するにはAndroidの設定で通知を許可してください。"</string>
+    <string name="reminder_inexact_saved">"通知を保存しました。このデバイスではAndroidが通知を遅らせる場合があります。"</string>
+    <string name="reminder_back_to_stations">"観測地点に戻る"</string>
+    <string name="reminder_my_alerts">"自分の通知"</string>
+    <string name="reminder_reset_height">"新しい潮位を設定"</string>
+    <string name="reminder_premium_required">"Premiumが必要"</string>
+    <string name="reminder_notifications_blocked">"通知がブロックされています"</string>
+    <string name="reminder_no_scheduled">"今後の通知は予定されていません"</string>
+    <string name="reminder_inexact">"Androidが通知を遅らせる場合があります"</string>
+    <string name="reminder_save_premium">"通知を保存するにはPremiumが必要です。"</string>
+    <string name="reminder_through">"%1$sまで予定済み"</string>
+    <string name="reminder_write_failed">"通知を保存できませんでした。もう一度お試しください。"</string>
+    <string name="schedule_title">"予定表"</string>
+    <string name="schedule_earlier">"前の週"</string>
+    <string name="schedule_later">"次の週"</string>
+    <string name="schedule_premium_message">"表の印刷と共有にはPremiumが必要です。予定表はここで確認できます。"</string>
+    <string name="schedule_reset">"選択した週に戻る"</string>
+    <string name="list_region_distance">"%1$s • %2$s"</string>
+    <string name="card_unavailable">"現在、予測はありません"</string>
+    <string name="card_value_unit_approximate">"~%1$s %2$s"</string>
+    <string name="card_spoken_reading">"%1$s %2$s、%3$s"</string>
+    <string name="card_spoken_set">"%1$sの方向"</string>
+    <string name="search_truncated">"最寄りの60件 — 入力を続けて絞り込む"</string>
+    <string name="list_catalog_unavailable">"このデバイスでは観測地点のデータを利用できません。"</string>
+    <string name="card_spoken_approximate">"約%1$s"</string>
+    <string name="data_and_licenses">"データとライセンス"</string>
+    <string name="data_credits">"データの提供元"</string>
+    <string name="reminder_channel">"観測点のリマインダー"</string>
+    <string name="notification_window_opens">"潮止まり時間帯が始まります"</string>
+    <string name="notification_eclipse_begins">"月食が始まります"</string>
+    <string name="notification_rise">"%1$s mを超えて上昇"</string>
+    <string name="notification_fall">"%1$s mを下回って下降"</string>
+</resources>

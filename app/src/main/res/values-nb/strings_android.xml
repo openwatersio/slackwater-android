@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generated from scripts/translations/android/nb.json. Edit the JSON source. -->
+<resources>
+    <string name="alert_plot_tide">"Tidevannshøyde (%1$s)"</string>
+    <string name="alert_plot_current">"Strømhastighet (kn)"</string>
+    <string name="alert_plot_derived">"Forutsagte strømskifter"</string>
+    <string name="alert_plot_range">"%1$s til %2$s"</string>
+    <string name="alert_plot_reset_event">"Tilbake til hendelsen"</string>
+    <string name="alert_rise">"stigende forbi %1$s m"</string>
+    <string name="alert_fall">"synkende forbi %1$s m"</string>
+    <string name="alert_edit">"Rediger varsel"</string>
+    <string name="alert_on_time">"På tidspunktet"</string>
+    <string name="alert_15min">"15 minutter før"</string>
+    <string name="alert_30min">"30 minutter før"</string>
+    <string name="alert_1hour">"1 time før"</string>
+    <string name="alert_3hours">"3 timer før"</string>
+    <string name="alert_1day">"1 dag før"</string>
+    <string name="alert_seconds">"%1$d sekunder før"</string>
+    <string name="alert_overdue">"Tidspunktet for påminnelsen har passert. Lagring sender den nå."</string>
+    <string name="alert_review_height">"Angi høyden på nytt (meter)"</string>
+    <string name="alert_height">"Høyde (meter)"</string>
+    <string name="alert_screen_empty">"Ingen varsler ennå. Opprett et varsel fra en stasjon."</string>
+    <plurals name="alert_plot_markers">
+        <item quantity="one">"%1$d merket varsel"</item>
+        <item quantity="other">"%1$d merkede varsler"</item>
+    </plurals>
+    <string name="alert_plot_previous">"Forrige hendelse, %1$s, %2$s"</string>
+    <string name="alert_plot_next">"Neste hendelse, %1$s, %2$s"</string>
+    <string name="alert_plot_earlier">"Fem minutter tidligere"</string>
+    <string name="alert_plot_later">"Fem minutter senere"</string>
+    <string name="alert_show_events">"Vis hendelser i grafen"</string>
+    <string name="alert_hide_events">"Skjul hendelser i grafen"</string>
+    <string name="alert_event_speed">"%1$s · %2$.1f kn"</string>
+    <string name="station_calendars_title">"Stasjonskalendere"</string>
+    <string name="station_calendars_about">"Legg stasjonens hendelser for de neste 90 dagene i en kalender på denne enheten. Hendelsene har ingen påminnelser og blir på denne enheten."</string>
+    <string name="station_calendar_subscribe">"Publiser kalender"</string>
+    <string name="station_calendar_remove">"Fjern kalender"</string>
+    <string name="station_calendar_remove_title">"Fjern %1$s?"</string>
+    <plurals name="station_calendar_remove_count">
+        <item quantity="one">"Slackwater fjerner %1$d hendelse som appen har publisert. Personlige hendelser og hendelser som allerede har startet, blir i Kalender."</item>
+        <item quantity="other">"Slackwater fjerner %1$d hendelser som appen har publisert. Personlige hendelser og hendelser som allerede har startet, blir i Kalender."</item>
+    </plurals>
+    <string name="station_calendar_offline_needed">"Krever nedlasting før publisering."</string>
+    <string name="station_calendar_pending">"Kalenderendringer venter. Allerede publiserte hendelser kan bli stående til Slackwater kan oppdatere Kalender."</string>
+    <string name="station_calendar_permission">"Tillat kalendertilgang slik at Slackwater kan finne og oppdatere hendelsene sine."</string>
+    <string name="station_calendar_premium">"Publisering av en ny stasjonskalender krever Premium."</string>
+    <string name="station_calendar_trial">"Publiserer i løpet av gratisdagen din."</string>
+    <string name="station_calendar_active">"Abonnert"</string>
+    <string name="station_calendar_failed">"Kalenderen kunne ikke oppdateres. Kontroller tilgang og prøv igjen."</string>
+    <string name="station_calendar_pending_remove">"Venter på fjerning"</string>
+    <plurals name="chart_minutes">
+        <item quantity="one">"%1$d minutt"</item>
+        <item quantity="other">"%1$d minutter"</item>
+    </plurals>
+    <plurals name="chart_hours">
+        <item quantity="one">"%1$d time"</item>
+        <item quantity="other">"%1$d timer"</item>
+    </plurals>
+    <string name="detail_related_currents">"Strøm ved %1$s"</string>
+    <string name="detail_namesakes">"Andre steder (%1$d)"</string>
+    <string name="detail_position">"Posisjon"</string>
+    <string name="detail_zone">"Tidssone"</string>
+    <string name="detail_reference">"Referanse"</string>
+    <string name="detail_datum">"Sjøkartnull"</string>
+    <string name="detail_datum_note">"Høyder måles fra sjøkartnull. En negativ verdi forutsier mindre vann enn kartdybden."</string>
+    <string name="detail_shape_note">"Kurven mellom strømskiftene er veiledende. Bare nullkryssingene viser forutsagte tidspunkter."</string>
+    <string name="detail_lags">"Forsinkelse i strømskifte"</string>
+    <string name="detail_lag_value">"%1$d min etter høyvann · %2$d min etter lavvann"</string>
+    <string name="detail_prediction">"Prognose"</string>
+    <string name="detail_fitted">"Beregnet på denne enheten fra lagrede observasjoner"</string>
+    <string name="detail_official">"Offisielle CHS-prognoser lastet ned for frakoblet bruk"</string>
+    <string name="detail_derived">"Bare anslåtte tider for strømskifte. Ingen hastighetsprognose er tilgjengelig for dette sundet."</string>
+    <string name="detail_harmonic">"Harmonisk prognose"</string>
+    <string name="detail_subordinate">"Prognose fra referansestasjonen med korreksjoner for sekundærstasjonen"</string>
+    <string name="detail_bound">"Strømskifte ved %1$s kan avvike med opptil %2$d minutter fra CHS-prognosen."</string>
+    <string name="detail_gap">"Slackwater har ingen prognoser for denne stasjonen."</string>
+    <string name="detail_queued">"Nedlasting forespurt"</string>
+    <string name="detail_no_week">"Ingen lagrede prognoser dekker denne uken."</string>
+    <string name="detail_no_data">"Ingen lagrede prognoser er tilgjengelige for denne stasjonen."</string>
+    <string name="detail_loading">"Laster prognoser"</string>
+    <string name="detail_copied">"Rapporten din ble kopiert. Send den til slackwater@openwaters.io."</string>
+    <string name="detail_flow">"Middelstrøm"</string>
+    <string name="detail_license">"Lisens"</string>
+    <string name="detail_source">"Kilde"</string>
+    <string name="detail_datum_source">"Sjøkartnull fra %1$s."</string>
+    <string name="detail_noaa_tide">"Harmonisk tidevannsprognose fra NOAA."</string>
+    <string name="detail_noaa_sub">"Basert på tidevann ved %1$s og publiserte NOAA-korreksjoner, beregnet på denne enheten."</string>
+    <string name="detail_publisher">"Harmoniske konstanter fra %1$s."</string>
+    <string name="detail_chs_fit">"Lastet ned fra CHS (IWLS), deretter tilpasset og beregnet på denne enheten. Dette er ikke prognoser publisert av CHS."</string>
+    <string name="detail_chs_preview">"Offisielle CHS-tidevannsprognoser lastet ned til denne enheten. Høydene er over LLWLT-sjøkartnull."</string>
+    <string name="detail_noaa_current">"Harmonisk strømprognose fra NOAA."</string>
+    <string name="detail_sub_current">"Strømskifter og maksima ved referansestasjonen korrigeres med publiserte NOAA-korreksjoner."</string>
+    <string name="detail_flood">"Flostrøm setter mot %1$d°T."</string>
+    <string name="detail_derived_source">"Slackwater anslår strømskifte ved %1$s ut fra høy- og lavvann ved %2$s. CHS publiserer ikke strømprognoser for dette sundet."</string>
+    <string name="detail_map">"Vis på kart"</string>
+    <string name="detail_invalid_link">"Denne stasjonslenken kunne ikke åpnes."</string>
+    <string name="detail_chart_settings">"Grafinnstillinger"</string>
+    <string name="panel_reference">"Anslått fra referansetidevann"</string>
+    <string name="panel_daylight">"%1$d h %2$d min dagslys"</string>
+    <string name="panel_lit">"%1$d%% belyst"</string>
+    <string name="panel_moonrise">"Måneoppgang"</string>
+    <string name="panel_moonset">"Månenedgang"</string>
+    <string name="panel_earth_distance">"Avstand fra jorden · %1$s km"</string>
+    <string name="panel_at">"%1$s kl. %2$s"</string>
+    <string name="panel_biggest">"De to ukenes største"</string>
+    <string name="panel_marked">"Utover det normale her"</string>
+    <string name="panel_hardest">"Sterkeste %1$s · %2$s"</string>
+    <string name="panel_strong">"Sterk %1$s · %2$s"</string>
+    <string name="panel_swing_rank">"Større enn alle unntatt %1$d av disse to ukenes %2$d tidevannsutslag."</string>
+    <string name="panel_max_rank">"Sterkere enn alle unntatt %1$d av disse to ukenes %2$d maksima i denne retningen."</string>
+    <string name="panel_biggest_day">"Hver søyle er én dags største tidevannsutslag."</string>
+    <string name="panel_max_day">"Hver søyle er én dags sterkeste %1$s."</string>
+    <string-array name="panel_phases">
+        <item>"Nymåne"</item>
+        <item>"Voksende månesigd"</item>
+        <item>"Første kvarter"</item>
+        <item>"Voksende måne"</item>
+        <item>"Fullmåne"</item>
+        <item>"Avtakende måne"</item>
+        <item>"Siste kvarter"</item>
+        <item>"Avtakende månesigd"</item>
+    </string-array>
+    <string name="panel_full">"Neste fullmåne"</string>
+    <string name="panel_new">"Neste nymåne"</string>
+    <string name="panel_last_lunar">"Siste synlige måneformørkelse"</string>
+    <string name="panel_last_solar">"Siste synlige solformørkelse"</string>
+    <string name="panel_rise_def">"Solens øvre kant kommer over en uhindret horisont."</string>
+    <string name="panel_set_def">"Solens øvre kant synker under en uhindret horisont."</string>
+    <string name="panel_noon_def">"Solen passerer den lokale meridianen."</string>
+    <string name="panel_twilight_rising">"Den stigende solen når %1$d° under horisonten."</string>
+    <string name="panel_twilight_setting">"Den synkende solen når %1$d° under horisonten."</string>
+    <string name="panel_edge_def">"Solens sentrum passerer %1$d° i forhold til horisonten."</string>
+    <string name="panel_next_total">"Neste totale måneformørkelse"</string>
+    <string name="panel_next_partial">"Neste delvise måneformørkelse"</string>
+    <string name="panel_next_penumbral">"Neste halvskyggeformørkelse av månen"</string>
+    <string name="panel_mostly">"Hovedsakelig sesongbestemt"</string>
+    <string name="panel_partly">"Delvis sesongbestemt"</string>
+    <string name="panel_ends">"Sammenlignet med stasjonens egne ytterpunkter"</string>
+    <string name="panel_season_large">"Den årlige endringen er langt større enn det daglige tidevannet."</string>
+    <string name="panel_hat">"Høyeste astronomiske tidevann · %1$s"</string>
+    <string name="panel_lat">"Laveste astronomiske tidevann · %1$s"</string>
+    <string name="panel_turn">"Valgt vendepunkt · %1$s"</string>
+    <string name="panel_ratio">"Årlig endring · %1$.1f× det daglige tidevannet"</string>
+    <string name="panel_slack_compared">"Strømstille varer %1$d minutter rundt dette maksimumet, mot vanligvis omtrent %2$d minutter her."</string>
+    <string name="panel_swing_explain">"Forskjellen mellom høy- og lavvann i dette tidevannsutslaget, %1$s."</string>
+    <string name="panel_springs_follow">"Springflo følger ny- og fullmåne."</string>
+    <string name="panel_orbit_scale">"Banens form er overdrevet for å vise endringen i avstand."</string>
+    <string name="panel_hat_label">"Høyeste astronomiske tidevann"</string>
+    <string name="panel_lat_label">"Laveste astronomiske tidevann"</string>
+    <string name="panel_high_label">"De to ukenes høyeste høyvann"</string>
+    <string name="panel_low_label">"De to ukenes laveste lavvann"</string>
+    <string name="panel_turn_label">"Valgt vendepunkt"</string>
+    <string name="panel_explain">"Om %1$s"</string>
+    <string name="panel_season_equal">"Den årlige endringen er omtrent like stor som det daglige tidevannet."</string>
+    <string name="panel_season_river">"Vannet ved %1$s varierer mye mer gjennom et år enn gjennom et døgn. Avrenning, nedbør og vind kan heve eller senke hele det daglige tidevannet."</string>
+    <string name="panel_season_tide">"Vannet ved %1$s følger et daglig tidevann og en årlig syklus av sammenlignbar størrelse. Tidspunktene for høy- og lavvann forblir forutsigbare når sesongnivået endrer seg."</string>
+    <string name="panel_spring_explain">"Solen og månen trekker langs samme linje. Den samlede virkningen øker vanligvis tidevannsforskjellen."</string>
+    <string name="panel_neap_explain">"Ved halvmåne trekker solen og månen i rett vinkel på hverandre. Tidevannsforskjellen blir vanligvis mindre."</string>
+    <string name="panel_perigee_explain">"Månen er nær sitt nærmeste punkt til jorden, der tidevannskraften er sterkere."</string>
+    <string name="panel_apogee_explain">"Månen er nær sitt fjerneste punkt fra jorden, der tidevannskraften er svakere."</string>
+    <string-array name="panel_phase_explanation">
+        <item>"Månen er nesten mellom jorden og solen."</item>
+        <item>"En voksende sigd av månens solbelyste halvdel vender mot jorden."</item>
+        <item>"Månen har tilbakelagt en fjerdedel av fasesyklusen."</item>
+        <item>"Mer enn halvparten av den synlige skiven er belyst, og det belyste området vokser."</item>
+        <item>"Månen står motsatt solen på himmelen vår."</item>
+        <item>"Mer enn halvparten av den synlige skiven er belyst, og det belyste området krymper."</item>
+        <item>"Månen har tilbakelagt tre fjerdedeler av fasesyklusen."</item>
+        <item>"En smalere og smalere sigd gjenstår før neste nymåne."</item>
+    </string-array>
+    <string name="prediction_shortcuts">"Prognosesnarveier"</string>
+    <string name="pdf_daylight">"Soloppgang %1$s · Solnedgang %2$s"</string>
+    <string name="pdf_kmh">"km/h"</string>
+    <string name="pdf_ms">"m/s"</string>
+    <string name="pdf_flood_set">"Flostrøm %1$s"</string>
+    <string name="pdf_ebb_set">"Fjærestrøm %1$s"</string>
+    <string name="pdf_page">"%1$d / %2$d"</string>
+    <string-array name="pdf_compass">
+        <item>"N"</item>
+        <item>"NNØ"</item>
+        <item>"NØ"</item>
+        <item>"ØNØ"</item>
+        <item>"Ø"</item>
+        <item>"ØSØ"</item>
+        <item>"SØ"</item>
+        <item>"SSØ"</item>
+        <item>"S"</item>
+        <item>"SSV"</item>
+        <item>"SV"</item>
+        <item>"VSV"</item>
+        <item>"V"</item>
+        <item>"VNV"</item>
+        <item>"NV"</item>
+        <item>"NNV"</item>
+    </string-array>
+    <string name="table_sheet_share">"Del PDF"</string>
+    <string name="table_sheet_print">"Skriv ut"</string>
+    <string name="table_sheet_page">"Side %1$d av %2$d"</string>
+    <string name="table_sheet_failed">"Kunne ikke klargjøre PDF-en."</string>
+    <string name="table_sheet_export_failed">"Kunne ikke åpne PDF-en for utskrift eller deling."</string>
+    <string name="table_sheet_locked">"Utskrivbare tabeller krever Premium."</string>
+    <string name="table_sheet_download_current">"Flere dager kan skrives ut når strømprognosene deres er lastet ned."</string>
+    <string name="table_sheet_download_tide">"Utskrift av flere dager krever fullstendige tidevannsprognoser for denne stasjonen."</string>
+    <string name="table_sheet_letter">"Fast US Letter-oppsett (8.5 × 11 in). Velg tilsvarende papir for størrelsen i forhåndsvisningen."</string>
+    <string name="table_sheet_a4">"Fast A4-oppsett (210 × 297 mm). Velg tilsvarende papir for størrelsen i forhåndsvisningen."</string>
+    <string name="query_invalid">"Denne prognosesnarveien kunne ikke leses."</string>
+    <string name="query_nearby_hint">"La feltet stå tomt for å bruke posisjonen din."</string>
+    <string name="query_date_hint">"Skriv inn YYYY-MM-DD, eller la feltet stå tomt for neste hendelse."</string>
+    <string name="query_show">"Vis prognose"</string>
+    <string name="query_missing">"Fant ikke %1$s. Kontroller stedsnavnet i Slackwater."</string>
+    <string name="query_location">"En nylig posisjon er nødvendig. Bruk posisjonen din eller skriv inn et sted ovenfor."</string>
+    <string name="query_use_location">"Bruk posisjonen min"</string>
+    <string name="query_choose">"Velg en stasjon"</string>
+    <string name="query_pin">"Fest denne snarveien"</string>
+    <string name="query_pin_failed">"Startappen kunne ikke feste denne snarveien."</string>
+    <string name="query_off">"Perioder med svak strøm er slått av i innstillingene dine for komfortabel strømhastighet."</string>
+    <string name="query_none_date">"Ingen samsvarende hendelse den %1$s."</string>
+    <string name="query_none_window">"Ingen periode med svak strøm de neste 48 timene."</string>
+    <string name="query_none_tide">"Intet samsvarende tidevann de neste 48 timene."</string>
+    <string name="query_tide_ft">"%1$s · %2$.1f ft"</string>
+    <string name="query_tide_m">"%1$s · %2$.2f m"</string>
+    <string name="query_window">"%1$s til %2$s"</string>
+    <string name="query_window_from">"Åpner %1$s. Sluttidspunkt ukjent."</string>
+    <string name="query_window_until">"Lukker %1$s. Starttidspunkt ukjent."</string>
+    <string name="query_window_at">"Innenfor din komfortable strømhastighet kl. %1$s. Start- og sluttidspunkt ukjent."</string>
+    <string name="query_curve_extent">"%1$s – %2$s"</string>
+    <string name="query_high_day">"Høyvann"</string>
+    <string name="query_low_day">"Lavvann"</string>
+    <string name="query_slack_day">"Perioder med svak strøm"</string>
+    <string name="query_tide_wait">"Om omtrent %1$s."</string>
+    <string name="query_open">"Åpent nå."</string>
+    <string name="query_remaining">"Åpent nå, med omtrent %1$s igjen."</string>
+    <string name="query_opens">"Åpner om omtrent %1$s."</string>
+    <string name="query_opens_duration">"Åpner om omtrent %1$s og varer omtrent %2$s."</string>
+    <string name="reminder_notify_blocked">"Varselet ditt er lagret. Tillat varslinger i Android-innstillingene for å motta det."</string>
+    <string name="reminder_inexact_saved">"Varselet ditt er lagret. Android kan forsinke påminnelser på denne enheten."</string>
+    <string name="reminder_back_to_stations">"Tilbake til stasjoner"</string>
+    <string name="reminder_my_alerts">"Mine varsler"</string>
+    <string name="reminder_reset_height">"Angi en ny høyde"</string>
+    <string name="reminder_premium_required">"Premium kreves"</string>
+    <string name="reminder_notifications_blocked">"Varslinger blokkert"</string>
+    <string name="reminder_no_scheduled">"Ingen kommende påminnelse planlagt"</string>
+    <string name="reminder_inexact">"Android kan forsinke leveringen"</string>
+    <string name="reminder_save_premium">"Lagring av et varsel krever Premium."</string>
+    <string name="reminder_through">"Planlagt til og med %1$s"</string>
+    <string name="reminder_write_failed">"Kunne ikke lagre varselet ditt. Prøv igjen."</string>
+    <string name="schedule_title">"Tidsplan"</string>
+    <string name="schedule_earlier">"Forrige uke"</string>
+    <string name="schedule_later">"Neste uke"</string>
+    <string name="schedule_premium_message">"Utskrift og deling av tabeller krever Premium. Du kan lese tidsplanen her."</string>
+    <string name="schedule_reset">"Tilbake til valgt uke"</string>
+    <string name="list_region_distance">"%1$s • %2$s"</string>
+    <string name="card_unavailable">"Ingen prognoser nå"</string>
+    <string name="card_value_unit_approximate">"~%1$s %2$s"</string>
+    <string name="card_spoken_reading">"%1$s %2$s, %3$s"</string>
+    <string name="card_spoken_set">"mot %1$s"</string>
+    <string name="search_truncated">"De nærmeste 60 — skriv videre for å avgrense"</string>
+    <string name="list_catalog_unavailable">"Stasjonsdata er ikke tilgjengelige på denne enheten."</string>
+    <string name="card_spoken_approximate">"omtrent %1$s"</string>
+    <string name="data_and_licenses">"Data og lisenser"</string>
+    <string name="data_credits">"Datakilder"</string>
+    <string name="reminder_channel">"Stasjonspåminnelser"</string>
+    <string name="notification_window_opens">"Perioden med svak strøm begynner"</string>
+    <string name="notification_eclipse_begins">"Formørkelsen begynner"</string>
+    <string name="notification_rise">"Stigende forbi %1$s m"</string>
+    <string name="notification_fall">"Synkende forbi %1$s m"</string>
+</resources>

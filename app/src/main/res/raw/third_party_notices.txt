@@ -22,7 +22,7 @@ Prediction engine: Slackwater (MIT).
 
 Canadian station identities and current-gate evidence: Canadian Hydrographic Service, Fisheries and Oceans Canada. DFO terms (clause 10). Derived gate evidence is not CHS-published prediction data and is not for navigation. This app target bundles no CHS predictions or user-fitted models.
 
-Credits follow slackwater-ios/Slackwater/AboutView.swift at 5b26bcd5ce0220302de3ba32be5ebf67552fb06e.
+Credits follow slackwater-ios/Slackwater/AboutView.swift at 02188f2a2f5ef4166cd74c373a5885736d7ef159.
 
 SOFTWARE LICENSES
 

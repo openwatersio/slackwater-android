@@ -2,7 +2,7 @@
 
 Android verification is tracked in the [scenario and accessibility matrix](validation/accessibility.md), the [station detail checks](validation/station-detail.md), the [timeline fixtures and interruption trace](validation/timeline.md), and the [performance evidence ledger](validation/android-performance.md).
 
-This ledger is the acceptance map for the [Android implementation plan](superpowers/plans/2026-11-05-android-development.md). Its source is the entire iOS tree at [PR #900 head `5b26bcd5ce0220302de3ba32be5ebf67552fb06e`](https://github.com/openwatersio/slackwater-ios/tree/5b26bcd5ce0220302de3ba32be5ebf67552fb06e). Rows describe work to implement and verify, not existing Android features.
+This ledger is the acceptance map for the [Android implementation plan](superpowers/plans/2026-11-05-android-development.md). Its source is the entire iOS tree at [PR #900 merge commit `02188f2a2f5ef4166cd74c373a5885736d7ef159`](https://github.com/openwatersio/slackwater-ios/tree/02188f2a2f5ef4166cd74c373a5885736d7ef159). Rows describe work to implement and verify, not existing Android features.
 
 Use the owning product document when its wording differs from incidental iOS code. Source documents that point to moving upstream links must be resolved to reviewed dependency SHAs in `upstream.lock.json` before implementation. Refresh this baseline deliberately; do not make CI compare a pinned export with the latest unreviewed iOS `main`.
 
@@ -149,28 +149,28 @@ PR #900 makes the implementation gaps explicit. A known iOS gap does not waive a
 - Record release-build performance with device/OS and named boundaries. Published iOS numbers are comparison context, not Android service-level targets.
 - Every row ends with an implementation/test link, an explicit platform adaptation, or a named unresolved design disposition. Do not claim generic "iOS parity" while a missing behavior is only hidden behind an unchecked issue.
 
-[ios-index]: https://github.com/openwatersio/slackwater-ios/blob/5b26bcd5ce0220302de3ba32be5ebf67552fb06e/docs/README.md
-[ios-list]: https://github.com/openwatersio/slackwater-ios/blob/5b26bcd5ce0220302de3ba32be5ebf67552fb06e/docs/list.md
-[ios-detail]: https://github.com/openwatersio/slackwater-ios/blob/5b26bcd5ce0220302de3ba32be5ebf67552fb06e/docs/detail.md
-[ios-scrubber]: https://github.com/openwatersio/slackwater-ios/blob/5b26bcd5ce0220302de3ba32be5ebf67552fb06e/docs/scrubber.md
-[ios-current]: https://github.com/openwatersio/slackwater-ios/blob/5b26bcd5ce0220302de3ba32be5ebf67552fb06e/docs/current-charts.md
-[ios-chs]: https://github.com/openwatersio/slackwater-ios/blob/5b26bcd5ce0220302de3ba32be5ebf67552fb06e/docs/chs-data-model.md
-[ios-premium]: https://github.com/openwatersio/slackwater-ios/blob/5b26bcd5ce0220302de3ba32be5ebf67552fb06e/docs/premium.md
-[ios-alerts]: https://github.com/openwatersio/slackwater-ios/blob/5b26bcd5ce0220302de3ba32be5ebf67552fb06e/docs/alerts.md
-[ios-siri]: https://github.com/openwatersio/slackwater-ios/blob/5b26bcd5ce0220302de3ba32be5ebf67552fb06e/docs/siri.md
-[ios-resources]: https://github.com/openwatersio/slackwater-ios/blob/5b26bcd5ce0220302de3ba32be5ebf67552fb06e/Slackwater/Resources/README.md
-[ios-chs-validation]: https://github.com/openwatersio/slackwater-ios/blob/5b26bcd5ce0220302de3ba32be5ebf67552fb06e/docs/validation/chs-currents.md
-[ios-world-validation]: https://github.com/openwatersio/slackwater-ios/blob/5b26bcd5ce0220302de3ba32be5ebf67552fb06e/docs/validation/world-tide-stations.md
-[ios-fill]: https://github.com/openwatersio/slackwater-ios/blob/5b26bcd5ce0220302de3ba32be5ebf67552fb06e/tools/fill-pipeline/README.md
-[ios-patches]: https://github.com/openwatersio/slackwater-ios/blob/5b26bcd5ce0220302de3ba32be5ebf67552fb06e/tools/patch-pipeline/README.md
-[ios-patch-certification]: https://github.com/openwatersio/slackwater-ios/blob/5b26bcd5ce0220302de3ba32be5ebf67552fb06e/tools/patch-pipeline/passes/CERTIFICATION.md
-[ios-performance]: https://github.com/openwatersio/slackwater-ios/blob/5b26bcd5ce0220302de3ba32be5ebf67552fb06e/docs/performance.md
-[ios-metadata]: https://github.com/openwatersio/slackwater-ios/blob/5b26bcd5ce0220302de3ba32be5ebf67552fb06e/docs/appstore-metadata.md
-[ios-listing]: https://github.com/openwatersio/slackwater-ios/blob/5b26bcd5ce0220302de3ba32be5ebf67552fb06e/docs/appstore-listing.json
-[ios-licensing]: https://github.com/openwatersio/slackwater-ios/blob/5b26bcd5ce0220302de3ba32be5ebf67552fb06e/docs/licensing.md
-[ios-testflight]: https://github.com/openwatersio/slackwater-ios/blob/5b26bcd5ce0220302de3ba32be5ebf67552fb06e/docs/testflight.md
-[ios-appstore]: https://github.com/openwatersio/slackwater-ios/blob/5b26bcd5ce0220302de3ba32be5ebf67552fb06e/docs/appstore.md
-[ios-release-notes]: https://github.com/openwatersio/slackwater-ios/tree/5b26bcd5ce0220302de3ba32be5ebf67552fb06e/docs/release-notes
+[ios-index]: https://github.com/openwatersio/slackwater-ios/blob/02188f2a2f5ef4166cd74c373a5885736d7ef159/docs/README.md
+[ios-list]: https://github.com/openwatersio/slackwater-ios/blob/02188f2a2f5ef4166cd74c373a5885736d7ef159/docs/list.md
+[ios-detail]: https://github.com/openwatersio/slackwater-ios/blob/02188f2a2f5ef4166cd74c373a5885736d7ef159/docs/detail.md
+[ios-scrubber]: https://github.com/openwatersio/slackwater-ios/blob/02188f2a2f5ef4166cd74c373a5885736d7ef159/docs/scrubber.md
+[ios-current]: https://github.com/openwatersio/slackwater-ios/blob/02188f2a2f5ef4166cd74c373a5885736d7ef159/docs/current-charts.md
+[ios-chs]: https://github.com/openwatersio/slackwater-ios/blob/02188f2a2f5ef4166cd74c373a5885736d7ef159/docs/chs-data-model.md
+[ios-premium]: https://github.com/openwatersio/slackwater-ios/blob/02188f2a2f5ef4166cd74c373a5885736d7ef159/docs/premium.md
+[ios-alerts]: https://github.com/openwatersio/slackwater-ios/blob/02188f2a2f5ef4166cd74c373a5885736d7ef159/docs/alerts.md
+[ios-siri]: https://github.com/openwatersio/slackwater-ios/blob/02188f2a2f5ef4166cd74c373a5885736d7ef159/docs/siri.md
+[ios-resources]: https://github.com/openwatersio/slackwater-ios/blob/02188f2a2f5ef4166cd74c373a5885736d7ef159/Slackwater/Resources/README.md
+[ios-chs-validation]: https://github.com/openwatersio/slackwater-ios/blob/02188f2a2f5ef4166cd74c373a5885736d7ef159/docs/validation/chs-currents.md
+[ios-world-validation]: https://github.com/openwatersio/slackwater-ios/blob/02188f2a2f5ef4166cd74c373a5885736d7ef159/docs/validation/world-tide-stations.md
+[ios-fill]: https://github.com/openwatersio/slackwater-ios/blob/02188f2a2f5ef4166cd74c373a5885736d7ef159/tools/fill-pipeline/README.md
+[ios-patches]: https://github.com/openwatersio/slackwater-ios/blob/02188f2a2f5ef4166cd74c373a5885736d7ef159/tools/patch-pipeline/README.md
+[ios-patch-certification]: https://github.com/openwatersio/slackwater-ios/blob/02188f2a2f5ef4166cd74c373a5885736d7ef159/tools/patch-pipeline/passes/CERTIFICATION.md
+[ios-performance]: https://github.com/openwatersio/slackwater-ios/blob/02188f2a2f5ef4166cd74c373a5885736d7ef159/docs/performance.md
+[ios-metadata]: https://github.com/openwatersio/slackwater-ios/blob/02188f2a2f5ef4166cd74c373a5885736d7ef159/docs/appstore-metadata.md
+[ios-listing]: https://github.com/openwatersio/slackwater-ios/blob/02188f2a2f5ef4166cd74c373a5885736d7ef159/docs/appstore-listing.json
+[ios-licensing]: https://github.com/openwatersio/slackwater-ios/blob/02188f2a2f5ef4166cd74c373a5885736d7ef159/docs/licensing.md
+[ios-testflight]: https://github.com/openwatersio/slackwater-ios/blob/02188f2a2f5ef4166cd74c373a5885736d7ef159/docs/testflight.md
+[ios-appstore]: https://github.com/openwatersio/slackwater-ios/blob/02188f2a2f5ef4166cd74c373a5885736d7ef159/docs/appstore.md
+[ios-release-notes]: https://github.com/openwatersio/slackwater-ios/tree/02188f2a2f5ef4166cd74c373a5885736d7ef159/docs/release-notes
 
 ### Android saved places
 

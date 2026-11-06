@@ -37,8 +37,10 @@ class StationListTest {
     @Before fun seed() = runBlocking {
         saved = places.places.first().getOrThrow()
         for (id in saved.favorites) places.forgetFavorite(id)
+        compose.waitUntil(60_000) { StationListModel.get(context).state.value?.favorites?.isEmpty() == true }
         places.setFavorite(fridayHarbor, true)
         places.setFavorite(withdrawn, true)
+        compose.waitUntil(60_000) { StationListModel.get(context).state.value?.sections?.favorites == listOf(fridayHarbor, withdrawn) }
     }
 
     @After fun restore() = runBlocking {
@@ -80,6 +82,12 @@ class StationListTest {
             compose.waitUntil(10_000) { compose.onAllNodesWithContentDescription("Remove from favorites").fetchSemanticsNodes().isNotEmpty() }
             compose.onNodeWithContentDescription("Remove from favorites").performClick()
             compose.waitUntil(10_000) { compose.onAllNodesWithContentDescription("Add to favorites").fetchSemanticsNodes().isNotEmpty() }
+            compose.waitUntil(10_000) {
+                runBlocking {
+                    val stored = places.places.first().getOrThrow()
+                    stored.favorites == listOf(withdrawn) && stored.recents.firstOrNull() == fridayHarbor
+                }
+            }
             val stored = runBlocking { places.places.first().getOrThrow() }
             assertEquals(listOf(withdrawn), stored.favorites)
             assertEquals(fridayHarbor, stored.recents.first())
