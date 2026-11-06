@@ -64,4 +64,8 @@
     <string name="station_unstar">Retirer des favoris</string>
     <string name="list_catalog_unavailable">Les données des stations ne sont pas disponibles sur cet appareil.</string>
     <string name="card_spoken_approximate">environ %1$s</string>
+    <string name="curve_spoken">Courbe de 25 heures : %1$s</string>
+    <string name="curve_spoken_item">%1$s à %2$s</string>
+    <string name="curve_spoken_flood">flot</string>
+    <string name="curve_spoken_ebb">jusant</string>
 </resources>

@@ -83,9 +83,7 @@ private fun readSeries(result: PredictionResult.Ready, at: Instant): CardReading
         // At slack the set shows only while water still crosses the channel at 0.05 kn or more, the threshold the
         // list contract states in knots whatever the display unit.
         val set = reading.directionDegrees?.takeIf { reading.magnitudeKnots >= CARD_NEUTRAL_SET_KNOTS }
-        val approximate = result.capabilities == StationCapabilities.PROVISIONAL_CURRENT ||
-            result.capabilities == StationCapabilities.BOUNDED_CURRENT
-        CardReading.Current(reading.magnitudeKnots, state, set, approximate)
+        CardReading.Current(reading.magnitudeKnots, state, set, result.approximate)
     } ?: CardReading.Unavailable
     is PredictionSeries.Derived -> derivedPhase(series.slacks, at)?.let(CardReading::Derived) ?: CardReading.Unavailable
 }
