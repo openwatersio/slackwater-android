@@ -52,11 +52,11 @@ private fun eventStops(series: PredictionSeries) = when (series) {
 
 internal fun plotSelection(
     series: PredictionSeries, offer: ChartAlertSelection, time: Instant, units: HeightUnits,
-    eclipseContacts: List<Instant> = emptyList(),
+    eclipseContacts: List<Instant> = emptyList(), fromNotification: Boolean = false,
 ): ChartAlertSelection? {
     // Notification destinations carry an occurrence at minute precision.
     val contact = eclipseContacts.firstOrNull {
-        it.truncatedTo(ChronoUnit.MINUTES) == time || Duration.between(it, time).abs() <= Duration.ofSeconds(1)
+        (fromNotification && it.truncatedTo(ChronoUnit.MINUTES) == time) || Duration.between(it, time).abs() <= Duration.ofSeconds(1)
     }
     if (contact != null) return offer.copy(moment = contact, trigger = AlertTrigger.Eclipse)
     val nearest = eventStops(series).minByOrNull { Duration.between(it.first, time).abs() }
@@ -97,8 +97,9 @@ fun AlertDetailPlot(
             SunWindows.eclipseContacts(coverage, selection.station.latitude, selection.station.longitude)
         }
     }
-    val parked = parkedTime?.takeIf { it in coverage }?.let { plotSelection(series, selection, it, heightUnits, contacts) }
-    val focus = parkedTime?.takeIf { it in coverage } ?: center
+    val cursor = parkedTime?.takeIf { it in coverage }
+    val parked = cursor?.let { plotSelection(series, selection, it, heightUnits, contacts) }
+    val focus = cursor ?: center
     val readingTime = focus ?: now
     val width = minOf(Duration.ofHours(12), Duration.between(coverage.start, coverage.end))
     if (width.toMillis() <= 0) return
@@ -122,9 +123,12 @@ fun AlertDetailPlot(
     val ink = MaterialTheme.colorScheme.primary
     val quiet = MaterialTheme.colorScheme.outline
     var pixels by remember { mutableIntStateOf(0) }
-    val markers = rememberAlertMarkers(true, selection, rules, window, thresholdKnots, repository)
+    val loadedMarkers = rememberAlertMarkers(true, selection, rules, coverage, thresholdKnots, repository)
+    val markers = loadedMarkers.filter { it >= window.start && it < window.end }
     val alertTime = focus ?: window.start.plus(width.dividedBy(2))
-    val accessible = alertTime.takeIf { it in coverage }?.let { plotSelection(series, selection, it, heightUnits, contacts) }
+    val accessible = alertTime.takeIf { it in coverage }?.let {
+        plotSelection(series, selection, it, heightUnits, contacts, fromNotification = cursor == null && center != null)
+    }
     val stops = remember(series, contacts, coverage) {
         (eventStops(series) + contacts.map { it to AlertTrigger.Eclipse })
             .filter { it.first in coverage }.sortedBy { it.first }
@@ -227,7 +231,7 @@ fun AlertDetailPlot(
             }
         }
         AlertLine(parked ?: selection, parked != null, rules, now, onEdit)
-        if (parkedTime != null) TextButton(onClick = { parkedTime = null }, modifier = Modifier.heightIn(min = 48.dp)) {
+        if (cursor != null) TextButton(onClick = { parkedTime = null }, modifier = Modifier.heightIn(min = 48.dp)) {
             Text(stringResource(if (center == null) R.string.alert_plot_reset else R.string.alert_plot_reset_event))
         }
     }

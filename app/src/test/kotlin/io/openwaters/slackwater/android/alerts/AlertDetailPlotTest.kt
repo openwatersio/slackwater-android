@@ -32,7 +32,8 @@ class AlertDetailPlotTest {
 
     @Test fun notificationMinuteSelectsTheActualContactOrNearbyExtreme() {
         val contact = t(50).plusSeconds(37)
-        val selected = plotSelection(tide, rest, t(50), HeightUnits.METRIC, listOf(contact))!!
+        assertEquals(AlertTrigger.TideExtreme(true), plotSelection(tide, rest, t(50), HeightUnits.METRIC, listOf(contact))!!.trigger)
+        val selected = plotSelection(tide, rest, t(50), HeightUnits.METRIC, listOf(contact), fromNotification = true)!!
         assertEquals(AlertTrigger.Eclipse, selected.trigger)
         assertEquals(contact, selected.moment)
         val nearHigh = plotSelection(tide, rest, t(59), HeightUnits.METRIC)!!

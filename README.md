@@ -23,7 +23,7 @@ The device check requires an attached emulator/device. CI runs it on API 26 and 
 
 The launch screen maps the uncompressed tide database directly from the APK and looks up Friday Harbor by station ID with the pinned Kotlin database reader. Runtime clock injection lives in the pure core; the shell does not yet ask for location or load Canadian models, so permission/location/model seed behavior belongs with those feature consumers. Test data never enters the release APK.
 
-Gradle checks the source pins and packaged inputs during configuration, including Android Studio sync. Kotlin compiler scratch files under `kotlin/.kotlin/` are excluded from the source cleanliness check. CI audits both debug and release APKs.
+Gradle checks the source pins and packaged inputs during configuration, including Android Studio sync. Kotlin compiler scratch files under `kotlin/.kotlin/` are excluded from the source cleanliness check. CI audits the debug, release and optimized benchmark APKs.
 
 Dependency checksums are in `gradle/verification-metadata.xml`; the wrapper has a distribution checksum. CI resolves published source variants for the debug app and tests. After updating Gradle or a dependency, sync the project in Android Studio to check the additional archives requested by the IDE. Verify any new sources, samples and Javadoc archives against the publisher before adding their SHA-256 pins. A wrapper update also needs the matching Gradle source ZIP checksum. Keep Studio’s generated .idea directory local. Upstream fixture provenance is recorded in the shared test fixture; data credits and third-party notices are available from the launch screen.
 

@@ -30,7 +30,7 @@ Archive the benchmark JSON and per-iteration Perfetto traces in `benchmark/build
 
 ## Emulator smoke run, November 6, 2026
 
-All four tests passed on the API 37 arm64 Android 17 Medium Phone AVD (Google Play image `CE2A.260420.051.A2/16418371`, 1080 × 2400, 420 dpi). The optimized target APK had SHA-256 `95e3f2dd5d42b60bf418bf50f0556eba1af9582e47e2e0ea5247b53e981b7b38`. Airplane mode was off. Each test produced five duration samples, frame CPU and overrun samples, and five Perfetto traces. The shell tests also reported time to initial display. This run verifies the harness. Physical-device measurements will supply the performance baselines.
+All four tests passed on the API 37 arm64 Android 17 Medium Phone AVD (Google Play image `CE2A.260420.051.A2/16418371`, 1080 × 2400, 420 dpi). The run used the issue #27 working tree based on `9601dd6b24d97382b8fa2c7f9e6f4dab83d81cee`, including the separate benchmark application ID. The measured target APK had SHA-256 `504f6b748b23a1bfb2dae0150a35527af02ada402a727aa808b2d8e51388f64a`. Airplane mode was off. Each test produced five duration samples, frame CPU and overrun samples, and five Perfetto traces. The shell tests also reported time to initial display. This run verifies the harness. Physical-device measurements will supply the performance baselines.
 
 ## Open measurements for issue #27
 

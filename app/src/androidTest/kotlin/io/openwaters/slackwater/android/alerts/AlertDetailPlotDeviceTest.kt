@@ -29,15 +29,18 @@ class AlertDetailPlotDeviceTest {
 
     @Test fun accessiblePlotParksAndReopensAnEventWithOneMarkerForTwoReminders() {
         val station = StationIdentity(StationId("a"), "Hope Bay", "", 0.0, 0.0, StationKind.Tide, timezone = "America/Los_Angeles")
-        val span = TimeSpan(Instant.EPOCH, Instant.EPOCH.plusSeconds(7200))
-        val high = span.start.plusSeconds(3600)
+        val span = TimeSpan(Instant.EPOCH, Instant.EPOCH.plusSeconds(24 * 3600))
+        val high = span.start.plusSeconds(6 * 3600)
         val ready = PredictionResult.Ready(station.id, span, "fixture", StationCapabilities.HARMONIC_TIDE,
             PredictionSeries.Tide(listOf(TidePoint(span.start, 0.0), TidePoint(high, 2.0), TidePoint(span.end, 0.0)),
                 emptyList(), listOf(TideExtreme(high, 2.0, ExtremeKind.HIGH))))
         val rule = AlertRule.forEditor(station.id, AlertTrigger.TideExtreme(true), high)
+        val loads = java.util.concurrent.atomic.AtomicInteger()
+        val rules = listOf(rule, rule.copy(id = java.util.UUID.randomUUID(), leadSeconds = 0))
         val repository = object : PredictionRepository {
             override suspend fun load(id: StationId, span: TimeSpan, purpose: PredictionPurpose): PredictionResult {
                 check(Looper.myLooper() != Looper.getMainLooper())
+                loads.incrementAndGet()
                 return ready
             }
         }
@@ -45,12 +48,13 @@ class AlertDetailPlotDeviceTest {
         compose.setContent {
             CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
                 AlertDetailPlot(ready, ChartAlertSelection(station, ready.capabilities, AlertTrigger.TideExtreme(false),
-                span.start, null), listOf(rule, rule.copy(id = java.util.UUID.randomUUID(), leadSeconds = 0)),
+                span.start, null), rules,
                 0.5, repository, span.start, { edited = it }, heightUnits = HeightUnits.METRIC)
             }
         }
         val marker = hasContentDescription("1 marked alert", substring = true)
         compose.waitUntil(5000) { compose.onAllNodes(marker).fetchSemanticsNodes().isNotEmpty() }
+        val initialLoads = loads.get()
         val plot = compose.onNode(hasContentDescription("Tide height", substring = true))
         fun assertCursor(moment: Instant) {
             assertTrue(plot.fetchSemanticsNode().config[SemanticsProperties.StateDescription].startsWith(station.timeLabel(moment)))
@@ -67,7 +71,7 @@ class AlertDetailPlotDeviceTest {
             and hasText("high tide", substring = true))
         highRow.assertExists()
         val startX = compose.onNodeWithText(station.timeLabel(span.start)).fetchSemanticsNode().boundsInRoot.left
-        val endX = compose.onNodeWithText(station.timeLabel(span.end)).fetchSemanticsNode().boundsInRoot.left
+        val endX = compose.onNodeWithText(station.timeLabel(span.start.plusSeconds(12 * 3600))).fetchSemanticsNode().boundsInRoot.left
         assertTrue(startX < endX)
         invokeAction("Set an alert")
         assertCursor(high)
@@ -88,6 +92,8 @@ class AlertDetailPlotDeviceTest {
         plot.performSemanticsAction(SemanticsActions.RequestFocus)
         plot.performKeyInput { pressKey(Key.DirectionRight) }
         assertCursor(high.plusSeconds(600))
+        compose.onNode(marker).assertExists()
+        assertEquals(initialLoads, loads.get())
         invokeAction("Previous event")
         assertCursor(high)
         invokeAction("Earlier by five minutes")
