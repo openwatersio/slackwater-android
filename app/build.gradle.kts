@@ -19,6 +19,7 @@ dependencies {
     implementation(platform(libs.compose.bom))
     implementation(libs.activity.compose)
     implementation(libs.material3)
+    implementation(libs.datastore)
     androidTestImplementation(testFixtures(project(":core")))
     androidTestImplementation(platform(libs.compose.bom))
     androidTestImplementation(libs.compose.test)
