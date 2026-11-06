@@ -146,11 +146,17 @@ data class StationListSections(
     val heroes: List<RankedStation>,
     /** Saved order, including stations no longer live, which render as removed cards. */
     val favorites: List<StationId>,
-    /** Each carries its distance from [anchor], which a screen can withhold when the anchor is not a fix. */
+    /** Each carries its distance from [anchor] for ranking; label it only when [showsDistances]. */
     val nearMe: List<RankedStation>,
     /** Most recent first, live stations only. */
     val recents: List<StationId>,
-)
+) {
+    /**
+     * Only a real fix earns distance labels. Ranked from the last-opened place or the first-run anchor, the order
+     * still holds but a distance would claim a position the app does not have. This departs from iOS on purpose.
+     */
+    val showsDistances: Boolean get() = anchor is RankingAnchor.Fix
+}
 
 /**
  * Builds the list's sections. [catalog] is the live catalog in catalog order (`StationIdentityIndex.identities`);
