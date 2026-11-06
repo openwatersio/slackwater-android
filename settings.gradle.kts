@@ -15,7 +15,7 @@ try {
 } catch (error: Exception) {
     throw GradleException("Upstream input verification failed. $setupHelp\n${error.message}", error)
 }
-include(":core", ":app")
+include(":core", ":app", ":benchmark")
 includeBuild("vendor/slackwater/kotlin") { name = "slackwater-engine" }
 includeBuild("vendor/almanac/kotlin") { name = "almanac" }
 includeBuild("vendor/slackwater-database/packages/kotlin")

@@ -1,5 +1,7 @@
 # Android parity with Slackwater iOS
 
+Android verification is tracked in the [scenario and accessibility matrix](validation/accessibility.md) and the [performance evidence ledger](validation/android-performance.md).
+
 This ledger is the acceptance map for the [Android implementation plan](superpowers/plans/2026-11-05-android-development.md). Its source is the entire iOS tree at [PR #900 head `5b26bcd5ce0220302de3ba32be5ebf67552fb06e`](https://github.com/openwatersio/slackwater-ios/tree/5b26bcd5ce0220302de3ba32be5ebf67552fb06e). Rows describe work to implement and verify, not existing Android features.
 
 Use the owning product document when its wording differs from incidental iOS code. Source documents that point to moving upstream links must be resolved to reviewed dependency SHAs in `upstream.lock.json` before implementation. Refresh this baseline deliberately; do not make CI compare a pinned export with the latest unreviewed iOS `main`.

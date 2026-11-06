@@ -30,6 +30,17 @@ class AlertDetailPlotTest {
         assertNull(plotSelection(tide, rest, t(121), HeightUnits.METRIC))
     }
 
+    @Test fun notificationMinuteSelectsTheActualContactOrNearbyExtreme() {
+        val contact = t(50).plusSeconds(37)
+        assertEquals(AlertTrigger.TideExtreme(true), plotSelection(tide, rest, t(50), HeightUnits.METRIC, listOf(contact))!!.trigger)
+        val selected = plotSelection(tide, rest, t(50), HeightUnits.METRIC, listOf(contact), fromNotification = true)!!
+        assertEquals(AlertTrigger.Eclipse, selected.trigger)
+        assertEquals(contact, selected.moment)
+        val nearHigh = plotSelection(tide, rest, t(59), HeightUnits.METRIC)!!
+        assertEquals(AlertTrigger.TideExtreme(true), nearHigh.trigger)
+        assertEquals(t(60), nearHigh.moment)
+    }
+
     @Test fun signedCurrentPeaksAndSlacksHaveDistinctOffers() {
         val current = PredictionSeries.Current(emptyList(), listOf(
             CurrentEvent(t(10), -2.0, CurrentEventKind.MAX_EBB),
