@@ -1,0 +1,131 @@
+package io.openwaters.slackwater.android.data
+
+import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
+import androidx.datastore.preferences.core.PreferenceDataStoreFactory
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.doublePreferencesKey
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.emptyPreferences
+import androidx.datastore.preferences.core.stringPreferencesKey
+import java.io.File
+import java.io.IOException
+import java.util.Locale
+import kotlin.math.abs
+import kotlin.math.floor
+import kotlin.math.sign
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
+
+// Stored values match the iOS and web settings, so a value means the same thing on every platform.
+enum class HeightUnits(internal val stored: String) { IMPERIAL("imperial"), METRIC("metric") }
+
+enum class SpeedUnit(internal val stored: String) { KNOTS("kn"), KILOMETRES_PER_HOUR("kmh"), METRES_PER_SECOND("ms") }
+
+/** How a current's set reads: a compass point ("SW") or a three-digit true bearing ("225°"). */
+enum class SetFormat(internal val stored: String) { COMPASS("compass"), DEGREES("degrees") }
+
+data class ReadingPreferences(
+    /** Null until the person picks one, so the regional default follows the device locale. */
+    val savedHeightUnits: HeightUnits? = null,
+    val speedUnit: SpeedUnit = SpeedUnit.KNOTS,
+    val setFormat: SetFormat = SetFormat.COMPASS,
+    /** The comfort current: the speed that bounds a slack window. Zero turns the window off. */
+    val slackWindowKnots: Double = DEFAULT_SLACK_WINDOW_KNOTS,
+) {
+    fun heightUnits(locale: Locale = Locale.getDefault()): HeightUnits =
+        savedHeightUnits ?: if (locale.country == "US") HeightUnits.IMPERIAL else HeightUnits.METRIC
+
+    val slackWindowOff: Boolean get() = slackWindowKnots <= 0
+
+    companion object {
+        const val DEFAULT_SLACK_WINDOW_KNOTS = 0.5
+        val SLACK_WINDOW_KNOTS_RANGE = 0.0..10.0
+
+        /** Rounded to the setting's tenth first, so stepping 0.3 down three times reads as off, not as a bad value. */
+        fun normalizedSlackWindowKnots(value: Double): Double {
+            if (!value.isFinite()) return DEFAULT_SLACK_WINDOW_KNOTS
+            // Half away from zero, as iOS rounds, so -0.05 is out of range there and here; + 0.0 drops -0.0.
+            val tenth = sign(value) * floor(abs(value) * 10 + 0.5) / 10 + 0.0
+            return if (tenth in SLACK_WINDOW_KNOTS_RANGE) tenth else DEFAULT_SLACK_WINDOW_KNOTS
+        }
+    }
+}
+
+private val heightUnitsKey = stringPreferencesKey("heightUnits")
+private val speedUnitKey = stringPreferencesKey("speedUnit")
+private val setFormatKey = stringPreferencesKey("setFormat")
+private val slackWindowKey = doublePreferencesKey("slackWindowKnots")
+
+// A value this build cannot read (a newer build's unit, a wrong type) reads as the default
+// and stays on disk until the person picks another.
+private inline fun <reified T> Preferences.value(key: Preferences.Key<*>): T? = asMap()[key] as? T
+
+private fun <E> Preferences.choice(key: Preferences.Key<String>, values: List<E>, stored: (E) -> String): E? =
+    value<String>(key)?.let { saved -> values.firstOrNull { stored(it) == saved } }
+
+private fun Preferences.readPreferences() = ReadingPreferences(
+    savedHeightUnits = choice(heightUnitsKey, HeightUnits.entries) { it.stored },
+    speedUnit = choice(speedUnitKey, SpeedUnit.entries) { it.stored } ?: SpeedUnit.KNOTS,
+    setFormat = choice(setFormatKey, SetFormat.entries) { it.stored } ?: SetFormat.COMPASS,
+    slackWindowKnots = ReadingPreferences.normalizedSlackWindowKnots(
+        value<Double>(slackWindowKey) ?: ReadingPreferences.DEFAULT_SLACK_WINDOW_KNOTS,
+    ),
+)
+
+/** How readings are shown: units, set format and the comfort current. Device-local, in the no-backup directory. */
+class ReadingPreferencesStore private constructor(private val data: DataStore<Preferences>) {
+    /**
+     * A failed read, such as a file the app cannot open, emits a failure and ends the flow; collect again to retry.
+     * Readings can show `getOrDefault(ReadingPreferences())` meanwhile.
+     */
+    val preferences: Flow<Result<ReadingPreferences>> = data.data
+        .map { Result.success(it.readPreferences()) }
+        .catch { error ->
+            if (error !is IOException) throw error
+            emit(Result.failure(error))
+        }
+        .distinctUntilChanged()
+
+    suspend fun setHeightUnits(units: HeightUnits) = data.edit { it[heightUnitsKey] = units.stored }
+
+    suspend fun setSpeedUnit(unit: SpeedUnit) = data.edit { it[speedUnitKey] = unit.stored }
+
+    suspend fun setSetFormat(format: SetFormat) = data.edit { it[setFormatKey] = format.stored }
+
+    /** Clamped into range, so stepping past either end keeps the nearest setting instead of resetting it. */
+    suspend fun setSlackWindowKnots(knots: Double) {
+        require(knots.isFinite()) { "Comfort current must be finite: $knots" }
+        val range = ReadingPreferences.SLACK_WINDOW_KNOTS_RANGE
+        val clamped = knots.coerceIn(range.start, range.endInclusive)
+        data.edit { it[slackWindowKey] = ReadingPreferences.normalizedSlackWindowKnots(clamped) }
+    }
+
+    companion object {
+        private var shared: ReadingPreferencesStore? = null
+
+        @Synchronized
+        fun get(context: Context): ReadingPreferencesStore {
+            val app = context.applicationContext
+            return shared ?: open(
+                File(app.noBackupFilesDir, "reading_preferences.preferences_pb"),
+                CoroutineScope(SupervisorJob() + Dispatchers.IO),
+            ).also { shared = it }
+        }
+
+        internal fun open(file: File, scope: CoroutineScope) = ReadingPreferencesStore(
+            PreferenceDataStoreFactory.create(
+                // Unreadable settings are cheap to choose again; replacing them keeps the settings writable.
+                corruptionHandler = ReplaceFileCorruptionHandler { emptyPreferences() },
+                scope = scope,
+                produceFile = { file },
+            ),
+        )
+    }
+}
