@@ -37,7 +37,8 @@ fun StationPage(model: StationListModel, id: StationId, now: Instant, onBack: ()
     val state by model.state.collectAsState()
     val preferences by model.readingPreferences.collectAsState()
     val station = catalog?.byId?.get(id)
-    LaunchedEffect(id) { model.places.recordVisit(id) }
+    // Recorded once the station is known to be live, so a restored page for a departed id adds nothing to Recents.
+    LaunchedEffect(id, station != null) { if (station != null) model.launchEdit { model.places.recordVisit(id) } }
     val favorite = state?.favorites?.contains(id) == true
     Surface(Modifier.fillMaxSize()) {
         Column(

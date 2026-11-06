@@ -62,4 +62,6 @@
     <string name="station_back">Retour</string>
     <string name="station_star">Ajouter aux favoris</string>
     <string name="station_unstar">Retirer des favoris</string>
+    <string name="list_catalog_unavailable">Les données des stations ne sont pas disponibles sur cet appareil.</string>
+    <string name="card_spoken_approximate">environ %1$s</string>
 </resources>

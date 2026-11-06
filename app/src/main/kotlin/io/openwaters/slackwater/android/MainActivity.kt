@@ -18,6 +18,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.openwaters.slackwater.android.data.AlertReconciliation
@@ -71,7 +72,8 @@ class MainActivity : ComponentActivity() {
                     )
                 }
                 Surface(Modifier.fillMaxSize()) {
-                    if (destination == null) {
+                    // The list stays composed under an alert's destination, so its scroll, search and page survive.
+                    Box(if (destination == null) Modifier.fillMaxSize() else Modifier.fillMaxSize().clearAndSetSemantics {}) {
                         StationsHome(onCredits = { showCredits = true }) {
                             var showQueries by remember { mutableStateOf(false) }
                             Box {
@@ -86,12 +88,17 @@ class MainActivity : ComponentActivity() {
                                 }
                             }
                         }
-                    } else Column(Modifier.safeDrawingPadding().verticalScroll(rememberScrollState()).padding(24.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                        Text(stringResource(R.string.app_name), style = MaterialTheme.typography.headlineLarge)
-                        key(destination) {
-                            StationAlerts(destination) {
-                                setIntent(Intent(this@MainActivity, MainActivity::class.java))
-                                destination = null
+                    }
+                    destination?.let { target ->
+                        Surface(Modifier.fillMaxSize()) {
+                            Column(Modifier.safeDrawingPadding().verticalScroll(rememberScrollState()).padding(24.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                                Text(stringResource(R.string.app_name), style = MaterialTheme.typography.headlineLarge)
+                                key(target) {
+                                    StationAlerts(target) {
+                                        setIntent(Intent(this@MainActivity, MainActivity::class.java))
+                                        destination = null
+                                    }
+                                }
                             }
                         }
                     }

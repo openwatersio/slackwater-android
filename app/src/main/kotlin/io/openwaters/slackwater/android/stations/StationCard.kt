@@ -116,7 +116,8 @@ private fun readingText(reading: CardReading, preferences: ReadingPreferences): 
                     else -> EbbAmber
                 },
                 glyphRotation = reading.setDegrees?.toFloat() ?: 0f,
-                spoken = stringResource(R.string.card_spoken_reading, value, spokenUnit, spokenState),
+                spoken = stringResource(R.string.card_spoken_reading,
+                    if (reading.approximate) stringResource(R.string.card_spoken_approximate, value) else value, spokenUnit, spokenState),
             )
         }
         is CardReading.Derived -> {

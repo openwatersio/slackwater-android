@@ -18,7 +18,9 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
 import io.openwaters.slackwater.android.core.station.StationId
 import java.time.Instant
+import io.openwaters.slackwater.android.core.station.LocationSlot
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 /** Visible cards refresh this often while the app is active. */
 private const val CARD_REFRESH_MILLIS = 60_000L
@@ -37,10 +39,14 @@ fun StationsHome(onCredits: () -> Unit, footerExtras: @Composable () -> Unit = {
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     LaunchedEffect(lifecycle) {
         lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-            // At once on becoming active, then every minute while active; the clock pauses in the background.
+            // Location is asked for when the list becomes active, then again on a tick only once the held fix has
+            // aged out; the clock pauses in the background.
+            launch { model.refreshLocation() }
             while (true) {
                 now = Instant.now()
                 delay(CARD_REFRESH_MILLIS)
+                model.tick()
+                if (!searching && opened == null && model.location.slot() !is LocationSlot.Located) launch { model.refreshLocation() }
             }
         }
     }

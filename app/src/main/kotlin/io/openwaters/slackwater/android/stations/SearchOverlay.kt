@@ -55,17 +55,21 @@ fun SearchOverlay(model: StationListModel, now: Instant, onOpen: (StationId) -> 
     val state by model.state.collectAsState()
     val preferences by model.readingPreferences.collectAsState()
     val list by model.preferences.collectAsState()
+    val catalog by model.catalog.collectAsState()
     val scope = rememberCoroutineScope()
     var query by remember { mutableStateOf("") }
     var answer by remember { mutableStateOf<Answer?>(null) }
     val anchor = state?.sections?.anchor?.coordinate ?: FIRST_RUN_ANCHOR
-    val filter = list.seriesFilter
+    val filter = list?.seriesFilter
     val focus = remember { FocusRequester() }
 
-    // A new keystroke, filter or anchor restarts this effect, so only the latest request's results land.
-    LaunchedEffect(query, filter, anchor) {
+    // A new keystroke, filter, anchor cell or the catalog arriving restarts this effect, so only the latest
+    // request's results land. The anchor is keyed by its 0.001° cell so GPS jitter does not re-rank the results.
+    val cell = Math.round(anchor.latitude * 1000) to Math.round(anchor.longitude * 1000)
+    LaunchedEffect(query, filter, cell, catalog) {
+        val loaded = catalog ?: return@LaunchedEffect
         if (query.isNotBlank()) delay(SEARCH_DEBOUNCE_MILLIS)
-        answer = Answer(query, model.search(query, anchor, filter))
+        answer = Answer(query, model.search(loaded, query, anchor, filter))
     }
     LaunchedEffect(Unit) { focus.requestFocus() }
 
@@ -97,7 +101,7 @@ fun SearchOverlay(model: StationListModel, now: Instant, onOpen: (StationId) -> 
                 }
             }
             Column(Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                SeriesChips(filter) { series -> scope.launch { model.listPreferences.setSeriesFilter(series) } }
+                SeriesChips(filter) { series -> model.launchEdit { model.listPreferences.setSeriesFilter(series) } }
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     OutlinedTextField(
                         value = query,

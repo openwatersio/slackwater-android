@@ -12,6 +12,11 @@ import kotlinx.coroutines.runBlocking
 class SlackwaterTestRunner : AndroidJUnitRunner() {
     override fun onCreate(arguments: Bundle?) {
         super.onCreate(arguments)
-        runBlocking { ListPreferencesStore.get(targetContext).markLocationAsked() }
+        runBlocking {
+            val list = ListPreferencesStore.get(targetContext)
+            list.markLocationAsked()
+            // A filter a previous run left on would hide stations the tests open by name.
+            list.setSeriesFilter(null)
+        }
     }
 }

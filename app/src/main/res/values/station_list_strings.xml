@@ -76,4 +76,7 @@
     <string name="station_back">Back</string>
     <string name="station_star">Add to favorites</string>
     <string name="station_unstar">Remove from favorites</string>
+    <string name="list_catalog_unavailable">Station data is unavailable on this device.</string>
+    <!-- An approximate value spoken, such as "approximately 1.2". -->
+    <string name="card_spoken_approximate">approximately %1$s</string>
 </resources>

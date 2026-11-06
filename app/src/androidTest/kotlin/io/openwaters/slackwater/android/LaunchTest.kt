@@ -12,8 +12,6 @@ import androidx.compose.ui.test.performScrollToNode
 import androidx.test.core.app.ActivityScenario
 import androidx.test.platform.app.InstrumentationRegistry
 import io.openwaters.slackwater.android.core.FixtureSmoke
-import io.openwaters.slackwater.android.data.ListPreferencesStore
-import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert.assertFalse
 import org.junit.Before
@@ -24,10 +22,8 @@ class LaunchTest {
     @get:Rule val compose = createEmptyComposeRule()
     private lateinit var scenario: ActivityScenario<MainActivity>
 
-    // The list asks for location once on a first launch; a system dialog over the screen would hide it from the test.
+    // SlackwaterTestRunner has already recorded the location ask, so no system dialog covers the list.
     @Before fun launch() {
-        val context = InstrumentationRegistry.getInstrumentation().targetContext
-        runBlocking { ListPreferencesStore.get(context).markLocationAsked() }
         scenario = ActivityScenario.launch(MainActivity::class.java)
     }
 
@@ -37,7 +33,8 @@ class LaunchTest {
 
     @Test fun readsBundledCredits() {
         // The catalog loads once per process; on a cold emulator that can take most of a minute.
-        compose.waitUntil(60_000) { compose.onAllNodesWithText("Near Me", substring = true, ignoreCase = true).fetchSemanticsNodes().isNotEmpty() ||
+        val nearMe = InstrumentationRegistry.getInstrumentation().targetContext.getString(R.string.list_near_me)
+        compose.waitUntil(60_000) { compose.onAllNodesWithText(nearMe, substring = true, ignoreCase = true).fetchSemanticsNodes().isNotEmpty() ||
             compose.onAllNodesWithText("Chesapeake Bay", substring = true, ignoreCase = true).fetchSemanticsNodes().isNotEmpty() }
         compose.onNode(hasScrollAction()).performScrollToNode(hasText("Data and licenses"))
         compose.onNodeWithText("Data and licenses").performClick()
@@ -55,7 +52,9 @@ class LaunchTest {
         assertFalse(permissions.contains("android.permission.INTERNET"))
         // Near Me cards show live readings computed from the bundled database, wherever the list is anchored.
         compose.waitUntil(60_000) {
-            listOf("Rising", "Falling", "Flooding", "Ebbing", "Slack").any { word ->
+            val context = InstrumentationRegistry.getInstrumentation().targetContext
+            listOf(R.string.card_rising, R.string.card_falling, R.string.card_flooding, R.string.card_ebbing, R.string.card_slack)
+                .map(context::getString).any { word ->
                 // Each card is one element whose spoken description carries its reading.
                 compose.onAllNodes(hasContentDescription(word, substring = true, ignoreCase = true)).fetchSemanticsNodes().isNotEmpty()
             }

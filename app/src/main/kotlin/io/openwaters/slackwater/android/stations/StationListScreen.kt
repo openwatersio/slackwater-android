@@ -96,6 +96,7 @@ fun StationListScreen(
     val state by model.state.collectAsState()
     val readingPreferences by model.readingPreferences.collectAsState()
     val listPreferences by model.preferences.collectAsState()
+    val catalogFailed by model.catalogFailed.collectAsState()
     var chooser by remember { mutableStateOf<RemovedStation?>(null) }
     val listState = rememberLazyListState()
 
@@ -112,18 +113,16 @@ fun StationListScreen(
         rationaleBefore = activity?.let { a -> locationPermissions.any { ActivityCompat.shouldShowRequestPermissionRationale(a, it) } } ?: false
         promptStarted = SystemClock.elapsedRealtime()
         model.location.promptShown()
-        scope.launch { model.listPreferences.markLocationAsked() }
+        model.launchEdit { model.listPreferences.markLocationAsked() }
         launcher.launch(locationPermissions)
     }
 
-    // The list asks for location once, on its first appearance on a first launch, and never again.
-    val asked = listPreferences.locationAsked
-    LaunchedEffect(state != null) {
-        if (state != null && !asked && model.location.inputs.value.permission == LocationPermission.NOT_GRANTED) ask()
+    // The list asks for location once, on its first appearance on a first launch, and never again. It waits for
+    // the stored flag, so a slow read never looks like a first launch.
+    val asked = listPreferences?.locationAsked
+    LaunchedEffect(state != null, asked) {
+        if (state != null && asked == false && model.location.inputs.value.permission == LocationPermission.NOT_GRANTED) ask()
     }
-
-    // Each tick of the shared clock also refreshes location, so a fix that ages out is replaced.
-    LaunchedEffect(now) { model.refreshLocation() }
 
     val current = state
     Box(Modifier.fillMaxSize()) {
@@ -134,7 +133,11 @@ fun StationListScreen(
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             if (current == null) {
-                item { Box(Modifier.fillMaxWidth().padding(32.dp), Alignment.Center) { CircularProgressIndicator() } }
+                item {
+                    Box(Modifier.fillMaxWidth().padding(32.dp), Alignment.Center) {
+                        if (catalogFailed) Text(stringResource(R.string.list_catalog_unavailable)) else CircularProgressIndicator()
+                    }
+                }
             } else {
                 locationSlot(current, model, readingPreferences, now, onOpen, onAsk = ::ask, onSettings = {
                     context.startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.fromParts("package", context.packageName, null)))
@@ -142,7 +145,7 @@ fun StationListScreen(
                 savedSection(R.string.list_favorites, current.sections.favorites, current, model, readingPreferences, now, onOpen,
                     onRemoved = { chooser = it }, isFavorites = true)
                 nearMe(current, model, readingPreferences, now, onOpen) { series ->
-                    scope.launch { model.listPreferences.setSeriesFilter(series) }
+                    model.launchEdit { model.listPreferences.setSeriesFilter(series) }
                 }
                 savedSection(R.string.list_recents, current.sections.recents, current, model, readingPreferences, now, onOpen,
                     onRemoved = { chooser = it }, isFavorites = false)
@@ -160,7 +163,7 @@ fun StationListScreen(
     chooser?.let { removed ->
         ReplacementChooser(removed, model, readingPreferences, now, onDismiss = { chooser = null }) { replacement ->
             chooser = null
-            scope.launch { model.places.replaceFavorite(removed.id, replacement) }
+            model.launchEdit { model.places.replaceFavorite(removed.id, replacement) }
             onOpen(replacement)
         }
     }
@@ -360,8 +363,12 @@ private fun RemovedStationCard(removed: RemovedStation, remove: SwipeAction, onC
             Text(removed.lastKnown?.name ?: stringResource(R.string.removed_title), style = MaterialTheme.typography.titleMedium, color = AttentionAmber)
             Text(headline, style = MaterialTheme.typography.bodyMedium)
             Text(detail, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-            TextButton(onClick = onChoose, modifier = Modifier.heightIn(min = 48.dp)) {
-                Text(stringResource(R.string.removed_choose), color = AttentionAmber)
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                TextButton(onClick = onChoose, modifier = Modifier.heightIn(min = 48.dp)) {
+                    Text(stringResource(R.string.removed_choose), color = AttentionAmber)
+                }
+                // Reachable by keyboard and switch access too, not only by swiping.
+                TextButton(onClick = remove.onAction, modifier = Modifier.heightIn(min = 48.dp)) { Text(remove.label) }
             }
         }
     }

@@ -55,11 +55,19 @@ sealed interface CardReading {
     data object Unavailable : CardReading
 }
 
-fun cardReading(result: PredictionResult, at: Instant): CardReading = when (result) {
+/** A reading whose numbers are not finite (a damaged downloaded model) reads as unavailable rather than crashing. */
+fun cardReading(result: PredictionResult, at: Instant): CardReading = when (val reading = rawCardReading(result, at)) {
+    is CardReading.Tide -> if (reading.heightMetres.isFinite()) reading else CardReading.Unavailable
+    is CardReading.Current ->
+        if (reading.speedKnots.isFinite() && reading.setDegrees?.isFinite() != false) reading else CardReading.Unavailable
+    else -> reading
+}
+
+private fun rawCardReading(result: PredictionResult, at: Instant): CardReading = when (result) {
     is PredictionResult.Unavailable ->
         if (result.reason == PredictionResult.Reason.MISSING_DOWNLOAD) CardReading.NotDownloaded else CardReading.Unavailable
     is PredictionResult.Disjoint ->
-        result.blocks.firstOrNull { at in it.coverage }?.let { cardReading(it, at) } ?: CardReading.Unavailable
+        result.blocks.firstOrNull { at in it.coverage }?.let { rawCardReading(it, at) } ?: CardReading.Unavailable
     is PredictionResult.Ready -> if (at !in result.coverage) CardReading.Unavailable else readSeries(result, at)
 }
 
@@ -91,8 +99,9 @@ fun derivedPhase(slacks: List<PredictionSeries.DerivedSlack>, at: Instant): Card
     return if (rising) CardCurrentState.FLOODING else CardCurrentState.EBBING
 }
 
-// The conversions iOS and the web print with, so the same height reads the same everywhere.
-private const val FEET_PER_METRE = 3.28084
+// The conversions the rest of the Android app prints with (tables, queries, alerts), so a value reads the same on
+// every screen.
+private const val METRES_PER_FOOT = 0.3048
 
 private fun decimal(value: Double, places: Int, locale: Locale): String {
     // The shortest decimal form rounds half away from zero, as ICU does; a value printing as zero loses its sign.
@@ -107,9 +116,9 @@ private fun decimal(value: Double, places: Int, locale: Locale): String {
 
 /** Feet to one decimal or metres to two, without the unit. */
 fun formatHeightValue(metres: Double, imperial: Boolean, locale: Locale): String =
-    if (imperial) decimal(metres * FEET_PER_METRE, 1, locale) else decimal(metres, 2, locale)
+    if (imperial) decimal(metres / METRES_PER_FOOT, 1, locale) else decimal(metres, 2, locale)
 
-enum class SpeedUnitKind(val perKnot: Double) { KNOTS(1.0), KILOMETRES_PER_HOUR(1.852), METRES_PER_SECOND(0.514444) }
+enum class SpeedUnitKind(val perKnot: Double) { KNOTS(1.0), KILOMETRES_PER_HOUR(1.852), METRES_PER_SECOND(1.852 / 3.6) }
 
 /** One decimal in the chosen unit, without the unit. */
 fun formatSpeedValue(knots: Double, unit: SpeedUnitKind, locale: Locale): String = decimal(knots * unit.perKnot, 1, locale)

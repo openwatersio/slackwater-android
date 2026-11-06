@@ -105,6 +105,13 @@ class CardReadingTest {
         assertEquals(CardReading.Derived(CardCurrentState.FLOODING), cardReading(result, at(120)))
     }
 
+    @Test fun nonFiniteNumbersReadAsUnavailable() {
+        val broken = tide.copy(points = tide.points.map { it.copy(heightMetres = Double.NaN) })
+        assertEquals(CardReading.Unavailable, cardReading(ready(broken, StationCapabilities.FITTED_TIDE), at(180)))
+        val fast = current().copy(points = current().points.map { it.copy(magnitudeKnots = Double.POSITIVE_INFINITY) })
+        assertEquals(CardReading.Unavailable, cardReading(ready(fast, StationCapabilities.FINAL_CURRENT), at(60)))
+    }
+
     @Test fun valuesFormatInTheChosenUnits() {
         assertEquals("4.2", formatHeightValue(1.28, imperial = true, Locale.US))
         assertEquals("1.28", formatHeightValue(1.28, imperial = false, Locale.US))
