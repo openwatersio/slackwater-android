@@ -71,7 +71,7 @@ class ReadingPreferencesStoreTest {
         }
         withScope { scope ->
             val preferences = ReadingPreferencesStore.open(file, scope).preferences.first().getOrThrow()
-            assertEquals(ReadingPreferences(HeightUnits.METRIC, SpeedUnit.METRES_PER_SECOND, SetFormat.DEGREES, 0.0), preferences)
+            assertEquals(ReadingPreferences(HeightUnits.METRIC, SpeedUnit.METRES_PER_SECOND, SetFormat.DEGREES, 0.0, showSky = false), preferences)
             assertEquals("a saved choice wins over the region", HeightUnits.METRIC, preferences.heightUnits(Locale.US))
             assertTrue(preferences.slackWindowOff)
         }
