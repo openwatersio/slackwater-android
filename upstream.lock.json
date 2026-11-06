@@ -12,6 +12,10 @@
     "almanac": {
       "repository": "openwatersio/almanac",
       "commit": "75ba6f7b6db7904968db380ce82ad92e8c042b0c"
+    },
+    "slackwater-database": {
+      "repository": "openwatersio/slackwater-database",
+      "commit": "6f7704faba4fce3cbc6deae7f1560ea7a8d6905b"
     }
   },
   "resources": {
@@ -75,18 +79,9 @@
       }
     ]
   },
-  "databaseReader": {
-    "status": "blocked",
-    "issue": "https://github.com/openwatersio/slackwater-database/issues/296"
-  },
   "recipeEvidence": {
     "repository": "openwatersio/slackwater-ios",
     "commit": "5b26bcd5ce0220302de3ba32be5ebf67552fb06e",
     "path": "tools/chs-current-recipe.json"
-  },
-  "launchStation": {
-    "sourcePath": "Slackwater/Resources/stations.json",
-    "id": "noaa/9449880",
-    "sha256": "e026243f0fa0e87d8bffee87e3d277972b2ffcaae08a4bdcf793c6088b94830b"
   }
 }

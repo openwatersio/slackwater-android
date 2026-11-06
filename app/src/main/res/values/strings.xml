@@ -6,4 +6,5 @@
  <string name="data_and_licenses">Data and licenses</string>
  <string name="data_credits">Data credits</string>
  <string name="close">Close</string>
+ <string name="station_unavailable">Friday Harbor data is unavailable.</string>
 </resources>

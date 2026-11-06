@@ -1,5 +1,7 @@
 package io.openwaters.slackwater.android
 
+import java.io.IOException
+import io.openwaters.slackwater.database.InvalidStationDatabaseException
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.ComponentActivity
@@ -17,7 +19,8 @@ import io.openwaters.slackwater.android.core.launchReading
 import java.time.Clock
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.json.JSONObject
+import io.openwaters.slackwater.android.data.BundledTideDatabase
+import io.openwaters.slackwater.android.core.station.StationId
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -25,20 +28,26 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             MaterialTheme {
-                var stationName by remember { mutableStateOf<String?>(null) }
+                var station by remember { mutableStateOf<Pair<String, String>?>(null) }
+                var stationUnavailable by remember { mutableStateOf(false) }
                 var showCredits by remember { mutableStateOf(false) }
                 LaunchedEffect(Unit) {
-                    stationName = withContext(Dispatchers.Default) {
-                        val record = assets.open("launch-station.json").bufferedReader().use { JSONObject(it.readText()) }
-                        val items = record.getJSONArray("constituents")
-                        val constituents = (0 until items.length()).map { i ->
-                            val c = items.getJSONObject(i)
-                            HarmonicConstituent(c.getString("name"), c.getDouble("amplitude"), c.getDouble("phase"))
-                        }
-                        val reading = launchReading(constituents, record.getDouble("datumOffset"), record.getDouble("latitude"), record.getDouble("longitude"), Clock.systemUTC())
-                        check(reading.heightMetres.isFinite() && reading.sunAltitudeDegrees.isFinite())
-                        record.getString("name")
+                    station = withContext(Dispatchers.IO) {
+                        val record = try {
+                            BundledTideDatabase(assets).station(StationId("noaa/9449880"))
+                        } catch (_: IOException) {
+                            null
+                        } catch (_: InvalidStationDatabaseException) {
+                            null
+                        } ?: return@withContext null
+                        val offset = record.chartDatumShift ?: return@withContext null
+                        val constituents = record.constituents.map { HarmonicConstituent(it.name, it.amplitude, it.phase) }
+                        val reading = launchReading(constituents, offset, record.latitude, record.longitude, Clock.systemUTC())
+                        if (reading.heightMetres.isFinite() && reading.sunAltitudeDegrees.isFinite()) {
+                            record.name to record.attribution
+                        } else null
                     }
+                    stationUnavailable = station == null
                 }
                 if (showCredits) {
                     val notices = remember { resources.openRawResource(R.raw.third_party_notices).bufferedReader().use { it.readText() } }
@@ -60,7 +69,11 @@ class MainActivity : ComponentActivity() {
                         Text(stringResource(R.string.app_name), style = MaterialTheme.typography.headlineLarge)
                         Text(stringResource(R.string.shell_message))
                         Text(stringResource(R.string.shell_status))
-                        stationName?.let { Text(it) }
+                        if (stationUnavailable) Text(stringResource(R.string.station_unavailable))
+                        station?.let { (name, attribution) ->
+                            Text(name)
+                            Text(attribution, style = MaterialTheme.typography.bodySmall)
+                        }
                         Text(stringResource(R.string.source_notice), style = MaterialTheme.typography.bodySmall)
                         TextButton(onClick = { showCredits = true }) { Text(stringResource(R.string.data_and_licenses)) }
                     }

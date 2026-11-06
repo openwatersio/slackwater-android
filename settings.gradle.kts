@@ -18,3 +18,4 @@ try {
 include(":core", ":app")
 includeBuild("vendor/slackwater/kotlin") { name = "slackwater-engine" }
 includeBuild("vendor/almanac/kotlin") { name = "almanac" }
+includeBuild("vendor/slackwater-database/packages/kotlin")

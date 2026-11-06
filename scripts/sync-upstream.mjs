@@ -52,18 +52,10 @@ async function main() {
    if(hash(data)!==entry.sha256) throw Error(`Upstream hash mismatch: ${entry.name}`);
    const dest=join(dir,entry.name); await writeFile(dest+'.tmp',data); await rename(dest+'.tmp',dest);
   }
-  const stations=JSON.parse(git(ios,'show',`${lock.resources.commit}:${lock.launchStation.sourcePath}`));
-  const station=stations.find(s=>s.id===lock.launchStation.id);
-  if(!station || station.id.startsWith('chs')) throw Error('Missing permitted launch station');
-  const data=JSON.stringify(station,null,2)+'\n';
-  if(hash(data)!==lock.launchStation.sha256) throw Error('Launch station hash mismatch');
-  const launch=join(root,'app/src/main/assets/launch-station.json');
-  await writeFile(launch+'.tmp',data); await rename(launch+'.tmp',launch);
  }
  await verifyAssets(dir,lock.resources.assets);
  const names=await readdir(join(root,'app/src/main/assets'));
- if(names.some(n=>!['slackwater','launch-station.json'].includes(n))) throw Error('Unexpected top-level asset');
- if(hash(await readFile(join(root,'app/src/main/assets/launch-station.json')))!==lock.launchStation.sha256) throw Error('Launch station hash mismatch');
+ if(names.some(n=>n !== 'slackwater')) throw Error('Unexpected top-level asset');
  console.log('Pinned sources and packaged assets verified.');
 }
 if(import.meta.main) main().catch(e=>{console.error(e.message);process.exitCode=1;});

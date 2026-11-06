@@ -64,8 +64,7 @@ test('rejects untracked source but permits ignored build output', async () => {
   await writeFile(join(repo,'kotlin/.kotlin/errors/compiler.log'),'generated');
   await mkdir(join(repo,'build')); await writeFile(join(repo,'build/output'),'ignored');
   await mkdir(join(root,'app/src/main/assets/slackwater'),{recursive:true});
-  await writeFile(join(root,'app/src/main/assets/launch-station.json'),'{}');
-  await writeFile(join(root,'upstream.lock.json'),JSON.stringify({sources:{fixture:{repository:'fixture/source',commit:git('rev-parse','HEAD')}},resources:{assets:[]},launchStation:{sha256:createHash('sha256').update('{}').digest('hex')}}));
+  await writeFile(join(root,'upstream.lock.json'),JSON.stringify({sources:{fixture:{repository:'fixture/source',commit:git('rev-parse','HEAD')}},resources:{assets:[]}}));
   assert.equal(run(root,['--check']).status,0);
   await writeFile(join(repo,'Local.kt'),'untracked source');
   const result=run(root,['--check']);

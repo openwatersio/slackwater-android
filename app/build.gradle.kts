@@ -16,6 +16,7 @@ android {
 }
 dependencies {
     implementation(project(":core"))
+    implementation("io.openwaters:slackwater-database:0.1.0")
     implementation(platform(libs.compose.bom))
     implementation(libs.activity.compose)
     implementation(libs.material3)

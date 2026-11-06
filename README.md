@@ -19,7 +19,7 @@ The device check requires an attached emulator/device. CI runs it on API 26 and 
 
 `upstream.lock.json` pins source repositories, product documentation, data and recipe provenance separately. `vendor/` contains ignored exact-SHA checkouts. Sync fails on changed or untracked dependency files or a different revision; inspect and preserve local work before replacing a checkout. `--check` performs no network requests and rejects changed/missing/unexpected packaged assets. Generated catalogs are committed; `stations.tcdb` stays uncompressed. Canadian files contain identity/evidence only, with no user predictions or fitted models.
 
-The launch screen reads one NOAA station from the pinned iOS data. The full database reader belongs to [#20](https://github.com/openwatersio/slackwater-android/issues/20). Runtime clock injection lives in the pure core; the shell requests no location and loads no Canadian models, so permission/location/model seed behavior belongs with those feature consumers. Test data never enters the release APK.
+The launch screen maps the uncompressed tide database directly from the APK and looks up Friday Harbor by station ID with the pinned Kotlin database reader. Runtime clock injection lives in the pure core; the shell requests no location and loads no Canadian models, so permission/location/model seed behavior belongs with those feature consumers. Test data never enters the release APK.
 
 Gradle checks the source pins and packaged inputs during configuration, including Android Studio sync. Kotlin compiler scratch files under `kotlin/.kotlin/` are excluded from the source cleanliness check. CI audits both debug and release APKs.
 
