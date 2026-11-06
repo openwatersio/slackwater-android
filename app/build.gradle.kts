@@ -31,6 +31,7 @@ dependencies {
     implementation(libs.activity.compose)
     implementation(libs.material3)
     implementation(libs.datastore)
+    implementation(libs.maplibre)
     androidTestImplementation(testFixtures(project(":core")))
     androidTestImplementation(platform(libs.compose.bom))
     androidTestImplementation(libs.compose.test)

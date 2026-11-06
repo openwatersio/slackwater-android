@@ -1,5 +1,4 @@
 package io.openwaters.slackwater.android
-import android.content.pm.PackageManager
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasScrollAction
@@ -13,7 +12,6 @@ import androidx.test.core.app.ActivityScenario
 import androidx.test.platform.app.InstrumentationRegistry
 import io.openwaters.slackwater.android.core.FixtureSmoke
 import org.junit.After
-import org.junit.Assert.assertFalse
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -44,12 +42,7 @@ class LaunchTest {
         compose.onNodeWithText("Data credits").assertDoesNotExist()
     }
 
-    @Test fun launchesWithoutNetworkAndReadsTheBundledStations() {
-        lateinit var permissions: Array<out String>
-        scenario.onActivity {
-            permissions = it.packageManager.getPackageInfo(it.packageName, PackageManager.GET_PERMISSIONS).requestedPermissions.orEmpty()
-        }
-        assertFalse(permissions.contains("android.permission.INTERNET"))
+    @Test fun launchesAndReadsTheBundledStations() {
         // Near Me cards show live readings computed from the bundled database, wherever the list is anchored.
         compose.waitUntil(60_000) {
             val context = InstrumentationRegistry.getInstrumentation().targetContext

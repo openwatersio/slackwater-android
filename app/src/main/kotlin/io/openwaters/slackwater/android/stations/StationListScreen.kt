@@ -88,6 +88,8 @@ fun StationListScreen(
     onCredits: () -> Unit,
     now: Instant,
     showing: Boolean = true,
+    onMap: (() -> Unit)? = null,
+    mapShowing: Boolean = false,
     footerExtras: @Composable () -> Unit = {},
 ) {
     val context = LocalContext.current
@@ -155,6 +157,9 @@ fun StationListScreen(
             // Keeps the last row above the floating search button.
             item { Spacer(Modifier.height(96.dp)) }
         }
+        if (onMap != null) ExtendedFloatingActionButton(
+            onClick = onMap, modifier = Modifier.align(Alignment.BottomEnd).safeDrawingPadding().padding(end = 16.dp, bottom = 24.dp).heightIn(min = 56.dp)
+        ) { Text(stringResource(if (mapShowing) R.string.map_list else R.string.map_open)) }
         ExtendedFloatingActionButton(
             onClick = onSearch,
             modifier = Modifier.align(Alignment.BottomStart).safeDrawingPadding().padding(start = 16.dp, bottom = 24.dp).heightIn(min = 56.dp),

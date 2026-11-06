@@ -48,7 +48,7 @@ private val waterColors = darkColorScheme(
 
 @Composable
 internal fun StationDetailScreen(model: StationListModel, id: StationId, clock: Instant, linkedTime: Instant?,
-                                onOpen: (StationId) -> Unit, onBack: () -> Unit) {
+                                onOpen: (StationId) -> Unit, onBack: () -> Unit, recordVisit: Boolean = true) {
     val activity = androidx.activity.compose.LocalActivity.current
     DisposableEffect(activity) {
         val bars = activity?.let { androidx.core.view.WindowCompat.getInsetsController(it.window, it.window.decorView) }
@@ -61,12 +61,12 @@ internal fun StationDetailScreen(model: StationListModel, id: StationId, clock: 
             if (lightNavigation != null) bars.isAppearanceLightNavigationBars = lightNavigation
         }
     }
-    MaterialTheme(colorScheme = waterColors) { StationDetailBody(model, id, clock, linkedTime, onOpen, onBack) }
+    MaterialTheme(colorScheme = waterColors) { StationDetailBody(model, id, clock, linkedTime, onOpen, onBack, recordVisit) }
 }
 
 @Composable
 private fun StationDetailBody(model: StationListModel, id: StationId, clock: Instant, linkedTime: Instant?,
-                                onOpen: (StationId) -> Unit, onBack: () -> Unit) {
+                                onOpen: (StationId) -> Unit, onBack: () -> Unit, recordVisit: Boolean = true) {
     val context = LocalContext.current.applicationContext
     val repository = remember { AndroidPredictionRepository(context) }
     val catalog = remember { BundledStationCatalog(context.assets) }
@@ -82,7 +82,7 @@ private fun StationDetailBody(model: StationListModel, id: StationId, clock: Ins
     val metadata by produceState<DetailMetadata?>(null, station) {
         value = station?.let { withContext(Dispatchers.IO) { records.metadata(it) } }
     }
-    LaunchedEffect(station?.id, live) { if (live && station != null) model.launchEdit { model.places.recordVisit(station.id) } }
+    LaunchedEffect(station?.id, live, recordVisit) { if (recordVisit && live && station != null) model.launchEdit { model.places.recordVisit(station.id) } }
     val zone = station?.plotZone() ?: ZoneOffset.UTC
     var restoredTime by rememberSaveable { mutableStateOf(linkedTime?.toString()) }
     var restoredDay by rememberSaveable { mutableStateOf<String?>(null) }

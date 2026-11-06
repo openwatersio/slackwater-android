@@ -1,6 +1,15 @@
 package io.openwaters.slackwater.android.stations
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import io.openwaters.slackwater.android.R
+import io.openwaters.slackwater.android.map.*
+import io.openwaters.slackwater.android.core.station.StationIdentity
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -31,11 +40,18 @@ private const val CARD_REFRESH_MILLIS = 60_000L
  * and filter survive, and is hidden from assistive technology while covered.
  */
 @Composable
-fun StationsHome(onCredits: () -> Unit, coveredByAlert: Boolean = false, footerExtras: @Composable () -> Unit = {}) {
+fun StationsHome(onCredits: () -> Unit, coveredByAlert: Boolean = false, externalMapFocus: StationIdentity? = null,
+                 consumeFocus: () -> Unit = {}, onSettings: () -> Unit = {}, footerExtras: @Composable () -> Unit = {}) {
     val context = LocalContext.current
     val model = remember { StationListModel.get(context) }
     var searching by rememberSaveable { mutableStateOf(false) }
     var opened by rememberSaveable { mutableStateOf<String?>(null) }
+    var mapShowing by rememberSaveable { mutableStateOf(false) }
+    var focused by rememberSaveable { mutableStateOf<String?>(null) }
+    var mapGeneration by rememberSaveable { mutableIntStateOf(0) }
+    var automatic by rememberSaveable { mutableStateOf(false) }
+    var initialChoiceMade by rememberSaveable { mutableStateOf(false) }
+    val current by model.state.collectAsState()
     var now by remember { mutableStateOf(Instant.now()) }
     // The tick loop below starts once, so it reads the latest value through this rather than the first one.
     val covered by rememberUpdatedState(coveredByAlert)
@@ -50,7 +66,7 @@ fun StationsHome(onCredits: () -> Unit, coveredByAlert: Boolean = false, footerE
                 delay(CARD_REFRESH_MILLIS)
                 model.tick()
                 val showing = !searching && opened == null && !covered
-                if (showing && model.wantsFreshFix(SystemClock.elapsedRealtime())) launch { model.refreshLocation() }
+                if ((showing || mapShowing) && !covered && model.wantsFreshFix(SystemClock.elapsedRealtime())) launch { model.refreshLocation() }
             }
         }
     }
@@ -60,25 +76,83 @@ fun StationsHome(onCredits: () -> Unit, coveredByAlert: Boolean = false, footerE
         opened = null
     }
     fun open(id: StationId) {
+        if (opened != id.value) closePage()
+        initialChoiceMade = true
+        automatic = false
         searching = false
         opened = id.value
     }
-    // The list appears again when its search, page or an alert's screen closes.
-    val showing = !searching && opened == null && !coveredByAlert
-    LaunchedEffect(showing) { if (showing) model.refreshLocation() }
-    // Under an alert's screen, Back belongs to that screen, not to a page or search hidden beneath it.
-    BackHandler(enabled = !coveredByAlert && (searching || opened != null)) {
-        if (opened != null) closePage() else searching = false
+    fun toggleMap() {
+        val showMap = !mapShowing || opened != null
+        closePage()
+        initialChoiceMade = true
+        searching = false
+        mapShowing = showMap
     }
-    Box(Modifier.fillMaxSize()) {
-        val covered = searching || opened != null
-        Box(if (covered) Modifier.fillMaxSize().clearAndSetSemantics {} else Modifier.fillMaxSize()) {
-            StationListScreen(model, ::open, onSearch = { searching = true }, onCredits = onCredits, now = now,
-                showing = showing, footerExtras = footerExtras)
+    fun focus(station: StationIdentity) {
+        closePage()
+        initialChoiceMade = true
+        searching = false
+        focused = station.id.value
+        mapGeneration++
+        mapShowing = true
+    }
+    LaunchedEffect(externalMapFocus) {
+        externalMapFocus?.let { focus(it); consumeFocus() }
+    }
+    BoxWithConstraints(Modifier.fillMaxSize()) {
+        val expanded = maxWidth >= 600.dp
+        val listVisible = expanded || (!mapShowing && opened == null)
+        val showing = listVisible && !searching && !coveredByAlert
+        LaunchedEffect(showing) { if (showing) model.refreshLocation() }
+        LaunchedEffect(expanded, current, coveredByAlert) {
+            val sections = current?.sections
+            if (expanded && !initialChoiceMade && !coveredByAlert && !mapShowing && !searching && sections != null) {
+                val first = sections.heroes.firstOrNull()?.id ?: sections.favorites.firstOrNull { current?.stations?.containsKey(it) == true }
+                    ?: sections.nearMe.firstOrNull()?.id
+                if (first != null) {
+                    opened = first.value
+                    automatic = true
+                    initialChoiceMade = true
+                }
+            }
         }
-        if (searching && opened == null) SearchOverlay(model, now, ::open) { searching = false }
-        if (!coveredByAlert) opened?.let { id ->
-            pageState.SaveableStateProvider(id) { StationPage(model, StationId(id), now, onBack = ::closePage) }
+        BackHandler(!coveredByAlert && (searching || opened != null || mapShowing)) {
+            when {
+                searching -> searching = false
+                opened != null -> closePage()
+                else -> toggleMap()
+            }
         }
+        Row(Modifier.fillMaxSize().then(if (searching) Modifier.clearAndSetSemantics {} else Modifier)) {
+            if (listVisible) Box(if (expanded) Modifier.width(320.dp).fillMaxHeight() else Modifier.fillMaxSize()) {
+                pageState.SaveableStateProvider("list") {
+                    StationListScreen(model, ::open, onSearch = { initialChoiceMade = true; searching = true }, onCredits = onCredits,
+                        now = now, showing = showing, onMap = ::toggleMap, mapShowing = mapShowing && opened == null,
+                        footerExtras = footerExtras)
+                }
+            }
+            if (!coveredByAlert && (expanded || !listVisible)) {
+                Box(Modifier.fillMaxSize()) {
+                    val station = opened
+                    when {
+                        station != null -> pageState.SaveableStateProvider(station) {
+                            CompositionLocalProvider(LocalOpenStationMap provides ::focus) {
+                                StationPage(model, StationId(station), now, recordVisit = !automatic, onBack = ::closePage)
+                            }
+                        }
+                        mapShowing -> pageState.SaveableStateProvider("discovery-map") {
+                            MapScreen(model, now, focused, mapGeneration, ::open, ::toggleMap, onSettings,
+                                showListButton = !expanded)
+                        }
+                        else -> Column(Modifier.align(Alignment.Center), horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(stringResource(R.string.map_pick), style = MaterialTheme.typography.titleLarge)
+                            Text(stringResource(R.string.map_pick_hint))
+                        }
+                    }
+                }
+            }
+        }
+        if (searching && !coveredByAlert) SearchOverlay(model, now, ::open) { searching = false }
     }
 }

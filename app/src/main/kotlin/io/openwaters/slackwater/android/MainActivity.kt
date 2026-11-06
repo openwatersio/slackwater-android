@@ -104,29 +104,15 @@ class MainActivity : ComponentActivity() {
                         },
                     )
                 }
+                var chartSettings by androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf(false) }
+                var focusMap by remember { mutableStateOf<io.openwaters.slackwater.android.core.station.StationIdentity?>(null) }
+                if (chartSettings) io.openwaters.slackwater.android.map.MapSettings { chartSettings = false }
                 Surface(Modifier.fillMaxSize()) {
                     // The list stays composed under an alert's destination, so its scroll, search and page survive.
                     Box(if (destination == null) Modifier.fillMaxSize() else Modifier.fillMaxSize().clearAndSetSemantics {}) {
-                        StationsHome(onCredits = { showCredits = true }, coveredByAlert = destination != null) {
-                            var chartSettings by remember { mutableStateOf(false) }
+                        StationsHome(onCredits = { showCredits = true }, coveredByAlert = destination != null, externalMapFocus = focusMap,
+                            consumeFocus = { focusMap = null }, onSettings = { chartSettings = true }) {
                             TextButton(onClick = { chartSettings = true }) { Text(stringResource(R.string.detail_chart_settings)) }
-                            if (chartSettings) {
-                                val store = remember { ReadingPreferencesStore.get(this@MainActivity) }
-                                val prefs by store.preferences.collectAsState(Result.success(ReadingPreferences()))
-                                val scope = rememberCoroutineScope()
-                                val enabled = prefs.getOrNull()?.showSky ?: true
-                                AlertDialog(onDismissRequest = { chartSettings = false }, title = { Text(stringResource(R.string.detail_chart_settings)) },
-                                    text = {
-                                        Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
-                                            val label = stringResource(R.string.detail_show_sky)
-                                            Text(label, Modifier.weight(1f))
-                                            Switch(enabled, onCheckedChange = { scope.launch { store.setShowSky(it) } },
-                                                modifier = Modifier.semantics { contentDescription = label })
-                                        }
-                                    }, confirmButton = {
-                                        TextButton(onClick = { chartSettings = false }) { Text(stringResource(R.string.close)) }
-                                    })
-                            }
                             var showQueries by remember { mutableStateOf(false) }
                             Box {
                                 OutlinedButton(onClick = { showQueries = true }) { Text(stringResource(R.string.prediction_shortcuts)) }
@@ -148,8 +134,13 @@ class MainActivity : ComponentActivity() {
                                 destination = null
                             }
                             androidx.activity.compose.BackHandler(onBack = back)
+                            CompositionLocalProvider(io.openwaters.slackwater.android.map.LocalOpenStationMap provides { station ->
+                                back()
+                                focusMap = station
+                            }) {
                             StationPage(remember { StationListModel.get(this@MainActivity) }, target.station,
                                 remember { Instant.now() }, target.event, onBack = back)
+                            }
                         }
                     }
                 }
