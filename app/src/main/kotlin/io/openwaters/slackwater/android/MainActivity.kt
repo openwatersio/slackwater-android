@@ -19,10 +19,16 @@ import io.openwaters.slackwater.android.core.launchReading
 import java.time.Clock
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import io.openwaters.slackwater.android.data.AlertReconciliation
 import io.openwaters.slackwater.android.data.BundledTideDatabase
 import io.openwaters.slackwater.android.core.station.StationId
 
 class MainActivity : ComponentActivity() {
+    override fun onStart() {
+        super.onStart()
+        AlertReconciliation.get(this).foreground()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
