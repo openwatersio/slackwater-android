@@ -29,7 +29,10 @@ class UserStateStoreTest {
 
     private fun withFile(block: suspend (File) -> Unit) = runBlocking {
         val file = File(context.cacheDir, "${UUID.randomUUID()}.preferences_pb")
-        try { block(file) } finally { file.delete() }
+        try { block(file) } finally {
+            file.delete()
+            File(file.parentFile, file.nameWithoutExtension + ".downloads.preferences_pb").delete()
+        }
     }
 
     @Test fun favoritesAndRecentsSurviveReopenAndMigrateInOrder() = withFile { file ->
@@ -120,6 +123,56 @@ class UserStateStoreTest {
             assertEquals(setOf(other.id, gate.id), reselected.chosenIds)
             assertEquals(other, reselected.preferredNearbyMember(listOf(moved, other)))
         }
+    }
+
+    @Test fun downloadIntentSurvivesReopenAndScopeChanges() = withFile { file ->
+        val former = StationId("noaa/8218617")
+        val millBay = StationId("chs-mill-bay")
+        val other = StationId("chs-fulford-harbour")
+        withScope { scope ->
+            val raw = PreferenceDataStoreFactory.create(scope = scope) { File(file.parentFile, file.nameWithoutExtension + ".downloads.preferences_pb") }
+            raw.edit {
+                it[androidx.datastore.preferences.core.stringSetPreferencesKey("requested")] = setOf(former.value)
+                it[androidx.datastore.preferences.core.stringSetPreferencesKey("cancelled")] = setOf(millBay.value, other.value)
+            }
+        }
+        withScope { scope ->
+            val store = UserStateStore.open(file, catalog, scope).downloads
+            val migrated = store.state.first().getOrThrow()
+            assertEquals(setOf(millBay), migrated.requested)
+            assertEquals(setOf(millBay, other), migrated.cancelled)
+            assertTrue(migrated.allowsRestore(millBay, ready = false))
+            assertFalse(migrated.allowsRestore(other, ready = false))
+            assertTrue(migrated.allowsRestore(other, ready = true))
+            store.requestDownloads(listOf(former))
+            store.trimDownloads(listOf(millBay, other))
+        }
+        withScope { scope ->
+            val store = UserStateStore.open(file, catalog, scope).downloads
+            assertEquals(DownloadIntent(setOf(millBay), setOf(other)), store.state.first().getOrThrow())
+            store.resumeAutomaticDownloads(listOf(other))
+            store.releaseDownloadRequests(listOf(former))
+            assertEquals(DownloadIntent(), store.state.first().getOrThrow())
+        }
+    }
+
+    @Test fun unsupportedDownloadFilePreservesIntentAndLeavesFavoritesUsable() = withFile { file ->
+        val intentFile = File(file.parentFile, file.nameWithoutExtension + ".downloads.preferences_pb")
+        withScope { scope ->
+            PreferenceDataStoreFactory.create(scope = scope) { intentFile }.edit { it[intPreferencesKey("version")] = 2 }
+        }
+        val before = intentFile.readBytes()
+        withScope { scope ->
+            val store = UserStateStore.open(file, catalog, scope)
+            assertTrue(store.downloads.state.first().exceptionOrNull() is IOException)
+            try {
+                store.downloads.requestDownloads(listOf(StationId("chs-mill-bay")))
+                fail("Expected unsupported version to prevent write")
+            } catch (_: IOException) { }
+            store.setFavorite(StationId("chs-mill-bay"), true)
+            assertEquals(listOf(StationId("chs-mill-bay")), store.places.first().getOrThrow().favorites)
+        }
+        assertArrayEquals(before, intentFile.readBytes())
     }
 
     @Test fun invalidSavedDataSurvivesFailedReadAndWrite() = withFile { file ->

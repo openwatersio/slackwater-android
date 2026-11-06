@@ -1,0 +1,107 @@
+package io.openwaters.slackwater.android.data
+
+import androidx.datastore.core.DataMigration
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.*
+import io.openwaters.slackwater.android.core.station.StationCatalog
+import io.openwaters.slackwater.android.core.station.StationId
+import io.openwaters.slackwater.android.core.station.remapSavedIds
+import java.io.File
+import java.io.IOException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.*
+
+data class DownloadIntent(
+    val requested: Set<StationId> = emptySet(),
+    val cancelled: Set<StationId> = emptySet(),
+) {
+    /** Filter existing queue candidates by current catalog ID after checking stored coverage. */
+    fun allowsRestore(canonicalId: StationId, ready: Boolean): Boolean =
+        ready || canonicalId in requested || canonicalId !in cancelled
+}
+
+private val versionKey = intPreferencesKey("version")
+private val requestedKey = stringSetPreferencesKey("requested")
+private val cancelledKey = stringSetPreferencesKey("cancelled")
+
+private fun Preferences.readIntent(): DownloadIntent {
+    val fields = asMap()
+    val version = fields[versionKey]
+    if (version != null && version != 1) throw IOException("Unsupported download intent version: $version")
+    fun ids(key: Preferences.Key<Set<String>>): Set<StationId> {
+        val value = fields[key] ?: return emptySet()
+        if (value !is Set<*>) throw IOException("Invalid download intent: ${key.name}")
+        return value.mapTo(mutableSetOf()) {
+            StationId(it as? String ?: throw IOException("Invalid station ID in ${key.name}"))
+        }
+    }
+    return DownloadIntent(ids(requestedKey), ids(cancelledKey))
+}
+
+private fun MutablePreferences.storeIntent(intent: DownloadIntent) {
+    this[versionKey] = 1
+    this[requestedKey] = intent.requested.mapTo(mutableSetOf()) { it.value }
+    this[cancelledKey] = intent.cancelled.mapTo(mutableSetOf()) { it.value }
+}
+
+class DownloadIntentStore private constructor(
+    private val data: DataStore<Preferences>,
+    private val catalog: StationCatalog,
+) {
+    val state: Flow<Result<DownloadIntent>> = data.data.map { Result.success(it.readIntent()) }
+        .catch { if (it is IOException) emit(Result.failure(it)) else throw it }
+        .distinctUntilChanged()
+
+    /** A direct request or explicit retry also resumes a previously trimmed job. */
+    suspend fun requestDownloads(ids: Collection<StationId>) = editDownloads(ids) { intent, stations ->
+        DownloadIntent(intent.requested + stations, intent.cancelled - stations)
+    }
+
+    /** A successful download or permanent failure releases its request. Transient failures retain it. */
+    suspend fun releaseDownloadRequests(ids: Collection<StationId>) = editDownloads(ids) { intent, stations ->
+        intent.copy(requested = intent.requested - stations)
+    }
+
+    /** Narrowing the download tier cancels automatic jobs while preserving explicit requests. */
+    suspend fun trimDownloads(ids: Collection<StationId>) = editDownloads(ids) { intent, stations ->
+        intent.copy(cancelled = intent.cancelled + (stations - intent.requested))
+    }
+
+    suspend fun resumeAutomaticDownloads(ids: Collection<StationId>) = editDownloads(ids) { intent, stations ->
+        intent.copy(cancelled = intent.cancelled - stations)
+    }
+
+    private suspend fun editDownloads(
+        ids: Collection<StationId>,
+        change: (DownloadIntent, Set<StationId>) -> DownloadIntent,
+    ) {
+        if (ids.isEmpty()) return
+        val stations = catalog.remapSavedIds(ids.toList()).toSet()
+        data.edit { prefs ->
+            val previous = prefs.readIntent()
+            val next = change(previous, stations)
+            if (next != previous) prefs.storeIntent(next)
+        }
+    }
+
+    companion object {
+        internal fun open(file: File, catalog: StationCatalog, scope: CoroutineScope): DownloadIntentStore {
+            val migration = object : DataMigration<Preferences> {
+                override suspend fun shouldMigrate(currentData: Preferences) = true
+                override suspend fun migrate(currentData: Preferences): Preferences {
+                    val previous = currentData.readIntent()
+                    val next = DownloadIntent(
+                        catalog.remapSavedIds(previous.requested.toList()).toSet(),
+                        catalog.remapSavedIds(previous.cancelled.toList()).toSet(),
+                    )
+                    if (next == previous) return currentData
+                    return currentData.toMutablePreferences().apply { storeIntent(next) }
+                }
+                override suspend fun cleanUp() = Unit
+            }
+            return DownloadIntentStore(PreferenceDataStoreFactory.create(
+                migrations = listOf(migration), scope = scope, produceFile = { file },
+            ), catalog)
+        }
+    }
+}
