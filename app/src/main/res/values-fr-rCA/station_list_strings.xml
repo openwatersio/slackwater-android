@@ -7,7 +7,7 @@
     <string name="list_finding_location">Recherche de votre emplacement…</string>
     <string name="list_location_unavailable">Emplacement indisponible</string>
     <string name="list_showing_near">Lieux près de %1$s</string>
-    <string name="list_go_to_settings">Accéder aux Réglages</string>
+    <string name="list_go_to_settings">Accéder aux paramètres</string>
     <string name="list_find_tides_near_me">Trouver les marées près de moi</string>
     <string name="list_approximate_location">Position approximative</string>
     <string name="list_filter_all">Tout</string>

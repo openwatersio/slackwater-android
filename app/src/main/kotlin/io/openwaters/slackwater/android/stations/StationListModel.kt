@@ -119,12 +119,18 @@ class StationListModel private constructor(context: Context) {
 
     init {
         scope.launch {
-            try {
-                _catalog.value = LoadedCatalog(catalogSource.identities())
-            } catch (error: Exception) {
-                if (error is CancellationException) throw error
-                Log.e("Slackwater", "Station catalog unavailable", error)
-                _catalogFailed.value = true
+            var attempt = 0
+            while (_catalog.value == null) {
+                try {
+                    _catalog.value = LoadedCatalog(catalogSource.identities())
+                    _catalogFailed.value = false
+                } catch (error: Exception) {
+                    if (error is CancellationException) throw error
+                    if (attempt == 0) Log.e("Slackwater", "Station catalog unavailable; will retry", error)
+                    _catalogFailed.value = true
+                    delay(1000L shl attempt.coerceAtMost(6))
+                    attempt++
+                }
             }
         }
     }
@@ -207,6 +213,23 @@ class StationListModel private constructor(context: Context) {
 
     private val refreshing = java.util.concurrent.atomic.AtomicBoolean(false)
 
+    // Held in memory as well as stored, so a write that fails can never make the list ask a second time.
+    private val askedThisProcess = java.util.concurrent.atomic.AtomicBoolean(false)
+
+    /**
+     * Whether the list should raise the location prompt now: only on a first launch, once. A person who allowed
+     * location before the list ever asked is recorded as asked, so revoking it later never brings the prompt back.
+     */
+    fun claimLocationAsk(storedAsked: Boolean): Boolean {
+        if (storedAsked || askedThisProcess.get()) return false
+        if (location.inputs.value.permission != io.openwaters.slackwater.android.core.station.LocationPermission.NOT_GRANTED) {
+            askedThisProcess.set(true)
+            launchEdit { listPreferences.markLocationAsked() }
+            return false
+        }
+        return askedThisProcess.compareAndSet(false, true)
+    }
+
     /** Asks for a fix unless a request is already running, so ticks never pile up requests. */
     suspend fun refreshLocation() {
         if (!refreshing.compareAndSet(false, true)) return
@@ -237,6 +260,20 @@ class StationListModel private constructor(context: Context) {
             if (error is CancellationException) throw error
             Log.w("Slackwater", "Reading unavailable for ${id.value}", error)
             CardReading.Unavailable
+        }
+    }
+
+    /** The station's data credit, from the record its predictions come from; null when it has none to read. */
+    suspend fun attribution(id: StationId, at: Instant): String? = withContext(Dispatchers.Default) {
+        try {
+            when (val result = predictions.load(id, cardSpan(at), PredictionPurpose.DISPLAY)) {
+                is io.openwaters.slackwater.android.core.prediction.PredictionResult.Ready -> result.source
+                is io.openwaters.slackwater.android.core.prediction.PredictionResult.Disjoint -> result.blocks.firstOrNull()?.source
+                else -> null
+            }
+        } catch (error: Exception) {
+            if (error is CancellationException) throw error
+            null
         }
     }
 

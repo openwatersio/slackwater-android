@@ -24,7 +24,9 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
+import io.openwaters.slackwater.compassIndex
 import androidx.compose.ui.semantics.CustomAccessibilityAction
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
@@ -100,7 +102,10 @@ private fun readingText(reading: CardReading, preferences: ReadingPreferences): 
                 SpeedUnit.METRES_PER_SECOND -> R.string.spoken_metres_per_second
             })
             val state = stateWord(reading.state)
-            val set = reading.setDegrees?.let { formatSet(it, preferences.setFormat == SetFormat.DEGREES) }
+            val compass = stringArrayResource(R.array.pdf_compass)
+            val set = reading.setDegrees?.let {
+                if (preferences.setFormat == SetFormat.DEGREES) formatSet(it, asBearing = true) else compass[compassIndex(it)]
+            }
             val spokenState = listOfNotNull(state.lowercase(locale), set?.let { stringResource(R.string.card_spoken_set, it) })
                 .joinToString(" ")
             ReadingText(

@@ -94,7 +94,7 @@ class MainActivity : ComponentActivity() {
                             Column(Modifier.safeDrawingPadding().verticalScroll(rememberScrollState()).padding(24.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
                                 Text(stringResource(R.string.app_name), style = MaterialTheme.typography.headlineLarge)
                                 key(target) {
-                                    StationAlerts(target) {
+                                    StationAlerts(target, target.station) {
                                         setIntent(Intent(this@MainActivity, MainActivity::class.java))
                                         destination = null
                                     }

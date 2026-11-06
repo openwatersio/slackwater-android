@@ -42,9 +42,9 @@ interface FixSource {
 }
 
 /**
- * The list's location state. [refresh] runs whenever the list appears or the app returns to the foreground, and
- * on the list's 60-second card tick once the held fix has aged past the reuse limit, so the spinner never stays up
- * with nothing asking. It shows a usable cached fix at once, then asks for a new
+ * The list's location state. [refresh] runs whenever the list appears or the app returns to the foreground, and on
+ * the list's 60-second card tick while still locating or once the held fix is halfway to the reuse limit, so a fix is
+ * replaced before it expires and the spinner never stays up with nothing asking. It shows a usable cached fix at once, then asks for a new
  * one. It never raises the permission prompt; the screen does that once, and reports it through [promptShown] and
  * [promptAnswered].
  */

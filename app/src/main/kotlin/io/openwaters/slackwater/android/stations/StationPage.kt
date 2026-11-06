@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.produceState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -48,13 +49,17 @@ fun StationPage(model: StationListModel, id: StationId, now: Instant, onBack: ()
             Row(verticalAlignment = Alignment.CenterVertically) {
                 TextButton(onClick = onBack, modifier = Modifier.heightIn(min = 48.dp)) { Text(stringResource(R.string.station_back)) }
                 Text(station?.name.orEmpty(), style = MaterialTheme.typography.titleLarge, modifier = Modifier.weight(1f))
-                TextButton(
+                // A departed station restored onto this page is never starred anew.
+                if (station != null || favorite) TextButton(
                     onClick = { model.launchEdit { model.places.setFavorite(id, !favorite) } },
                     modifier = Modifier.heightIn(min = 48.dp),
                 ) { Text(stringResource(if (favorite) R.string.station_unstar else R.string.station_star)) }
             }
             if (station != null) {
                 StationCard(station, null, now, preferences, { model.reading(id, it) }, onOpen = null)
+                // The credit the station's source asks to be shown with its data.
+                val credit by produceState<String?>(null, id) { value = model.attribution(id, now) }
+                credit?.let { Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant) }
             }
             // This station's alerts, calendar, schedule and printable tables.
             StationAlerts(destination = null, station = id) {}

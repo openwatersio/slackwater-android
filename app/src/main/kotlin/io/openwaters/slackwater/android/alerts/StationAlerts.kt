@@ -30,7 +30,7 @@ import kotlinx.coroutines.withContext
 @Composable
 internal fun StationAlerts(
     destination: AlertDestination?,
-    station: StationId = StationId("noaa/9449880"),
+    station: StationId,
     onCloseDestination: () -> Unit,
 ) {
     val context = LocalContext.current.applicationContext

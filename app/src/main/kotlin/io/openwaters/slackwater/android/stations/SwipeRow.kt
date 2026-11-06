@@ -16,6 +16,8 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -55,8 +57,10 @@ fun SwipeRow(leading: SwipeAction?, trailing: SwipeAction?, content: @Composable
         action.onAction()
     }
     Box {
-        // The revealed buttons stay out of the accessibility tree; the card carries the same actions itself.
-        Box(Modifier.matchParentSize().clearAndSetSemantics {}) {
+        // The buttons exist only while a swipe has moved the card, so keyboard focus never lands on one hidden behind
+        // it. They stay out of the accessibility tree; the card carries the same actions itself.
+        val moved by remember(state) { derivedStateOf { state.offset.let { !it.isNaN() && it != 0f } } }
+        if (moved) Box(Modifier.matchParentSize().clearAndSetSemantics {}) {
             leading?.let { action ->
                 ActionButton(action, Modifier.align(Alignment.CenterStart)) { run(action) }
             }

@@ -8,6 +8,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -36,17 +37,19 @@ fun StationsHome(onCredits: () -> Unit, coveredByAlert: Boolean = false, footerE
     var searching by rememberSaveable { mutableStateOf(false) }
     var opened by rememberSaveable { mutableStateOf<String?>(null) }
     var now by remember { mutableStateOf(Instant.now()) }
+    // The tick loop below starts once, so it reads the latest value through this rather than the first one.
+    val covered by rememberUpdatedState(coveredByAlert)
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     LaunchedEffect(lifecycle) {
         lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-            // Location is asked for when the list becomes active, then again on a tick only once the held fix has
-            // aged out; the clock pauses in the background.
+            // Location is asked for when the list becomes active, then on a tick while locating or once the held fix
+            // is halfway to the reuse limit; the clock pauses in the background.
             launch { model.refreshLocation() }
             while (true) {
                 now = Instant.now()
                 delay(CARD_REFRESH_MILLIS)
                 model.tick()
-                val showing = !searching && opened == null && !coveredByAlert
+                val showing = !searching && opened == null && !covered
                 if (showing && model.wantsFreshFix(SystemClock.elapsedRealtime())) launch { model.refreshLocation() }
             }
         }

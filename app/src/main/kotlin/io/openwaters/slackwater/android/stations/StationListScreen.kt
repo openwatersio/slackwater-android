@@ -61,7 +61,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
 import io.openwaters.slackwater.android.R
-import io.openwaters.slackwater.android.core.station.LocationPermission
 import io.openwaters.slackwater.android.core.station.LocationSlot
 import io.openwaters.slackwater.android.core.station.RankedStation
 import io.openwaters.slackwater.android.core.station.RankingAnchor
@@ -123,7 +122,7 @@ fun StationListScreen(
     val asked = listPreferences?.locationAsked
     // Never over a page, search or an alert's screen: it waits until the list itself is showing.
     LaunchedEffect(state != null, asked, showing) {
-        if (showing && state != null && asked == false && model.location.inputs.value.permission == LocationPermission.NOT_GRANTED) ask()
+        if (showing && state != null && asked != null && model.claimLocationAsk(asked)) ask()
     }
 
     val current = state
