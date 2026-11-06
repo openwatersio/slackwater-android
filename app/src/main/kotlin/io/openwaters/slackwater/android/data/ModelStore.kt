@@ -1,5 +1,6 @@
 package io.openwaters.slackwater.android.data
 
+import io.openwaters.slackwater.android.calendars.CalendarStateStore
 import android.content.Context
 import android.system.ErrnoException
 import android.system.Os
@@ -63,7 +64,14 @@ sealed interface StoredModel {
  * An [IOException] after the rename (a failed directory sync) means the new record is in place but may not survive
  * a power loss.
  */
-class ModelStore internal constructor(private val directory: File) {
+class ModelStore internal constructor(
+    private val directory: File,
+    private val invalidate: suspend (StationId, ModelKind) -> Unit = { _, _ -> },
+) {
+    private suspend fun invalidateFit(id: StationId, kind: ModelKind) {
+        if (kind == ModelKind.TIDE || kind == ModelKind.CURRENT) invalidate(id, kind)
+    }
+
     private var sweptTemporaries = false
     private val _revision = MutableStateFlow(0L)
 
@@ -92,6 +100,7 @@ class ModelStore internal constructor(private val directory: File) {
         withContext(Dispatchers.IO) {
             alertInputLock.withLock {
                 prepare()
+                invalidateFit(id, kind)
                 replace(fileFor(id, kind), bytes)
             }
         }
@@ -107,6 +116,7 @@ class ModelStore internal constructor(private val directory: File) {
                 val next = change(readFile(id, kind)) ?: return@withLock
                 val bytes = encode(id, next)
                 prepare()
+                invalidateFit(id, kind)
                 replace(fileFor(id, kind), bytes)
             }
         }
@@ -128,6 +138,7 @@ class ModelStore internal constructor(private val directory: File) {
         withContext(Dispatchers.IO) {
             alertInputLock.withLock {
                 val file = fileFor(id, kind)
+                invalidateFit(id, kind)
                 if (!file.delete()) {
                     if (file.exists()) throw IOException("Cannot remove $file")
                     return@withLock
@@ -199,8 +210,18 @@ class ModelStore internal constructor(private val directory: File) {
         private var shared: ModelStore? = null
 
         @Synchronized
-        fun get(context: Context): ModelStore =
-            shared ?: ModelStore(File(context.applicationContext.noBackupFilesDir, "models")).also { shared = it }
+        fun get(context: Context): ModelStore {
+            val app = context.applicationContext
+            val dependents by lazy {
+                val rows = app.assets.open("slackwater/chs-gates.json").bufferedReader().use { org.json.JSONArray(it.readText()) }
+                (0 until rows.length()).map(rows::getJSONObject)
+                    .groupBy({ StationId(it.getString("reference")) }, { StationId(it.getString("id")) })
+            }
+            return shared ?: ModelStore(File(app.noBackupFilesDir, "models")) { id, kind ->
+                val affected = if (kind == ModelKind.TIDE) setOf(id) + dependents[id].orEmpty() else setOf(id)
+                CalendarStateStore.get(app).invalidate(affected)
+            }.also { shared = it }
+        }
 
         internal fun decode(bytes: ByteArray, id: StationId): StoredModel {
             val record = try {

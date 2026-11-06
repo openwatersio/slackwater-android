@@ -35,4 +35,12 @@ The alert editor previews station events offline. Saving a reminder requires a c
 
 Android may defer reminders in Doze or when exact alarms are unavailable. The app uses one-shot alarms and rechecks the station prediction, notification access and entitlement before posting. Tapping a notification opens the station at the event time. Android can restart a closed app to deliver an alarm. After a user force-stop, open Slackwater to rebuild the schedule. Reboot, package replacement and clock changes restore eligible entries within the saved horizon.
 
-The release manifest requests notification and boot access. Declaring special exact-alarm access requires a separate release policy review. [Android alarm guidance](https://developer.android.com/develop/background-work/services/alarms) and [notification permissions](https://developer.android.com/develop/ui/compose/notifications/notification-permission).
+Reminders use Android notification and boot permissions. Declaring special exact-alarm access requires a separate release policy review. [Android alarm guidance](https://developer.android.com/develop/background-work/services/alarms) and [notification permissions](https://developer.android.com/develop/ui/compose/notifications/notification-permission).
+
+## Station calendars
+
+Open **Station calendars** from a station to publish the next 90 days of tide turns, slack windows or derived slacks, plus visible lunar eclipses. Each station and series has a local Android calendar. Events open the station at the event time and have no reminders. Publishing requires read and write calendar access.
+
+A subscription started with purchased Premium keeps publishing after lapse. A free-day subscription stops when the free day ends, and purchasing converts it to a purchased subscription. Android schedules refresh and expiry work. If execution or calendar access is blocked, already-published events can remain until the next successful reconciliation. Opening Slackwater retries pending work.
+
+Removing a favorite keeps its calendar subscription. Removing the subscription asks for confirmation with the station name and number of generated events that will be removed. Personal entries and events already underway stay in Calendar.

@@ -3,6 +3,7 @@ package io.openwaters.slackwater.android.alerts
 import io.openwaters.slackwater.android.data.alertInputLock
 import kotlinx.coroutines.sync.withLock
 import android.content.Context
+import io.openwaters.slackwater.android.calendars.CalendarStateStore
 import androidx.datastore.preferences.core.*
 import io.openwaters.slackwater.android.core.planning.ReminderEntitlement
 import io.openwaters.slackwater.android.core.planning.allows
@@ -12,6 +13,7 @@ import kotlinx.coroutines.flow.*
 
 /** Billing publishes entitlement here so an alarm can check it in a newly started process. */
 class ReminderAccessStore private constructor(context: Context) {
+    private val calendars = CalendarStateStore.get(context)
     private val data = PreferenceDataStoreFactory.create {
         File(context.noBackupFilesDir, "reminder_access.preferences_pb")
     }
@@ -28,6 +30,7 @@ class ReminderAccessStore private constructor(context: Context) {
     suspend fun current() = changes.first()
 
     suspend fun update(access: ReminderEntitlement): Unit = alertInputLock.withLock {
+        if (access == ReminderEntitlement.Purchased) calendars.convertPurchased()
         data.edit { prefs ->
             prefs.clear()
             when (access) {

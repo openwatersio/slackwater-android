@@ -1,6 +1,8 @@
 package io.openwaters.slackwater.android
 
 import android.content.Intent
+import android.provider.CalendarContract
+import io.openwaters.slackwater.android.calendars.CalendarRepository
 import io.openwaters.slackwater.android.alerts.AlertDestination
 import io.openwaters.slackwater.android.alerts.StationAlerts
 import java.io.IOException
@@ -32,17 +34,25 @@ class MainActivity : ComponentActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
+        handleDestination(intent)
+    }
+
+    private fun handleDestination(intent: Intent) {
         destination = AlertDestination.read(intent)
+        if (intent.action == CalendarContract.ACTION_HANDLE_CUSTOM_EVENT) {
+            setResult(if (destination == null) RESULT_CANCELED else RESULT_OK)
+        }
     }
 
     override fun onStart() {
         super.onStart()
         AlertReconciliation.get(this).foreground()
+        CalendarRepository.get(this).foreground()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        destination = AlertDestination.read(intent)
+        handleDestination(intent)
         enableEdgeToEdge()
         setContent {
             MaterialTheme {
