@@ -1,5 +1,6 @@
 package io.openwaters.slackwater.android.sharing
 
+import io.openwaters.slackwater.android.openStation
 import android.os.ParcelFileDescriptor
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
@@ -19,6 +20,7 @@ class PrintPreviewTest {
     @get:Rule val compose = createAndroidComposeRule<MainActivity>()
 
     private fun openSheet() {
+        compose.openStation("Friday Harbor")
         compose.waitUntil(30_000) { compose.onAllNodesWithTag("printable-tables-row").fetchSemanticsNodes().isNotEmpty() }
         compose.onNodeWithTag("printable-tables-row").performScrollTo().performClick()
     }

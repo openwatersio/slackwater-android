@@ -1,5 +1,6 @@
 package io.openwaters.slackwater.android.sharing
 
+import io.openwaters.slackwater.android.openStation
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import io.openwaters.slackwater.android.MainActivity
@@ -21,6 +22,7 @@ class StationScheduleTest {
         val previous = runBlocking { access.current() }
         try {
             runBlocking { access.update(ReminderEntitlement.Free) }
+            compose.openStation("Friday Harbor")
             compose.waitUntil(30_000) { compose.onAllNodesWithTag("printable-tables-row").fetchSemanticsNodes().isNotEmpty() }
             compose.onNodeWithText("Schedule").performScrollTo().assertIsDisplayed()
             compose.onNodeWithText("Next week").performScrollTo().performClick()

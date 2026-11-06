@@ -160,7 +160,8 @@ data class StationListSections(
 
 /**
  * Builds the list's sections. [catalog] is the live catalog in catalog order (`StationIdentityIndex.identities`);
- * [filter] narrows Near Me only, never heroes, favorites or recents.
+ * [filter] narrows Near Me only, never heroes, favorites or recents. [rank] ranks the browsable catalog from an
+ * anchor; a caller may memoize it by the exact coordinate, since every distance it returns is from that coordinate.
  */
 fun stationListSections(
     catalog: List<StationIdentity>,
@@ -169,11 +170,12 @@ fun stationListSections(
     recents: List<StationId>,
     chosen: Set<StationId>,
     filter: StationSeries?,
+    rank: (List<StationIdentity>, Coordinate) -> List<RankedStation> = ::rankByDistance,
 ): StationListSections {
     val browsable = catalog.filter { it.series != null }
     val live = browsable.associateBy { it.id }
     val anchor = rankingAnchor(fix, recents, live)
-    val byDistance = rankByDistance(browsable, anchor.coordinate)
+    val byDistance = rank(browsable, anchor.coordinate)
     val namesakes = Namesakes(byDistance, chosen)
     // Heroes come from the uncollapsed ranking, then stand in for their chosen namesake, as in Near Me.
     val heroes = if (fix == null) emptyList() else heroes(byDistance).map { namesakes.shownFor(it.id) ?: it }

@@ -1,10 +1,6 @@
 <resources>
     <string name="app_name">Slackwater</string>
-    <string name="shell_message">Prévisions des marées et des courants hors ligne</string>
-    <string name="shell_status">Application Android en développement</string>
-    <string name="source_notice">Données des stations de la NOAA. Prévisions non destinées à la navigation.</string>
     <string name="data_and_licenses">Données et licences</string>
     <string name="data_credits">Sources des données</string>
     <string name="close">Fermer</string>
-    <string name="station_unavailable">Les données de Friday Harbor ne sont pas disponibles.</string>
 </resources>

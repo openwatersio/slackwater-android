@@ -1,5 +1,6 @@
 package io.openwaters.slackwater.android.calendars
 
+import io.openwaters.slackwater.android.openStation
 import android.content.Intent
 import android.provider.CalendarContract
 import androidx.compose.ui.test.*
@@ -29,6 +30,7 @@ class CalendarSettingsTest {
         val previous = runBlocking { access.current() }
         try {
             runBlocking { access.update(ReminderEntitlement.Free) }
+            compose.openStation("Friday Harbor")
             compose.onNodeWithText("Station calendars").performScrollTo().performClick()
             compose.waitUntil(20_000) { compose.onAllNodes(hasText("Publish calendar") and isEnabled()).fetchSemanticsNodes().isNotEmpty() }
             compose.onNodeWithText("Publish calendar").performClick()

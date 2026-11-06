@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="list_my_location">Ma position</string>
+    <string name="list_favorites">Favoris</string>
+    <string name="list_near_me">Près de moi</string>
+    <string name="list_recents">Récents</string>
+    <string name="list_finding_location">Recherche de votre emplacement…</string>
+    <string name="list_location_unavailable">Emplacement indisponible</string>
+    <string name="list_showing_near">Lieux près de %1$s</string>
+    <string name="list_go_to_settings">Accéder aux Réglages</string>
+    <string name="list_find_tides_near_me">Trouver les marées près de moi</string>
+    <string name="list_approximate_location">Position approximative</string>
+    <string name="list_filter_all">Tout</string>
+    <string name="list_filter_tides">Marées</string>
+    <string name="list_filter_currents">Courants</string>
+    <string name="list_filter_show_all">Tout afficher</string>
+    <string name="list_filter_show_tides">Afficher les marées</string>
+    <string name="list_filter_show_currents">Afficher les courants</string>
+    <string name="list_search">Rechercher</string>
+    <string name="list_by_open_waters">par Open Waters</string>
+    <string name="list_not_for_navigation">Prévisions non destinées à la navigation.</string>
+    <string name="list_distance_nm">%1$s nm</string>
+    <string name="list_region_distance">%1$s • %2$s</string>
+
+    <string name="card_rising">Montante</string>
+    <string name="card_falling">Descendante</string>
+    <string name="card_slack">Étale</string>
+    <string name="card_flooding">Flot</string>
+    <string name="card_ebbing">Jusant</string>
+    <string name="card_not_downloaded">Non téléchargé</string>
+    <string name="card_unavailable">Aucune prévision pour l’instant</string>
+    <string name="card_value_unit">%1$s %2$s</string>
+    <string name="card_value_unit_approximate">~%1$s %2$s</string>
+    <string name="card_state_set">%1$s %2$s</string>
+    <string name="spoken_feet">pieds</string>
+    <string name="spoken_metres">mètres</string>
+    <string name="spoken_knots">nœuds</string>
+    <string name="spoken_kilometres_per_hour">kilomètres par heure</string>
+    <string name="spoken_metres_per_second">mètres par seconde</string>
+    <string name="card_spoken_reading">%1$s %2$s, %3$s</string>
+    <string name="card_spoken_set">vers %1$s</string>
+
+    <string name="action_favorite">Favori</string>
+    <string name="action_unfavorite">Retirer des favoris</string>
+    <string name="action_remove">Supprimer</string>
+
+    <string name="removed_title">Station supprimée</string>
+    <string name="removed_withdrawn">Publication interrompue pour %1$s.</string>
+    <string name="removed_gone">%1$s — n’est plus dans Slackwater.</string>
+    <string name="removed_gone_unknown">Cette station n’est plus dans Slackwater.</string>
+    <string name="removed_withdrawn_detail">Retirée du service hydrographique, elle ne fournit plus de relevés. Balayez pour la supprimer.</string>
+    <string name="removed_gone_detail">Slackwater n’offre plus cette station et n’a donc aucun relevé à afficher. Balayez pour la supprimer.</string>
+    <string name="removed_choose">Choisir une autre station</string>
+    <string name="removed_choose_prompt">Choisissez une station de remplacement près de la station retirée.</string>
+
+    <string name="search_placeholder">Port, baie ou chenal</string>
+    <string name="search_clear">Effacer le texte de recherche</string>
+    <string name="search_close">Fermer la recherche</string>
+    <string name="search_truncated">Les 60 plus proches — continuez à taper pour préciser</string>
+    <string name="search_no_matches">Aucun résultat</string>
+
+    <string name="station_back">Retour</string>
+    <string name="station_star">Ajouter aux favoris</string>
+    <string name="station_unstar">Retirer des favoris</string>
+</resources>
