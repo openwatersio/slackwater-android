@@ -11,10 +11,13 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import io.openwaters.slackwater.android.core.station.StationCatalog
 import io.openwaters.slackwater.android.core.station.StationId
 import io.openwaters.slackwater.android.core.station.remapSavedIds
+import io.openwaters.slackwater.android.core.station.StationIdentity
+import io.openwaters.slackwater.android.core.station.place
 import java.io.File
 import java.io.IOException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.Flow
@@ -23,10 +26,19 @@ import kotlinx.coroutines.flow.map
 import org.json.JSONArray
 import org.json.JSONException
 
-data class SavedPlaces(val favorites: List<StationId>, val recents: List<StationId>)
+data class SavedPlaces(
+    val favorites: List<StationId>,
+    val recents: List<StationId>,
+    val chosenIds: Set<StationId> = emptySet(),
+) {
+    /** Representative for one Near Me group, supplied in nearest-first order. */
+    fun preferredNearbyMember(group: List<StationIdentity>): StationIdentity? =
+        group.firstOrNull { it.id in chosenIds } ?: group.firstOrNull()
+}
 
 private val favoritesKey = stringPreferencesKey("favorites")
 private val recentsKey = stringPreferencesKey("recents")
+private val chosenKey = stringPreferencesKey("chosenStationIds")
 private val versionKey = intPreferencesKey("savedPlacesVersion")
 private const val recentLimit = 6
 
@@ -46,10 +58,10 @@ private fun Preferences.ids(key: Preferences.Key<String>): List<StationId> {
 private fun Preferences.readPlaces(): SavedPlaces {
     val version = asMap()[versionKey]
     if (version != null && version != 1) throw IOException("Unsupported saved places version: $version")
-    return SavedPlaces(ids(favoritesKey), ids(recentsKey))
+    return SavedPlaces(ids(favoritesKey), ids(recentsKey), ids(chosenKey).toSet())
 }
 
-private fun List<StationId>.encode() = JSONArray(map { it.value }).toString()
+private fun Collection<StationId>.encode() = JSONArray(map { it.value }).toString()
 
 private fun List<StationId>.record(id: StationId) = (listOf(id) + (this - id)).take(recentLimit)
 
@@ -100,13 +112,34 @@ class UserStateStore private constructor(
         }
     }
 
+    suspend fun chooseStation(id: StationId) {
+        val canonical = catalog.resolve(id).id
+        val live = catalog.identities()
+        val group = withContext(Dispatchers.Default) {
+            val chosen = live.firstOrNull { it.id == canonical } ?: return@withContext emptySet()
+            val place = chosen.place ?: return@withContext emptySet()
+            live.asSequence().filter {
+                it.place == place
+            }.map { it.id }.toSet()
+        }
+        if (group.isEmpty()) return
+        editPlaces { places ->
+            places.copy(chosenIds = (places.chosenIds - group) + canonical)
+        }
+    }
+
     private suspend fun update(id: StationId, change: (SavedPlaces, StationId) -> SavedPlaces) {
         val station = catalog.resolve(id).id
+        editPlaces { change(it, station) }
+    }
+
+    private suspend fun editPlaces(change: (SavedPlaces) -> SavedPlaces) {
         data.edit { preferences ->
             val previous = preferences.readPlaces()
-            val next = change(previous, station)
+            val next = change(previous)
             if (next != previous) {
                 preferences[versionKey] = 1
+                if (next.chosenIds != previous.chosenIds) preferences[chosenKey] = next.chosenIds.encode()
                 if (next.favorites != previous.favorites) preferences[favoritesKey] = next.favorites.encode()
                 if (next.recents != previous.recents) preferences[recentsKey] = next.recents.encode()
             }
@@ -134,11 +167,13 @@ class UserStateStore private constructor(
                     val places = currentData.readPlaces()
                     val favorites = catalog.remapSavedIds(places.favorites)
                     val recents = catalog.remapSavedIds(places.recents).take(recentLimit)
-                    if (favorites == places.favorites && recents == places.recents) return currentData
+                    val chosen = catalog.remapSavedIds(places.chosenIds.toList()).toSet()
+                    if (favorites == places.favorites && recents == places.recents && chosen == places.chosenIds) return currentData
                     return currentData.toMutablePreferences().apply {
                         this[versionKey] = 1
                         this[favoritesKey] = favorites.encode()
                         this[recentsKey] = recents.encode()
+                        if (chosen != places.chosenIds) this[chosenKey] = chosen.encode()
                     }
                 }
                 override suspend fun cleanUp() = Unit

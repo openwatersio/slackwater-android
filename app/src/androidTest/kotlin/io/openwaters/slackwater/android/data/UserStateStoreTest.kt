@@ -5,7 +5,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.test.platform.app.InstrumentationRegistry
-import io.openwaters.slackwater.android.core.station.StationId
+import io.openwaters.slackwater.android.core.station.*
 import java.io.File
 import java.io.IOException
 import java.util.UUID
@@ -78,6 +78,47 @@ class UserStateStoreTest {
             store.replaceFavorite(order[1], new)
             store.replaceFavorite(order[2], order[0])
             assertEquals(listOf(order[0], new) + order.drop(3), store.places.first().getOrThrow().favorites)
+        }
+    }
+
+    @Test fun namesakeChoicesFollowIdsAcrossRenameAndSuccessorOnReopen() = withFile { file ->
+        fun station(id: String, name: String, kind: StationKind) =
+            StationIdentity(StationId(id), name, "", 0.0, 0.0, kind)
+        val near = station("noaa/near", "Bay", StationKind.Tide)
+        val far = station("chs-far", "Bay", StationKind.CanadianTide)
+        val gate = station("chs-gate", "Bay", StationKind.DerivedGate)
+        val other = station("noaa/other", "Cove", StationKind.Tide)
+        fun fixture(rows: List<StationIdentity>, successors: Map<StationId, StationSuccessor> = emptyMap()) =
+            object : StationCatalog {
+                val index = StationIdentityIndex(rows, successors)
+                override suspend fun identities() = index.identities
+                override suspend fun resolve(id: StationId) = index.resolve(id)
+            }
+        withScope { scope ->
+            val store = UserStateStore.open(file, fixture(listOf(near, far, gate, other)), scope)
+            val group = listOf(near, far)
+            assertEquals(near, store.places.first().getOrThrow().preferredNearbyMember(group))
+            store.chooseStation(near.id)
+            store.chooseStation(gate.id)
+            store.chooseStation(other.id)
+            store.chooseStation(far.id)
+            val places = store.places.first().getOrThrow()
+            assertEquals(setOf(far.id, gate.id, other.id), places.chosenIds)
+            assertEquals(far, places.preferredNearbyMember(group))
+            assertTrue(places.favorites.isEmpty() && places.recents.isEmpty())
+        }
+        val moved = far.copy(id = StationId("noaa/replacement"), name = "Cove")
+        withScope { scope ->
+            val store = UserStateStore.open(file, fixture(listOf(near, moved, gate, other),
+                mapOf(far.id to StationSuccessor(moved.id))), scope)
+            val places = store.places.first().getOrThrow()
+            assertEquals(setOf(moved.id, gate.id, other.id), places.chosenIds)
+            assertEquals(other, places.preferredNearbyMember(listOf(other, moved)))
+            assertEquals(moved, places.preferredNearbyMember(listOf(moved, other)))
+            store.chooseStation(other.id)
+            val reselected = store.places.first().getOrThrow()
+            assertEquals(setOf(other.id, gate.id), reselected.chosenIds)
+            assertEquals(other, reselected.preferredNearbyMember(listOf(moved, other)))
         }
     }
 
