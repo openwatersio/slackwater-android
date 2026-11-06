@@ -68,6 +68,7 @@ private fun List<StationId>.record(id: StationId) = (listOf(id) + (this - id)).t
 class UserStateStore private constructor(
     private val data: DataStore<Preferences>,
     private val catalog: StationCatalog,
+    val downloads: DownloadIntentStore,
 ) {
     val places: Flow<Result<SavedPlaces>> = data.data
         .map { Result.success(it.readPlaces()) }
@@ -180,7 +181,7 @@ class UserStateStore private constructor(
             }
             return UserStateStore(PreferenceDataStoreFactory.create(
                 migrations = listOf(migration), scope = scope, produceFile = { file },
-            ), catalog)
+            ), catalog, DownloadIntentStore.open(File(file.parentFile, file.nameWithoutExtension + ".downloads.preferences_pb"), catalog, scope))
         }
     }
 }
