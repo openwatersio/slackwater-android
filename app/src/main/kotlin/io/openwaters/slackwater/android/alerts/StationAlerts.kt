@@ -4,6 +4,7 @@ import androidx.compose.ui.window.Dialog
 import io.openwaters.slackwater.heightAt
 import io.openwaters.slackwater.android.R
 import io.openwaters.slackwater.android.calendars.StationCalendarButton
+import io.openwaters.slackwater.android.sharing.StationSchedule
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
@@ -113,6 +114,7 @@ internal fun StationAlerts(destination: AlertDestination?, onCloseDestination: (
     }
     TextButton(onClick = { showRules = true }) { Text(context.getString(R.string.reminder_my_alerts)) }
     StationCalendarButton(id)
+    station?.let { StationSchedule(it, moment, predictions, settings.getOrNull() ?: ReadingPreferences(), revision) }
     if (showRules && editor == null) {
         val plan by remember { DeliveryPlanStore.get(context).plan.retryAlertReads() }.collectAsState(null)
         val rows by produceState<List<AlertRow>>(emptyList(), rules, premium, plan) {

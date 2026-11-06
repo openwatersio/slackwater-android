@@ -46,3 +46,9 @@ Open **Station calendars** from a station to publish the next 90 days of tide tu
 A subscription started with purchased Premium keeps publishing after lapse. A free-day subscription stops when the free day ends, and purchasing converts it to a purchased subscription. Android schedules refresh and expiry work. If execution or calendar access is blocked, already-published events can remain until the next successful reconciliation. Opening Slackwater retries pending work.
 
 Removing a favorite keeps its calendar subscription. Removing the subscription asks for confirmation with the station name and number of generated events that will be removed. Personal entries and events already underway stay in Calendar.
+
+## Printable tide and current tables
+
+Read a station’s seven-day schedule for free. With Premium or an active free day, open **Printable tables** to preview a week starting on the schedule’s selected day or the calendar month containing that day. Share exports the preview as a PDF, and Print opens Android’s print dialog. The document uses the station’s time zone, the selected reading units and local Letter or A4 paper sizing.
+
+Tables use predictions already on the device. For online current gates and Canadian tide previews, the PDF identifies the covered dates within the requested period. Sharing grants the receiving app read access to that PDF.
