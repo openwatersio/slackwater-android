@@ -3,6 +3,7 @@ kotlin { jvmToolchain(17) }
 dependencies {
     api("io.openwaters:slackwater-engine:0.1.0")
     implementation("io.openwaters:almanac:0.12.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
     testFixturesImplementation("io.openwaters:slackwater-engine:0.1.0")
     testFixturesImplementation("io.openwaters:almanac:0.12.2")
     testImplementation(libs.junit)

@@ -43,7 +43,8 @@ object BoundedPredictions {
             i = end + 1
         }
         return PredictionResult.Ready(id, coverage, "CHS", StationCapabilities.TIDE_PREVIEW,
-            PredictionSeries.Tide(slice(points, coverage) { it.time }, slice(points.sampledRates(), coverage) { it.time }, turns))
+            PredictionSeries.Tide(slice(points, coverage) { it.time }, slice(points.sampledRates(), coverage) { it.time }, turns),
+            previewSampleSpan = TimeSpan(points.first().time, points.last().time))
     }
 
     fun current(id: StationId, span: TimeSpan, points: List<CurrentPoint>, flood: Double, ebb: Double): PredictionResult {
