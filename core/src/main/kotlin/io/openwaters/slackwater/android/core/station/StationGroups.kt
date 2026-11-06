@@ -161,7 +161,7 @@ data class StationListSections(
 /**
  * Builds the list's sections. [catalog] is the live catalog in catalog order (`StationIdentityIndex.identities`);
  * [filter] narrows Near Me only, never heroes, favorites or recents. [rank] ranks the browsable catalog from an
- * anchor; a caller may memoize it by the exact coordinate, since every distance it returns is from that coordinate.
+ * anchor and must return it sorted by distance from that exact coordinate, which heroes and namesakes rely on.
  */
 fun stationListSections(
     catalog: List<StationIdentity>,

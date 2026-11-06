@@ -153,7 +153,8 @@ private fun stateWord(state: CardCurrentState) = stringResource(when (state) {
 })
 
 /**
- * One station as a single tap target: name and region on the left, the live reading on the right. The reading is
+ * One station as a single tap target, or a plain element when [onOpen] is null: name and region on the left, the
+ * live reading on the right. The reading is
  * computed when the card appears and again whenever [now] moves, which the list advances every 60 seconds.
  */
 @Composable
@@ -163,7 +164,7 @@ fun StationCard(
     now: Instant,
     preferences: ReadingPreferences,
     load: suspend (Instant) -> CardReading,
-    onOpen: () -> Unit,
+    onOpen: (() -> Unit)?,
     modifier: Modifier = Modifier,
     actions: List<CustomAccessibilityAction> = emptyList(),
 ) {
@@ -187,11 +188,13 @@ fun StationCard(
         modifier = modifier
             .fillMaxWidth()
             .heightIn(min = 96.dp)
-            .clickable(onClick = onOpen)
+            .then(if (onOpen != null) Modifier.clickable(onClick = onOpen) else Modifier)
             .clearAndSetSemantics {
                 contentDescription = spoken
-                role = Role.Button
-                onClick { onOpen(); true }
+                if (onOpen != null) {
+                    role = Role.Button
+                    onClick { onOpen(); true }
+                }
                 if (actions.isNotEmpty()) customActions = actions
             },
     ) {

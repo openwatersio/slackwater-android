@@ -74,7 +74,7 @@ class MainActivity : ComponentActivity() {
                 Surface(Modifier.fillMaxSize()) {
                     // The list stays composed under an alert's destination, so its scroll, search and page survive.
                     Box(if (destination == null) Modifier.fillMaxSize() else Modifier.fillMaxSize().clearAndSetSemantics {}) {
-                        StationsHome(onCredits = { showCredits = true }) {
+                        StationsHome(onCredits = { showCredits = true }, coveredByAlert = destination != null) {
                             var showQueries by remember { mutableStateOf(false) }
                             Box {
                                 OutlinedButton(onClick = { showQueries = true }) { Text(stringResource(R.string.prediction_shortcuts)) }

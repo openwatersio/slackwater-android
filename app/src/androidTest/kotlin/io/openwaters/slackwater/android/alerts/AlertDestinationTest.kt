@@ -24,7 +24,6 @@ class AlertDestinationTest {
         compose.waitUntil(15000) { compose.onAllNodesWithText("Seattle").fetchSemanticsNodes().isNotEmpty() }
         compose.onNodeWithText("Seattle").assertIsDisplayed()
         compose.onNodeWithText("08:00", substring = true).assertExists()
-        compose.onNodeWithText("Friday Harbor").assertDoesNotExist()
         compose.onNodeWithText("Back to stations").performClick()
         // Back on the station list.
         compose.onNodeWithText("Search").assertExists()

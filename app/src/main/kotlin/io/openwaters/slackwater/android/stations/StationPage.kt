@@ -54,7 +54,7 @@ fun StationPage(model: StationListModel, id: StationId, now: Instant, onBack: ()
                 ) { Text(stringResource(if (favorite) R.string.station_unstar else R.string.station_star)) }
             }
             if (station != null) {
-                StationCard(station, null, now, preferences, { model.reading(id, it) }, onOpen = {})
+                StationCard(station, null, now, preferences, { model.reading(id, it) }, onOpen = null)
             }
             // This station's alerts, calendar, schedule and printable tables.
             StationAlerts(destination = null, station = id) {}

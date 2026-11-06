@@ -46,7 +46,10 @@ import kotlinx.coroutines.launch
 /** A non-empty query waits this long after the last keystroke; an empty one ranks at once. */
 private const val SEARCH_DEBOUNCE_MILLIS = 120L
 
-/** Ranked results with the query they answer, so a superseded answer is never shown as this query's. */
+/**
+ * Ranked results with the query they answer. While a newer query is still being ranked the earlier cards stay up,
+ * but the notices that describe a result ("No matches", the 60-result note) show only for the query they answer.
+ */
 private data class Answer(val query: String, val results: SearchResults)
 
 /** The full-screen search (list §7). Each opening starts empty with the field focused. */

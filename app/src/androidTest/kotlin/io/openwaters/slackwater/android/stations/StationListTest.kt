@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -57,8 +58,12 @@ class StationListTest {
         ActivityScenario.launch(MainActivity::class.java).use {
             val card = hasContentDescription("Friday Harbor, San Juan Island", substring = true)
             compose.waitUntil(60_000) { compose.onAllNodes(card).fetchSemanticsNodes().isNotEmpty() }
-            // The tombstone's name, with copy that says only that CHS no longer publishes it.
+            // Star order: Friday Harbor was starred first, so it is drawn above the removed station.
             scrollTo("Aulatsivik Point")
+            val harborTop = compose.onAllNodes(card).onFirst().fetchSemanticsNode().boundsInRoot.top
+            val removedTop = compose.onNodeWithText("Aulatsivik Point").fetchSemanticsNode().boundsInRoot.top
+            assertTrue(harborTop < removedTop)
+            // The tombstone's name, with copy that says only that CHS no longer publishes it.
             compose.onNodeWithText("Arctic Coast — no longer published.").assertExists()
             compose.onNodeWithText("Remove").performClick()
             compose.waitUntil(10_000) { compose.onAllNodesWithText("Aulatsivik Point").fetchSemanticsNodes().isEmpty() }

@@ -81,6 +81,13 @@ class CardReadingTest {
         val slack = cardReading(ready(current(), StationCapabilities.HARMONIC_CURRENT), at(180)) as CardReading.Current
         assertEquals(CardCurrentState.SLACK, slack.state)
         assertNull(slack.setDegrees)
+        // Water still crossing the channel at slack keeps its set; just below the neutral speed it does not.
+        val crossing = cardReading(ready(current(cross = 0.3), StationCapabilities.HARMONIC_CURRENT), at(180)) as CardReading.Current
+        assertEquals(CardCurrentState.SLACK, crossing.state)
+        assertEquals(0.3, crossing.speedKnots, 1e-9)
+        assertNotNull(crossing.setDegrees)
+        val faint = cardReading(ready(current(cross = 0.04), StationCapabilities.HARMONIC_CURRENT), at(180)) as CardReading.Current
+        assertNull(faint.setDegrees)
     }
 
     @Test fun earlyAndBoundedCanadianModelsAreApproximate() {

@@ -80,7 +80,8 @@ private fun readSeries(result: PredictionResult.Ready, at: Instant): CardReading
             CurrentState.FLOODING, CurrentState.MAX_FLOOD -> CardCurrentState.FLOODING
             CurrentState.EBBING, CurrentState.MAX_EBB -> CardCurrentState.EBBING
         }
-        // At slack the set shows only while water still crosses the channel at a speed that prints above zero.
+        // At slack the set shows only while water still crosses the channel at 0.05 kn or more, the threshold the
+        // list contract states in knots whatever the display unit.
         val set = reading.directionDegrees?.takeIf { reading.magnitudeKnots >= CARD_NEUTRAL_SET_KNOTS }
         val approximate = result.capabilities == StationCapabilities.PROVISIONAL_CURRENT ||
             result.capabilities == StationCapabilities.BOUNDED_CURRENT
@@ -99,8 +100,7 @@ fun derivedPhase(slacks: List<PredictionSeries.DerivedSlack>, at: Instant): Card
     return if (rising) CardCurrentState.FLOODING else CardCurrentState.EBBING
 }
 
-// The conversions the rest of the Android app prints with (tables, queries, alerts), so a value reads the same on
-// every screen.
+// The conversions the Android tables, query answers and alert thresholds use, so a card agrees with them.
 private const val METRES_PER_FOOT = 0.3048
 
 private fun decimal(value: Double, places: Int, locale: Locale): String {

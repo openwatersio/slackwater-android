@@ -18,7 +18,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
 import io.openwaters.slackwater.android.core.station.StationId
 import java.time.Instant
-import io.openwaters.slackwater.android.core.station.LocationSlot
+import android.os.SystemClock
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -30,7 +30,7 @@ private const val CARD_REFRESH_MILLIS = 60_000L
  * and filter survive, and is hidden from assistive technology while covered.
  */
 @Composable
-fun StationsHome(onCredits: () -> Unit, footerExtras: @Composable () -> Unit = {}) {
+fun StationsHome(onCredits: () -> Unit, coveredByAlert: Boolean = false, footerExtras: @Composable () -> Unit = {}) {
     val context = LocalContext.current
     val model = remember { StationListModel.get(context) }
     var searching by rememberSaveable { mutableStateOf(false) }
@@ -46,7 +46,8 @@ fun StationsHome(onCredits: () -> Unit, footerExtras: @Composable () -> Unit = {
                 now = Instant.now()
                 delay(CARD_REFRESH_MILLIS)
                 model.tick()
-                if (!searching && opened == null && model.location.slot() !is LocationSlot.Located) launch { model.refreshLocation() }
+                val showing = !searching && opened == null && !coveredByAlert
+                if (showing && model.wantsFreshFix(SystemClock.elapsedRealtime())) launch { model.refreshLocation() }
             }
         }
     }
@@ -54,13 +55,18 @@ fun StationsHome(onCredits: () -> Unit, footerExtras: @Composable () -> Unit = {
         searching = false
         opened = id.value
     }
-    BackHandler(enabled = searching || opened != null) {
+    // The list appears again when its search, page or an alert's screen closes.
+    val showing = !searching && opened == null && !coveredByAlert
+    LaunchedEffect(showing) { if (showing) model.refreshLocation() }
+    // Under an alert's screen, Back belongs to that screen, not to a page or search hidden beneath it.
+    BackHandler(enabled = !coveredByAlert && (searching || opened != null)) {
         if (opened != null) opened = null else searching = false
     }
     Box(Modifier.fillMaxSize()) {
         val covered = searching || opened != null
         Box(if (covered) Modifier.fillMaxSize().clearAndSetSemantics {} else Modifier.fillMaxSize()) {
-            StationListScreen(model, ::open, onSearch = { searching = true }, onCredits = onCredits, now = now, footerExtras = footerExtras)
+            StationListScreen(model, ::open, onSearch = { searching = true }, onCredits = onCredits, now = now,
+                showing = showing, footerExtras = footerExtras)
         }
         if (searching && opened == null) SearchOverlay(model, now, ::open) { searching = false }
         opened?.let { StationPage(model, StationId(it), now) { opened = null } }

@@ -88,6 +88,7 @@ fun StationListScreen(
     onSearch: () -> Unit,
     onCredits: () -> Unit,
     now: Instant,
+    showing: Boolean = true,
     footerExtras: @Composable () -> Unit = {},
 ) {
     val context = LocalContext.current
@@ -120,8 +121,9 @@ fun StationListScreen(
     // The list asks for location once, on its first appearance on a first launch, and never again. It waits for
     // the stored flag, so a slow read never looks like a first launch.
     val asked = listPreferences?.locationAsked
-    LaunchedEffect(state != null, asked) {
-        if (state != null && asked == false && model.location.inputs.value.permission == LocationPermission.NOT_GRANTED) ask()
+    // Never over a page, search or an alert's screen: it waits until the list itself is showing.
+    LaunchedEffect(state != null, asked, showing) {
+        if (showing && state != null && asked == false && model.location.inputs.value.permission == LocationPermission.NOT_GRANTED) ask()
     }
 
     val current = state

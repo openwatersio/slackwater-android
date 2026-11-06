@@ -28,6 +28,7 @@ import io.openwaters.slackwater.android.data.UserStateStore
 import android.util.Log
 import io.openwaters.slackwater.android.core.station.coordinate
 import io.openwaters.slackwater.android.core.station.distanceKm
+import io.openwaters.slackwater.android.core.station.series
 import io.openwaters.slackwater.android.data.retryAlertReads
 import java.io.IOException
 import java.time.Instant
@@ -35,7 +36,7 @@ import kotlinx.coroutines.CancellationException
 import io.openwaters.slackwater.android.data.SavedPlaces
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.filterNotNull
+import io.openwaters.slackwater.android.core.station.FIX_MAXIMUM_AGE_MILLIS
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -138,12 +139,13 @@ class StationListModel private constructor(context: Context) {
         .map { it.getOrThrow() }.retryAlertReads()
         .stateIn(scope, SharingStarted.Eagerly, null)
 
-    /** Null until the catalog, saved places and list preferences have loaded. */
+    /** Null until the catalog and saved places have loaded. */
     val state: StateFlow<StationListState?> = combine(
         catalog.mapNotNull { it },
         // Unreadable or newer-format saved places show as empty lists and stay on disk untouched.
         places.places.orRetrying(SavedPlaces(emptyList(), emptyList())),
-        preferences.filterNotNull(),
+        // The filter falls back to All while its file is unreadable; only the ask waits for a real read.
+        listPreferences.preferences.orRetrying(ListPreferences()),
         combine(location.inputs, slotTick) { _, _ -> location.slot() }.distinctUntilChanged(),
     ) { catalog, saved, list, slot ->
         val sections = stationListSections(
@@ -169,16 +171,19 @@ class StationListModel private constructor(context: Context) {
         )
     }.flowOn(Dispatchers.Default).stateIn(scope, SharingStarted.Eagerly, null)
 
-    // Sorting the whole catalog is the list's costliest step. Like iOS, the order is reused while the anchor stays
-    // in one 0.001° cell, so GPS jitter, a tick or a favorite toggle does not re-sort; every distance, including the
-    // hero radius check, is still measured from the exact anchor. Only the state's one combine coroutine touches it.
+    // Sorting the whole catalog from scratch is the list's costliest step. Within one 0.001° cell of the last
+    // anchor the previous order is nearly right, so it is re-sorted by the exact distances (a stable sort of an
+    // almost-sorted list is close to linear) rather than ranked again. Ties keep the previous order, which came from
+    // catalog order. Only the state's one combine coroutine touches it.
     private var ranking: Pair<Pair<Long, Long>, List<StationIdentity>>? = null
 
     private fun rankOnce(stations: List<StationIdentity>, anchor: Coordinate): List<RankedStation> {
         val cell = Math.round(anchor.latitude * 1000) to Math.round(anchor.longitude * 1000)
-        val order = ranking?.takeIf { it.first == cell }?.second
-            ?: rankByDistance(stations, anchor).map { it.identity }.also { ranking = cell to it }
-        return order.map { RankedStation(it, distanceKm(anchor, it.coordinate)) }
+        val previous = ranking?.takeIf { it.first == cell }?.second
+        val ranked = previous?.map { RankedStation(it, distanceKm(anchor, it.coordinate)) }?.sortedBy { it.distanceKm }
+            ?: rankByDistance(stations, anchor)
+        ranking = cell to ranked.map { it.identity }
+        return ranked
     }
 
     /**
@@ -200,9 +205,28 @@ class StationListModel private constructor(context: Context) {
         slotTick.value++
     }
 
+    private val refreshing = java.util.concurrent.atomic.AtomicBoolean(false)
+
+    /** Asks for a fix unless a request is already running, so ticks never pile up requests. */
     suspend fun refreshLocation() {
-        location.refresh()
-        tick()
+        if (!refreshing.compareAndSet(false, true)) return
+        try {
+            location.refresh()
+        } finally {
+            refreshing.set(false)
+            tick()
+        }
+    }
+
+    /**
+     * Whether the list's 60-second tick should ask for a new fix: while still locating, or once the held fix is
+     * halfway to the reuse limit, so it is replaced before it expires and the list never falls back mid-use.
+     * A failed request is retried when the list next appears, not every minute.
+     */
+    fun wantsFreshFix(nowElapsedRealtimeMillis: Long): Boolean = when (val slot = location.slot()) {
+        LocationSlot.Locating -> true
+        is LocationSlot.Located -> nowElapsedRealtimeMillis - slot.fix.elapsedRealtimeMillis >= FIX_MAXIMUM_AGE_MILLIS / 2
+        else -> false
     }
 
     /** One card's reading. A station that fails to load reads as unavailable; the card refreshes on the next tick. */
@@ -223,7 +247,8 @@ class StationListModel private constructor(context: Context) {
     /** The five live stations nearest a removed one's last position, or the list's anchor without one. */
     suspend fun replacements(removed: RemovedStation, fallback: Coordinate): List<RankedStation> = withContext(Dispatchers.Default) {
         val origin = removed.lastKnown?.let { Coordinate(it.latitude, it.longitude) } ?: fallback
-        rankByDistance(catalog.value?.stations.orEmpty(), origin).take(5)
+        // Only stations the list can show, so a replacement is never one Near Me would hide.
+        rankByDistance(catalog.value?.stations.orEmpty().filter { it.series != null }, origin).take(5)
     }
 
     companion object {
