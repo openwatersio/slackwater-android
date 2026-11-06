@@ -52,4 +52,11 @@
         <item quantity="one">%1$d alerte indiquée</item>
         <item quantity="other">%1$d alertes indiquées</item>
     </plurals>
+    <string name="alert_plot_previous">Événement précédent, %1$s, %2$s</string>
+    <string name="alert_plot_next">Événement suivant, %1$s, %2$s</string>
+    <string name="alert_plot_earlier">Reculer de cinq minutes</string>
+    <string name="alert_plot_later">Avancer de cinq minutes</string>
+    <string name="alert_show_events">Afficher les événements du graphique</string>
+    <string name="alert_hide_events">Masquer les événements du graphique</string>
+    <string name="alert_event_speed">%1$s · %2$.1f kn</string>
 </resources>

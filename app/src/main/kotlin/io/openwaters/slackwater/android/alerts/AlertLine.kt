@@ -51,8 +51,10 @@ internal fun AlertTrigger.label(): String = when (this) {
         java.text.DecimalFormat("0.##").format(heightM))
 }
 
+internal fun StationIdentity.plotZone(): ZoneId = timezone?.let { runCatching { ZoneId.of(it) }.getOrNull() } ?: ZoneOffset.UTC
+
 internal fun StationIdentity.timeLabel(time: Instant): String =
-    DateTimeFormatter.ofPattern("EEE HH:mm z").withZone(timezone?.let(ZoneId::of) ?: ZoneOffset.UTC).format(time)
+    DateTimeFormatter.ofPattern("EEE HH:mm z").withZone(plotZone()).format(time)
 
 internal fun ChartAlertSelection.lineDraft(parked: Boolean, rules: List<AlertRule>, now: Instant): AlertEditorDraft? {
     if (!capability.supports(PredictionPurpose.ALERT)) return null
@@ -78,7 +80,7 @@ fun AlertLine(selection: ChartAlertSelection?, parked: Boolean, rules: List<Aler
         else -> stringResource(R.string.alert_set_action)
     }
     Box(Modifier.fillMaxWidth(), contentAlignment = androidx.compose.ui.Alignment.Center) {
-        TextButton(onClick = { onEdit(draft) }) { Text(label) }
+        TextButton(onClick = { onEdit(draft) }, modifier = Modifier.heightIn(min = 48.dp)) { Text(label) }
     }
 }
 
@@ -86,17 +88,18 @@ fun AlertLine(selection: ChartAlertSelection?, parked: Boolean, rules: List<Aler
 @Composable
 fun Modifier.chartAlertPress(
     supported: Boolean, selectionAt: (Offset) -> ChartAlertSelection?,
-    center: ChartAlertSelection?, onPark: (ChartAlertSelection) -> Unit,
+    center: ChartAlertSelection?, navigation: List<CustomAccessibilityAction> = emptyList(), onPark: (ChartAlertSelection) -> Unit,
 ): Modifier {
-    if (!supported) return this
+    if (!supported) return semantics { customActions = navigation }
     val select by rememberUpdatedState(selectionAt)
     val park by rememberUpdatedState(onPark)
     val haptic = LocalHapticFeedback.current
     val actionLabel = stringResource(R.string.alert_set_action)
     return semantics {
-        center?.takeIf { it.capability.supports(PredictionPurpose.ALERT) }?.let {
-            customActions = listOf(CustomAccessibilityAction(actionLabel) { park(it); true })
+        val centerAction = center?.takeIf { it.capability.supports(PredictionPurpose.ALERT) }?.let {
+            CustomAccessibilityAction(actionLabel) { park(it); true }
         }
+        customActions = listOfNotNull(centerAction) + navigation
     }.pointerInput(Unit) {
         awaitEachGesture {
             val down = awaitFirstDown(requireUnconsumed = false)
@@ -136,7 +139,7 @@ fun rememberAlertMarkers(
     val markers = remember(station, relevant, window, thresholdKnots, repository) { mutableStateOf(emptyList<Instant>()) }
     LaunchedEffect(markers) {
         markers.value = withContext(Dispatchers.Default) {
-            val zone = station.timezone?.let(ZoneId::of) ?: ZoneOffset.UTC
+            val zone = station.plotZone()
             markerMinutes(relevant.flatMap {
                 OccurrenceResolver.resolve(it, repository, window, zone, station.latitude, station.longitude, thresholdKnots)
             }, window)

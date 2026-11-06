@@ -15,8 +15,10 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.semantics.*
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import io.openwaters.slackwater.android.EventList
 import io.openwaters.slackwater.android.R
 import io.openwaters.slackwater.android.core.shortcuts.QueryAnswer
 import io.openwaters.slackwater.android.core.station.StationIdentity
@@ -42,7 +44,7 @@ internal fun QueryAnswerView(station: StationIdentity, answer: QueryAnswer, pref
             .appendLiteral(' ').appendZoneText(TextStyle.SHORT).toFormatter(locale)
             .withZone(station.timezone?.let { runCatching { ZoneId.of(it) }.getOrNull() } ?: ZoneOffset.UTC)
     }
-    Text(station.name, style = MaterialTheme.typography.titleLarge)
+    Text(station.name, modifier = Modifier.semantics { heading() }, style = MaterialTheme.typography.titleLarge)
     if (station.region.isNotBlank()) Text(station.region, style = MaterialTheme.typography.bodySmall)
     when (answer) {
         QueryAnswer.Unavailable -> Text(stringResource(R.string.query_unavailable))
@@ -57,16 +59,17 @@ internal fun QueryAnswerView(station: StationIdentity, answer: QueryAnswer, pref
             val imperial = prefs.heightUnits(locale) == HeightUnits.IMPERIAL
             if (request.date == null) Text(stringResource(R.string.query_tide_wait,
                 waitLabel(queriedAt, answer.events.first().time, locale)))
-            for (event in answer.events) {
+            EventList(answer.events) { event ->
                 val height = if (imperial) event.heightMetres / 0.3048 else event.heightMetres
                 Text(stringResource(if (imperial) R.string.query_tide_ft else R.string.query_tide_m,
                     formatter.format(event.time), height))
             }
             AnswerCurve(remember(answer) { answer.curve.points.map { it.time to it.heightMetres } },
-                answer.events.map { it.time to it.time }, formatter)
+                answer.events.map { it.time to it.time }, formatter,
+                stringResource(R.string.alert_plot_tide, if (imperial) "ft" else "m"))
         }
         is QueryAnswer.Windows -> {
-            for (window in answer.windows) {
+            EventList(answer.windows) { window ->
                 val start = window.start
                 val end = window.end
                 if (request.date == null) {
@@ -88,7 +91,7 @@ internal fun QueryAnswerView(station: StationIdentity, answer: QueryAnswer, pref
                 answer.windows.map {
                     if (it.start != null && it.end != null) requireNotNull(it.start) to requireNotNull(it.end)
                     else it.highlight to it.highlight
-                }, formatter, prefs.effectiveThresholdKn(station.id))
+                }, formatter, stringResource(R.string.alert_plot_current), prefs.effectiveThresholdKn(station.id))
         }
     }
 }
@@ -102,7 +105,7 @@ private fun waitLabel(start: Instant, end: Instant, locale: Locale): String {
 
 @Composable
 private fun AnswerCurve(samples: List<Pair<Instant, Double>>, highlights: List<Pair<Instant, Instant>>, formatter: DateTimeFormatter,
-                        threshold: Double? = null) {
+                        description: String, threshold: Double? = null) {
     if (samples.size < 2) return
     val start = samples.first().first.toEpochMilli()
     val span = samples.last().first.toEpochMilli() - start
@@ -113,7 +116,7 @@ private fun AnswerCurve(samples: List<Pair<Instant, Double>>, highlights: List<P
     val ink = MaterialTheme.colorScheme.primary
     val marker = MaterialTheme.colorScheme.tertiary
     val axis = MaterialTheme.colorScheme.outline
-    Canvas(Modifier.fillMaxWidth().height(104.dp)) {
+    Canvas(Modifier.fillMaxWidth().height(104.dp), contentDescription = description) {
         fun x(time: Instant) = size.width * ((time.toEpochMilli() - start).toDouble() / span).toFloat()
         fun y(value: Double) = 4.dp.toPx() + (size.height - 8.dp.toPx()) * ((high - value) / range).toFloat()
         drawLine(axis, Offset(0f, y(0.0)), Offset(size.width, y(0.0)))

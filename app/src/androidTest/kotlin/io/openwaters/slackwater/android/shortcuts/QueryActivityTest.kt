@@ -1,5 +1,8 @@
 package io.openwaters.slackwater.android.shortcuts
 
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.test.SemanticsMatcher
+import org.junit.Assert.assertEquals
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasSetTextAction
@@ -30,7 +33,10 @@ class QueryActivityTest {
             compose.waitUntil(20_000) { compose.onAllNodes(event).fetchSemanticsNodes().size == 2 }
             compose.onNodeWithText(context.getString(R.string.query_high_day)).assertIsDisplayed()
             compose.onAllNodes(hasText("Friday Harbor") and !hasSetTextAction()).assertCountEquals(1)
-            compose.onAllNodes(event).assertCountEquals(2)
+            val rows = compose.onAllNodes(event).fetchSemanticsNodes()
+            assertEquals(listOf(0, 1), rows.map { it.config[SemanticsProperties.CollectionItemInfo].rowIndex })
+            val table = compose.onNode(SemanticsMatcher.keyIsDefined(SemanticsProperties.CollectionInfo))
+            assertEquals(2, table.fetchSemanticsNode().config[SemanticsProperties.CollectionInfo].rowCount)
         }
     }
 }
