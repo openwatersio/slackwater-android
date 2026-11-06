@@ -97,6 +97,12 @@ class StationGroupsTest {
         assertEquals(emptyList<StationId>(), s.recents)
     }
 
+    @Test fun onlyARealFixEarnsDistanceLabels() {
+        assertTrue(sections().showsDistances)
+        assertFalse(sections(fix = null, recents = listOf(sound.id)).showsDistances)
+        assertFalse(sections(fix = null).showsDistances)
+    }
+
     @Test fun firstLaunchRanksFromAnnapolis() {
         // §14.8
         val s = sections(fix = null)
