@@ -32,6 +32,42 @@ class AndroidPredictionRepository(
     private val gates by lazy { rows("chs-current-gates") }
     private val derived by lazy { rows("chs-gates") }
 
+    /** Identifies only this station's inputs. Bounded previews and online cache blocks are never calendar sources. */
+    internal suspend fun calendarSource(station: StationIdentity): String? {
+        val id = station.id
+        val reference: StationId
+        val kind: ModelKind
+        val catalogRecord: String
+        when (station.kind) {
+            StationKind.DerivedGate -> {
+                val gate = derived[id.value] ?: return "missing-derived:${id.value}"
+                reference = StationId(gate.getString("reference"))
+                kind = ModelKind.TIDE
+                catalogRecord = gate.toString()
+            }
+            StationKind.CanadianCurrent -> {
+                val gate = gates[id.value] ?: return "missing-current:${id.value}"
+                reference = id
+                kind = ModelKind.CURRENT
+                catalogRecord = "${ChsCurrentFit.STAMP}:$gate"
+            }
+            StationKind.CanadianTide -> {
+                reference = id
+                kind = ModelKind.TIDE
+                catalogRecord = ""
+            }
+            else -> return "${station.kind}:${id.value}"
+        }
+        val record = when (val stored = models.read(reference, kind)) {
+            is StoredModel.Ready -> stored.record.toString()
+            StoredModel.Missing -> "missing"
+            is StoredModel.Unavailable -> if (stored.reason == StoredModel.Unavailable.Reason.UNREADABLE) return null else stored.reason.name
+        }
+        val digest = java.security.MessageDigest.getInstance("SHA-256")
+            .digest("$catalogRecord\u0000$record".toByteArray(Charsets.UTF_8))
+        return "${station.kind}:${reference.value}:" + android.util.Base64.encodeToString(digest, android.util.Base64.NO_WRAP)
+    }
+
     override suspend fun load(id: StationId, span: TimeSpan, purpose: PredictionPurpose): PredictionResult =
         withContext(Dispatchers.IO) {
             try {

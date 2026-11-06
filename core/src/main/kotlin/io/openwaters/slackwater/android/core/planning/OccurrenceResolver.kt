@@ -35,7 +35,7 @@ object OccurrenceResolver {
 
     private fun grid(time: Instant) = Instant.ofEpochSecond(Math.floorDiv(time.epochSecond, 600L) * 600)
 
-    private fun querySpan(trigger: AlertTrigger, span: TimeSpan, zone: ZoneId): TimeSpan = when {
+    internal fun querySpan(trigger: AlertTrigger, span: TimeSpan, zone: ZoneId): TimeSpan = when {
         trigger is AlertTrigger.TideExtreme && trigger.ofDay -> TimeSpan(
             span.start.atZone(zone).toLocalDate().atStartOfDay(zone).toInstant(),
             span.end.atZone(zone).toLocalDate().plusDays(1).atStartOfDay(zone).toInstant(),
@@ -64,6 +64,21 @@ object OccurrenceResolver {
             is PredictionResult.Unavailable -> return emptyList()
         }.filter { it.capabilities.supports(PredictionPurpose.ALERT) }
 
+        val found = occurrences(rule, blocks, zone, latitude, longitude, thresholdKnots)
+        val events = found.filter { it.event in candidates }.distinctBy { it.key }.sortedBy { it.event }
+        val selected = if (pressed == null) events else {
+            val nearest = events.minByOrNull { Duration.between(pressed, it.event).abs() }
+            listOfNotNull(nearest?.takeIf { it.event in span })
+        }
+        val sun = rule.sun ?: return selected
+        val windows = SunWindows.spans(sun, span, latitude, longitude)
+        return selected.filter { occurrence -> windows.any { occurrence.event in it } }
+    }
+
+    internal fun occurrences(
+        rule: AlertRule, blocks: List<PredictionResult.Ready>, zone: ZoneId,
+        latitude: Double, longitude: Double, thresholdKnots: Double,
+    ): List<AlertOccurrence> {
         fun occurrence(time: Instant, end: Instant? = null, noWindow: Boolean = false, height: Double? = null): AlertOccurrence {
             val minute = time.truncatedTo(ChronoUnit.MINUTES)
             return AlertOccurrence(rule.id, minute, minute.minusSeconds(rule.leadSeconds),
@@ -124,13 +139,6 @@ object OccurrenceResolver {
                     .forEach { found += occurrence(it) }
             }
         }
-        val events = found.filter { it.event in candidates }.distinctBy { it.key }.sortedBy { it.event }
-        val selected = if (pressed == null) events else {
-            val nearest = events.minByOrNull { Duration.between(pressed, it.event).abs() }
-            listOfNotNull(nearest?.takeIf { it.event in span })
-        }
-        val sun = rule.sun ?: return selected
-        val windows = SunWindows.spans(sun, span, latitude, longitude)
-        return selected.filter { occurrence -> windows.any { occurrence.event in it } }
+        return found
     }
 }
