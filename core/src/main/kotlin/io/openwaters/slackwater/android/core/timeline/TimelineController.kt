@@ -6,7 +6,7 @@ import java.time.LocalDate
 import java.time.ZoneId
 
 enum class TimelineMode { CONTINUOUS, ONLINE, PREVIEW }
-enum class TimelineMotion { INITIAL_POSITIONING, OPENING, DRAG, MOMENTUM, RIDE, MAGNETIC_SETTLE, RESTING }
+enum class TimelineMotion { INITIAL_POSITIONING, OPENING, HINGE_FOLLOW, DRAG, MOMENTUM, RIDE, MAGNETIC_SETTLE, RESTING }
 
 data class TimelineMove(val from: Instant, val to: Instant)
 data class TimelineState(
@@ -31,6 +31,7 @@ data class TimelineState(
 
 sealed interface TimelineAction {
     data object Tick : TimelineAction
+    data object BeginHingeFollow : TimelineAction
     data object BeginDrag : TimelineAction
     data class DragBy(val contentDeltaDp: Double) : TimelineAction
     data class EndDrag(val momentum: Boolean) : TimelineAction
@@ -69,6 +70,7 @@ class TimelineController(
     private val reduceMotion: Boolean = false,
     private val clockMillis: () -> Long = { System.nanoTime() / 1_000_000 },
     anchor: LocalDate = openingAnchor(now, initialSelection, zone),
+    allowOpening: Boolean = true,
 ) {
     init { require(viewport >= 0 && viewport.isFinite()) }
 
@@ -77,7 +79,7 @@ class TimelineController(
     private var targets = MagneticTargets()
     private var pending: TimelineAction.Request? = null
     val pendingTarget: Instant? get() = pending?.target
-    private val opening = Duration.between(initialSelection, now.minusSeconds(7200)).abs() <= Duration.ofSeconds(2)
+    private val opening = allowOpening && Duration.between(initialSelection, now.minusSeconds(7200)).abs() <= Duration.ofSeconds(2)
     private val first = coverage.clamp(if (opening && reduceMotion) now else initialSelection, viewport)
     var state = TimelineState(
         anchor, now, first, coverage.offset(first, viewport), viewport, coverage,
@@ -93,6 +95,16 @@ class TimelineController(
     fun dispatch(action: TimelineAction, elapsedMillis: Long = clockMillis()): TimelineState {
         when (action) {
             TimelineAction.Tick -> tick(elapsedMillis)
+            TimelineAction.BeginHingeFollow -> if (!reduceMotion && state.viewport > 0 &&
+                state.motion == TimelineMotion.RESTING && state.pendingGeneration == null) {
+                val target = state.selected
+                val lead = state.coverage.clamp(target.plusSeconds(6 * 3600), state.viewport)
+                if (lead > target) {
+                    stop(elapsedMillis)
+                    position(lead, elapsedMillis)
+                    state = state.copy(motion = TimelineMotion.HINGE_FOLLOW, move = TimelineMove(lead, target))
+                }
+            }
             TimelineAction.BeginDrag -> {
                 stop(elapsedMillis)
                 state = state.copy(motion = TimelineMotion.DRAG)
@@ -113,7 +125,7 @@ class TimelineController(
             }
             is TimelineAction.EndMomentum -> if (isMomentum(action.generation)) finishGesture(elapsedMillis)
             is TimelineAction.AnimationFrame -> if (action.generation == state.generation &&
-                state.motion in setOf(TimelineMotion.RIDE, TimelineMotion.MAGNETIC_SETTLE)
+                state.motion in setOf(TimelineMotion.RIDE, TimelineMotion.MAGNETIC_SETTLE, TimelineMotion.HINGE_FOLLOW)
             ) frame(action.progress, elapsedMillis)
             is TimelineAction.Request -> explicit(action, elapsedMillis)
             is TimelineAction.PrepareRequest -> prepare(TimelineAction.Request(action.target, action.direct, anchor = action.anchor), elapsedMillis)

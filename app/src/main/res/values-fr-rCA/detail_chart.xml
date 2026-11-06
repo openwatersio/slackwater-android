@@ -1,0 +1,15 @@
+<resources>
+    <string name="chart_high">Pleine mer</string>
+    <string name="chart_low">Basse mer</string>
+    <string name="chart_max_flood">Flot maximal</string>
+    <string name="chart_max_ebb">Jusant maximal</string>
+    <string name="chart_fast_rise">Montée la plus rapide</string>
+    <string name="chart_fast_fall">Descente la plus rapide</string>
+    <string name="chart_window">Fenêtre d’étale</string>
+    <string name="chart_closes">Fin de la fenêtre d’étale</string>
+    <string name="chart_now">Maintenant</string>
+    <string name="chart_return">Revenir à maintenant</string>
+    <string name="chart_in">%1$s dans %2$s</string>
+    <plurals name="chart_minutes"><item quantity="one">%d minute</item><item quantity="other">%d minutes</item></plurals>
+    <plurals name="chart_hours"><item quantity="one">%d heure</item><item quantity="other">%d heures</item></plurals>
+</resources>

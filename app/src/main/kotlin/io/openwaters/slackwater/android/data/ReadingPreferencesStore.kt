@@ -10,6 +10,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.doublePreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
@@ -44,6 +45,7 @@ data class ReadingPreferences(
     /** The comfort current: the speed that bounds a slack window. Zero turns the window off. */
     val slackWindowKnots: Double = DEFAULT_SLACK_WINDOW_KNOTS,
     val stationDeltasKn: Map<StationId, Double> = emptyMap(),
+    val showSky: Boolean = true,
 ) {
     fun heightUnits(locale: Locale = Locale.getDefault()): HeightUnits =
         savedHeightUnits ?: if (locale.country == "US") HeightUnits.IMPERIAL else HeightUnits.METRIC
@@ -66,6 +68,7 @@ data class ReadingPreferences(
     }
 }
 
+private val skyKey = booleanPreferencesKey("showSky")
 private val heightUnitsKey = stringPreferencesKey("heightUnits")
 private val speedUnitKey = stringPreferencesKey("speedUnit")
 private val setFormatKey = stringPreferencesKey("setFormat")
@@ -80,6 +83,7 @@ private fun <E> Preferences.choice(key: Preferences.Key<String>, values: List<E>
     value<String>(key)?.let { saved -> values.firstOrNull { stored(it) == saved } }
 
 private fun Preferences.readPreferences() = ReadingPreferences(
+    showSky = value<Boolean>(skyKey) ?: true,
     stationDeltasKn = asMap().mapNotNull { (key, value) ->
         if (key.name.startsWith(DELTA_PREFIX) && value is Double && value.isFinite() && value in -10.0..10.0)
             StationId(key.name.removePrefix(DELTA_PREFIX)) to value else null
@@ -113,6 +117,8 @@ class ReadingPreferencesStore private constructor(private val data: DataStore<Pr
         val key = doublePreferencesKey(DELTA_PREFIX + canonical.value)
         alertInputLock.withLock { data.edit { if (delta == null) it.remove(key) else it[key] = delta } }
     }
+
+    suspend fun setShowSky(show: Boolean) { data.edit { it[skyKey] = show } }
 
     suspend fun setHeightUnits(units: HeightUnits) = data.edit { it[heightUnitsKey] = units.stored }
 

@@ -23,8 +23,10 @@ class AlertDestinationTest {
         }
         compose.waitUntil(15000) { compose.onAllNodesWithText("Seattle").fetchSemanticsNodes().isNotEmpty() }
         compose.onNodeWithText("Seattle").assertIsDisplayed()
-        compose.onNodeWithText("08:00", substring = true).assertExists()
-        compose.onNodeWithText("Back to stations").performClick()
+        val chart = hasTestTag("detailTimeline")
+        compose.waitUntil(45_000) { compose.onAllNodes(chart).fetchSemanticsNodes().isNotEmpty() }
+        compose.onNode(chart).assertExists()
+        compose.onNodeWithContentDescription("Back to stations").performClick()
         // Back on the station list.
         compose.onNodeWithText("Search").assertExists()
         compose.runOnUiThread { activity.intent = launch }

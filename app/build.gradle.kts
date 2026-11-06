@@ -25,6 +25,7 @@ android {
 dependencies {
     testImplementation(libs.junit)
     implementation(project(":core"))
+    implementation("io.openwaters:almanac:0.12.2")
     implementation("io.openwaters:slackwater-database:0.1.0")
     implementation(platform(libs.compose.bom))
     implementation(libs.activity.compose)
