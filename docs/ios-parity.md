@@ -169,3 +169,7 @@ PR #900 makes the implementation gaps explicit. A known iOS gap does not waive a
 [ios-testflight]: https://github.com/openwatersio/slackwater-ios/blob/5b26bcd5ce0220302de3ba32be5ebf67552fb06e/docs/testflight.md
 [ios-appstore]: https://github.com/openwatersio/slackwater-ios/blob/5b26bcd5ce0220302de3ba32be5ebf67552fb06e/docs/appstore.md
 [ios-release-notes]: https://github.com/openwatersio/slackwater-ios/tree/5b26bcd5ce0220302de3ba32be5ebf67552fb06e/docs/release-notes
+
+### Android saved places
+
+Favorites and recents share one device-local DataStore file so unstarring a station and moving it to Recents commit together. Both lists survive process restarts. The file lives in the no-backup directory, so moving to another device starts with empty lists. Corrupt or newer-format data stays on disk. A collector receives a failed result and can collect again to retry after a transient read failure.
