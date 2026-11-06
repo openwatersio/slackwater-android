@@ -182,7 +182,7 @@ Height units, speed unit, set format and the comfort current live in their own d
 
 ### Android list preferences and location
 
-The series filter and the record that the list has raised the location prompt live in their own device-local DataStore file in the no-backup directory. A corrupt file is replaced with defaults, which costs at most one tap or one prompt; unlike saved places, nothing in it is worth keeping unreadable. Fixes stay in memory and are never stored, logged or sent.
+The series filter and the record that the list has raised the location prompt live in their own device-local DataStore file in the no-backup directory. A corrupt file is replaced with defaults, which costs at most one tap or one prompt; unlike saved places, nothing in it is worth keeping unreadable. Slackwater keeps the device fix in memory. OpenFreeMap receives the requested tile coordinates and the device’s network address when the map loads. Centering the map on a fix reveals its surrounding area.
 
 The location slot's states are pure functions in `core`, tested without a device. Two device tests also drive the framework providers through Android test providers: they grant location and the mock-location app-op and leave the grant in place, because revoking a runtime permission ends the test process, so later tests in the same run start with location allowed and must seed permission state through a fake source.
 

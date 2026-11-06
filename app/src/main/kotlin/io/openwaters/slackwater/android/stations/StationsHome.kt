@@ -51,25 +51,12 @@ fun StationsHome(onCredits: () -> Unit, coveredByAlert: Boolean = false, externa
     var mapGeneration by rememberSaveable { mutableIntStateOf(0) }
     var automatic by rememberSaveable { mutableStateOf(false) }
     var initialChoiceMade by rememberSaveable { mutableStateOf(false) }
+    val mapModel = remember(context) { lazy { StationMapModel(context) } }
     val current by model.state.collectAsState()
     var now by remember { mutableStateOf(Instant.now()) }
     // The tick loop below starts once, so it reads the latest value through this rather than the first one.
     val covered by rememberUpdatedState(coveredByAlert)
     val lifecycle = LocalLifecycleOwner.current.lifecycle
-    LaunchedEffect(lifecycle) {
-        lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-            // Location is asked for when the list becomes active, then on a tick while locating or once the held fix
-            // is halfway to the reuse limit; the clock pauses in the background.
-            launch { model.refreshLocation() }
-            while (true) {
-                now = Instant.now()
-                delay(CARD_REFRESH_MILLIS)
-                model.tick()
-                val showing = !searching && opened == null && !covered
-                if ((showing || mapShowing) && !covered && model.wantsFreshFix(SystemClock.elapsedRealtime())) launch { model.refreshLocation() }
-            }
-        }
-    }
     val pageState = androidx.compose.runtime.saveable.rememberSaveableStateHolder()
     fun closePage() {
         opened?.let { pageState.removeState(it) }
@@ -101,7 +88,28 @@ fun StationsHome(onCredits: () -> Unit, coveredByAlert: Boolean = false, externa
         externalMapFocus?.let { focus(it); consumeFocus() }
     }
     BoxWithConstraints(Modifier.fillMaxSize()) {
-        val expanded = maxWidth >= 600.dp
+        val expanded = maxWidth >= 600.dp && maxHeight >= 480.dp
+        val wideLayout by rememberUpdatedState(expanded)
+        LaunchedEffect(lifecycle) {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                // Location is asked for when the list becomes active, then on a tick while locating or once the held fix
+                // is halfway to the reuse limit; the clock pauses in the background.
+                launch { model.refreshLocation() }
+                while (true) {
+                    now = Instant.now()
+                    delay(CARD_REFRESH_MILLIS)
+                    model.tick()
+                    val showing = !searching && (wideLayout || opened == null) && !covered
+                    if ((showing || mapShowing) && !covered && model.wantsFreshFix(SystemClock.elapsedRealtime())) launch { model.refreshLocation() }
+                }
+            }
+        }
+        LaunchedEffect(expanded) {
+            if (!expanded && automatic) {
+                closePage()
+                automatic = false
+            }
+        }
         val listVisible = expanded || (!mapShowing && opened == null)
         val showing = listVisible && !searching && !coveredByAlert
         LaunchedEffect(showing) { if (showing) model.refreshLocation() }
@@ -142,7 +150,7 @@ fun StationsHome(onCredits: () -> Unit, coveredByAlert: Boolean = false, externa
                             }
                         }
                         mapShowing -> pageState.SaveableStateProvider("discovery-map") {
-                            MapScreen(model, now, focused, mapGeneration, ::open, ::toggleMap, onSettings,
+                            MapScreen(model, mapModel.value, now, focused, mapGeneration, ::open, ::toggleMap, onSettings,
                                 showListButton = !expanded)
                         }
                         else -> Column(Modifier.align(Alignment.Center), horizontalAlignment = Alignment.CenterHorizontally) {
@@ -153,6 +161,6 @@ fun StationsHome(onCredits: () -> Unit, coveredByAlert: Boolean = false, externa
                 }
             }
         }
-        if (searching && !coveredByAlert) SearchOverlay(model, now, ::open) { searching = false }
+        if (searching) SearchOverlay(model, now, ::open) { searching = false }
     }
 }

@@ -8,7 +8,7 @@
     <string name="map_disclaimer">Not for navigation</string>
     <string name="map_tide_units">Tide heights</string>
     <string name="map_current_units">Current speeds</string>
-    <string name="map_retry">Retry chart</string>
+    <string name="map_retry">Retry map</string>
     <string name="map_failure">Basemap unavailable</string>
     <string name="map_stations">Stations in view</string>
     <string name="map_close">Close preview</string>

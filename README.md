@@ -1,6 +1,6 @@
 # Slackwater for Android
 
-Native Android app for offline tide and current predictions. It opens on the station list: your location, favorites, nearby stations and recents, each with a live reading, plus search across the bundled catalog, using local prediction data. The map uses Internet access to load the OpenFreeMap Fiord basemap and tiles. If the style is unavailable offline, local station pins still open their station details. The app asks for coarse and fine location once for the list, with location hardware optional. Tap a map pin for its station preview, then tap the preview to open the tide or current chart. Tap the station name on the chart to return to its position on the map.
+Native Android app for offline tide and current predictions. It opens on the station list: your location, favorites, nearby stations and recents, each with a live reading, plus search across the bundled catalog, using local prediction data. The map uses Internet access to load the OpenFreeMap Fiord basemap and tiles. Tile requests tell OpenFreeMap which area is on screen, including the area around your location when the map is centered there. If the style is unavailable offline, local station pins still open their station details. The app asks for coarse and fine location once for the list, with location hardware optional. Tap a map pin for its station preview, then tap the preview to open the tide or current chart. Tap the station name on the chart to return to its position on the map.
 
 ## Build
 

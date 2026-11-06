@@ -38,6 +38,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import io.openwaters.slackwater.android.core.station.FIX_MAXIMUM_AGE_MILLIS
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.async
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -211,7 +213,7 @@ class StationListModel private constructor(context: Context) {
         slotTick.value++
     }
 
-    private val refreshing = java.util.concurrent.atomic.AtomicBoolean(false)
+    private var refreshRequest: Deferred<Unit>? = null
 
     // Held in memory as well as stored, so a write that fails can never make the list ask a second time.
     private val askedThisProcess = java.util.concurrent.atomic.AtomicBoolean(false)
@@ -230,15 +232,18 @@ class StationListModel private constructor(context: Context) {
         return askedThisProcess.compareAndSet(false, true)
     }
 
-    /** Asks for a fix unless a request is already running, so ticks never pile up requests. */
+    /** Concurrent callers await the same fix, even if the screen that requested it leaves. */
     suspend fun refreshLocation() {
-        if (!refreshing.compareAndSet(false, true)) return
-        try {
-            location.refresh()
-        } finally {
-            refreshing.set(false)
-            tick()
+        val request = synchronized(this) {
+            refreshRequest?.takeUnless { it.isCompleted } ?: scope.async {
+                try {
+                    location.refresh()
+                } finally {
+                    tick()
+                }
+            }.also { refreshRequest = it }
         }
+        request.await()
     }
 
     /**

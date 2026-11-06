@@ -12,7 +12,7 @@ rtk ./gradlew :core:test :core:nationalTideDirectionSweep
 
 ## Optimized map calculations, November 6, 2026
 
-The API 37 Google Play arm64 emulator (Android 17, build CE2A.260420.051.A2/16418371, 1080 × 2400, 420 dpi) ran the R8-optimized benchmark target with full ART compilation. Airplane mode was off. The measured APK's SHA-256 was `de43e70ee4946c491b4a127f895e2e32c3a1196fc39da5cf6438b1fa2e5b20e0`.
+The API 37 Google Play arm64 emulator (Android 17, build CE2A.260420.051.A2/16418371, 1080 × 2400, 420 dpi) ran the R8-optimized benchmark target with the harness requesting full ART compilation. The recorded APK predates the OpenGL renderer change. These timings cover warm pin calculations only. Airplane mode was off. The measured APK's SHA-256 was `de43e70ee4946c491b4a127f895e2e32c3a1196fc39da5cf6438b1fa2e5b20e0`.
 
 | Camera | Zoom | Stations | Five rebuilds (ms) | Median (ms) |
 | --- | ---: | ---: | --- | ---: |

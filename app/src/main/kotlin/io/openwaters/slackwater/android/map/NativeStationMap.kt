@@ -122,7 +122,7 @@ internal fun NativeStationMap(
             layers = null
             reportFailure(false)
             val failure = MapView.OnDidFailLoadingMapListener {
-                if (active && !failed) {
+                if (active && !failed && layers == null) {
                     failed = true
                     reportFailure(true)
                     // Keep local pins selectable even when the hosted style has never been cached.

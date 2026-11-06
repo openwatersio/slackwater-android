@@ -48,14 +48,14 @@ class StationMapModel(context: Context, private val models: ModelStore = ModelSt
                 // Restricted records in this catalog are tide gauges.
                 if (filter != null && (station.series ?: StationSeries.Tide) != filter) continue
                 if (station.id != selected && !bounds.contains(station.latitude, station.longitude)) continue
-                add(PinCandidate(station, ranks.getOrPut(station.id) { rank(station) }))
+                add(PinCandidate(station, ranks.getOrPut(station.id) { readPinRecord(25.0) { rank(station) } }))
             }
         }
         val format = PinFormat(context, prefs)
         visibleStations(bounds, zoom, candidates, selected).map { candidate ->
             currentCoroutineContext().ensureActive()
             val station = candidate.station
-            try {
+            readPinRecord(StationMapPin(station, MapPinState())) {
                 val detailed = zoom >= PIN_READING_MIN_ZOOM
                 when (station.kind) {
                     StationKind.Tide -> StationMapPin(station, bundledTide(station.id, at, detailed, format))
@@ -63,15 +63,18 @@ class StationMapModel(context: Context, private val models: ModelStore = ModelSt
                     StationKind.Restricted, StationKind.Retired -> StationMapPin(station, MapPinState())
                     else -> canadian(station, at, detailed, format)
                 }
-            } catch (cancelled: CancellationException) {
-                throw cancelled
-            } catch (_: IllegalArgumentException) {
-                StationMapPin(station, MapPinState())
-            } catch (_: JSONException) {
-                StationMapPin(station, MapPinState())
-            } catch (_: IOException) {
-                StationMapPin(station, MapPinState())
             }
+        }
+    }
+
+    private inline fun <T> readPinRecord(fallback: T, read: () -> T): T = try {
+        read()
+    } catch (error: Exception) {
+        when (error) {
+            is CancellationException -> throw error
+            is IllegalArgumentException, is IllegalStateException, is java.time.DateTimeException,
+            is JSONException, is IOException -> fallback
+            else -> throw error
         }
     }
 

@@ -46,16 +46,17 @@ private data class PinCamera(val bounds: PinBox, val zoom: Double) {
 }
 
 @Composable
-internal fun MapScreen(list: StationListModel, now: Instant, focusId: String?, focusGeneration: Int,
+internal fun MapScreen(list: StationListModel, engine: StationMapModel, now: Instant, focusId: String?, focusGeneration: Int,
                        open: (StationId) -> Unit, close: () -> Unit, settings: () -> Unit,
                        showListButton: Boolean = true, styleUrl: String = BASEMAP_STYLE_URL) {
     val context = LocalContext.current
-    val engine = remember { StationMapModel(context) }
     val catalog = remember { BundledStationCatalog(context.assets) }
     val listState by list.state.collectAsState()
     val prefs by list.readingPreferences.collectAsState()
     val revision by engine.revision.collectAsState()
-    val filter = listState?.filter
+    val savedFilter = listState?.filter
+    var bypassFilter by rememberSaveable(savedFilter) { mutableStateOf(false) }
+    val filter = savedFilter.takeUnless { bypassFilter }
     val scope = rememberCoroutineScope()
     val fix = (listState?.slot as? LocationSlot.Located)?.fix?.coordinate
     val anchor = listState?.sections?.anchor?.coordinate
@@ -89,8 +90,7 @@ internal fun MapScreen(list: StationListModel, now: Instant, focusId: String?, f
             if (resolved != null) {
                 val station = resolved.identity
                 if (filter != null && filter != (station.series ?: StationSeries.Tide)) {
-                    list.listPreferences.setSeriesFilter(null)
-                    return@LaunchedEffect
+                    bypassFilter = true
                 }
                 selected = station.id.value
                 move(station.coordinate, 12.5)
@@ -128,7 +128,7 @@ internal fun MapScreen(list: StationListModel, now: Instant, focusId: String?, f
     var rationale by remember { mutableStateOf(false) }
     fun locate() {
         scope.launch {
-            list.refreshLocation()
+            if (list.location.slot() !is LocationSlot.Located) list.refreshLocation()
             val point = (list.location.slot() as? LocationSlot.Located)?.fix?.coordinate
             if (point == null) locationError = true else { selected = null; move(point, 10.5) }
         }
@@ -159,6 +159,7 @@ internal fun MapScreen(list: StationListModel, now: Instant, focusId: String?, f
                             onClick = {
                                 if (choice != null && resolvedSelection != null &&
                                     (resolvedSelection.series ?: StationSeries.Tide) != choice) selected = null
+                                if (choice == savedFilter) bypassFilter = false
                                 list.launchEdit { list.listPreferences.setSeriesFilter(choice) }
                             })
                     }
@@ -185,7 +186,7 @@ internal fun MapScreen(list: StationListModel, now: Instant, focusId: String?, f
                                 StationCard(station, null, now, prefs, { list.reading(station.id, it) }, { open(station.id) })
                             }
                         }
-                        TextButton(onClick = { selected = null }) { Text(stringResource(R.string.close)) }
+                        TextButton(onClick = { selected = null }) { Text(stringResource(R.string.map_close)) }
                     }
                 }
             }
