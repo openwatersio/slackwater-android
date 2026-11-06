@@ -48,12 +48,15 @@ object SunWindows {
     internal fun visibleLunarEclipses(span: TimeSpan, observer: Observer): List<LunarEclipse> {
         // Almanac searches by peak. Include peaks just beyond the range whose first contact is inside.
         return lunarEclipses(span.start, span.end.plusSeconds(86_400)).filter { eclipse ->
-            val visibility = lunarEclipseVisibility(eclipse, observer)
-            val contacts = visibility.contactsVisible
-            val visible = visibility.visibleAtPeak || contacts.p1 || contacts.p4 ||
-                listOf(contacts.u1, contacts.u2, contacts.u3, contacts.u4).any { it == true }
-            visible && (eclipse.u1 ?: eclipse.p1) in span
+            visibleAtStation(eclipse, observer) && (eclipse.u1 ?: eclipse.p1) in span
         }
+    }
+
+    internal fun visibleAtStation(eclipse: LunarEclipse, observer: Observer): Boolean {
+        val visibility = lunarEclipseVisibility(eclipse, observer)
+        val contacts = visibility.contactsVisible
+        return visibility.visibleAtPeak || contacts.p1 || contacts.p4 ||
+            listOf(contacts.u1, contacts.u2, contacts.u3, contacts.u4).any { it == true }
     }
 
     private fun observer(latitude: Double, longitude: Double): Observer? =

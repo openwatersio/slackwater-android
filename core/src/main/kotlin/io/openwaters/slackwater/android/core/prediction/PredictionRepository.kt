@@ -28,6 +28,8 @@ sealed interface PredictionResult {
         val series: PredictionSeries,
         val slackErrorBoundMinutes: Int? = null,
         val successor: io.openwaters.slackwater.android.core.station.StationResolution.Successor? = null,
+        /** Complete validated sample interval, even when this result contains only a preview slice. */
+        val previewSampleSpan: TimeSpan? = null,
     ) : PredictionResult
 }
 
