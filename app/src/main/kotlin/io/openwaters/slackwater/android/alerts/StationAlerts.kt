@@ -13,8 +13,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
-import java.time.ZoneId
-import java.time.ZoneOffset
 import io.openwaters.slackwater.CurrentEventKind
 import io.openwaters.slackwater.ExtremeKind
 import io.openwaters.slackwater.android.core.planning.*
@@ -80,7 +78,7 @@ internal fun StationAlerts(destination: AlertDestination?, onCloseDestination: (
                 is PredictionSeries.Derived -> series.slacks.firstOrNull { it.time >= moment }?.let { AlertTrigger.Slack to it.time }
             } ?: return@withContext null
             val event = if (next.first == AlertTrigger.SlackWindowOpens) {
-                val zone = place.timezone?.let(ZoneId::of) ?: ZoneOffset.UTC
+                val zone = place.plotZone()
                 OccurrenceResolver.resolve(AlertRule(stationId = place.id, trigger = next.first), predictions,
                     TimeSpan(moment, span.end), zone, place.latitude, place.longitude, threshold).firstOrNull()?.event
             } else next.second
