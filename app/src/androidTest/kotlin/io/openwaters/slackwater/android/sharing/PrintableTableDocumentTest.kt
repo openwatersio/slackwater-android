@@ -126,7 +126,7 @@ class PrintableTableDocumentTest {
                 assertEquals(595, page.width)
                 assertEquals(842, page.height)
                 if (Build.VERSION.SDK_INT >= 35) {
-                    val text = page.textContents.joinToString(" ") { it.text }
+                    val text = Api35PdfText.read(page)
                     assertTrue(text.contains("Flot maximal"))
                     assertTrue(text.contains("Imprimé"))
                     assertTrue(text.contains("navigation"))
@@ -147,4 +147,11 @@ class PrintableTableDocumentTest {
             }
         }
     }
+}
+
+// JUnit reflects on every test method on API 26. Keep API 35 types out of that class.
+@androidx.annotation.RequiresApi(35)
+private object Api35PdfText {
+    fun read(page: PdfRenderer.Page): String =
+        page.textContents.joinToString(" ") { it.text }
 }
