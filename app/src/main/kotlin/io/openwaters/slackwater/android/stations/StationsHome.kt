@@ -54,6 +54,11 @@ fun StationsHome(onCredits: () -> Unit, coveredByAlert: Boolean = false, footerE
             }
         }
     }
+    val pageState = androidx.compose.runtime.saveable.rememberSaveableStateHolder()
+    fun closePage() {
+        opened?.let { pageState.removeState(it) }
+        opened = null
+    }
     fun open(id: StationId) {
         searching = false
         opened = id.value
@@ -63,7 +68,7 @@ fun StationsHome(onCredits: () -> Unit, coveredByAlert: Boolean = false, footerE
     LaunchedEffect(showing) { if (showing) model.refreshLocation() }
     // Under an alert's screen, Back belongs to that screen, not to a page or search hidden beneath it.
     BackHandler(enabled = !coveredByAlert && (searching || opened != null)) {
-        if (opened != null) opened = null else searching = false
+        if (opened != null) closePage() else searching = false
     }
     Box(Modifier.fillMaxSize()) {
         val covered = searching || opened != null
@@ -72,6 +77,8 @@ fun StationsHome(onCredits: () -> Unit, coveredByAlert: Boolean = false, footerE
                 showing = showing, footerExtras = footerExtras)
         }
         if (searching && opened == null) SearchOverlay(model, now, ::open) { searching = false }
-        opened?.let { StationPage(model, StationId(it), now) { opened = null } }
+        if (!coveredByAlert) opened?.let { id ->
+            pageState.SaveableStateProvider(id) { StationPage(model, StationId(id), now, onBack = ::closePage) }
+        }
     }
 }

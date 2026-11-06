@@ -92,8 +92,7 @@ class PrintTableFormat(
         }
     }
 
-    fun scheduleRow(entry: PrintEntry): String {
-        val cells = weekCells(entry)
+    internal fun scheduleValue(entry: PrintEntry): String? {
         val unit = if (tide) {
             if (imperial) "ft" else "m"
         } else when (preferences.speedUnit) {
@@ -101,7 +100,12 @@ class PrintTableFormat(
             SpeedUnit.KILOMETRES_PER_HOUR -> "km/h"
             SpeedUnit.METRES_PER_SECOND -> "m/s"
         }
-        return listOfNotNull(cells[0], cells[1], cells.getOrNull(2)?.takeUnless { it == "—" }?.let { "$it $unit" },
+        return value(entry)?.let { "$it $unit" }
+    }
+
+    fun scheduleRow(entry: PrintEntry): String {
+        val cells = weekCells(entry)
+        return listOfNotNull(cells[0], cells[1], scheduleValue(entry),
             cells.getOrNull(3)?.takeUnless { it == "—" }).joinToString(" · ")
     }
 

@@ -1,0 +1,135 @@
+<resources>
+  <string name="panel_today">Aujourd’hui</string>
+  <string name="panel_tomorrow">Demain</string>
+  <string name="panel_yesterday">Hier</string>
+  <string name="panel_show">Afficher</string>
+  <string name="panel_choose_date">Choisir une date</string>
+  <string name="panel_range">Marnage</string>
+  <string name="panel_max">Prochain maximum</string>
+  <string name="panel_shape">Schéma seulement</string>
+  <string name="panel_no_speed">Vitesse inconnue</string>
+  <string name="panel_reference">Estimé à partir des marées de référence</string>
+  <string name="panel_port">Marées à %1$s</string>
+  <string name="panel_low_high">de la basse à la pleine mer</string>
+  <string name="panel_high_low">de la pleine à la basse mer</string>
+  <string name="panel_moon">Lune</string>
+  <string name="panel_sun">Soleil</string>
+  <string name="panel_daylight">%1$d h %2$d min de jour</string>
+  <string name="panel_lit">%1$d %% éclairée</string>
+  <string name="panel_spring">Marée de vive-eau</string>
+  <string name="panel_neap">Marée de morte-eau</string>
+  <string name="panel_rise">Lever du soleil</string>
+  <string name="panel_set">Coucher du soleil</string>
+  <string name="panel_moonrise">Lever de la lune</string>
+  <string name="panel_moonset">Coucher de la lune</string>
+  <string name="panel_earth_distance">Distance de la Terre · %1$s km</string>
+  <string name="panel_at">%1$s à %2$s</string>
+  <string name="panel_biggest">Le plus grand de la quinzaine</string>
+  <string name="panel_marked">Supérieur à la normale ici</string>
+  <string name="panel_hardest">%1$s le plus fort · %2$s</string>
+  <string name="panel_strong">Fort %1$s · %2$s</string>
+  <string name="panel_rank_title">Est-ce au-dessus de la normale ?</string>
+  <string name="panel_swing_rank">Seuls %1$d des %2$d marnages de la quinzaine sont plus grands.</string>
+  <string name="panel_max_rank">Seuls %1$d des %2$d maxima de la quinzaine dans cette direction sont plus forts.</string>
+  <string name="panel_biggest_day">Chaque barre représente le plus grand marnage du jour.</string>
+  <string name="panel_max_day">Chaque barre représente le plus fort %1$s du jour.</string>
+  <string-array name="panel_phases">
+    <item>Nouvelle lune</item>
+    <item>Premier croissant</item>
+    <item>Premier quartier</item>
+    <item>Lune gibbeuse croissante</item>
+    <item>Pleine lune</item>
+    <item>Lune gibbeuse décroissante</item>
+    <item>Dernier quartier</item>
+    <item>Dernier croissant</item>
+  </string-array>
+    <string name="panel_closest">Au plus près</string>
+    <string name="panel_farthest">Au plus loin</string>
+    <string name="panel_full">Prochaine pleine lune</string>
+    <string name="panel_new">Prochaine nouvelle lune</string>
+    <string name="panel_last_lunar">Dernière éclipse lunaire visible</string>
+    <string name="panel_last_solar">Dernière éclipse solaire visible</string>
+    <string name="panel_next_solar">Prochaine éclipse solaire</string>
+    <string name="panel_noon">Midi solaire</string>
+    <string name="panel_astro_dawn">Aube astronomique</string>
+    <string name="panel_astro_dusk">Crépuscule astronomique</string>
+    <string name="panel_naut_dawn">Aube nautique</string>
+    <string name="panel_naut_dusk">Crépuscule nautique</string>
+    <string name="panel_civil_dawn">Aube civile</string>
+    <string name="panel_civil_dusk">Crépuscule civil</string>
+    <string name="panel_golden_end">Fin de l’heure dorée</string>
+    <string name="panel_golden_start">Début de l’heure dorée</string>
+    <string name="panel_blue_start">Début de l’heure bleue</string>
+    <string name="panel_blue_end">Fin de l’heure bleue</string>
+    <string name="panel_perihelion">Périhélie</string>
+    <string name="panel_aphelion">Aphélie</string>
+    <string name="panel_rise_def">Le bord supérieur du Soleil apparaît au-dessus d’un horizon dégagé.</string>
+    <string name="panel_set_def">Le bord supérieur du Soleil disparaît sous un horizon dégagé.</string>
+    <string name="panel_noon_def">Le Soleil traverse le méridien local.</string>
+    <string name="panel_twilight_rising">Le Soleil montant se trouve à %1$d° sous l’horizon.</string>
+    <string name="panel_twilight_setting">Le Soleil descendant se trouve à %1$d° sous l’horizon.</string>
+    <string name="panel_edge_def">Le centre du Soleil franchit %1$d° par rapport à l’horizon.</string>
+    <string name="panel_next_total">Prochaine éclipse lunaire totale</string>
+    <string name="panel_next_partial">Prochaine éclipse lunaire partielle</string>
+    <string name="panel_next_penumbral">Prochaine éclipse lunaire pénombrale</string>
+    <string name="panel_mostly">Surtout saisonnier</string>
+    <string name="panel_partly">En partie saisonnier</string>
+    <string name="panel_solar_eclipse">Éclipse solaire</string>
+    <string name="panel_total_eclipse">Éclipse totale</string>
+    <string name="panel_partial_eclipse">Éclipse partielle</string>
+    <string name="panel_penumbra">Éclipse pénombrale</string>
+    <string name="panel_ends">Par rapport aux limites de cette station</string>
+    <string name="panel_season_large">La variation annuelle dépasse de loin la marée quotidienne.</string>
+    <string name="panel_hat">Plus haute marée astronomique · %1$s</string>
+    <string name="panel_lat">Plus basse marée astronomique · %1$s</string>
+    <string name="panel_turn">Étale sélectionnée · %1$s</string>
+    <string name="panel_ratio">Variation annuelle · %1$.1f× la marée quotidienne</string>
+    <string name="panel_year_tide">Quand le marnage est le plus grand</string>
+    <string name="panel_year_current">Quand le courant est le plus fort</string>
+    <string name="panel_widest_month">Marnage maximal vers %1$s.</string>
+    <string name="panel_hardest_month">Courant maximal vers %1$s.</string>
+    <string name="panel_perigean_spring">Vive-eau de périgée</string>
+    <string name="panel_apogean_spring">Vive-eau d’apogée</string>
+    <string name="panel_perigean_neap">Morte-eau de périgée</string>
+    <string name="panel_apogean_neap">Morte-eau d’apogée</string>
+    <string name="panel_perigean">Marée de périgée</string>
+    <string name="panel_apogean">Marée d’apogée</string>
+    <string name="panel_flood">Flot</string>
+    <string name="panel_ebb">Jusant</string>
+    <string name="panel_widest_solstice">Marnage maximal vers %1$s, près du solstice.</string>
+    <string name="panel_hardest_solstice">Courant maximal vers %1$s, près du solstice.</string>
+    <string name="panel_widest_equinox">Marnage maximal vers %1$s, près de l’équinoxe.</string>
+    <string name="panel_hardest_equinox">Courant maximal vers %1$s, près de l’équinoxe.</string>
+    <string name="panel_slack_compared">L’étale dure %1$d minutes près de ce maximum, contre environ %2$d minutes habituellement.</string>
+    <string name="panel_swing_explain">La différence entre la pleine et la basse mer, %1$s.</string>
+    <string name="panel_max_explain">Le courant le plus fort avant la renverse, à %1$s.</string>
+    <string name="panel_springs_follow">Les vives-eaux suivent la nouvelle et la pleine lune.</string>
+    <string name="panel_orbit_scale">La forme de l’orbite est exagérée pour illustrer la variation de distance.</string>
+    <string name="panel_hat_label">Plus haute marée astronomique</string>
+    <string name="panel_lat_label">Plus basse marée astronomique</string>
+    <string name="panel_high_label">Plus haute pleine mer de la quinzaine</string>
+    <string name="panel_low_label">Plus basse mer de la quinzaine</string>
+    <string name="panel_turn_label">Étale sélectionnée</string>
+    <string name="panel_expanded">Développé</string>
+    <string name="panel_collapsed">Réduit</string>
+    <string name="panel_explain">À propos de %1$s</string>
+    <string name="panel_biggest_swing">Le plus grand marnage de la quinzaine.</string>
+    <string name="panel_hardest_max">Le plus fort %1$s de la quinzaine.</string>
+    <string name="panel_season_equal">La variation annuelle est comparable à la marée quotidienne.</string>
+    <string name="panel_season_river">À %1$s, le niveau d’eau varie bien davantage au fil de l’année qu’au cours d’une journée. Le ruissellement, les précipitations et le vent peuvent déplacer toute la marée quotidienne.</string>
+    <string name="panel_season_tide">À %1$s, la marée quotidienne et le cycle annuel sont de taille comparable. L’heure de pleine ou basse mer reste prévisible malgré la variation saisonnière.</string>
+    <string name="panel_spring_explain">Les attractions du Soleil et de la Lune sont alignées. Leurs effets combinés tendent à accroître le marnage.</string>
+    <string name="panel_neap_explain">Au quartier, les attractions du Soleil et de la Lune forment un angle droit. Le marnage tend à diminuer.</string>
+    <string name="panel_perigee_explain">La Lune est près de son point le plus proche de la Terre, où son effet sur les marées est plus fort.</string>
+    <string name="panel_apogee_explain">La Lune est près de son point le plus éloigné de la Terre, où son effet sur les marées est plus faible.</string>
+    <string-array name="panel_phase_explanation">
+        <item>La Lune se situe presque entre la Terre et le Soleil.</item>
+        <item>Un croissant de plus en plus large de la moitié éclairée fait face à la Terre.</item>
+        <item>La Lune a parcouru le quart de son cycle.</item>
+        <item>Plus de la moitié du disque visible est éclairée et la partie éclairée grandit.</item>
+        <item>La Lune se trouve à l’opposé du Soleil dans notre ciel.</item>
+        <item>Plus de la moitié du disque visible est éclairée et la partie éclairée diminue.</item>
+        <item>La Lune a parcouru les trois quarts de son cycle.</item>
+        <item>Le croissant s’amincit avant la prochaine nouvelle lune.</item>
+    </string-array>
+</resources>

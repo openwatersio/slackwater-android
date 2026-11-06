@@ -1,0 +1,15 @@
+<resources>
+    <string name="chart_high">High</string>
+    <string name="chart_low">Low</string>
+    <string name="chart_max_flood">Max flood</string>
+    <string name="chart_max_ebb">Max ebb</string>
+    <string name="chart_fast_rise">Fastest rise</string>
+    <string name="chart_fast_fall">Fastest fall</string>
+    <string name="chart_window">Slack window</string>
+    <string name="chart_closes">Slack window closes</string>
+    <string name="chart_now">Now</string>
+    <string name="chart_return">Return to now</string>
+    <string name="chart_in">%1$s in %2$s</string>
+    <plurals name="chart_minutes"><item quantity="one">%d minute</item><item quantity="other">%d minutes</item></plurals>
+    <plurals name="chart_hours"><item quantity="one">%d hour</item><item quantity="other">%d hours</item></plurals>
+</resources>

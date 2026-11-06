@@ -34,6 +34,35 @@ class TimelineControllerTest {
         assertEquals(TimelineMotion.RESTING, controller(linked).state.motion)
     }
 
+    @Test fun hingeFramesUseTheRestoredMomentAndUserInputOwnsTheNextGeneration() {
+        val c = controller()
+        val gen = c.dispatch(TimelineAction.BeginHingeFollow).generation
+        assertEquals(now.plusSeconds(21600), c.state.selected)
+        assertEquals(now.plusSeconds(10800), c.dispatch(TimelineAction.AnimationFrame(gen, .5)).selected)
+        val grabbed = c.dispatch(TimelineAction.BeginDrag).selected
+        c.dispatch(TimelineAction.AnimationFrame(gen, 1.0))
+        assertEquals(grabbed, c.state.selected)
+        assertEquals(TimelineMotion.DRAG, c.state.motion)
+        val reduced = controller(reduceMotion = true)
+        assertEquals(now, reduced.dispatch(TimelineAction.BeginHingeFollow).selected)
+        assertEquals(TimelineMotion.RESTING, reduced.state.motion)
+    }
+
+    @Test fun restoredSelectionAtOpeningSentinelRemainsParkedAcrossPostureAndModelChanges() {
+        val selected = now.minusSeconds(7200)
+        val anchor = today.minusDays(3)
+        val restored = TimelineController(now, zone, full, 0.0, initialSelection = selected,
+            clockMillis = { 0L }, anchor = anchor, allowOpening = false)
+        for (width in listOf(360.0, 800.0, 320.0)) {
+            restored.dispatch(TimelineAction.Viewport(width))
+            val state = restored.dispatch(TimelineAction.Tick, 700)
+            assertEquals(selected, state.selected)
+            assertEquals(selected, state.coverage.selected(state.offset, width))
+            assertEquals(anchor, state.anchor)
+            assertEquals(TimelineMotion.RESTING, state.motion)
+        }
+    }
+
     @Test fun initialLayoutStartsOpeningOnceAndANewerRequestWinsBeforeLayout() {
         fun unmeasured(reduceMotion: Boolean = false) =
             TimelineController(now, zone, full, 0.0, reduceMotion = reduceMotion, clockMillis = { 0L })

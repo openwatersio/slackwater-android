@@ -117,31 +117,35 @@ class AndroidPredictionRepository(
     private fun bundledTide(id: StationId, span: TimeSpan): PredictionResult {
         val record = tides.station(id) ?: bad()
         val offsets = record.tideOffsets
-        if (offsets == null) return PredictionResult.Ready(id, span, record.attribution,
-            StationCapabilities.HARMONIC_TIDE, EngineAdapter.tide(reference(record), span))
+        if (offsets == null) {
+            val station = reference(record)
+            return PredictionResult.Ready(id, span, record.attribution, StationCapabilities.HARMONIC_TIDE,
+                EngineAdapter.tide(station, span), chartModel = ChartModel.Tide(station::heights))
+        }
         val ref = reference(tides.station(StationId(offsets.reference)) ?: bad())
         val height = if (offsets.heightType == HeightOffsetType.RATIO) HeightOffset.Ratio(offsets.heightHigh, offsets.heightLow)
             else HeightOffset.Fixed(offsets.heightHigh, offsets.heightLow)
         val station = EngineAdapter.subordinateTide(ref, offsets.timeHigh, offsets.timeLow, height)
-        return PredictionResult.Ready(id, span, record.attribution, StationCapabilities.SUBORDINATE_TIDE, EngineAdapter.tide(station, span))
+        return PredictionResult.Ready(id, span, record.attribution, StationCapabilities.SUBORDINATE_TIDE, EngineAdapter.tide(station, span), chartModel = ChartModel.Tide(station::heights))
     }
 
     private fun bundledCurrent(id: StationId, span: TimeSpan): PredictionResult {
         val row = currents[id.value.removePrefix("current:")] ?: bad()
         val ref = row.optString("reference")
-        val (capability, series) = if (ref.isEmpty()) {
-            StationCapabilities.HARMONIC_CURRENT to EngineAdapter.current(row.currentStation(), span).copy(
+        val (capability, series, model) = if (ref.isEmpty()) {
+            val station = row.currentStation()
+            Triple(StationCapabilities.HARMONIC_CURRENT, EngineAdapter.current(station, span).copy(
                 hasCrossAxis = (row.optJSONArray("minorConstituents")?.length() ?: 0) > 0 || row.optDouble("minorMeanFlow", 0.0) != 0.0,
-            )
+            ), ChartModel.Current(station::speeds, station::events))
         } else {
             val station = SubordinateCurrentStation(currents[ref]?.currentStation() ?: bad(),
                 row.getDouble("slackBeforeFloodOffset"), row.getDouble("slackBeforeEbbOffset"),
                 row.getDouble("floodTimeOffset"), row.getDouble("ebbTimeOffset"),
                 row.getDouble("floodSpeedRatio"), row.getDouble("ebbSpeedRatio"),
                 row.optional("floodDirection"), row.optional("ebbDirection"))
-            StationCapabilities.SUBORDINATE_CURRENT to EngineAdapter.current(station, span)
+            Triple(StationCapabilities.SUBORDINATE_CURRENT, EngineAdapter.current(station, span), ChartModel.Current(station::speeds, station::events))
         }
-        return PredictionResult.Ready(id, span, "NOAA", capability, series)
+        return PredictionResult.Ready(id, span, "NOAA", capability, series, chartModel = model)
     }
 
     private suspend fun record(id: StationId, kind: ModelKind): JSONObject? = when (val stored = models.read(id, kind)) {
@@ -163,7 +167,7 @@ class AndroidPredictionRepository(
                 null
             }
             if (station != null) return PredictionResult.Ready(id, span, "CHS", StationCapabilities.FITTED_TIDE,
-                EngineAdapter.tide(station, span))
+                EngineAdapter.tide(station, span), chartModel = ChartModel.Tide(station::heights))
         }
         val preview = record(id, ModelKind.TIDE_PREVIEW)
             ?: bad(if (stored == StoredModel.Missing) Reason.MISSING_DOWNLOAD else Reason.INVALID_MODEL)
@@ -228,7 +232,8 @@ class AndroidPredictionRepository(
             StationCapabilities.PROVISIONAL_CURRENT -> gate.getInt("provisionalSlackMinutes")
             else -> null
         }
-        return PredictionResult.Ready(id, span, "CHS", capability, EngineAdapter.current(station, span), errorBound)
+        return PredictionResult.Ready(id, span, "CHS", capability, EngineAdapter.current(station, span), errorBound,
+            chartModel = ChartModel.Current(station::speeds, station::events))
     }
 
     private suspend fun derivedGate(id: StationId, span: TimeSpan): PredictionResult {

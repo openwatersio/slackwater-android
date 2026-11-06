@@ -1,5 +1,7 @@
 package io.openwaters.slackwater.android.stations
 
+import androidx.compose.ui.test.onAllNodesWithContentDescription
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasScrollAction
 import androidx.compose.ui.test.hasText
@@ -75,9 +77,9 @@ class StationListTest {
             val card = hasContentDescription("Friday Harbor, San Juan Island", substring = true)
             compose.waitUntil(60_000) { compose.onAllNodes(card).fetchSemanticsNodes().isNotEmpty() }
             compose.onAllNodes(card).onFirst().performClick()
-            compose.waitUntil(10_000) { compose.onAllNodesWithText("Remove from favorites").fetchSemanticsNodes().isNotEmpty() }
-            compose.onNodeWithText("Remove from favorites").performClick()
-            compose.waitUntil(10_000) { compose.onAllNodesWithText("Add to favorites").fetchSemanticsNodes().isNotEmpty() }
+            compose.waitUntil(10_000) { compose.onAllNodesWithContentDescription("Remove from favorites").fetchSemanticsNodes().isNotEmpty() }
+            compose.onNodeWithContentDescription("Remove from favorites").performClick()
+            compose.waitUntil(10_000) { compose.onAllNodesWithContentDescription("Add to favorites").fetchSemanticsNodes().isNotEmpty() }
             val stored = runBlocking { places.places.first().getOrThrow() }
             assertEquals(listOf(withdrawn), stored.favorites)
             assertEquals(fridayHarbor, stored.recents.first())

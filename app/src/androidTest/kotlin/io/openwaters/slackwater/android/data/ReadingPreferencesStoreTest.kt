@@ -66,6 +66,7 @@ class ReadingPreferencesStoreTest {
             store.setHeightUnits(HeightUnits.METRIC)
             store.setSpeedUnit(SpeedUnit.METRES_PER_SECOND)
             store.setSetFormat(SetFormat.DEGREES)
+            store.setShowSky(false)
             store.setSlackWindowKnots(0.0)
         }
         withScope { scope ->

@@ -1,6 +1,6 @@
 # Android parity with Slackwater iOS
 
-Android verification is tracked in the [scenario and accessibility matrix](validation/accessibility.md), the [timeline fixtures and interruption trace](validation/timeline.md), and the [performance evidence ledger](validation/android-performance.md).
+Android verification is tracked in the [scenario and accessibility matrix](validation/accessibility.md), the [station detail checks](validation/station-detail.md), the [timeline fixtures and interruption trace](validation/timeline.md), and the [performance evidence ledger](validation/android-performance.md).
 
 This ledger is the acceptance map for the [Android implementation plan](superpowers/plans/2026-11-05-android-development.md). Its source is the entire iOS tree at [PR #900 head `5b26bcd5ce0220302de3ba32be5ebf67552fb06e`](https://github.com/openwatersio/slackwater-ios/tree/5b26bcd5ce0220302de3ba32be5ebf67552fb06e). Rows describe work to implement and verify, not existing Android features.
 

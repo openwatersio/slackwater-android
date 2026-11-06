@@ -7,7 +7,14 @@ import android.content.Intent
 import android.provider.CalendarContract
 import io.openwaters.slackwater.android.calendars.CalendarRepository
 import io.openwaters.slackwater.android.alerts.AlertDestination
-import io.openwaters.slackwater.android.alerts.StationAlerts
+import io.openwaters.slackwater.android.stations.StationPage
+import io.openwaters.slackwater.android.stations.StationListModel
+import java.time.Instant
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import io.openwaters.slackwater.android.detail.DetailRecords
+import io.openwaters.slackwater.android.core.station.StationId
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.ComponentActivity
@@ -19,24 +26,46 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import io.openwaters.slackwater.android.data.ReadingPreferences
+import io.openwaters.slackwater.android.data.ReadingPreferencesStore
 import io.openwaters.slackwater.android.data.AlertReconciliation
 import io.openwaters.slackwater.android.stations.StationsHome
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class MainActivity : ComponentActivity() {
-    private var destination by mutableStateOf<AlertDestination?>(null)
+    private data class DetailDestination(val station: StationId, val event: Instant?)
+    private var destination by mutableStateOf<DetailDestination?>(null)
+    private val records by lazy { DetailRecords(assets) }
+    private var linkLoad: Job? = null
+    private var badLink by mutableStateOf(false)
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        setIntent(intent)
         handleDestination(intent)
     }
 
     private fun handleDestination(intent: Intent) {
-        destination = AlertDestination.read(intent)
+        linkLoad?.cancel()
+        badLink = false
+        if (intent.action == Intent.ACTION_VIEW) {
+            val link = intent.data
+            linkLoad = lifecycleScope.launch {
+                val resolved = link?.let { withContext(Dispatchers.IO) { records.destination(it) } }
+                if (resolved == null) badLink = true
+                else {
+                    setIntent(intent)
+                    destination = DetailDestination(resolved.first, resolved.second)
+                }
+            }
+            return
+        }
+        setIntent(intent)
+        destination = AlertDestination.read(intent)?.let { DetailDestination(it.station, it.event) }
         if (intent.action == CalendarContract.ACTION_HANDLE_CUSTOM_EVENT) {
             setResult(if (destination == null) RESULT_CANCELED else RESULT_OK)
         }
@@ -56,6 +85,10 @@ class MainActivity : ComponentActivity() {
             MaterialTheme {
                 LaunchedEffect(Unit) { withContext(Dispatchers.IO) { ShortcutPublisher.publish(this@MainActivity) } }
                 var showCredits by remember { mutableStateOf(false) }
+                if (badLink) {
+                    AlertDialog(onDismissRequest = { badLink = false }, text = { Text(stringResource(R.string.detail_invalid_link)) },
+                        confirmButton = { TextButton(onClick = { badLink = false }) { Text(stringResource(R.string.close)) } })
+                }
                 if (showCredits) {
                     val notices = remember { resources.openRawResource(R.raw.third_party_notices).bufferedReader().use { it.readText() } }
                     AlertDialog(
@@ -75,6 +108,25 @@ class MainActivity : ComponentActivity() {
                     // The list stays composed under an alert's destination, so its scroll, search and page survive.
                     Box(if (destination == null) Modifier.fillMaxSize() else Modifier.fillMaxSize().clearAndSetSemantics {}) {
                         StationsHome(onCredits = { showCredits = true }, coveredByAlert = destination != null) {
+                            var chartSettings by remember { mutableStateOf(false) }
+                            TextButton(onClick = { chartSettings = true }) { Text(stringResource(R.string.detail_chart_settings)) }
+                            if (chartSettings) {
+                                val store = remember { ReadingPreferencesStore.get(this@MainActivity) }
+                                val prefs by store.preferences.collectAsState(Result.success(ReadingPreferences()))
+                                val scope = rememberCoroutineScope()
+                                val enabled = prefs.getOrNull()?.showSky ?: true
+                                AlertDialog(onDismissRequest = { chartSettings = false }, title = { Text(stringResource(R.string.detail_chart_settings)) },
+                                    text = {
+                                        Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
+                                            val label = stringResource(R.string.detail_show_sky)
+                                            Text(label, Modifier.weight(1f))
+                                            Switch(enabled, onCheckedChange = { scope.launch { store.setShowSky(it) } },
+                                                modifier = Modifier.semantics { contentDescription = label })
+                                        }
+                                    }, confirmButton = {
+                                        TextButton(onClick = { chartSettings = false }) { Text(stringResource(R.string.close)) }
+                                    })
+                            }
                             var showQueries by remember { mutableStateOf(false) }
                             Box {
                                 OutlinedButton(onClick = { showQueries = true }) { Text(stringResource(R.string.prediction_shortcuts)) }
@@ -90,16 +142,14 @@ class MainActivity : ComponentActivity() {
                         }
                     }
                     destination?.let { target ->
-                        Surface(Modifier.fillMaxSize()) {
-                            Column(Modifier.safeDrawingPadding().verticalScroll(rememberScrollState()).padding(24.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                                Text(stringResource(R.string.app_name), style = MaterialTheme.typography.headlineLarge)
-                                key(target) {
-                                    StationAlerts(target, target.station) {
-                                        setIntent(Intent(this@MainActivity, MainActivity::class.java))
-                                        destination = null
-                                    }
-                                }
+                        key(target) {
+                            val back = {
+                                setIntent(Intent(this@MainActivity, MainActivity::class.java))
+                                destination = null
                             }
+                            androidx.activity.compose.BackHandler(onBack = back)
+                            StationPage(remember { StationListModel.get(this@MainActivity) }, target.station,
+                                remember { Instant.now() }, target.event, onBack = back)
                         }
                     }
                 }

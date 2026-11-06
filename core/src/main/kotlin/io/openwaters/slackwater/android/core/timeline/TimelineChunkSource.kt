@@ -43,12 +43,16 @@ suspend fun PredictionRepository.timelineChunk(
         }
         is PredictionSeries.Derived -> TimelineChunkData(derivedSlacks = series.slacks)
     }
+    return data.copy(days = timelineDays(station, zone, window)).clipped(window)
+}
+
+suspend fun timelineDays(station: StationIdentity, zone: ZoneId, window: TimelineWindow): List<TimelineDay> {
     val observer = if (station.latitude in -90.0..90.0 && station.longitude in -180.0..180.0)
         Observer(station.latitude, station.longitude) else null
     val first = window.start.atZone(zone).toLocalDate().minusDays(1)
     val last = window.end.atZone(zone).toLocalDate()
     val context = currentCoroutineContext()
-    val days = generateSequence(first) { it.plusDays(1) }.takeWhile { it <= last }.map { day ->
+    return generateSequence(first) { it.plusDays(1) }.takeWhile { it <= last }.map { day ->
         context.ensureActive()
         val start = day.atStartOfDay(zone).toInstant()
         val end = day.plusDays(1).atStartOfDay(zone).toInstant()
@@ -64,7 +68,15 @@ suspend fun PredictionRepository.timelineChunk(
             moon.firstOrNull { it.kind == MoonEventKind.RISE }?.time,
             moon.firstOrNull { it.kind == MoonEventKind.SET }?.time)
     }.toList()
-    return data.copy(days = days).clipped(window)
+}
+
+// Western Alaska's first sunset of a civil day can precede that day's sunrise.
+fun TimelineDay.dateAnchor(days: List<TimelineDay>, zone: ZoneId): Instant {
+    val noon = date.atTime(12, 0).atZone(zone).toInstant()
+    val rise = sunrise ?: return noon
+    val nextSet = days.asSequence().mapNotNull { it.sunset }.filter { it > rise }.minOrNull() ?: return noon
+    if (days.any { it.sunrise != null && it.sunrise > rise && it.sunrise < nextSet }) return noon
+    return rise.plus(Duration.between(rise, nextSet).dividedBy(2))
 }
 
 private fun requireSampleGrid(times: List<Instant>, window: TimelineWindow) {

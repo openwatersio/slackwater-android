@@ -31,6 +31,7 @@ class CalendarSettingsTest {
         try {
             runBlocking { access.update(ReminderEntitlement.Free) }
             compose.openStation("Friday Harbor", "San Juan Island")
+            compose.waitUntil(30_000) { compose.onAllNodesWithText("Station calendars").fetchSemanticsNodes().isNotEmpty() }
             compose.onNodeWithText("Station calendars").performScrollTo().performClick()
             compose.waitUntil(20_000) { compose.onAllNodes(hasText("Publish calendar") and isEnabled()).fetchSemanticsNodes().isNotEmpty() }
             compose.onNodeWithText("Publish calendar").performClick()
