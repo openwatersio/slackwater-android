@@ -1,0 +1,9 @@
+<resources>
+ <string name="app_name">Slackwater</string>
+ <string name="shell_message">Offline tide and current predictions</string>
+ <string name="shell_status">Android app in development</string>
+ <string name="source_notice">NOAA station data. Predictions — not for navigation.</string>
+ <string name="data_and_licenses">Data and licenses</string>
+ <string name="data_credits">Data credits</string>
+ <string name="close">Close</string>
+</resources>

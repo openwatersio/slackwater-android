@@ -1,0 +1,92 @@
+{
+  "schemaVersion": 1,
+  "productDocs": {
+    "repository": "openwatersio/slackwater-ios",
+    "commit": "5b26bcd5ce0220302de3ba32be5ebf67552fb06e"
+  },
+  "sources": {
+    "slackwater": {
+      "repository": "openwatersio/slackwater",
+      "commit": "e66586a0e2a12c1565e2aefb866c14317f257961"
+    },
+    "almanac": {
+      "repository": "openwatersio/almanac",
+      "commit": "75ba6f7b6db7904968db380ce82ad92e8c042b0c"
+    }
+  },
+  "resources": {
+    "repository": "openwatersio/slackwater-ios",
+    "commit": "5b26bcd5ce0220302de3ba32be5ebf67552fb06e",
+    "assets": [
+      {
+        "name": "station-index.json",
+        "path": "Slackwater/Resources/station-index.json",
+        "sha256": "d469f3c162e6de10d8f4366b4b83ae732d9e759e228e14e956d47829f039028c"
+      },
+      {
+        "name": "stations.tcdb",
+        "path": "Slackwater/Resources/stations.tcdb",
+        "sha256": "a8654087f1f3972089f69b70fb47f26e5d558c272e0ac576d4b6d2bcd9b00b6a"
+      },
+      {
+        "name": "currents.json",
+        "path": "Slackwater/Resources/currents.json",
+        "sha256": "395d5738bf93bba73067a49d0bf42242d4edafce2d474e9c3ab815cd98dbbbbc"
+      },
+      {
+        "name": "chs-stations.json",
+        "path": "Slackwater/Resources/chs-stations.json",
+        "sha256": "e8e1902070426b94b550f09ffd84dc86db2000243982fee22def02c283e1ffa3"
+      },
+      {
+        "name": "chs-current-gates.json",
+        "path": "Slackwater/Resources/chs-current-gates.json",
+        "sha256": "b091e5dc35f6c249bc39732cae133db35987acc9329b429b246e0370a765a204"
+      },
+      {
+        "name": "chs-gates.json",
+        "path": "Slackwater/Resources/chs-gates.json",
+        "sha256": "969be21894772d8d655eb21f66a40ef29ca75ca790b1b8687adc26a7852d21b3"
+      },
+      {
+        "name": "chs-tombstones.json",
+        "path": "Slackwater/Resources/chs-tombstones.json",
+        "sha256": "c10e119afaa3c724718276d2c4ba5bc2e693f0a78783323c8fbd4d46565ebe4e"
+      },
+      {
+        "name": "station-successors.json",
+        "path": "Slackwater/Resources/station-successors.json",
+        "sha256": "604c73c4f23275784a3a728cab36fc1477d591e3b26227b91af80c9affc0e6bc"
+      },
+      {
+        "name": "station-tombstones.json",
+        "path": "Slackwater/Resources/station-tombstones.json",
+        "sha256": "c470a35473e1c6c56562ff601f50fcdd7d84eec5406065e8cc5f5f5ad3eceaff"
+      },
+      {
+        "name": "unavailable-stations.json",
+        "path": "Slackwater/Resources/unavailable-stations.json",
+        "sha256": "d0b6b85ae9fb435784a877360885d89e08b4c50b18bbf8df2e6d90b5c163fbe4"
+      },
+      {
+        "name": "slugs.json",
+        "path": "Slackwater/Resources/slugs.json",
+        "sha256": "33380beb0c7e58a7f995674bbf28ce5de504aae67ac74a0bd1c2fa140d061ba1"
+      }
+    ]
+  },
+  "databaseReader": {
+    "status": "blocked",
+    "issue": "https://github.com/openwatersio/slackwater-database/issues/296"
+  },
+  "recipeEvidence": {
+    "repository": "openwatersio/slackwater-ios",
+    "commit": "5b26bcd5ce0220302de3ba32be5ebf67552fb06e",
+    "path": "tools/chs-current-recipe.json"
+  },
+  "launchStation": {
+    "sourcePath": "Slackwater/Resources/stations.json",
+    "id": "noaa/9449880",
+    "sha256": "e026243f0fa0e87d8bffee87e3d277972b2ffcaae08a4bdcf793c6088b94830b"
+  }
+}

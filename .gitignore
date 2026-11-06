@@ -1,0 +1,7 @@
+/.gradle/
+/.kotlin/
+/**/build/
+/vendor/
+/local.properties
+/.superpowers/
+/scripts/__pycache__/
