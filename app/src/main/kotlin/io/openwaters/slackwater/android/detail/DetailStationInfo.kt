@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.*
 import androidx.compose.ui.text.style.TextAlign
@@ -27,8 +28,6 @@ import io.openwaters.slackwater.android.data.SpeedUnit
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -123,12 +122,14 @@ internal fun StationDetails(station: StationIdentity, meta: DetailMetadata?, rea
     var expanded by rememberSaveable(station.id.value) { mutableStateOf(false) }
     TextButton(onClick = { expanded = !expanded }) { Text(stringResource(R.string.detail_details)) }
     if (!expanded) return
+    val online = meta?.gate?.online == true
+    val saved = if (online) onlineCoverage(station.id, revision) else emptyList()
     val method = when (ready?.capabilities) {
         StationCapabilities.DERIVED_TIMING -> R.string.detail_derived
         StationCapabilities.ONLINE_CURRENT, StationCapabilities.TIDE_PREVIEW -> R.string.detail_official
         StationCapabilities.SUBORDINATE_TIDE, StationCapabilities.SUBORDINATE_CURRENT -> R.string.detail_subordinate
         StationCapabilities.HARMONIC_CURRENT, StationCapabilities.HARMONIC_TIDE -> R.string.detail_harmonic
-        null -> R.string.detail_official.takeIf { meta?.gate?.online == true }
+        null -> if (online && saved.isNotEmpty()) R.string.detail_official else null
         else -> R.string.detail_fitted
     }
     listOf(R.string.detail_station to station.id.value, R.string.detail_position to formatCoordinate(station.coordinate),
@@ -137,11 +138,10 @@ internal fun StationDetails(station: StationIdentity, meta: DetailMetadata?, rea
         if (value != null) Text(stringResource(label) + " · " + value)
     }
     if (method != null) Text(stringResource(R.string.detail_prediction) + " · " + stringResource(method))
-    if (meta?.gate?.online == true) {
-        GateExplanation(meta.gate, speedUnit)
-        savedThrough(station.id, today, zone, revision)?.let {
-            Text(stringResource(R.string.detail_network_missing, it.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM))))
-        }
+    if (online) {
+        GateExplanation(meta?.gate, speedUnit)
+        if (saved.isEmpty()) Text(stringResource(R.string.card_not_downloaded), Modifier.testTag("online-detail-download-status"))
+        else OnlineValidity(savedThrough(saved, today, zone), today)
     }
     if (meta?.datum != null) Text(stringResource(R.string.detail_datum_note))
     if (station.kind == StationKind.DerivedGate) {

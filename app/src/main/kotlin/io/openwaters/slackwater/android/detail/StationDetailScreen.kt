@@ -89,7 +89,7 @@ private fun StationDetailBody(model: StationListModel, id: StationId, clock: Ins
     val zone = station?.plotZone() ?: ZoneOffset.UTC
     var restoredTime by rememberSaveable { mutableStateOf(linkedTime?.toString()) }
     var restoredDay by rememberSaveable { mutableStateOf<String?>(null) }
-    var missingPagePick by remember { mutableStateOf<LocalDate?>(null) }
+    var pickerRevision by remember { mutableIntStateOf(0) }
     var loaded by remember { mutableStateOf<LoadedDetail?>(null) }
     var loading by remember { mutableStateOf(true) }
     var reloadAt by remember { mutableStateOf<Instant?>(null) }
@@ -106,7 +106,7 @@ private fun StationDetailBody(model: StationListModel, id: StationId, clock: Ins
         }
     }
     DisposableEffect(Unit) { onDispose { loaded?.timeline?.close() } }
-    LaunchedEffect(station, revision, reloadAt, missingPagePick) {
+    LaunchedEffect(station, revision, reloadAt, pickerRevision) {
         if (station == null || !live) { loading = resolved == null; return@LaunchedEffect }
         val previous = loaded?.timeline
         if (previous?.mode == TimelineMode.ONLINE && (previous.missingDay != null || previous.state.onlineDayRequested != null)) {
@@ -184,7 +184,7 @@ private fun StationDetailBody(model: StationListModel, id: StationId, clock: Ins
         else {
             restoredDay = day.toString()
             restoredTime = day.atTime(12, 0).atZone(zone).toInstant().toString()
-            missingPagePick = day
+            pickerRevision++
         }
         picker = null
     }
@@ -221,7 +221,7 @@ private fun StationDetailBody(model: StationListModel, id: StationId, clock: Ins
                             reloadAt = now
                         }
                     }
-                    OnlineAlternative(station, model, onOpen)
+                    OnlineAlternative(station, model, repository, clock, revision, onOpen)
                 }
                 detail == null -> MissingPredictions(station, metadata, model)
                 else -> DetailContent(station, detail, prefs, repository, downloads, revision, metadata, page.scheduleModifier(scroll),
@@ -351,15 +351,19 @@ private fun MissingPredictions(station: StationIdentity, metadata: DetailMetadat
 }
 
 @Composable
-private fun OnlineAlternative(station: StationIdentity, model: StationListModel, open: (StationId) -> Unit) {
+private fun OnlineAlternative(station: StationIdentity, model: StationListModel, repository: PredictionRepository,
+                              now: Instant, revision: Long, open: (StationId) -> Unit) {
     val catalog by model.catalog.collectAsState()
-    val assets = LocalContext.current.assets
-    val alternative by produceState<StationIdentity?>(null, station.id, catalog) {
-        value = withContext(Dispatchers.IO) {
-            val gates = BundledCurrentGates(assets)
-            rankByDistance(catalog?.byId?.values.orEmpty().filter {
-                it.kind == StationKind.CanadianCurrent && gates[it.id]?.online == false
-            }, station.coordinate).firstOrNull()?.identity
+    val alternative by produceState<StationIdentity?>(null, station.id, catalog, revision) {
+        value = withContext(Dispatchers.Default) {
+            val span = TimeSpan(now, now.plusSeconds(600))
+            val candidates = rankByDistance(catalog?.byId?.values.orEmpty().filter {
+                it.id != station.id && (it.kind == StationKind.Current || it.kind == StationKind.CanadianCurrent)
+            }, station.coordinate).sortedBy { it.identity.kind != StationKind.CanadianCurrent }
+            candidates.firstOrNull {
+                val result = repository.load(it.id, span, PredictionPurpose.DISPLAY) as? PredictionResult.Ready
+                result?.capabilities?.continuous == true
+            }?.identity
         }
     }
     alternative?.let { TextButton(onClick = { open(it.id) }) { Text(stringResource(R.string.detail_instead, it.name)) } }

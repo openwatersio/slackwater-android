@@ -11,7 +11,6 @@ import java.io.IOException
 import java.time.Duration
 import java.time.Instant
 import java.time.LocalDate
-import java.time.ZoneId
 import java.util.concurrent.ConcurrentHashMap
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
@@ -39,8 +38,26 @@ internal class OnlineGateDownloads(
     private val mutableStates = MutableStateFlow<Map<StationId, OnlineDownloadState>>(emptyMap())
     val states = mutableStates.asStateFlow()
 
-    private fun status(id: StationId, state: OnlineDownloadState?) = mutableStates.update {
-        if (state == null) it - id else it + (id to state)
+    private val stateDays = mutableMapOf<StationId, LocalDate>()
+
+    @Synchronized
+    private fun status(id: StationId, day: LocalDate, state: OnlineDownloadState?) {
+        if (state == null) {
+            if (stateDays[id] != day) return
+            stateDays.remove(id)
+            mutableStates.update { it - id }
+        } else {
+            stateDays[id] = day
+            mutableStates.update { it + (id to state) }
+        }
+    }
+
+    @Synchronized
+    private fun reconnected() {
+        failedDay.clear()
+        for ((id, state) in mutableStates.value) {
+            if (state == OnlineDownloadState.OFFLINE) stateDays[id]?.let { status(id, it, null) }
+        }
     }
 
     private enum class Attempt { COVERED, UNAVAILABLE, RETRY }
@@ -49,7 +66,7 @@ internal class OnlineGateDownloads(
         station: StationIdentity, day: LocalDate, manual: Boolean, refresh: Boolean, last: Boolean,
     ): Attempt {
         val id = station.id
-        val zone = ZoneId.of(station.timezone ?: "UTC")
+        val zone = station.currentGateZone()
         val anchor = day.atStartOfDay(zone).toInstant()
         val span = TimelineWindow.fixed(day, zone)
         val covered = coverage(id).firstOrNull { span.start in it && span.end in it }
@@ -57,34 +74,34 @@ internal class OnlineGateDownloads(
         if (covered != null && !manual && (!refresh || restricted.value || !online.value || refreshedDay[id] == day ||
                 covered.end >= anchor.plus(Duration.ofDays(30)).minus(Duration.ofHours(12)))) return Attempt.COVERED
         if (!online.value) {
-            status(id, OnlineDownloadState.OFFLINE)
+            status(id, day, OnlineDownloadState.OFFLINE)
             return if (covered == null) Attempt.UNAVAILABLE else Attempt.COVERED
         }
         if (!manual && covered == null && failedDay[id] == day) return Attempt.UNAVAILABLE
-        if (quiet) refreshedDay[id] = day
         try {
             transfer.withLock {
-                if (!quiet) status(id, OnlineDownloadState.DOWNLOADING)
+                if (quiet) refreshedDay[id] = day
+                if (!quiet) status(id, day, OnlineDownloadState.DOWNLOADING)
                 download(station, anchor, clock().atZone(zone).toLocalDate().atStartOfDay(zone).toInstant())
             }
             if (coverage(id).none { span.start in it && span.end in it }) {
-                throw IwlsException.Transient("Downloaded predictions do not cover this week")
+                throw IwlsException.Permanent("Downloaded predictions do not cover this week")
             }
             failedDay.remove(id)
-            status(id, null)
+            status(id, day, null)
             return Attempt.COVERED
         } catch (cancelled: CancellationException) {
-            if (!quiet) status(id, null)
+            if (quiet) refreshedDay.remove(id, day)
             throw cancelled
         } catch (failure: Exception) {
-            if (failure !is IwlsException && failure !is IOException) throw failure
             if (quiet) return Attempt.COVERED
+            if (failure !is IwlsException && failure !is IOException) throw failure
             if (last || failure is IwlsException.Permanent) {
                 failedDay[id] = day
-                status(id, OnlineDownloadState.FAILED)
+                status(id, day, OnlineDownloadState.FAILED)
                 return if (covered == null) Attempt.UNAVAILABLE else Attempt.COVERED
             }
-            status(id, OnlineDownloadState.WAITING_TO_RETRY)
+            status(id, day, OnlineDownloadState.WAITING_TO_RETRY)
             return Attempt.RETRY
         }
     }
@@ -109,6 +126,14 @@ internal class OnlineGateDownloads(
             try {
                 result = runCycle(station, day, manual, refresh, background, wake)
                 return result
+            } catch (cancelled: CancellationException) {
+                status(id, day, null)
+                throw cancelled
+            } catch (_: Exception) {
+                failedDay[id] = day
+                status(id, day, OnlineDownloadState.FAILED)
+                result = false
+                return false
             } finally {
                 pending.remove(key, completion)
                 completion.complete(result)
@@ -150,12 +175,12 @@ internal class OnlineGateDownloads(
         val stations = ids.mapNotNull { stationFor(it) }
         val now = clock()
         val nextDay = stations.minOfOrNull { station ->
-            val local = now.atZone(ZoneId.of(station.timezone ?: "UTC"))
+            val local = now.atZone(station.currentGateZone())
             local.toLocalDate().plusDays(1).atStartOfDay(local.zone).toInstant()
         } ?: now.plus(Duration.ofDays(1))
         coroutineScope {
             for (station in stations) launch {
-                val day = now.atZone(ZoneId.of(station.timezone ?: "UTC")).toLocalDate()
+                val day = now.atZone(station.currentGateZone()).toLocalDate()
                 request(station, day, refresh = true, background = true)
             }
         }
@@ -183,7 +208,7 @@ internal class OnlineGateDownloads(
             }, online, restricted)
             watchDownloadNetwork(app) { available, limited, _ ->
                 restricted.value = limited
-                if (available && !online.value) service.failedDay.clear()
+                if (available && !online.value) service.reconnected()
                 online.value = available
             }
             return service.also { shared = it }

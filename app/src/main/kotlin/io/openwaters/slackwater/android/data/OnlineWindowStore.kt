@@ -24,7 +24,9 @@ data class OnlineWindowBlock(
     val span get() = TimeSpan(points.first().time, points.last().time)
 
     internal fun record() = JSONObject()
-        .put("times", JSONArray(points.map { it.time.toEpochMilli() / 1000.0 }))
+        .put("times", JSONArray(points.map { point ->
+            if (point.time.nano == 0) point.time.epochSecond else point.time.toEpochMilli() / 1000.0
+        }))
         .put("speeds", JSONArray(points.map { it.speedKnots }))
         .put("floodDirection", floodDirection)
         .put("ebbDirection", ebbDirection)
@@ -71,17 +73,31 @@ class OnlineWindowStore(private val models: ModelStore) {
 
         internal fun blocks(record: JSONObject): List<OnlineWindowBlock> {
             val rows = if (record.has("blocks")) record.getJSONArray("blocks") else JSONArray().put(record)
-            return normalize((0 until rows.length()).map { i ->
-                val row = rows.getJSONObject(i)
-                val times = row.getJSONArray("times")
-                val speeds = row.getJSONArray("speeds")
-                require(times.length() == speeds.length())
-                OnlineWindowBlock((0 until times.length()).map { n ->
-                    val millis = times.getDouble(n) * 1000.0
-                    require(millis.isFinite() && millis == millis.toLong().toDouble())
-                    CurrentPoint(Instant.ofEpochMilli(millis.toLong()), speeds.getDouble(n))
-                }, row.getDouble("floodDirection"), row.getDouble("ebbDirection"))
-            })
+            val decoded = (0 until rows.length()).mapNotNull { i ->
+                try {
+                    decodeBlock(rows.getJSONObject(i))
+                } catch (_: JSONException) {
+                    null
+                } catch (_: IllegalArgumentException) {
+                    null
+                } catch (_: ArithmeticException) {
+                    null
+                }
+            }
+            require(decoded.isNotEmpty() || rows.length() == 0)
+            return normalize(decoded)
+        }
+
+        private fun decodeBlock(row: JSONObject): OnlineWindowBlock {
+            val times = row.getJSONArray("times")
+            val speeds = row.getJSONArray("speeds")
+            require(times.length() == speeds.length())
+            val points = (0 until times.length()).map { n ->
+                val value = (times.get(n) as? Number ?: throw JSONException("Expected numeric sample time")).toString()
+                val millis = value.toBigDecimal().movePointRight(3).longValueExact()
+                CurrentPoint(Instant.ofEpochMilli(millis), speeds.getDouble(n))
+            }
+            return OnlineWindowBlock(points, row.getDouble("floodDirection"), row.getDouble("ebbDirection"))
         }
 
         // Later entries win overlapping timestamps and supply the bearings for the joined trace.

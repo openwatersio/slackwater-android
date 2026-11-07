@@ -39,16 +39,14 @@ internal fun onlineCoverage(id: StationId, revision: Long): List<TimeSpan> {
     return spans
 }
 
-@Composable
-internal fun savedThrough(id: StationId, today: LocalDate, zone: ZoneId, revision: Long): LocalDate? {
-    val spans = onlineCoverage(id, revision)
+internal fun savedThrough(spans: List<TimeSpan>, today: LocalDate, zone: ZoneId): LocalDate? {
     return coveredThrough(spans, TimelineWindow.fixed(today, zone), zone)
         ?: spans.lastOrNull { it.start <= today.atStartOfDay(zone).toInstant() }
             ?.end?.minus(TimelineWindow.forward)?.atZone(zone)?.toLocalDate()
 }
 
 @Composable
-private fun Validity(through: LocalDate?, today: LocalDate) {
+internal fun OnlineValidity(through: LocalDate?, today: LocalDate) {
     if (through == null) return
     val locale = LocalConfiguration.current.locales[0]
     val monthDay = remember(locale) {
@@ -68,7 +66,7 @@ internal fun OnlineGateValidity(downloads: OnlineGateDownloads, id: StationId, t
     Card {
         Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
             Text(stringResource(R.string.gate_offline_available), style = MaterialTheme.typography.titleMedium)
-            Validity(savedThrough(id, today, zone, revision), today)
+            OnlineValidity(savedThrough(onlineCoverage(id, revision), today, zone), today)
             Text(stringResource(R.string.gate_offline_expectation))
             TextButton(enabled = online && (state != OnlineDownloadState.DOWNLOADING || open != null), onClick = {
                 if (state == OnlineDownloadState.DOWNLOADING) open?.invoke()
@@ -90,7 +88,7 @@ internal fun OnlineGateStatus(downloads: OnlineGateDownloads, id: StationId, day
                              today: LocalDate, zone: ZoneId, revision: Long, online: Boolean,
                              explanation: @Composable () -> Unit = {}, retry: () -> Unit, now: () -> Unit) {
     val states by downloads.states.collectAsState()
-    val through = savedThrough(id, today, zone, revision)
+    val through = savedThrough(onlineCoverage(id, revision), today, zone)
     val state = states[id]
     val open = LocalOpenDownloads.current
     val (title, action) = when {
@@ -109,7 +107,7 @@ internal fun OnlineGateStatus(downloads: OnlineGateDownloads, id: StationId, day
                 explanation()
                 Text(stringResource(if (online) R.string.gate_expectation else R.string.gate_expectation_offline))
                 if (state == OnlineDownloadState.WAITING_TO_RETRY) Text(stringResource(R.string.gate_retry_expectation))
-                if (title != R.string.gate_expired) Validity(through, today)
+                if (title != R.string.gate_expired) OnlineValidity(through, today)
             }
             Row {
                 TextButton(enabled = online && (state != OnlineDownloadState.DOWNLOADING || open != null), onClick = {

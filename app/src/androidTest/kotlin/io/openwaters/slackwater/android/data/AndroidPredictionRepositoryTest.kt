@@ -17,6 +17,31 @@ import java.time.Instant
 import java.util.UUID
 
 class AndroidPredictionRepositoryTest {
+    @Test fun malformedSiblingDoesNotDiscardReadableWeeksOrTheirMilliseconds() = runBlocking {
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        val dir = File(context.cacheDir, "mixed-online-${UUID.randomUUID()}")
+        val id = StationId("chs-arran-rapids")
+        val models = ModelStore(dir)
+        val store = OnlineWindowStore(models)
+        fun row(vararg seconds: Number) = JSONObject().put("times", JSONArray(seconds.toList()))
+            .put("speeds", JSONArray(listOf(-1.0, 1.0))).put("floodDirection", 20).put("ebbDirection", 215)
+        try {
+            val records = JSONArray().put(row(1.001, 901.001)).put(row(5.0001, 6))
+                .put("corrupt").put(row(10_000, 10_900))
+            models.write(id, ModelKind.ONLINE_WINDOW, JSONObject().put("blocks", records))
+            val fractional = TimeSpan(Instant.ofEpochMilli(1001), Instant.ofEpochMilli(901001))
+            val whole = TimeSpan(Instant.ofEpochSecond(10_000), Instant.ofEpochSecond(10_900))
+            assertEquals(listOf(fractional, whole), store.coverage(id))
+            val incoming = OnlineWindowBlock(listOf(CurrentPoint(Instant.ofEpochMilli(30_000_001), 2.0)), 22.0, 215.0)
+            store.save(id, incoming, incoming.span.start)
+            assertEquals(listOf(fractional, whole, incoming.span), OnlineWindowStore(ModelStore(dir)).coverage(id))
+            val saved = (models.read(id, ModelKind.ONLINE_WINDOW) as StoredModel.Ready).record.getJSONArray("blocks")
+            assertEquals(1.001, saved.getJSONObject(0).getJSONArray("times").getDouble(0), 0.0)
+            assertEquals(10_000L, saved.getJSONObject(1).getJSONArray("times").getLong(0))
+        } finally { dir.deleteRecursively() }
+        Unit
+    }
+
     @Test fun reopenedOnlineStoreReadsDisjointWeeksAndRepairsMalformedRecords() = runBlocking {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
         val dir = File(context.cacheDir, "reopened-online-${UUID.randomUUID()}")

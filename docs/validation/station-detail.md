@@ -9,7 +9,7 @@ These rows refer to the numbered titles in [detail §18](https://github.com/open
 | Detail scenario | Android evidence and boundary |
 |---|---|
 | 1 Tide page, 2 Derived gate | `DetailConformanceTest.tidePage` opens Friday Harbor. `derivedGatePage` uses the bundled Malibu Rapids identity and lag rules with a test reference-port fit. Its lead gives phase without a speed. |
-| 3 Online gate, never downloaded | `neverDownloadedOnlineGateHasAnAlternativeAndNoWeekBar` checks the coverage notice, download action and a usable alternative. |
+| 3 Online gate, never downloaded | `neverDownloadedOnlineGateHasAnAlternativeAndNoWeekBar` expands Station details and checks that an empty cache says “Not downloaded.” It opens the alternative and verifies continuous predictions from a compatible fitted Canadian gate. Without a fitted gate, the page can offer another current station with continuous predictions. |
 | 4 Unavailable station | `unavailableStationOffersHelpAndNearbyWithoutAStarOrSchedule` opens Aigio, verifies the catalog-only explanation, and checks available actions. |
 | 5–13 Opening through Date in the strip | See the schedule, timeline and input fixtures. Day and week boundaries use the station’s civil calendar. |
 | 14–24 Provisional current through Moon jump | See the panel and chart fixtures. A dated summary row requests its event instant through the same controller as the chart. |

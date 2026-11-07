@@ -5,6 +5,7 @@ import io.openwaters.slackwater.CurrentPoint
 import io.openwaters.slackwater.HarmonicSample
 import io.openwaters.slackwater.android.core.station.StationIdentity
 import io.openwaters.slackwater.android.core.station.StationKind
+import io.openwaters.slackwater.android.core.station.currentGateZone
 import io.openwaters.slackwater.android.core.timeline.TimelineWindow
 import io.openwaters.slackwater.iwls.HttpUrlConnectionTransport
 import io.openwaters.slackwater.iwls.IwlsClient
@@ -14,7 +15,6 @@ import io.openwaters.slackwater.iwls.IwlsTransport
 import java.io.File
 import java.time.Duration
 import java.time.Instant
-import java.time.ZoneId
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -28,7 +28,7 @@ class IwlsOnlineGateSource internal constructor(cacheDirectory: File, transport:
 
     suspend fun fetch(station: StationIdentity, anchor: Instant): FetchedOnlineGate = withContext(Dispatchers.IO) {
         if (station.kind != StationKind.CanadianCurrent) throw IwlsException.Permanent("Station is not a Canadian current gate")
-        val zone = station.timezone?.let { runCatching { ZoneId.of(it) }.getOrNull() } ?: ZoneId.systemDefault()
+        val zone = station.currentGateZone()
         val day = anchor.atZone(zone).toLocalDate()
         val start = TimelineWindow.fixed(day, zone).start
         val end = day.atStartOfDay(zone).toInstant().plus(Duration.ofDays(30))

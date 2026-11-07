@@ -3,6 +3,7 @@ package io.openwaters.slackwater.android.core.downloads
 import io.openwaters.slackwater.android.core.station.StationId
 import io.openwaters.slackwater.android.core.station.StationIdentity
 import io.openwaters.slackwater.android.core.station.StationKind
+import io.openwaters.slackwater.android.core.station.currentGateZone
 import io.openwaters.slackwater.iwls.IwlsException
 import io.openwaters.slackwater.iwls.IwlsFetch
 import io.openwaters.slackwater.iwls.IwlsResponse
@@ -10,6 +11,9 @@ import io.openwaters.slackwater.iwls.IwlsTransport
 import java.net.URL
 import java.time.Duration
 import java.time.Instant
+import java.time.ZoneId
+import java.time.ZoneOffset
+import java.util.TimeZone
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.*
 import org.junit.Rule
@@ -58,6 +62,19 @@ class IwlsOnlineGateSourceTest {
         assertEquals(listOf(0, 1, 3, 4, 5).map { first.plus(Duration.ofMinutes(15L * it)) }, fetched.points.map { it.time })
         assertEquals(3.895, fetched.points.first().speedKnots, 1e-10)
         assertEquals(-0.379, fetched.points.last().speedKnots, 1e-10)
+    }
+
+    @Test fun invalidOrMissingGateTimezoneUsesUtcAcrossDevices() {
+        val original = TimeZone.getDefault()
+        try {
+            TimeZone.setDefault(TimeZone.getTimeZone("Asia/Tokyo"))
+            for (timezone in listOf(null, "Invalid/Zone")) {
+                assertEquals(ZoneOffset.UTC, gate.copy(timezone = timezone).currentGateZone())
+            }
+            assertEquals(ZoneId.of("America/Vancouver"), gate.currentGateZone())
+        } finally {
+            TimeZone.setDefault(original)
+        }
     }
 
     @Test fun missingEbbDirectionStopsBeforeSeriesFetch() {

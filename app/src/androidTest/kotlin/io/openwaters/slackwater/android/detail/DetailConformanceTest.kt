@@ -8,6 +8,8 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.platform.app.InstrumentationRegistry
 import io.openwaters.slackwater.CurrentEventKind
 import io.openwaters.slackwater.android.core.prediction.*
+import io.openwaters.slackwater.android.core.station.StationKind
+import io.openwaters.slackwater.android.core.station.StationResolution
 import io.openwaters.slackwater.android.core.station.StationId
 import io.openwaters.slackwater.android.data.*
 import io.openwaters.slackwater.android.stations.StationListModel
@@ -141,7 +143,17 @@ class DetailConformanceTest {
             }, network, kotlinx.coroutines.flow.MutableStateFlow(false), { now },
         )
         val visible = androidx.compose.runtime.mutableStateOf(true)
+        val preferred = StationId("chs-blackney-passage").takeIf { !connect && !savedWeek }
+        val previousFit = preferred?.let { runBlocking { models.read(it, ModelKind.CURRENT) } }
+        if (preferred != null) assertTrue(previousFit is StoredModel.Ready || previousFit is StoredModel.Missing)
+        var opened: StationId? = null
         try {
+            if (preferred != null) {
+                val fit = JSONObject("""{"offset":1.387,"constituents":[{"name":"M2","amplitude":1.5,"phase":10}]}""")
+                    .put("recipe", io.openwaters.slackwater.ChsCurrentFit.STAMP).put("fitDays", 210)
+                    .put("floodDirection", 20).put("ebbDirection", 215)
+                runBlocking { models.write(preferred, ModelKind.CURRENT, fit) }
+            }
             runBlocking { models.remove(id, ModelKind.ONLINE_WINDOW) }
             if (savedWeek) {
                 val zone = java.time.ZoneId.of("America/Vancouver")
@@ -152,7 +164,7 @@ class DetailConformanceTest {
                 }
                 runBlocking { store.save(id, OnlineWindowBlock(points, 40.0, 220.0), now) }
             }
-            compose.setContent { if (visible.value) StationDetailScreen(StationListModel.get(context), id, now, linked, {}, {}, downloads = downloads) }
+            compose.setContent { if (visible.value) StationDetailScreen(StationListModel.get(context), id, now, linked, { opened = it }, {}, downloads = downloads) }
             compose.waitUntil(60_000) { compose.onAllNodesWithText("instead", substring = true).fetchSemanticsNodes().isNotEmpty() }
             compose.onNodeWithText("No saved predictions cover this week.", substring = true).assertExists()
             compose.onNodeWithText("Waiting for signal").assertExists()
@@ -161,9 +173,21 @@ class DetailConformanceTest {
             compose.onNodeWithText("Predictions — not for navigation").assertDoesNotExist()
             compose.onNodeWithText("Concerns or Feedback").assertDoesNotExist()
             compose.onNodeWithText("Publish calendar").assertDoesNotExist()
+            compose.onNodeWithText("instead", substring = true).performScrollTo().performClick()
+            val alternative = requireNotNull(opened)
+            val result = runBlocking { AndroidPredictionRepository(context).load(alternative,
+                TimeSpan(now, now.plusSeconds(600)), PredictionPurpose.DISPLAY) } as PredictionResult.Ready
+            assertTrue(result.capabilities.continuous)
+            if (preferred != null) {
+                val target = runBlocking { catalog.resolve(alternative) } as StationResolution.Live
+                assertEquals(StationKind.CanadianCurrent, target.identity.kind)
+                compose.onNodeWithText("Station details").performScrollTo().performClick()
+                compose.onNodeWithTag("online-detail-download-status").assertTextEquals("Not downloaded")
+                compose.onNodeWithText("Official CHS predictions downloaded for offline use", substring = true).assertDoesNotExist()
+            }
             if (savedWeek) {
                 compose.waitUntil(30_000) { compose.onAllNodesWithTag("schedule-week").fetchSemanticsNodes().isNotEmpty() }
-                compose.onNodeWithTag("schedule-week").performClick()
+                compose.onNodeWithTag("schedule-week").performScrollTo().performClick()
                 compose.onNodeWithText(context.getString(io.openwaters.slackwater.android.R.string.panel_choose_date)).assertExists()
                 compose.onNodeWithText(context.getString(android.R.string.cancel)).performClick()
                 compose.onNodeWithText("Previous week").performClick()
@@ -191,6 +215,10 @@ class DetailConformanceTest {
             runBlocking {
                 if (previous is StoredModel.Ready) models.write(id, ModelKind.ONLINE_WINDOW, previous.record)
                 else models.remove(id, ModelKind.ONLINE_WINDOW)
+                if (preferred != null) {
+                    if (previousFit is StoredModel.Ready) models.write(preferred, ModelKind.CURRENT, previousFit.record)
+                    else models.remove(preferred, ModelKind.CURRENT)
+                }
             }
         }
     }

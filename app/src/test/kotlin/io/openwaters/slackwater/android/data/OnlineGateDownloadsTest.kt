@@ -47,6 +47,18 @@ class OnlineGateDownloadsTest {
         assertTrue(downloads.states.value.isEmpty())
     }
 
+    @Test fun dataSaverAllowsPrefetchOnlyWhenTheWeekNeedsCoverage() = runBlocking {
+        var attempts = 0
+        saver.value = true
+        val downloads = service {
+            attempts++
+            blocks = listOf(full.copy(end = now.plusSeconds(15 * 86400L)))
+        }
+        downloads.prefetch(listOf(gate.id))
+        downloads.prefetch(listOf(gate.id))
+        assertEquals(1, attempts)
+    }
+
     @Test fun prefetchAndDetailShareTheSameTransferEvenInDataSaver() = runBlocking {
         var tries = 0
         val entered = CompletableDeferred<Unit>()
@@ -74,9 +86,51 @@ class OnlineGateDownloadsTest {
         assertEquals(2, tries)
     }
 
+    @Test fun cancelledBackoffWithdrawsTheRetryNotice() = runBlocking {
+        val downloads = OnlineGateDownloads({ gate }, { blocks }, { _, _, _ -> throw IwlsException.Transient("retry") },
+            network, saver, { now }, retryDelayMillis = 60_000)
+        val job = launch { downloads.fetch(gate.id, day) }
+        downloads.states.first { it[gate.id] == OnlineDownloadState.WAITING_TO_RETRY }
+        job.cancelAndJoin()
+        assertNull(downloads.states.value[gate.id])
+    }
+
+    @Test fun cancellingQuietRefreshKeepsItEligibleOnTheSameDay() = runBlocking {
+        blocks = listOf(full.copy(end = now.plusSeconds(15 * 86400L)))
+        val started = CompletableDeferred<Unit>()
+        var attempts = 0
+        val downloads = service {
+            if (++attempts == 1) {
+                started.complete(Unit)
+                awaitCancellation()
+            }
+            blocks = listOf(full)
+        }
+        val job = launch { downloads.refreshIfStale(gate.id, day) }
+        started.await()
+        job.cancelAndJoin()
+        downloads.refreshIfStale(gate.id, day)
+        assertEquals(2, attempts)
+    }
+
+    @Test fun invalidGateResponseDoesNotCancelOtherPrefetches() = runBlocking {
+        val other = gate.copy(id = StationId("chs-other"))
+        val saved = java.util.concurrent.ConcurrentHashMap<StationId, List<TimeSpan>>()
+        val downloads = OnlineGateDownloads({ if (it == gate.id) gate else other }, { saved[it].orEmpty() },
+            { station, _, _ ->
+                require(station.id != gate.id) { "invalid projected speed" }
+                saved[station.id] = listOf(full)
+            }, network, saver, { now })
+        downloads.prefetch(listOf(gate.id, other.id))
+        assertEquals(OnlineDownloadState.FAILED, downloads.states.value[gate.id])
+        assertEquals(listOf(full), saved[other.id])
+    }
+
     @Test fun incompleteResponseNeverClaimsCoverage() = runBlocking {
-        val downloads = service { blocks = listOf(full.copy(start = now)) }
+        var attempts = 0
+        val downloads = service { attempts++; blocks = listOf(full.copy(start = now)) }
         assertFalse(downloads.fetch(gate.id, day))
         assertEquals(OnlineDownloadState.FAILED, downloads.states.value[gate.id])
+        assertEquals(1, attempts)
     }
 }
