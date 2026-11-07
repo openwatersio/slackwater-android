@@ -4,7 +4,7 @@ import android.graphics.Bitmap
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.*
-import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.test.platform.app.InstrumentationRegistry
 import io.openwaters.slackwater.CurrentEventKind
 import io.openwaters.slackwater.android.core.prediction.*
@@ -229,7 +229,6 @@ class DetailConformanceTest {
         compose.waitUntil(60_000) { compose.onAllNodes(credit).fetchSemanticsNodes().isNotEmpty() }
         // Nearby cards can grow while their predictions load above the footer.
         compose.waitUntil(10_000) { compose.onNode(credit).performScrollTo().isDisplayed() }
-        compose.onNode(credit).assertIsDisplayed()
     }
 
     @Test fun waitingPageFillsInWithoutReopeningTheStation() {

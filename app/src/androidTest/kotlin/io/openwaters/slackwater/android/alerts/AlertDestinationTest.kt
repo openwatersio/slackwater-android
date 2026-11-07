@@ -1,7 +1,7 @@
 package io.openwaters.slackwater.android.alerts
 
 import androidx.compose.ui.test.*
-import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import io.openwaters.slackwater.android.MainActivity
 import io.openwaters.slackwater.android.core.station.StationId
 import java.time.Instant
