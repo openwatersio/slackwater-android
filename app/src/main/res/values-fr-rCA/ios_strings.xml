@@ -245,4 +245,20 @@
     <string name="gate_peak_speed">"L’écart médian de vitesse maximale entre l’ajustement et le SHC était de %1$s %2$s au pire trimestre."</string>
     <string name="gate_unknown">"L’ajustement sur l’appareil n’a pas réussi la validation ici. Slackwater utilise les prévisions du SHC."</string>
     <string name="gate_too_few">"Il n’y avait pas assez d’événements du SHC pour valider l’ajustement sur l’appareil chaque trimestre."</string>
+    <string name="gate_downloading">"Téléchargement"</string>
+    <string name="gate_waiting">"En attente de nouvelle tentative"</string>
+    <string name="gate_failed">"Échec du téléchargement"</string>
+    <string name="gate_offline">"En attente de signal"</string>
+    <string name="gate_expired">"Expiré"</string>
+    <string name="gate_download">"Télécharger"</string>
+    <string name="gate_retry">"Réessayer"</string>
+    <string name="gate_retry_now">"Réessayer maintenant"</string>
+    <string name="gate_connect">"Connectez-vous pour télécharger"</string>
+    <string name="gate_all_downloads">"Voir tous les téléchargements"</string>
+    <string name="gate_expectation">"Les téléchargements couvrent environ un mois et peuvent être actualisés à tout moment."</string>
+    <string name="gate_expectation_offline">"Connectez-vous pendant un moment pour télécharger environ un mois de prévisions."</string>
+    <string name="gate_retry_expectation">"Slackwater réessaiera automatiquement."</string>
+    <string name="gate_offline_available">"Disponible hors ligne"</string>
+    <string name="gate_offline_expectation">"Slackwater conserve environ un mois sur cet appareil et l’actualise dès que vous êtes en ligne."</string>
+    <string name="gate_update">"Actualiser maintenant"</string>
 </resources>

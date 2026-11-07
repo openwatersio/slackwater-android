@@ -30,6 +30,8 @@ import io.openwaters.slackwater.android.core.station.fixCoordinate
 import androidx.compose.runtime.key
 import io.openwaters.slackwater.android.detail.TideDownloadEdits
 import io.openwaters.slackwater.android.data.TidePreviewDownloads
+import io.openwaters.slackwater.android.data.OnlineGateDownloads
+import io.openwaters.slackwater.android.data.OnlineDownloadState
 import io.openwaters.slackwater.android.data.ModelKind
 import io.openwaters.slackwater.android.data.ModelStore
 import io.openwaters.slackwater.android.stations.StationListModel
@@ -107,6 +109,17 @@ internal fun ChartDownloads(manager: ChartPackManager, close: () -> Unit) {
                     key(id) {
                         Text(catalog?.byId?.get(id)?.name ?: id.value)
                         TideDownloadEdits(state, model::launchEdit, { downloads.request(id) }, { downloads.cancel(id) })
+                    }
+                }
+                val onlineGates = OnlineGateDownloads.get(LocalContext.current)
+                val gateStates by onlineGates.states.collectAsState()
+                for ((id, state) in gateStates.entries.sortedBy { catalog?.byId?.get(it.key)?.name ?: it.key.value }) {
+                    Text(catalog?.byId?.get(id)?.name ?: id.value)
+                    when (state) {
+                        OnlineDownloadState.DOWNLOADING -> LinearProgressIndicator()
+                        OnlineDownloadState.OFFLINE -> Text(stringResource(R.string.tide_download_network))
+                        OnlineDownloadState.WAITING_TO_RETRY -> Text(stringResource(R.string.detail_queued))
+                        OnlineDownloadState.FAILED -> Text(stringResource(R.string.chart_failed))
                     }
                 }
                 Text(stringResource(R.string.chart_offline))

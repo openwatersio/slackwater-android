@@ -11,6 +11,9 @@ import io.openwaters.slackwater.android.stations.StationPage
 import io.openwaters.slackwater.android.stations.StationListModel
 import java.time.Instant
 import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.*
+import io.openwaters.slackwater.android.data.OnlineGateDownloads
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import io.openwaters.slackwater.android.detail.DetailRecords
@@ -101,11 +104,29 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+        if (automaticChartDownloads) lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(androidx.lifecycle.Lifecycle.State.STARTED) {
+                val downloads = OnlineGateDownloads.get(applicationContext)
+                val model = StationListModel.get(applicationContext)
+                val candidates = model.state.filterNotNull().map { list ->
+                    with(list.sections) { favorites + heroes.map { it.identity.id } + nearMe.map { it.identity.id } + recents }
+                }.distinctUntilChanged()
+                combine(candidates, model.places.downloads.state, downloads.online) { ids, intent, online ->
+                    val desired = intent.getOrNull()
+                    if (!online || desired == null) emptySet() else (ids - desired.cancelled + desired.requested).toSet()
+                }.distinctUntilChanged().combine(downloads.restricted) { ids, _ -> ids }.collectLatest { ids ->
+                    while (ids.isNotEmpty()) {
+                        delay(downloads.prefetch(ids).toMillis().coerceAtLeast(1))
+                    }
+                }
+            }
+        }
         enableEdgeToEdge()
         setContent {
+            var showDownloads by androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf(false) }
+            CompositionLocalProvider(io.openwaters.slackwater.android.detail.LocalOpenDownloads provides { showDownloads = true }) {
             MaterialTheme {
                 LaunchedEffect(Unit) { withContext(Dispatchers.IO) { ShortcutPublisher.publish(this@MainActivity) } }
-                var showDownloads by androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf(false) }
                 if (showDownloads) io.openwaters.slackwater.android.map.ChartDownloads(chartPacks) { showDownloads = false }
                 var showCredits by remember { mutableStateOf(false) }
                 if (badLink) {
@@ -172,6 +193,7 @@ class MainActivity : ComponentActivity() {
                         }
                     }
                 }
+            }
             }
         }
     }

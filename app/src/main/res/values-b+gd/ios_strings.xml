@@ -245,4 +245,20 @@
     <string name="gate_peak_speed">"B’ e %1$s %2$s meadhan an eadar-dhealachaidh eadar an luaths as àirde aig an fhreagarrachadh agus CHS sa chairteal a bu mhiosa."</string>
     <string name="gate_unknown">"Cha deach leis an fhreagarrachadh air an uidheam san dearbhadh an seo. Cleachdaidh Slackwater ro-aithrisean CHS."</string>
     <string name="gate_too_few">"Cha robh tachartasan CHS gu leòr ann gus am freagarrachadh air an uidheam a dhearbhadh anns gach cairteal."</string>
+    <string name="gate_downloading">"Ga luchdadh a-nuas"</string>
+    <string name="gate_waiting">"A\' feitheamh ri feuchainn a-rithist"</string>
+    <string name="gate_failed">"Dh\'fhàillig an luchdadh a-nuas"</string>
+    <string name="gate_offline">"A\' feitheamh ri siognail"</string>
+    <string name="gate_expired">"Dh\'fhalbh an ùine air"</string>
+    <string name="gate_download">"Luchdaich a-nuas"</string>
+    <string name="gate_retry">"Feuch ris a-rithist"</string>
+    <string name="gate_retry_now">"Feuch ris a-rithist an-dràsta"</string>
+    <string name="gate_connect">"Ceangail gus luchdadh a-nuas"</string>
+    <string name="gate_all_downloads">"Seall gach luchdadh a-nuas"</string>
+    <string name="gate_expectation">"Mairidh luchdaidhean a-nuas mu mhìos agus faodar an ath-nuadhachadh uair sam bith."</string>
+    <string name="gate_expectation_offline">"Ceangail airson greiseag gus ro-innsean airson mu mhìos a luchdadh a-nuas."</string>
+    <string name="gate_retry_expectation">"Feuchaidh Slackwater a-rithist leis fhèin."</string>
+    <string name="gate_offline_available">"Ri fhaighinn far loidhne"</string>
+    <string name="gate_offline_expectation">"Cumaidh Slackwater mu mhìos air an uidheam seo agus ath-nuadhaichidh e e uair sam bith a bhios tu air loidhne."</string>
+    <string name="gate_update">"Ùraich an-dràsta"</string>
 </resources>

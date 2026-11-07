@@ -245,4 +245,20 @@
     <string name="gate_peak_speed">"A diferença mediana da velocidade máxima entre o ajuste e o CHS foi %1$s %2$s no pior trimestre."</string>
     <string name="gate_unknown">"O ajuste no dispositivo não passou na validação aqui. O Slackwater utiliza previsões do CHS."</string>
     <string name="gate_too_few">"Não houve eventos suficientes do CHS para validar o ajuste no dispositivo em todos os trimestres."</string>
+    <string name="gate_downloading">"A descarregar"</string>
+    <string name="gate_waiting">"A aguardar nova tentativa"</string>
+    <string name="gate_failed">"Falha na descarga"</string>
+    <string name="gate_offline">"A aguardar sinal"</string>
+    <string name="gate_expired">"Expirado"</string>
+    <string name="gate_download">"Descarregar"</string>
+    <string name="gate_retry">"Tentar novamente"</string>
+    <string name="gate_retry_now">"Tentar novamente agora"</string>
+    <string name="gate_connect">"Ligar à Internet para descarregar"</string>
+    <string name="gate_all_downloads">"Ver todas as descargas"</string>
+    <string name="gate_expectation">"As descargas abrangem cerca de um mês e podem ser atualizadas a qualquer momento."</string>
+    <string name="gate_expectation_offline">"Ligue-se à Internet por um momento para descarregar cerca de um mês de previsões."</string>
+    <string name="gate_retry_expectation">"Slackwater tentará novamente automaticamente."</string>
+    <string name="gate_offline_available">"Disponível sem ligação"</string>
+    <string name="gate_offline_expectation">"O Slackwater guarda cerca de um mês neste dispositivo e atualiza-o sempre que houver ligação."</string>
+    <string name="gate_update">"Atualizar agora"</string>
 </resources>

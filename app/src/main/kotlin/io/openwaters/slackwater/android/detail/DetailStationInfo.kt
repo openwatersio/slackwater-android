@@ -23,7 +23,12 @@ import io.openwaters.slackwater.android.R
 import io.openwaters.slackwater.android.core.prediction.*
 import io.openwaters.slackwater.android.core.station.*
 import io.openwaters.slackwater.android.stations.*
+import io.openwaters.slackwater.android.data.SpeedUnit
 import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -113,7 +118,8 @@ internal fun DetailRelated(station: StationIdentity, meta: DetailMetadata?, mode
 }
 
 @Composable
-internal fun StationDetails(station: StationIdentity, meta: DetailMetadata?, ready: PredictionResult.Ready?) {
+internal fun StationDetails(station: StationIdentity, meta: DetailMetadata?, ready: PredictionResult.Ready?,
+                            speedUnit: SpeedUnit, today: LocalDate, zone: ZoneId, revision: Long) {
     var expanded by rememberSaveable(station.id.value) { mutableStateOf(false) }
     TextButton(onClick = { expanded = !expanded }) { Text(stringResource(R.string.detail_details)) }
     if (!expanded) return
@@ -122,7 +128,7 @@ internal fun StationDetails(station: StationIdentity, meta: DetailMetadata?, rea
         StationCapabilities.ONLINE_CURRENT, StationCapabilities.TIDE_PREVIEW -> R.string.detail_official
         StationCapabilities.SUBORDINATE_TIDE, StationCapabilities.SUBORDINATE_CURRENT -> R.string.detail_subordinate
         StationCapabilities.HARMONIC_CURRENT, StationCapabilities.HARMONIC_TIDE -> R.string.detail_harmonic
-        null -> null
+        null -> R.string.detail_official.takeIf { meta?.gate?.online == true }
         else -> R.string.detail_fitted
     }
     listOf(R.string.detail_station to station.id.value, R.string.detail_position to formatCoordinate(station.coordinate),
@@ -131,6 +137,12 @@ internal fun StationDetails(station: StationIdentity, meta: DetailMetadata?, rea
         if (value != null) Text(stringResource(label) + " · " + value)
     }
     if (method != null) Text(stringResource(R.string.detail_prediction) + " · " + stringResource(method))
+    if (meta?.gate?.online == true) {
+        GateExplanation(meta.gate, speedUnit)
+        savedThrough(station.id, today, zone, revision)?.let {
+            Text(stringResource(R.string.detail_network_missing, it.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM))))
+        }
+    }
     if (meta?.datum != null) Text(stringResource(R.string.detail_datum_note))
     if (station.kind == StationKind.DerivedGate) {
         if (meta?.highLag != null && meta.lowLag != null) Text(stringResource(R.string.detail_lag_value, meta.highLag, meta.lowLag))

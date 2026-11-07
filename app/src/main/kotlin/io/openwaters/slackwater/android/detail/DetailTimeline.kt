@@ -37,6 +37,8 @@ internal class DetailTimeline(
         private set
     var targets = MagneticTargets()
         private set
+    var missingDay by mutableStateOf<LocalDate?>(null)
+        private set
     var showSky = true
     var closed = false
         private set
@@ -62,6 +64,7 @@ internal class DetailTimeline(
 
     fun dispatch(action: TimelineAction) {
         if (closed) return
+        if (action is TimelineAction.Now || action is TimelineAction.PickDay || action is TimelineAction.BeginDrag) missingDay = null
         if (action is TimelineAction.Targets) targets = action.value
         if (continuous == null) controller.dispatch(action)
         else {
@@ -104,16 +107,20 @@ internal class DetailTimeline(
         try { request.thenApply { it }.await() } finally { sync() }
     }
 
-    suspend fun online(day: LocalDate, generation: Long) {
+    suspend fun online(day: LocalDate, generation: Long, fetch: (suspend (LocalDate) -> Boolean)? = null) {
         val window = TimelineWindow.fixed(day, zone)
-        val block = withContext(Dispatchers.IO) {
+        suspend fun readBlock() = withContext(Dispatchers.IO) {
             repository.load(station.id, TimeSpan(window.start, window.end), PredictionPurpose.DISPLAY)
                 .onlineTimelineBlock(window)
         }
+        val block = readBlock() ?: if (fetch?.invoke(day) == true) readBlock() else null
         val chrome = block?.let { fixedDays(station, zone, window) }
         if (closed || state.generation != generation || state.onlineDayRequested != day) return
         if (block == null) {
-            if (state.awaitingCoverage) dispatch(TimelineAction.RequestFailed(generation))
+            if (state.awaitingCoverage) {
+                missingDay = day
+                dispatch(TimelineAction.RequestFailed(generation))
+            }
             return
         }
         // If a request arrives during a drag, defer the entire block until release.
@@ -171,7 +178,7 @@ private suspend fun fixedDays(station: StationIdentity, zone: ZoneId, window: Ti
     withContext(Dispatchers.Default) { timelineDays(station, zone, window) }
 
 @Composable
-internal fun DetailTimelineEffects(timeline: DetailTimeline, station: StationIdentity, thresholdKnots: Double, showSky: Boolean) {
+internal fun DetailTimelineEffects(timeline: DetailTimeline, station: StationIdentity, thresholdKnots: Double, showSky: Boolean, onlineAvailable: Boolean = false, fetch: (suspend (LocalDate) -> Boolean)? = null) {
     val state = timeline.state
     val series = timeline.series
     val lifecycle = LocalLifecycleOwner.current.lifecycle
@@ -224,10 +231,10 @@ internal fun DetailTimelineEffects(timeline: DetailTimeline, station: StationIde
         try { timeline.refresh() } catch (e: CancellationException) { throw e }
         catch (_: Exception) { /* A failed neighbor leaves the published strip reachable. */ }
     }
-    LaunchedEffect(timeline, state.onlineDayRequested, state.generation, state.motion == TimelineMotion.DRAG) {
+    LaunchedEffect(timeline, state.onlineDayRequested, state.generation, state.motion == TimelineMotion.DRAG, onlineAvailable) {
         val day = state.onlineDayRequested ?: return@LaunchedEffect
         if (state.motion != TimelineMotion.DRAG) try {
-            timeline.online(day, state.generation)
+            timeline.online(day, state.generation, if (onlineAvailable) fetch else null)
         } catch (e: CancellationException) { throw e }
         catch (_: Exception) { timeline.dispatch(TimelineAction.RequestFailed(state.generation)) }
     }

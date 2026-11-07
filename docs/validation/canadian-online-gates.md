@@ -1,0 +1,7 @@
+# Canadian online current gates
+
+On November 7, 2026, opening the Arran Rapids station link on an Android emulator downloaded 3,073 paired official CHS current predictions at 15-minute intervals. The stored interval ran from November 5 at 08:00 UTC through December 7 at 08:00 UTC. The flood bearing was 60° and the ebb bearing was 240°. After a force-stop, with airplane mode enabled and both Wi-Fi and cellular disabled, the station link opened the current timeline from disk. Detail displayed “Offline through Nov 29,” the final station-local anchor date that fits the full strip.
+
+The normal test suite uses synthetic samples. AndroidPredictionRepositoryTest reopens two saved weeks, queries the interval between them and checks that a gap has no prediction. DetailConformanceTest restores connectivity on a linked week with no coverage and checks that the page displays its new chart. OnlineDetailTimelineTest finishes an older request after Now and verifies that the selected time and visible week stay at Now.
+
+To repeat the live check, use a disposable emulator with no Arran Rapids cache. Open <https://slackwater.xyz/currents/arran-rapids>, wait for the current timeline and record the offline validity date. Force-stop the app, disable Wi-Fi and cellular, and reopen the link. Compare the chart and validity date, then restore connectivity. Dates and sample counts depend on the CHS response.

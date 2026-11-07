@@ -245,4 +245,20 @@
     <string name="gate_peak_speed">"Ba é %1$s %2$s airmheán na difríochta idir buaicluas an fheistithe agus CHS sa ráithe ba mheasa."</string>
     <string name="gate_unknown">"Níor éirigh leis an bhfeistiú ar an ngléas sa bhailíochtú anseo. Úsáideann Slackwater réamhaisnéisí CHS."</string>
     <string name="gate_too_few">"Ní raibh dóthain imeachtaí CHS ann chun an feistiú ar an ngléas a bhailíochtú i ngach ráithe."</string>
+    <string name="gate_downloading">"Á íoslódáil"</string>
+    <string name="gate_waiting">"Ag fanacht le triail eile"</string>
+    <string name="gate_failed">"Theip ar an íoslódáil"</string>
+    <string name="gate_offline">"Ag fanacht le comhartha"</string>
+    <string name="gate_expired">"Imithe in éag"</string>
+    <string name="gate_download">"Íoslódáil"</string>
+    <string name="gate_retry">"Bain triail eile as"</string>
+    <string name="gate_retry_now">"Bain triail eile as anois"</string>
+    <string name="gate_connect">"Ceangail chun íoslódáil"</string>
+    <string name="gate_all_downloads">"Féach ar gach íoslódáil"</string>
+    <string name="gate_expectation">"Clúdaíonn íoslódálacha thart ar mhí, agus is féidir iad a athnuachan am ar bith."</string>
+    <string name="gate_expectation_offline">"Ceangail ar feadh nóiméid chun thart ar mhí de thuartha a íoslódáil."</string>
+    <string name="gate_retry_expectation">"Bainfidh Slackwater triail eile as go huathoibríoch."</string>
+    <string name="gate_offline_available">"Ar fáil as líne"</string>
+    <string name="gate_offline_expectation">"Coinníonn Slackwater thart ar mhí ar an ngléas seo agus athnuann sé í aon uair a bhíonn tú ar líne."</string>
+    <string name="gate_update">"Nuashonraigh anois"</string>
 </resources>

@@ -245,4 +245,20 @@
     <string name="gate_peak_speed">"Anpassningens medianhastighetsskillnad mot CHS för strömtoppar var %1$s %2$s under det sämsta kvartalet."</string>
     <string name="gate_unknown">"Anpassningen på enheten klarade inte valideringen här. Slackwater använder CHS prognoser."</string>
     <string name="gate_too_few">"Det fanns inte tillräckligt med CHS-händelser för att validera anpassningen på enheten varje kvartal."</string>
+    <string name="gate_downloading">"Hämtar"</string>
+    <string name="gate_waiting">"Väntar på nytt försök"</string>
+    <string name="gate_failed">"Hämtning misslyckades"</string>
+    <string name="gate_offline">"Väntar på signal"</string>
+    <string name="gate_expired">"Utgånget"</string>
+    <string name="gate_download">"Hämta"</string>
+    <string name="gate_retry">"Försök igen"</string>
+    <string name="gate_retry_now">"Försök igen nu"</string>
+    <string name="gate_connect">"Anslut för att hämta"</string>
+    <string name="gate_all_downloads">"Se alla hämtningar"</string>
+    <string name="gate_expectation">"Hämtningar täcker ungefär en månad och kan uppdateras när som helst."</string>
+    <string name="gate_expectation_offline">"Anslut en stund för att hämta ungefär en månads prognoser."</string>
+    <string name="gate_retry_expectation">"Slackwater försöker igen automatiskt."</string>
+    <string name="gate_offline_available">"Tillgängligt offline"</string>
+    <string name="gate_offline_expectation">"Slackwater sparar ungefär en månad på den här enheten och uppdaterar den när du är online."</string>
+    <string name="gate_update">"Uppdatera nu"</string>
 </resources>
