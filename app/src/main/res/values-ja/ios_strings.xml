@@ -276,4 +276,10 @@
     <string name="tour_next">"次へ ›"</string>
     <string name="tour_done">"完了"</string>
     <string name="tour_skip">"スキップ"</string>
+    <string name="widget_nearest_section">"最寄りの観測所"</string>
+    <string name="widget_nearest_any">"すべての観測所"</string>
+    <string name="widget_nearest_tide">"潮汐観測所"</string>
+    <string name="widget_nearest_current">"潮流観測所"</string>
+    <string name="widget_location_hint">"Slackwaterを開いて位置情報へのアクセスを許可すると、近くの場所を探せます。"</string>
+    <string name="widget_event_time">"%1$s · %2$s"</string>
 </resources>

@@ -312,5 +312,6 @@
   "tide_download_restricted": "Esperando una red sin restricciones",
   "tide_download_failed": "No se ha podido descargar el avance de mareas",
   "tide_download_saved": "Avance de mareas guardado para usar sin conexión",
-  "tide_download_edit_failed": "No se ha podido guardar el cambio en tus descargas. Vuelve a intentarlo."
+  "tide_download_edit_failed": "No se ha podido guardar el cambio en tus descargas. Vuelve a intentarlo.",
+  "widget_snapshot_time": "Actualizado: %1$s"
 }

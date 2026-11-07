@@ -1,6 +1,7 @@
 package io.openwaters.slackwater.android.data
 
 import android.content.Context
+import io.openwaters.slackwater.android.widgets.WidgetRefreshWorker
 import androidx.datastore.core.DataMigration
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
@@ -69,6 +70,7 @@ class UserStateStore private constructor(
     private val data: DataStore<Preferences>,
     private val catalog: StationCatalog,
     val downloads: DownloadIntentStore,
+    private val onFavoritesChanged: () -> Unit,
 ) {
     val places: Flow<Result<SavedPlaces>> = data.data
         .map { Result.success(it.readPlaces()) }
@@ -135,16 +137,21 @@ class UserStateStore private constructor(
     }
 
     private suspend fun editPlaces(change: (SavedPlaces) -> SavedPlaces) {
+        var favoritesChanged = false
         data.edit { preferences ->
             val previous = preferences.readPlaces()
             val next = change(previous)
             if (next != previous) {
                 preferences[versionKey] = 1
                 if (next.chosenIds != previous.chosenIds) preferences[chosenKey] = next.chosenIds.encode()
-                if (next.favorites != previous.favorites) preferences[favoritesKey] = next.favorites.encode()
+                if (next.favorites != previous.favorites) {
+                    preferences[favoritesKey] = next.favorites.encode()
+                    favoritesChanged = true
+                }
                 if (next.recents != previous.recents) preferences[recentsKey] = next.recents.encode()
             }
         }
+        if (favoritesChanged) onFavoritesChanged()
     }
 
     companion object {
@@ -157,12 +164,14 @@ class UserStateStore private constructor(
                 File(app.noBackupFilesDir, "saved_places.preferences_pb"),
                 BundledStationCatalog(app.assets),
                 CoroutineScope(SupervisorJob() + Dispatchers.IO),
+                { WidgetRefreshWorker.refresh(app) },
                 { derivedGatesByReference(app.assets).keys },
             ).also { shared = it }
         }
 
         internal fun open(
             file: File, catalog: StationCatalog, scope: CoroutineScope,
+            onFavoritesChanged: () -> Unit = {},
             gateReferences: () -> Set<StationId> = { emptySet() },
         ): UserStateStore {
             // Run on each open because a catalog refresh can publish new successors.
@@ -185,7 +194,7 @@ class UserStateStore private constructor(
             }
             return UserStateStore(PreferenceDataStoreFactory.create(
                 migrations = listOf(migration), scope = scope, produceFile = { file },
-            ), catalog, DownloadIntentStore.open(File(file.parentFile, file.nameWithoutExtension + ".downloads.preferences_pb"), catalog, scope, gateReferences))
+            ), catalog, DownloadIntentStore.open(File(file.parentFile, file.nameWithoutExtension + ".downloads.preferences_pb"), catalog, scope, gateReferences), onFavoritesChanged)
         }
     }
 }

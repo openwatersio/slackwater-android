@@ -1,0 +1,10 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_card" android:layout_width="match_parent" android:layout_height="match_parent"
+    android:orientation="vertical" android:background="@drawable/station_widget_background"
+    android:padding="8dp" android:gravity="center_vertical">
+    <TextView android:id="@+id/widget_name" android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:textColor="#F1F5F9" android:textSize="16sp" android:textStyle="bold" android:singleLine="true" android:ellipsize="end"/>
+    <TextView android:id="@+id/widget_reading" android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:textColor="#F1F5F9" android:textSize="14sp" android:maxLines="2" android:ellipsize="end"/>
+    <include layout="@layout/station_widget_body"/>
+</LinearLayout>

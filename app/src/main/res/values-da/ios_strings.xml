@@ -276,4 +276,10 @@
     <string name="tour_next">"Næste ›"</string>
     <string name="tour_done">"OK"</string>
     <string name="tour_skip">"Spring over"</string>
+    <string name="widget_nearest_section">"Nærmeste station"</string>
+    <string name="widget_nearest_any">"Vilkårlig station"</string>
+    <string name="widget_nearest_tide">"Tidevandsstation"</string>
+    <string name="widget_nearest_current">"Strømstation"</string>
+    <string name="widget_location_hint">"Åbn Slackwater, og tillad adgang til din placering for at finde et sted i nærheden."</string>
+    <string name="widget_event_time">"%1$s · %2$s"</string>
 </resources>

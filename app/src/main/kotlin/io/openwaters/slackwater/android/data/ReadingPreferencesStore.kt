@@ -6,6 +6,8 @@ import io.openwaters.slackwater.android.core.station.StationCatalog
 import androidx.datastore.core.DataMigration
 import kotlinx.coroutines.sync.withLock
 import android.content.Context
+import androidx.datastore.preferences.core.MutablePreferences
+import io.openwaters.slackwater.android.widgets.WidgetRefreshWorker
 import androidx.datastore.core.DataStore
 import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
@@ -97,7 +99,7 @@ private fun Preferences.readPreferences() = ReadingPreferences(
 )
 
 /** How readings are shown: units, set format and the comfort current. Device-local, in the no-backup directory. */
-class ReadingPreferencesStore private constructor(private val data: DataStore<Preferences>, private val catalog: StationCatalog?) {
+class ReadingPreferencesStore private constructor(private val data: DataStore<Preferences>, private val catalog: StationCatalog?, private val onReadingChanged: () -> Unit) {
     /**
      * A failed read, such as a file the app cannot open, emits a failure and ends the flow; collect again to retry.
      * Readings can show `getOrDefault(ReadingPreferences())` meanwhile.
@@ -110,28 +112,31 @@ class ReadingPreferencesStore private constructor(private val data: DataStore<Pr
         }
         .distinctUntilChanged()
 
+    private suspend fun editReading(change: (MutablePreferences) -> Unit): Preferences =
+        data.edit { change(it) }.also { onReadingChanged() }
+
     /** Null restores inheritance from the global setting. Keys retain the complete station ID. */
     suspend fun setStationThresholdDeltaKn(id: StationId, delta: Double?) {
         require(delta == null || (delta.isFinite() && delta in -10.0..10.0))
         val canonical = catalog?.resolve(id)?.id ?: id
         val key = doublePreferencesKey(DELTA_PREFIX + canonical.value)
-        alertInputLock.withLock { data.edit { if (delta == null) it.remove(key) else it[key] = delta } }
+        alertInputLock.withLock { editReading { if (delta == null) it.remove(key) else it[key] = delta } }
     }
 
     suspend fun setShowSky(show: Boolean) { data.edit { it[skyKey] = show } }
 
-    suspend fun setHeightUnits(units: HeightUnits) = data.edit { it[heightUnitsKey] = units.stored }
+    suspend fun setHeightUnits(units: HeightUnits) = editReading { it[heightUnitsKey] = units.stored }
 
-    suspend fun setSpeedUnit(unit: SpeedUnit) = data.edit { it[speedUnitKey] = unit.stored }
+    suspend fun setSpeedUnit(unit: SpeedUnit) = editReading { it[speedUnitKey] = unit.stored }
 
-    suspend fun setSetFormat(format: SetFormat) = data.edit { it[setFormatKey] = format.stored }
+    suspend fun setSetFormat(format: SetFormat) = editReading { it[setFormatKey] = format.stored }
 
     /** Clamped into range, so stepping past either end keeps the nearest setting instead of resetting it. */
     suspend fun setSlackWindowKnots(knots: Double) {
         require(knots.isFinite()) { "Comfort current must be finite: $knots" }
         val range = ReadingPreferences.SLACK_WINDOW_KNOTS_RANGE
         val clamped = knots.coerceIn(range.start, range.endInclusive)
-        alertInputLock.withLock { data.edit { it[slackWindowKey] = ReadingPreferences.normalizedSlackWindowKnots(clamped) } }
+        alertInputLock.withLock { editReading { it[slackWindowKey] = ReadingPreferences.normalizedSlackWindowKnots(clamped) } }
     }
 
     companion object {
@@ -143,11 +148,11 @@ class ReadingPreferencesStore private constructor(private val data: DataStore<Pr
             return shared ?: open(
                 File(app.noBackupFilesDir, "reading_preferences.preferences_pb"),
                 CoroutineScope(SupervisorJob() + Dispatchers.IO),
-                BundledStationCatalog(app.assets),
+                BundledStationCatalog(app.assets), { WidgetRefreshWorker.refresh(app) },
             ).also { shared = it }
         }
 
-        internal fun open(file: File, scope: CoroutineScope, catalog: StationCatalog? = null) = ReadingPreferencesStore(
+        internal fun open(file: File, scope: CoroutineScope, catalog: StationCatalog? = null, onReadingChanged: () -> Unit = {}) = ReadingPreferencesStore(
             PreferenceDataStoreFactory.create(
                 // Unreadable settings are cheap to choose again; replacing them keeps the settings writable.
                 corruptionHandler = ReplaceFileCorruptionHandler { emptyPreferences() },
@@ -171,7 +176,7 @@ class ReadingPreferencesStore private constructor(private val data: DataStore<Pr
                 }),
                 scope = scope,
                 produceFile = { file },
-            ), catalog,
+            ), catalog, onReadingChanged,
         )
     }
 }

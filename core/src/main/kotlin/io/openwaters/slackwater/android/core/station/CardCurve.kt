@@ -4,6 +4,7 @@ import io.openwaters.slackwater.CurrentEventKind
 import io.openwaters.slackwater.ExtremeKind
 import io.openwaters.slackwater.android.core.prediction.PredictionResult
 import io.openwaters.slackwater.android.core.prediction.PredictionSeries
+import io.openwaters.slackwater.android.core.prediction.TimeSpan
 import io.openwaters.slackwater.android.core.prediction.StationCapabilities
 import io.openwaters.slackwater.android.core.prediction.windows
 import io.openwaters.slackwater.speedAt
@@ -60,8 +61,7 @@ data class CurveRun(val start: Instant, val end: Instant) {
 }
 
 /**
- * The 25-hour curve behind a station card (list §6.4): 1.5 swings back and 2.5 ahead of [now], at the samples its
- * series gives. A pure scene: the card maps it to pixels, and tests read it without a device.
+ * The station card curve over the requested span. The list and wide widget show four swings, and the small widget shows two.
  */
 class CardCurve(
     val start: Instant,
@@ -130,7 +130,6 @@ class CardCurve(
 
     companion object {
         val SAMPLE_STEP: Duration = Duration.ofMinutes(10)
-        private val SWING: Duration = Duration.ofSeconds((6.21 * 3600).toLong())
 
         /**
          * The axis times a card prints, in time order: clear of both edges, each at least a time's width after the
@@ -178,17 +177,17 @@ class CardCurve(
          * damaged downloaded model). A finite block, such as an online window or a tide preview, can end inside the
          * span; the curve then stops where its data does.
          */
-        fun from(result: PredictionResult, now: Instant, thresholdKnots: Double): CardCurve? =
-            build(result, now, thresholdKnots)?.takeIf { curve ->
+        fun from(result: PredictionResult, now: Instant, thresholdKnots: Double, span: TimeSpan = cardSpan(now)): CardCurve? =
+            build(result, now, thresholdKnots, span)?.takeIf { curve ->
                 curve.samples.size >= 2 &&
                     curve.samples.all { it.value.isFinite() } && curve.extremes.all { it.value.isFinite() }
             }
 
-        private fun build(result: PredictionResult, now: Instant, thresholdKnots: Double): CardCurve? {
+        private fun build(result: PredictionResult, now: Instant, thresholdKnots: Double, span: TimeSpan): CardCurve? {
             val ready = result.blockAt(now) ?: return null
             if (now !in ready.coverage) return null
-            val start = now.minus(SWING.multipliedBy(3).dividedBy(2))
-            val end = now.plus(SWING.multipliedBy(5).dividedBy(2))
+            val start = span.start
+            val end = span.end
             fun inSpan(time: Instant) = time >= start && time <= end
             return when (val series = ready.series) {
                 is PredictionSeries.Tide -> CardCurve(

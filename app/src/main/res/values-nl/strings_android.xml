@@ -311,4 +311,5 @@
     <string name="tide_download_failed">"Kan het getijdenoverzicht niet downloaden"</string>
     <string name="tide_download_saved">"Getijdenoverzicht opgeslagen voor offlinegebruik"</string>
     <string name="tide_download_edit_failed">"De wijziging in je downloads kon niet worden opgeslagen. Probeer het opnieuw."</string>
+    <string name="widget_snapshot_time">"Bijgewerkt: %1$s"</string>
 </resources>

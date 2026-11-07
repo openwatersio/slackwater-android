@@ -1561,6 +1561,36 @@
       "name": "tour_skip",
       "key": "Skip",
       "english": "Skip"
+    },
+    {
+      "name": "widget_nearest_section",
+      "key": "Nearest Station",
+      "english": "Nearest Station"
+    },
+    {
+      "name": "widget_nearest_any",
+      "key": "Any Station",
+      "english": "Any Station"
+    },
+    {
+      "name": "widget_nearest_tide",
+      "key": "Tide Station",
+      "english": "Tide Station"
+    },
+    {
+      "name": "widget_nearest_current",
+      "key": "Current Station",
+      "english": "Current Station"
+    },
+    {
+      "name": "widget_location_hint",
+      "key": "Open Slackwater and allow location to find a nearby place.",
+      "english": "Open Slackwater and allow location to find a nearby place."
+    },
+    {
+      "name": "widget_event_time",
+      "key": "%@ · %@",
+      "english": "%@ · %@"
     }
   ],
   "androidDirectory": "scripts/translations/android"

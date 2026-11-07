@@ -276,4 +276,10 @@
     <string name="tour_next">"Next ›"</string>
     <string name="tour_done">"Done"</string>
     <string name="tour_skip">"Skip"</string>
+    <string name="widget_nearest_section">"Nearest Station"</string>
+    <string name="widget_nearest_any">"Any Station"</string>
+    <string name="widget_nearest_tide">"Tide Station"</string>
+    <string name="widget_nearest_current">"Current Station"</string>
+    <string name="widget_location_hint">"Open Slackwater and allow location to find a nearby place."</string>
+    <string name="widget_event_time">"%1$s · %2$s"</string>
 </resources>

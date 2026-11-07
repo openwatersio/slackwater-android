@@ -311,4 +311,5 @@
     <string name="tide_download_failed">"Couldn’t download the tide preview"</string>
     <string name="tide_download_saved">"Tide preview saved for offline use"</string>
     <string name="tide_download_edit_failed">"Couldn’t save this change to your downloads. Try again."</string>
+    <string name="widget_snapshot_time">"As of %1$s"</string>
 </resources>

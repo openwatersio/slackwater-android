@@ -276,4 +276,10 @@
     <string name="tour_next">"Seuraava ›"</string>
     <string name="tour_done">"Valmis"</string>
     <string name="tour_skip">"Ohita"</string>
+    <string name="widget_nearest_section">"Lähin asema"</string>
+    <string name="widget_nearest_any">"Mikä tahansa asema"</string>
+    <string name="widget_nearest_tide">"Vuorovesiasema"</string>
+    <string name="widget_nearest_current">"Virtausasema"</string>
+    <string name="widget_location_hint">"Avaa Slackwater ja salli sijainnin käyttö, jotta lähistöllä oleva paikka löytyy."</string>
+    <string name="widget_event_time">"%1$s · %2$s"</string>
 </resources>

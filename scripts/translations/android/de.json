@@ -308,5 +308,6 @@
   "tide_download_restricted": "Warten auf ein uneingeschränktes Netzwerk",
   "tide_download_failed": "Gezeitenvorschau konnte nicht heruntergeladen werden",
   "tide_download_saved": "Gezeitenvorschau für die Offline-Nutzung gespeichert",
-  "tide_download_edit_failed": "Die Änderung an deinen Downloads konnte nicht gespeichert werden. Versuche es erneut."
+  "tide_download_edit_failed": "Die Änderung an deinen Downloads konnte nicht gespeichert werden. Versuche es erneut.",
+  "widget_snapshot_time": "Stand: %1$s"
 }

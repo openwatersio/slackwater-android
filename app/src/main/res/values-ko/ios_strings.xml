@@ -276,4 +276,10 @@
     <string name="tour_next">"다음 ›"</string>
     <string name="tour_done">"완료"</string>
     <string name="tour_skip">"건너뛰기"</string>
+    <string name="widget_nearest_section">"가장 가까운 관측소"</string>
+    <string name="widget_nearest_any">"모든 관측소"</string>
+    <string name="widget_nearest_tide">"조석 관측소"</string>
+    <string name="widget_nearest_current">"조류 관측소"</string>
+    <string name="widget_location_hint">"가까운 장소를 찾으려면 Slackwater를 열고 위치 접근을 허용하세요."</string>
+    <string name="widget_event_time">"%1$s · %2$s"</string>
 </resources>

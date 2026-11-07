@@ -308,5 +308,6 @@
   "tide_download_restricted": "Waiting for an unrestricted network",
   "tide_download_failed": "Couldn’t download the tide preview",
   "tide_download_saved": "Tide preview saved for offline use",
-  "tide_download_edit_failed": "Couldn’t save this change to your downloads. Try again."
+  "tide_download_edit_failed": "Couldn’t save this change to your downloads. Try again.",
+  "widget_snapshot_time": "As of %1$s"
 }

@@ -26,7 +26,7 @@ sealed interface QueryAnswer {
 
 private val windowMargin = Duration.ofHours(6)
 private val horizon = Duration.ofHours(48)
-// Widget cards look back 1.5 swings of the 12.42-hour semidiurnal tide.
+// Wide widget cards look back 1.5 swings of the 12.42-hour semidiurnal tide.
 private val cardLookback = Duration.ofSeconds(33_534)
 
 suspend fun queryPrediction(

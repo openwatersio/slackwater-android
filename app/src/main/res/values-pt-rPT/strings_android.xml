@@ -315,4 +315,5 @@
     <string name="tide_download_failed">"Não foi possível transferir a pré-visualização das marés"</string>
     <string name="tide_download_saved">"Pré-visualização das marés guardada para utilização offline"</string>
     <string name="tide_download_edit_failed">"Não foi possível guardar a alteração às transferências. Tente novamente."</string>
+    <string name="widget_snapshot_time">"Atualizado em %1$s"</string>
 </resources>
