@@ -14,7 +14,7 @@ import androidx.compose.ui.test.performTextInput
  * spoken description, so a station whose region merely mentions the name is never picked instead.
  */
 fun ComposeTestRule.openStation(name: String, region: String) {
-    waitUntil(30_000) { onAllNodesWithText("Search").fetchSemanticsNodes().isNotEmpty() }
+    waitUntil(30_000) { onAllNodesWithText("Search").fetchSemanticsNodes(atLeastOneRootRequired = false).isNotEmpty() }
     onNodeWithText("Search").performClick()
     onNode(hasSetTextAction()).performTextInput(name)
     val card = hasContentDescription("$name, $region", substring = true)
