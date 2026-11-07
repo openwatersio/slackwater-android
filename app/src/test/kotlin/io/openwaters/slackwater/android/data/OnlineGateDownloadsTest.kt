@@ -168,6 +168,8 @@ class OnlineGateDownloadsTest {
         downloads.reconnected()
         assertFalse(downloads.fetch(gate.id, day))
         assertEquals(1, invalidAttempts)
+        assertFalse(downloads.fetch(gate.id, day, manual = true))
+        assertEquals(2, invalidAttempts)
     }
 
     @Test fun reconnectAllowsTransientStorageFailureToRecover() = runBlocking {

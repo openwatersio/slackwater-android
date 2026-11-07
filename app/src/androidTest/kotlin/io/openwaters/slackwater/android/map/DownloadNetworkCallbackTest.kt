@@ -48,8 +48,8 @@ class DownloadNetworkCallbackTest {
         } finally {
             instrumentation.uiAutomation.executeShellCommand("svc wifi enable").close()
             job.cancelAndJoin()
-            withTimeout(30_000) { while (!uses(NetworkCapabilities.TRANSPORT_WIFI)) delay(100) }
         }
+        withTimeout(30_000) { while (!uses(NetworkCapabilities.TRANSPORT_WIFI)) delay(100) }
     }
 
     @Test fun handoffKeepsRunningTransferAndRealLossPublishesOffline() = runBlocking {
