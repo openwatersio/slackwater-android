@@ -245,4 +245,19 @@
     <string name="gate_peak_speed">"Die mediane Geschwindigkeitsabweichung der Geräteanpassung von CHS bei Strömungsmaxima betrug im schlechtesten Quartal %1$s %2$s."</string>
     <string name="gate_unknown">"Die Geräteanpassung bestand hier die Validierung nicht. Slackwater verwendet CHS-Vorhersagen."</string>
     <string name="gate_too_few">"Es gab nicht genügend CHS-Ereignisse, um die Geräteanpassung in jedem Quartal zu validieren."</string>
+    <string name="tour_read_title">"Die Zeitleiste lesen"</string>
+    <string name="tour_read">"Die Mittellinie markiert den unten angezeigten Zeitpunkt."</string>
+    <string name="tour_swipe_title">"Wischen, um mehr zu sehen"</string>
+    <string name="tour_swipe">"Wische über die Kurve, um dich durch die Zeit zu bewegen."</string>
+    <string name="tour_stars_title">"Der echte Himmel"</string>
+    <string name="tour_stars">"Das sind die tatsächlichen Sterne über %1$s heute Nacht."</string>
+    <string name="tour_moon_title">"Der Mond"</string>
+    <string name="tour_moon">"Und das ist der echte Mond in seiner heutigen Phase."</string>
+    <string name="tour_moon_card_title">"Monddetails"</string>
+    <string name="tour_moon_card">"Tippe auf den Mond, um Aufgang, Untergang und Phase zu sehen."</string>
+    <string name="tour_star_title">"Favoriten"</string>
+    <string name="tour_star">"Markiere eine Station mit einem Stern, damit sie oben in deiner Liste bleibt."</string>
+    <string name="tour_next">"Weiter ›"</string>
+    <string name="tour_done">"Fertig"</string>
+    <string name="tour_skip">"Überspringen"</string>
 </resources>

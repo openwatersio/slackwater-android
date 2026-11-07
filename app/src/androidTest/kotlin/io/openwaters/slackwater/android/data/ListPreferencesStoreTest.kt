@@ -2,6 +2,7 @@ package io.openwaters.slackwater.android.data
 
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.test.platform.app.InstrumentationRegistry
 import io.openwaters.slackwater.android.core.station.StationSeries
@@ -38,13 +39,37 @@ class ListPreferencesStoreTest {
         }
         withScope { scope ->
             val store = ListPreferencesStore.open(file, scope)
-            assertEquals(ListPreferences(StationSeries.Current, locationAsked = true), store.preferences.first().getOrThrow())
+            assertEquals(ListPreferences(StationSeries.Current, locationAsked = true, tourSeenStored = true), store.preferences.first().getOrThrow())
             // Tapping the active chip returns to All.
             store.setSeriesFilter(null)
             store.setSeriesFilter(StationSeries.Tide)
             assertEquals(StationSeries.Tide, store.preferences.first().getOrThrow().seriesFilter)
             store.setSeriesFilter(null)
-            assertEquals(ListPreferences(locationAsked = true), store.preferences.first().getOrThrow())
+            assertEquals(ListPreferences(locationAsked = true, tourSeenStored = true), store.preferences.first().getOrThrow())
+        }
+    }
+
+    @Test fun anInstallFromBeforeTheTourHasSeenItAndAFirstRunKeepsItUnseen() = withFile { file ->
+        withScope { scope ->
+            // An install that asked for location before the tour existed has no tour flag at all.
+            PreferenceDataStoreFactory.create(scope = scope) { file }.edit { it[booleanPreferencesKey("locationAsked")] = true }
+        }
+        withScope { scope ->
+            val older = ListPreferencesStore.open(file, scope)
+            assertEquals(ListPreferences(locationAsked = true, tourSeen = true), older.preferences.first().getOrThrow())
+        }
+        file.delete()
+        withScope { scope ->
+            val fresh = ListPreferencesStore.open(file, scope)
+            // This build's first ask records the tour as still to be seen, whichever write lands first.
+            fresh.markLocationAsked()
+            fresh.markTourUnseen()
+            val read = fresh.preferences.first().getOrThrow()
+            assertTrue(read.locationAsked && !read.tourSeen && read.tourSeenStored)
+            fresh.markTourSeen()
+            // Recording a tour still to be seen never undoes one already seen.
+            fresh.markTourUnseen()
+            assertTrue(fresh.preferences.first().getOrThrow().tourSeen)
         }
     }
 

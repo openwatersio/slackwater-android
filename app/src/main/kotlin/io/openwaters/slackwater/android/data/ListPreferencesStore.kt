@@ -23,12 +23,20 @@ import kotlinx.coroutines.flow.map
 data class ListPreferences(
     /** Null shows all series. One choice governs Near Me, search and every detail's Nearby section. */
     val seriesFilter: StationSeries? = null,
-    /** The list has raised the system location prompt, which it does once on first appearance and never again. */
+    /** The system location prompt has been raised, once on a first launch over the list or the tour's station, and never again. */
     val locationAsked: Boolean = false,
+    /**
+     * The first-run tour has been finished or skipped, here; it never comes back on its own. An install from before
+     * the tour, which has already asked for location, reads as having seen it.
+     */
+    val tourSeen: Boolean = false,
+    /** Whether [tourSeen] was stored, rather than read from the ask. */
+    val tourSeenStored: Boolean = false,
 )
 
 private val seriesFilterKey = stringPreferencesKey("seriesFilter")
 private val locationAskedKey = booleanPreferencesKey("locationAsked")
+private val tourSeenKey = booleanPreferencesKey("seenTour")
 
 private fun Preferences.readList() = ListPreferences(
     seriesFilter = when (asMap()[seriesFilterKey]) {
@@ -37,6 +45,8 @@ private fun Preferences.readList() = ListPreferences(
         else -> null
     },
     locationAsked = asMap()[locationAskedKey] as? Boolean ?: false,
+    tourSeen = asMap()[tourSeenKey] as? Boolean ?: (asMap()[locationAskedKey] as? Boolean ?: false),
+    tourSeenStored = asMap()[tourSeenKey] is Boolean,
 )
 
 /** The list's own settings, device-local in the no-backup directory. */
@@ -58,7 +68,19 @@ class ListPreferencesStore private constructor(private val data: DataStore<Prefe
         }
     }
 
-    suspend fun markLocationAsked() = data.edit { it[locationAskedKey] = true }
+    // The tour is recorded as still to be seen in the same write, so the ask can never read as an older install.
+    suspend fun markLocationAsked() = data.edit {
+        if (it[locationAskedKey] != true && tourSeenKey !in it) it[tourSeenKey] = false
+        it[locationAskedKey] = true
+    }
+
+    suspend fun markTourSeen() = data.edit { it[tourSeenKey] = true }
+
+    /** Records a tour still to be seen, so the location ask that follows does not read as an older install. */
+    suspend fun markTourUnseen() = data.edit { if (tourSeenKey !in it) it[tourSeenKey] = false }
+
+    /** Makes the next launch a first run for the tour again. */
+    suspend fun clearTourSeen() = data.edit { it[tourSeenKey] = false }
 
     companion object {
         private var shared: ListPreferencesStore? = null
@@ -74,7 +96,7 @@ class ListPreferencesStore private constructor(private val data: DataStore<Prefe
 
         internal fun open(file: File, scope: CoroutineScope) = ListPreferencesStore(
             PreferenceDataStoreFactory.create(
-                // A lost filter or ask flag costs one tap or one prompt; replacing keeps the list writable.
+                // A lost filter, ask flag or tour flag costs one tap, one prompt or one tour; replacing keeps the list writable.
                 corruptionHandler = ReplaceFileCorruptionHandler { emptyPreferences() },
                 scope = scope,
                 produceFile = { file },

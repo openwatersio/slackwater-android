@@ -1,5 +1,6 @@
 package io.openwaters.slackwater.android.detail
 
+import io.openwaters.slackwater.android.core.tour.TourStep
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.ui.input.pointer.pointerInput
@@ -201,7 +202,7 @@ internal fun DetailSummary(
         }
     }
     val moonCard: @Composable (Modifier) -> Unit = { modifier ->
-        if (moon != null) SummaryTile(stringResource(R.string.panel_moon), moonName, moonCaption, modifier, { sheet = Sheet.MOON }) {
+        if (moon != null) SummaryTile(stringResource(R.string.panel_moon), moonName, moonCaption, modifier.tourAnchor(TourStep.MOON_CARD), { sheet = Sheet.MOON }) {
             MoonDisc(selected, observer, moon, eclipse)
         }
     }

@@ -1,5 +1,6 @@
 package io.openwaters.slackwater.android.detail
 
+import io.openwaters.slackwater.android.core.tour.TourStep
 import android.content.ActivityNotFoundException
 import android.content.ClipData
 import android.content.ClipboardManager
@@ -42,7 +43,7 @@ internal fun DetailHeader(station: StationIdentity?, id: StationId, live: Boolea
         }) { Text(stringResource(R.string.detail_share)) }
         if (live) {
             val star = stringResource(if (favorite) R.string.station_unstar else R.string.station_star)
-            IconButton(onClick = toggle, modifier = Modifier.semantics { contentDescription = star }) {
+            IconButton(onClick = toggle, modifier = Modifier.tourAnchor(TourStep.STAR).semantics { contentDescription = star }) {
                 Text(if (favorite) "★" else "☆", color = if (favorite) androidx.compose.ui.graphics.Color(0xfff0c860) else MaterialTheme.colorScheme.onSurface, style = MaterialTheme.typography.headlineSmall)
             }
         }

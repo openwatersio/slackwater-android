@@ -245,4 +245,19 @@
     <string name="gate_peak_speed">"A diferença mediana da velocidade máxima entre o ajuste e o CHS foi %1$s %2$s no pior trimestre."</string>
     <string name="gate_unknown">"O ajuste no dispositivo não passou na validação aqui. O Slackwater utiliza previsões do CHS."</string>
     <string name="gate_too_few">"Não houve eventos suficientes do CHS para validar o ajuste no dispositivo em todos os trimestres."</string>
+    <string name="tour_read_title">"Como ler a faixa"</string>
+    <string name="tour_read">"A linha central marca o momento apresentado abaixo."</string>
+    <string name="tour_swipe_title">"Passe o dedo para ver mais"</string>
+    <string name="tour_swipe">"Passe o dedo sobre a curva para avançar ou recuar no tempo."</string>
+    <string name="tour_stars_title">"O céu real"</string>
+    <string name="tour_stars">"Estas são as estrelas reais sobre %1$s esta noite."</string>
+    <string name="tour_moon_title">"A lua"</string>
+    <string name="tour_moon">"E esta é a lua real, na fase desta noite."</string>
+    <string name="tour_moon_card_title">"Detalhes da lua"</string>
+    <string name="tour_moon_card">"Toque na lua para ver o nascer, o pôr e a fase."</string>
+    <string name="tour_star_title">"Favoritos"</string>
+    <string name="tour_star">"Marque uma estação com uma estrela para a manter no topo da sua lista."</string>
+    <string name="tour_next">"Próximo ›"</string>
+    <string name="tour_done">"OK"</string>
+    <string name="tour_skip">"Ignorar"</string>
 </resources>

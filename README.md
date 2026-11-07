@@ -22,7 +22,7 @@ python3 scripts/check-apk.py app/build/outputs/apk/debug/app-debug.apk
 ./gradlew :app:connectedDebugAndroidTest
 ```
 
-The device check requires an attached emulator/device. CI runs it on API 26 and API 37.0. Test fixtures exercise NOAA tide events and Almanac solar positions on both JVM and Android; the launch test verifies that the list’s cards read predictions from the bundled database. `SlackwaterTestRunner` records the list's one location ask before any test, so the system prompt never covers a test's activity.
+The device check requires an attached emulator/device. CI runs it on API 26 and API 37.0. Test fixtures exercise NOAA tide events and Almanac solar positions on both JVM and Android; the launch test verifies that the list’s cards read predictions from the bundled database. `SlackwaterTestRunner` records the list's one location ask and the first-run tour as done before any test, so neither the system prompt nor the tour's station covers a test's activity; the tour's own tests clear the flag.
 
 `upstream.lock.json` pins source repositories, product documentation, data and recipe provenance separately. `vendor/` contains ignored exact-SHA checkouts. Sync fails on changed or untracked dependency files or a different revision; inspect and preserve local work before replacing a checkout. `--check` performs no network requests and rejects changed/missing/unexpected packaged assets. Generated catalogs are committed; `stations.tcdb` stays uncompressed. Canadian files contain identity/evidence only, with no user predictions or fitted models.
 
