@@ -41,6 +41,7 @@ internal fun NativeStationMap(
     bottomMarginDp: Int = 8,
     styleUrl: String = BASEMAP_STYLE_URL,
     localOnly: Boolean = false,
+    retryTimeoutMillis: Long = 30_000L,
 ) {
     val context = LocalContext.current
     val lifecycle = LocalLifecycleOwner.current.lifecycle
@@ -142,7 +143,7 @@ internal fun NativeStationMap(
                 val initialLoad = styleRequest == 0
                 reportStatus(if (initialLoad) BasemapStatus.Loading else BasemapStatus.Retrying)
                 // Give an explicit retry more time, then restore pins even if the network never responds.
-                view.postDelayed(fallback, if (initialLoad) 2_000L else 30_000L)
+                view.postDelayed(fallback, if (initialLoad) 2_000L else retryTimeoutMillis)
                 ready.setStyle(styleUrl) {
                     if (active && !usingLocal) {
                         view.removeCallbacks(fallback)

@@ -154,12 +154,15 @@ class MapNativeConformanceTest {
                     fix = null, cameraTarget = Coordinate(station.latitude, station.longitude), cameraZoom = 11.0,
                     cameraRequest = 0, styleRequest = request.intValue, onViewport = { _, _, _, _, _, _ -> },
                     onSelect = selected::set, onBasemapStatus = status::set, modifier = Modifier.fillMaxSize().testTag("map"),
-                    styleUrl = "$base/${request.intValue}", localOnly = localOnly.value)
+                    styleUrl = "$base/${request.intValue}", localOnly = localOnly.value,
+                    retryTimeoutMillis = if (request.intValue == 1) 1_000L else 30_000L)
             }
             compose.waitUntil(8_000) { status.get() == BasemapStatus.Unavailable }
             compose.runOnIdle { request.intValue++ }
             compose.waitUntil(8_000) { status.get() == BasemapStatus.Retrying }
-            compose.runOnIdle { localOnly.value = true }
+            compose.waitUntil(8_000) { status.get() == BasemapStatus.Slow }
+            selectCenter(station.id, selected)
+            compose.runOnIdle { selected.set(null); localOnly.value = true }
             compose.waitUntil(8_000) { status.get() == BasemapStatus.LocalOnly }
             selectCenter(station.id, selected)
             compose.runOnIdle {
