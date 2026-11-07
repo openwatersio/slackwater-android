@@ -42,6 +42,8 @@ internal fun NativeStationMap(
     styleUrl: String = BASEMAP_STYLE_URL,
     localOnly: Boolean = false,
     retryTimeoutMillis: Long = 30_000L,
+    fieldsEnabled: Boolean = true,
+    fields: CurrentFieldFeatures? = null,
 ) {
     val context = LocalContext.current
     val lifecycle = LocalLifecycleOwner.current.lifecycle
@@ -120,7 +122,7 @@ internal fun NativeStationMap(
                 }
             }
         }
-        DisposableEffect(ready, styleRequest, styleUrl, localOnly) {
+        DisposableEffect(ready, styleRequest, styleUrl, localOnly, fieldsEnabled) {
             var active = true
             var usingLocal = false
             layers = null
@@ -129,7 +131,7 @@ internal fun NativeStationMap(
                 usingLocal = true
                 reportStatus(status)
                 ready.setStyle(Style.Builder().fromJson("""{"version":8,"sources":{},"layers":[{"id":"offline-ground","type":"background","paint":{"background-color":"#152256"}}]}""")) {
-                    if (active) layers = StationLayers(it)
+                    if (active) layers = StationLayers(it, fieldsEnabled)
                 }
             }
             val fallback = Runnable { useLocal(BasemapStatus.Slow) }
@@ -147,7 +149,7 @@ internal fun NativeStationMap(
                 ready.setStyle(styleUrl) {
                     if (active && !usingLocal) {
                         view.removeCallbacks(fallback)
-                        layers = StationLayers(it)
+                        layers = StationLayers(it, fieldsEnabled)
                         reportStatus(BasemapStatus.Ready)
                     }
                 }
@@ -168,6 +170,7 @@ internal fun NativeStationMap(
         }
     }
     LaunchedEffect(layers, pins, selectedId) { layers?.update(pins, selectedId) }
+    LaunchedEffect(layers, fields) { layers?.fields?.update(fields) }
     LaunchedEffect(layers, fix) { layers?.updateFix(fix) }
     AndroidView(factory = { view }, modifier = modifier)
 }

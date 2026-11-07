@@ -76,6 +76,26 @@
         "name": "slugs.json",
         "path": "Slackwater/Resources/slugs.json",
         "sha256": "33380beb0c7e58a7f995674bbf28ce5de504aae67ac74a0bd1c2fa140d061ba1"
+      },
+      {
+        "name": "fill-salish.json",
+        "path": "Slackwater/Resources/fill-salish.json",
+        "sha256": "d97601bb5257ab849f191b8ab0ac51b373ed140eab7ba156cfed75d0a9f05a0f"
+      },
+      {
+        "name": "fill-salish.bin",
+        "path": "Slackwater/Resources/fill-salish.bin",
+        "sha256": "e16c1aaf889b376beeac7bff866669b681f3969da9268c281133e31e81dbd5ce"
+      },
+      {
+        "name": "patches-salish.json",
+        "path": "Slackwater/Resources/patches-salish.json",
+        "sha256": "528dced8ba24d3bda11641408dc436c513c388cc76d3f6a5e416a1325f7d9155"
+      },
+      {
+        "name": "patches-salish.bin",
+        "path": "Slackwater/Resources/patches-salish.bin",
+        "sha256": "94ba76ae21b1dd52f55248181bf3bafee58bf714f993fde5de10e82ae77370fb"
       }
     ]
   },

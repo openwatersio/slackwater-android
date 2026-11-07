@@ -25,7 +25,7 @@ private const val CAPTIONS = "slackwater-station-captions"
 private const val FIX = "slackwater-location"
 private const val INK = "#152256"
 private const val NEUTRAL = "#5888a8"
-internal val stationHitLayers = arrayOf("station-rings", "station-dots", "station-arrows", "station-gauges", "station-names", "station-readings", "station-vectors")
+internal val stationHitLayers = arrayOf("station-rings", "station-dots", "station-arrows", "station-gauges", "station-names", "station-readings")
 
 private fun pinColor(state: String) = when (state) {
     "rising" -> "#2dd4bf"
@@ -38,7 +38,8 @@ private fun pinColor(state: String) = when (state) {
 
 private fun size(base: Double) = interpolate(exponential(1.7), zoom(), stop(6, base * 0.4), stop(12.5, base * 1.8))
 
-internal class StationLayers(style: Style) {
+internal class StationLayers(style: Style, fieldsEnabled: Boolean = true) {
+    val fields: CurrentFieldLayers?
     private val pins = GeoJsonSource(PINS, FeatureCollection.fromFeatures(emptyList()))
     private val location = GeoJsonSource(FIX, FeatureCollection.fromFeatures(emptyList()))
 
@@ -48,6 +49,8 @@ internal class StationLayers(style: Style) {
     } else null
 
     init {
+        style.addImage("slackwater-arrow", arrowDistanceField(), true)
+        fields = if (fieldsEnabled) CurrentFieldLayers(style) else null
         style.addSource(pins)
         style.addSource(location)
         style.addLayer(CircleLayer("station-selection", PINS).withFilter(has("selected")).withProperties(
@@ -57,14 +60,10 @@ internal class StationLayers(style: Style) {
         style.addLayer(CircleLayer("station-dots", PINS).withFilter(eq(get("form"), literal("dot"))).withProperties(
             circleRadius(size(4.0)), circleColor(toColor(get("color"))), circleStrokeColor(INK), circleStrokeWidth(size(1.5))))
 
-        style.addImage("slackwater-arrow", arrowDistanceField(), true)
-        fun arrow(id: String, property: String, vector: Boolean) = SymbolLayer(id, PINS).withFilter(has(property)).withProperties(
-            iconImage("slackwater-arrow"), iconRotate(get(property)), iconRotationAlignment("map"),
-            iconAllowOverlap(true), iconSize(size(if (vector) 0.75 else 1.0)),
-            iconOffset(arrayOf(0f, if (vector) -15f else 0f)),
-            iconColor(if (vector) literal("#ffffff") else toColor(get("color"))), iconHaloColor(INK), iconHaloWidth(1.2f))
-        style.addLayer(arrow("station-arrows", "bearing", false))
-        style.addLayer(arrow("station-vectors", "vector", true))
+        style.addLayer(SymbolLayer("station-arrows", PINS).withFilter(has("bearing")).withProperties(
+            iconImage("slackwater-arrow"), iconRotate(get("bearing")), iconRotationAlignment("map"),
+            iconAllowOverlap(true), iconSize(size(1.0)), iconColor(toColor(get("color"))),
+            iconHaloColor(INK), iconHaloWidth(1.2f)))
         for (trend in listOf("rising", "falling")) for (bucket in 0..8) {
             style.addImage("station-$trend-$bucket", gaugeImage(trend, bucket))
         }
@@ -101,7 +100,6 @@ internal class StationLayers(style: Style) {
                 addStringProperty("form", form)
                 if (form == "arrow") addNumberProperty("bearing", pin.state.bearing)
                 if (form == "gauge") addStringProperty("gauge", "station-${pin.state.state}-${pin.state.gauge}")
-                pin.vectorBearing?.let { addNumberProperty("vector", it) }
                 pin.state.reading?.let { addStringProperty("reading", it) }
             }
         }

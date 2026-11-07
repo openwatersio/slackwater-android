@@ -17,7 +17,7 @@ import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
 import org.json.JSONException
 
-data class StationMapPin(val station: StationIdentity, val state: MapPinState, val vectorBearing: Double? = null)
+data class StationMapPin(val station: StationIdentity, val state: MapPinState)
 
 class StationMapModel(context: Context, private val models: ModelStore = ModelStore.get(context)) {
     private val context = context.applicationContext
@@ -25,11 +25,14 @@ class StationMapModel(context: Context, private val models: ModelStore = ModelSt
     private val catalog = BundledStationCatalog(assets)
     private val tides = BundledTideDatabase(assets)
     private val repository = AndroidPredictionRepository(context, models)
+    private val fields by lazy { CurrentMapFieldSource(context, repository) }
+    internal suspend fun currentFields(at: Instant) = fields.evaluate(at)
     val revision = models.revision
     private val referenceEvents = ReferenceCurrentEvents()
     private val ranks = ConcurrentHashMap<StationId, Double>()
 
     private val currents = BundledCurrentRecords(assets)
+    private val gates = BundledCurrentGates(assets)
 
     suspend fun pins(
         bounds: PinBox, zoom: Double, filter: StationSeries?, selected: StationId?, at: Instant,
@@ -112,6 +115,9 @@ class StationMapModel(context: Context, private val models: ModelStore = ModelSt
     }
 
     private suspend fun canadian(station: StationIdentity, at: Instant, detailed: Boolean, format: PinFormat): StationMapPin {
+        if (station.kind == StationKind.CanadianCurrent && gates[station.id]?.online == true) {
+            return StationMapPin(station, MapPinState())
+        }
         if (station.kind == StationKind.CanadianTide) {
             val model = (models.read(station.id, ModelKind.TIDE) as? StoredModel.Ready)?.record
             val harmonic = try {
@@ -140,11 +146,6 @@ class StationMapModel(context: Context, private val models: ModelStore = ModelSt
         val state = when (val series = ready.series) {
             is PredictionSeries.Current -> {
                 val signed = series.points.speedAt(at)
-                if (ready.capabilities == StationCapabilities.ONLINE_CURRENT) {
-                    val vector = if (station.id.value == "chs-dodd-narrows")
-                        doddMapVector(signed, series.floodBearing, series.ebbBearing, at) else null
-                    return StationMapPin(station, MapPinState(), vector?.directionDegrees)
-                }
                 format.current(signed, series.floodBearing, series.ebbBearing, detailed)
             }
             is PredictionSeries.Tide -> {

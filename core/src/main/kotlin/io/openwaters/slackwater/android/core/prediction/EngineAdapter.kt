@@ -15,11 +15,11 @@ object EngineAdapter {
         PredictionSeries.Tide(station.heights(span.start, span.end, stepSeconds),
             station.rates(span.start, span.end, stepSeconds), station.extremes(span.start, span.end))
 
-    fun current(station: CurrentStation, span: TimeSpan, stepSeconds: Double = 600.0): PredictionSeries.Current =
+    fun current(station: CurrentStation, span: TimeSpan, stepSeconds: Double = if (span.start == span.end) 1.0 else 600.0): PredictionSeries.Current =
         PredictionSeries.Current(station.speeds(span.start, span.end, stepSeconds), station.events(span.start, span.end),
             station.floodDirectionDegrees, station.ebbDirectionDegrees)
 
-    fun current(station: SubordinateCurrentStation, span: TimeSpan, stepSeconds: Double = 600.0): PredictionSeries.Current =
+    fun current(station: SubordinateCurrentStation, span: TimeSpan, stepSeconds: Double = if (span.start == span.end) 1.0 else 600.0): PredictionSeries.Current =
         PredictionSeries.Current(station.speeds(span.start, span.end, stepSeconds), station.events(span.start, span.end),
             station.floodDirectionDegrees, station.ebbDirectionDegrees)
 }
