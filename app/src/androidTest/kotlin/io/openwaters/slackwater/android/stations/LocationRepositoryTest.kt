@@ -303,17 +303,28 @@ class LocationRepositoryTest {
                 manager.addTestProvider(name, false, false, false, false, true, true, true, Criteria.POWER_LOW, Criteria.ACCURACY_FINE)
                 manager.setTestProviderEnabled(name, true)
             }
-            val report = {
-                for (name in providers.filter { answering == null || it == answering }) {
-                    manager.setTestProviderLocation(name, Location(name).apply {
-                        latitude = here.latitude
-                        longitude = here.longitude
-                        accuracy = 20f
-                        time = System.currentTimeMillis()
-                        elapsedRealtimeNanos = SystemClock.elapsedRealtimeNanos()
-                    })
-                }
+            fun reportFix(name: String, accuracyMetres: Float) {
+                manager.setTestProviderLocation(name, Location(name).apply {
+                    latitude = here.latitude
+                    longitude = here.longitude
+                    accuracy = accuracyMetres
+                    time = System.currentTimeMillis()
+                    elapsedRealtimeNanos = SystemClock.elapsedRealtimeNanos()
+                })
             }
+            val active = providers.filter { answering == null || it == answering }
+            // LocationManager applies mock reports asynchronously. Replace any cached emulator fix
+            // on a silent provider with an unusable fix before registering the request.
+            withTimeout(5_000) {
+                do {
+                    for (name in providers) reportFix(name, if (name in active) 20f else 0f)
+                    delay(50)
+                } while (providers.any { name ->
+                    val cached = manager.getLastKnownLocation(name)
+                    cached?.latitude != here.latitude || cached.accuracy != (if (name in active) 20f else 0f)
+                })
+            }
+            val report = { active.forEach { reportFix(it, 20f) } }
             block(PlatformFixSource(context, providerTimeoutMillis = 2_000), report)
         } finally {
             for (name in providers) runCatching { manager.removeTestProvider(name) }
