@@ -141,7 +141,11 @@ class OnlineGateDownloadsTest {
         firstStarted.await()
         val queued = launch { downloads.prefetch(listOf(second.id, opened.id)) }
         val tap = async { downloads.fetch(opened.id, day) }
-        withTimeout(5_000) { openedChecked.await() }
+        withTimeout(5_000) {
+            openedChecked.await()
+            downloads.weekStates.first { it[opened.id to day] == OnlineDownloadState.DOWNLOADING }
+        }
+        assertTrue(order.isEmpty())
         release.complete(Unit)
         assertTrue(tap.await())
         joinAll(first, queued)
@@ -166,6 +170,8 @@ class OnlineGateDownloadsTest {
         val downloads = service { attempts++; blocks = listOf(full.copy(start = now)) }
         assertFalse(downloads.fetch(gate.id, day))
         assertEquals(OnlineDownloadState.FAILED, downloads.weekStates.value[gate.id to day])
+        downloads.reconnected()
+        assertFalse(downloads.fetch(gate.id, day))
         assertEquals(1, attempts)
     }
 }

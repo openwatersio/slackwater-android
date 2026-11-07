@@ -33,7 +33,8 @@ internal class OnlineGateDownloads(
     private val transfer = Mutex()
     private val prefetchLane = Mutex()
     private val holds = ConcurrentHashMap<StationId, Mutex>()
-    private val failedDay = ConcurrentHashMap<StationId, LocalDate>()
+    private val failedWeeks = ConcurrentHashMap<Pair<StationId, LocalDate>, Failure>()
+    private enum class Failure { TRANSIENT, PERMANENT }
     private val refreshedDay = ConcurrentHashMap<StationId, LocalDate>()
     private val mutableStates = MutableStateFlow<Map<Pair<StationId, LocalDate>, OnlineDownloadState>>(emptyMap())
     val weekStates = mutableStates.asStateFlow()
@@ -43,8 +44,10 @@ internal class OnlineGateDownloads(
         mutableStates.update { if (state == null) it - key else it + (key to state) }
     }
 
-    private fun reconnected() {
-        failedDay.clear()
+    internal fun reconnected() {
+        for ((week, failure) in failedWeeks) {
+            if (failure == Failure.TRANSIENT) failedWeeks.remove(week, failure)
+        }
         mutableStates.update { states -> states.filterValues { it != OnlineDownloadState.OFFLINE } }
     }
 
@@ -60,22 +63,28 @@ internal class OnlineGateDownloads(
         val covered = coverage(id).firstOrNull { span.start in it && span.end in it }
         val quiet = covered != null && !manual
         if (covered != null && !manual && (!refresh || restricted.value || !online.value || refreshedDay[id] == day ||
-                covered.end >= anchor.plus(Duration.ofDays(30)).minus(Duration.ofHours(12)))) return Attempt.COVERED
+                covered.end >= anchor.plus(Duration.ofDays(30)).minus(Duration.ofHours(12)))) {
+            status(id, day, null)
+            return Attempt.COVERED
+        }
         if (!online.value) {
             status(id, day, OnlineDownloadState.OFFLINE)
             return if (covered == null) Attempt.UNAVAILABLE else Attempt.COVERED
         }
-        if (!manual && covered == null && failedDay[id] == day) return Attempt.UNAVAILABLE
+        if (!manual && covered == null && failedWeeks.containsKey(id to day)) {
+            status(id, day, OnlineDownloadState.FAILED)
+            return Attempt.UNAVAILABLE
+        }
         try {
+            if (!quiet) status(id, day, OnlineDownloadState.DOWNLOADING)
             transfer.withLock {
                 if (quiet) refreshedDay[id] = day
-                if (!quiet) status(id, day, OnlineDownloadState.DOWNLOADING)
                 download(station, anchor, clock().atZone(zone).toLocalDate().atStartOfDay(zone).toInstant())
             }
             if (coverage(id).none { span.start in it && span.end in it }) {
                 throw IwlsException.Permanent("Downloaded predictions do not cover this week")
             }
-            failedDay.remove(id)
+            failedWeeks.remove(id to day)
             status(id, day, null)
             return Attempt.COVERED
         } catch (cancelled: CancellationException) {
@@ -85,7 +94,7 @@ internal class OnlineGateDownloads(
             if (quiet) return Attempt.COVERED
             if (failure !is IwlsException && failure !is IOException) throw failure
             if (last || failure is IwlsException.Permanent) {
-                failedDay[id] = day
+                failedWeeks[id to day] = if (failure is IwlsException.Permanent) Failure.PERMANENT else Failure.TRANSIENT
                 status(id, day, OnlineDownloadState.FAILED)
                 return if (covered == null) Attempt.UNAVAILABLE else Attempt.COVERED
             }
@@ -111,6 +120,7 @@ internal class OnlineGateDownloads(
             suspend fun firstAttempt(): Attempt? {
                 active = pending.putIfAbsent(key, completion)
                 if (active != null) return null
+                if (!background && !refresh && hold.isLocked) status(id, day, OnlineDownloadState.DOWNLOADING)
                 return hold.withLock { attempt(station, day, manual, refresh, last = false) }
             }
             try {
@@ -136,7 +146,7 @@ internal class OnlineGateDownloads(
                 if (pending[key] === completion) status(id, day, null)
                 throw cancelled
             } catch (_: Exception) {
-                failedDay[id] = day
+                failedWeeks[id to day] = Failure.PERMANENT
                 status(id, day, OnlineDownloadState.FAILED)
                 result = false
                 return false
