@@ -25,6 +25,7 @@ internal class TidePreviewDownloads(
     private val catalog: StationCatalog,
     private val network: StateFlow<TideDownloadState?>,
     private val predictions: PredictionRepository,
+    private val networkRecovery: StateFlow<Long> = MutableStateFlow(0L),
     private val fetch: suspend (StationIdentity, Instant) -> List<TidePoint>,
 ) {
     private val lock = Mutex()
@@ -46,8 +47,8 @@ internal class TidePreviewDownloads(
                     val requested = intents.state.first().getOrThrow().previewRequested
                     for (id in jobs.keys.toList() - requested) stop(id)
                     for (id in requested - jobs.keys) {
-                        val station = liveStation(id) ?: continue
-                        start(station)
+                        val station = liveStation(id)
+                        if (station == null) intents.releasePreviews(listOf(id)) else start(station)
                     }
                 }
             }.retryAlertReads().collect()
@@ -120,6 +121,7 @@ internal class TidePreviewDownloads(
             }.distinctUntilChanged().collectLatest { paused ->
                 var backoff = 60_000L
                 while (true) {
+                    val recoveryAtStart = networkRecovery.value
                     try {
                         if (alreadyAvailable(id)) {
                             finish(id)
@@ -137,8 +139,8 @@ internal class TidePreviewDownloads(
                     } catch (_: IOException) {
                         activeStatus(id, TideDownloadState.RETRY)
                     }
-                    delay(backoff)
-                    backoff = (backoff * 2).coerceAtMost(15 * 60_000L)
+                    val recovered = withTimeoutOrNull(backoff) { networkRecovery.first { it != recoveryAtStart } } != null
+                    backoff = if (recovered) 60_000L else (backoff * 2).coerceAtMost(15 * 60_000L)
                 }
             }
         }
@@ -152,7 +154,11 @@ internal class TidePreviewDownloads(
             val app = context.applicationContext
             return shared ?: run {
                 val network = MutableStateFlow<TideDownloadState?>(TideDownloadState.WAITING_FOR_NETWORK)
-                watchDownloadNetwork(app) { online, restricted ->
+                val recovery = MutableStateFlow(0L)
+                var wasValidated = false
+                watchDownloadNetwork(app) { online, restricted, validated ->
+                    if (validated && !wasValidated) recovery.value++
+                    wasValidated = validated
                     network.value = when {
                         !online -> TideDownloadState.WAITING_FOR_NETWORK
                         restricted -> TideDownloadState.DATA_SAVER
@@ -161,7 +167,7 @@ internal class TidePreviewDownloads(
                 }
                 TidePreviewDownloads(CoroutineScope(SupervisorJob() + Dispatchers.IO),
                     UserStateStore.get(app).downloads, ModelStore.get(app), BundledStationCatalog(app.assets),
-                    network, AndroidPredictionRepository(app), IwlsTidePreviewSource(app.cacheDir)::fetch)
+                    network, AndroidPredictionRepository(app), recovery, IwlsTidePreviewSource(app.cacheDir)::fetch)
             }.also { shared = it }
         }
     }

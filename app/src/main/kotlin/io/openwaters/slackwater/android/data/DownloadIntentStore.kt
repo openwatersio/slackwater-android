@@ -5,6 +5,8 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.*
 import io.openwaters.slackwater.android.core.station.StationCatalog
 import io.openwaters.slackwater.android.core.station.StationId
+import io.openwaters.slackwater.android.core.station.StationKind
+import io.openwaters.slackwater.android.core.station.StationResolution
 import io.openwaters.slackwater.android.core.station.remapSavedIds
 import java.io.File
 import java.io.IOException
@@ -105,17 +107,25 @@ class DownloadIntentStore internal constructor(
     }
 
     companion object {
-        internal fun open(file: File, catalog: StationCatalog, scope: CoroutineScope): DownloadIntentStore {
+        internal fun open(
+            file: File, catalog: StationCatalog, scope: CoroutineScope,
+            gateReferences: () -> Set<StationId> = { emptySet() },
+        ): DownloadIntentStore {
             val migration = object : DataMigration<Preferences> {
                 override suspend fun shouldMigrate(currentData: Preferences) = true
                 override suspend fun migrate(currentData: Preferences): Preferences {
                     val previous = currentData.readIntent()
-                    val next = DownloadIntent(
-                        catalog.remapSavedIds(previous.requested.toList()).toSet(),
-                        catalog.remapSavedIds(previous.cancelled.toList()).toSet(),
-                        catalog.remapSavedIds(previous.previewRequested.toList()).toSet(),
-                    )
-                    if (next == previous) return currentData
+                    val requested = catalog.remapSavedIds(previous.requested.toList()).toSet()
+                    val legacy = !currentData.contains(previewRequestedKey)
+                    val previews = if (legacy && requested.isNotEmpty()) {
+                        // A gate requested its reference tide under the same ID as a direct tide download.
+                        val references = gateReferences()
+                        requested.filterTo(mutableSetOf()) { id ->
+                            id !in references && (catalog.resolve(id) as? StationResolution.Live)?.identity?.kind == StationKind.CanadianTide
+                        }
+                    } else catalog.remapSavedIds(previous.previewRequested.toList()).toSet()
+                    val next = DownloadIntent(requested, catalog.remapSavedIds(previous.cancelled.toList()).toSet(), previews)
+                    if (!legacy && next == previous) return currentData
                     return currentData.toMutablePreferences().apply { storeIntent(next) }
                 }
                 override suspend fun cleanUp() = Unit

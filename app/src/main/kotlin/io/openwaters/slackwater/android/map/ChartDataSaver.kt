@@ -13,10 +13,10 @@ import androidx.core.content.ContextCompat
 
 /** The process-wide pack manager can keep downloading after its activity stops. */
 internal fun watchChartDataSaver(context: Context, update: (Boolean) -> Unit) {
-    watchDownloadNetwork(context) { _, restricted -> update(restricted) }
+    watchDownloadNetwork(context) { _, restricted, _ -> update(restricted) }
 }
 
-internal fun watchDownloadNetwork(context: Context, update: (online: Boolean, restricted: Boolean) -> Unit) {
+internal fun watchDownloadNetwork(context: Context, update: (online: Boolean, restricted: Boolean, validated: Boolean) -> Unit) {
     val connectivity = context.getSystemService(ConnectivityManager::class.java) ?: return
     val main = Handler(Looper.getMainLooper())
     var network = connectivity.activeNetwork
@@ -29,7 +29,8 @@ internal fun watchDownloadNetwork(context: Context, update: (online: Boolean, re
         val restricted = connectivity.restrictBackgroundStatus == ConnectivityManager.RESTRICT_BACKGROUND_STATUS_ENABLED &&
             (blocked || !unmetered)
         val internet = capabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) == true
-        update(internet && (!blocked || restricted), restricted)
+        update(internet && (!blocked || restricted), restricted,
+            capabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED) == true && !blocked)
     }
     connectivity.registerDefaultNetworkCallback(object : ConnectivityManager.NetworkCallback() {
         override fun onAvailable(available: Network) {

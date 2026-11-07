@@ -139,7 +139,7 @@ class UserStateStoreTest {
         withScope { scope ->
             val store = UserStateStore.open(file, catalog, scope).downloads
             val migrated = store.state.first().getOrThrow()
-            assertTrue(migrated.previewRequested.isEmpty())
+            assertEquals(setOf(millBay), migrated.previewRequested)
             assertEquals(setOf(millBay), migrated.requested)
             assertEquals(setOf(millBay, other), migrated.cancelled)
             assertTrue(migrated.allowsRestore(millBay, ready = false))
@@ -157,6 +157,32 @@ class UserStateStoreTest {
             assertEquals(setOf(millBay), store.state.first().getOrThrow().previewRequested)
             store.releasePreviews(listOf(former))
             assertEquals(DownloadIntent(), store.state.first().getOrThrow())
+        }
+    }
+
+    @Test fun legacyDirectTidesEnrollOnceWhileGateReferencesKeepOnlyTheirFitRequest() = withFile { file ->
+        val direct = StationId("chs-mill-bay")
+        val paired = StationId("chs-point-atkinson")
+        val later = StationId("chs-fulford-harbour")
+        withScope { scope ->
+            val raw = PreferenceDataStoreFactory.create(scope = scope) {
+                File(file.parentFile, file.nameWithoutExtension + ".downloads.preferences_pb")
+            }
+            raw.edit { it[androidx.datastore.preferences.core.stringSetPreferencesKey("requested")] = setOf(direct.value, paired.value) }
+        }
+        fun open(scope: CoroutineScope) = UserStateStore.open(file, catalog, scope) { derivedGatesByReference(context.assets).keys }.downloads
+        withScope { scope ->
+            val store = open(scope)
+            val migrated = store.state.first().getOrThrow()
+            assertEquals(setOf(direct, paired), migrated.requested)
+            assertEquals(setOf(direct), migrated.previewRequested)
+            store.requestPreviews(listOf(paired))
+            assertEquals(setOf(direct, paired), store.state.first().getOrThrow().previewRequested)
+            store.releasePreviews(listOf(direct, paired))
+            store.requestDownloads(listOf(later))
+        }
+        withScope { scope ->
+            assertEquals(DownloadIntent(requested = setOf(direct, paired, later)), open(scope).state.first().getOrThrow())
         }
     }
 

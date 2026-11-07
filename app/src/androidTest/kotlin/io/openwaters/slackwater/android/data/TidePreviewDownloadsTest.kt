@@ -8,6 +8,7 @@ import androidx.datastore.preferences.core.stringSetPreferencesKey
 import androidx.test.platform.app.InstrumentationRegistry
 import io.openwaters.slackwater.TidePoint
 import io.openwaters.slackwater.android.core.station.StationId
+import io.openwaters.slackwater.iwls.IwlsException
 import java.io.File
 import java.time.Instant
 import java.util.UUID
@@ -77,6 +78,23 @@ class TidePreviewDownloadsTest {
         Unit
     }
 
+    @Test fun newlyValidatedNetworkWakesTransientBackoff() = withQueue { worker, catalog, store, models ->
+        val recovery = MutableStateFlow(0L)
+        val calls = AtomicInteger()
+        val queue = TidePreviewDownloads(worker, store, models, catalog, MutableStateFlow(null),
+            AndroidPredictionRepository(context, models), recovery) { _, _ ->
+            if (calls.incrementAndGet() == 1) throw IwlsException.Transient("No route")
+            points
+        }
+        queue.activityStarted()
+        queue.request(station)
+        queue.states.first { it[station] == TideDownloadState.RETRY }
+        recovery.value++
+        queue.states.first { it.isEmpty() }
+        assertEquals(2, calls.get())
+        assertTrue(models.read(station, ModelKind.TIDE_PREVIEW) is StoredModel.Ready)
+    }
+
     @Test fun restoredRequestWaitsForAllowedNetworkAndPublishesPreview() = withQueue { worker, catalog, store, models ->
         store.requestDownloads(listOf(station))
         store.requestPreviews(listOf(station))
@@ -99,6 +117,22 @@ class TidePreviewDownloadsTest {
         assertEquals(2.5, record.getJSONArray("samples").getJSONObject(1).getDouble("height"), 0.0)
         assertEquals(StoredModel.Missing, models.read(station, ModelKind.TIDE))
         assertEquals(1, calls.get())
+    }
+
+    @Test fun withdrawnAndUnknownPreviewsReleaseOnlyTheirOwnRequest() = withQueue { worker, catalog, store, models ->
+        val ids = setOf(StationId("chs-aulatsivik-point"), StationId("missing-station"))
+        store.requestDownloads(ids)
+        store.requestPreviews(ids)
+        val calls = AtomicInteger()
+        val queue = TidePreviewDownloads(worker, store, models, catalog, MutableStateFlow(null),
+            AndroidPredictionRepository(context, models)) { _, _ ->
+            calls.incrementAndGet()
+            points
+        }
+        queue.activityStarted()
+        val restored = store.state.first { it.getOrThrow().previewRequested.isEmpty() }.getOrThrow()
+        assertEquals(ids, restored.requested)
+        assertEquals(0, calls.get())
     }
 
     @Test fun cancellationDuringFetchPreservesOldPreviewAndExplicitRetryResumes() = withQueue { worker, catalog, store, models ->
