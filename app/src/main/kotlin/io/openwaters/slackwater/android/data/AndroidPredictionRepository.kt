@@ -46,7 +46,7 @@ class AndroidPredictionRepository(
                 catalogRecord = gate.toString()
             }
             StationKind.CanadianCurrent -> {
-                val gate = gates[id] ?: return "missing-current:${id.value}"
+                val gate = gates.catalogRecord(id) ?: return "missing-current:${id.value}"
                 reference = id
                 kind = ModelKind.CURRENT
                 catalogRecord = "${ChsCurrentFit.STAMP}:$gate"

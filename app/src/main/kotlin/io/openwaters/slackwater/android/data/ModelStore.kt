@@ -23,6 +23,7 @@ import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.update
@@ -151,7 +152,7 @@ class ModelStore internal constructor(
     }
 
     private suspend fun removeObsolete(id: StationId, kind: ModelKind) {
-        if (fileFor(id, kind).exists()) {
+        if (fileFor(id, kind).isFile) {
             invalidate(id, kind)
             delete(id, kind)
         }
@@ -192,7 +193,7 @@ class ModelStore internal constructor(
         syncDirectory()
     }
 
-    /** Stations with a file of [kind], whether or not it is readable. */
+    /** Stations with a catalog-permitted file of [kind], including unreadable records. */
     suspend fun storedIds(kind: ModelKind): Set<StationId> = withContext(Dispatchers.IO) {
         idsOnDisk(kind).filterTo(mutableSetOf()) { permitted(it, kind) }
     }
@@ -274,7 +275,9 @@ class ModelStore internal constructor(
             }.also { store ->
                 shared = store
                 scope.launch {
-                    flow { emit(store.reconcileCurrentTiers()) }.retryAlertReads().collect {}
+                    flow { emit(store.reconcileCurrentTiers()) }.retryAlertReads()
+                        .catch { android.util.Log.e("ModelStore", "Could not reconcile current gate caches", it) }
+                        .collect {}
                 }
             }
         }

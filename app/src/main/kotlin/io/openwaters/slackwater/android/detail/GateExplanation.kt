@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import io.openwaters.slackwater.android.R
 import io.openwaters.slackwater.android.core.prediction.CurrentGateEvidence
 import io.openwaters.slackwater.android.core.station.SpeedUnitKind
@@ -16,7 +15,6 @@ import io.openwaters.slackwater.android.map.unitLabel
 internal fun GateExplanation(gate: CurrentGateEvidence?, unit: SpeedUnit) {
     if (gate == null) return
     if (gate.online) Text(gate.onlineExplanation(LocalContext.current, unit))
-    gate.magnitudeNote?.let { Text(stringResource(R.string.detail_context, it)) }
 }
 
 internal fun CurrentGateEvidence.onlineExplanation(context: Context, unit: SpeedUnit): String {

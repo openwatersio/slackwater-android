@@ -74,6 +74,7 @@ class DetailConformanceTest {
         try {
             runBlocking { store.write(id, ModelKind.TIDE, JSONObject("""{"offset":1.387,"constituents":[{"name":"M2","amplitude":1.5,"phase":10}]}""")) }
             scene("derived", "chs-malibu-rapids")
+            compose.onNodeWithText(context.getString(io.openwaters.slackwater.android.R.string.detail_context, "9 kn flood & ebb")).assertExists()
         } finally {
             runBlocking {
                 if (previous is StoredModel.Ready) store.write(id, ModelKind.TIDE, previous.record)

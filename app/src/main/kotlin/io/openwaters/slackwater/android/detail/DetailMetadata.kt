@@ -18,7 +18,7 @@ internal data class DetailMetadata(
     val route: String?, val pairedTide: StationId?, val reference: String?,
     val credit: String?, val gate: CurrentGateEvidence?, val datum: String?,
     val highLag: Int?, val lowLag: Int?, val meanFlow: Double?,
-    val publisher: String?, val flood: Double?,
+    val publisher: String?, val flood: Double?, val magnitudeNote: String?,
 )
 
 internal class DetailRecords(private val assets: AssetManager) {
@@ -65,7 +65,8 @@ internal class DetailRecords(private val assets: AssetManager) {
             row?.takeIf { it.has("hwLagMinutes") }?.getInt("hwLagMinutes"),
             row?.takeIf { it.has("lwLagMinutes") }?.getInt("lwLagMinutes"),
             row?.takeIf { it.has("meanFlow") }?.getDouble("meanFlow"), record?.source?.name,
-            row?.takeIf { it.has("floodDirection") }?.getDouble("floodDirection"))
+            row?.takeIf { it.has("floodDirection") }?.getDouble("floodDirection"),
+            gate?.magnitudeNote ?: row?.optString("magnitudeNote")?.takeIf(String::isNotBlank))
     }
 }
 

@@ -11,10 +11,14 @@ import org.json.JSONObject
 internal class BundledCurrentGates(private val assets: AssetManager) {
     private val records by lazy {
         val rows = assets.open("slackwater/chs-current-gates.json").bufferedReader().use { JSONArray(it.readText()) }
-        (0 until rows.length()).map { rows.getJSONObject(it).toGateEvidence() }.associateBy { it.id }
+        (0 until rows.length()).map(rows::getJSONObject).associateBy { StationId(it.getString("id")) }
     }
 
-    operator fun get(id: StationId): CurrentGateEvidence? = records[id]
+    private val evidence by lazy { records.mapValues { (_, row) -> row.toGateEvidence() } }
+
+    operator fun get(id: StationId): CurrentGateEvidence? = evidence[id]
+
+    fun catalogRecord(id: StationId): String? = records[id]?.toString()
 }
 
 private fun JSONObject.toGateEvidence() = CurrentGateEvidence(

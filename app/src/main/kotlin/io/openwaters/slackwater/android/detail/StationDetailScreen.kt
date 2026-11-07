@@ -258,6 +258,7 @@ private fun DetailContent(station: StationIdentity, detail: LoadedDetail, prefs:
         DetailSummary(station, timeline, prefs, repository, metadata?.pairedTide?.let { StationListModel.get(LocalContext.current).catalog.collectAsState().value?.byId?.get(it)?.name },
             cap == StationCapabilities.PROVISIONAL_CURRENT || cap == StationCapabilities.BOUNDED_CURRENT)
         GateExplanation(metadata?.gate, prefs.speedUnit)
+        metadata?.magnitudeNote?.let { Text(stringResource(R.string.detail_context, it)) }
         related()
         Box(scheduleModifier.fillMaxWidth()) {
             DetailSchedule(station, timeline, prefs, repository, revision) { pick(state.anchor) }
@@ -271,6 +272,7 @@ private fun MissingPredictions(station: StationIdentity, metadata: DetailMetadat
                                repository: PredictionRepository, now: Instant, prefs: ReadingPreferences, open: (StationId) -> Unit) {
     Text(stringResource(if (metadata?.gate?.online == true) R.string.detail_no_week else R.string.detail_no_data))
     GateExplanation(metadata?.gate, prefs.speedUnit)
+    metadata?.magnitudeNote?.let { Text(stringResource(R.string.detail_context, it)) }
     if (station.kind == StationKind.CanadianTide) {
         TideDownloadControls(station.id, model)
     } else if (station.kind == StationKind.CanadianCurrent || station.kind == StationKind.DerivedGate) {
