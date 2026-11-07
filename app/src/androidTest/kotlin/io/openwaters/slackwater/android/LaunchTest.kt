@@ -31,6 +31,20 @@ class LaunchTest {
 
     @Test fun engineAndAstronomyMatchFixtures() { FixtureSmoke.verify() }
 
+    @Test fun opensDownloadsAndCanKeepChartPacks() {
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        val model = io.openwaters.slackwater.android.stations.StationListModel.get(context)
+        compose.waitUntil(60_000) { model.state.value != null }
+        val downloads = context.getString(R.string.chart_downloads)
+        compose.onNode(hasScrollAction()).performScrollToNode(hasText(downloads))
+        compose.onNodeWithText(downloads).performClick()
+        compose.onNodeWithText(context.getString(R.string.chart_offline)).assertIsDisplayed()
+        compose.onNodeWithText(context.getString(R.string.chart_remove)).performClick()
+        compose.onNodeWithText(context.getString(R.string.chart_remove_question)).assertIsDisplayed()
+        compose.onNodeWithText(context.getString(R.string.alert_cancel)).performClick()
+        compose.onNodeWithText(context.getString(R.string.chart_offline)).assertIsDisplayed()
+    }
+
     @Test fun readsBundledCredits() {
         // The catalog loads once per process; on a cold emulator that can take most of a minute.
         val nearMe = InstrumentationRegistry.getInstrumentation().targetContext.getString(R.string.list_near_me)

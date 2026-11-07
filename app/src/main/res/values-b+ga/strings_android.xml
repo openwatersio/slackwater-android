@@ -300,4 +300,20 @@
     <string name="map_units_legend">"Taoidí in %1$s. Sruthanna in %2$s. Ní le haghaidh loingseoireachta. Socruithe cairte."</string>
     <string name="map_zoom_out">"Zúmáil amach"</string>
     <string name="map_zoom_in">"Zúmáil isteach"</string>
+    <string name="chart_downloads">"Íoslódálacha"</string>
+    <string name="chart_offline">"Cairt as líne"</string>
+    <string name="chart_coverage">"Léarscáil an domhain, ceantair in aice láimhe agus stáisiúin shábháilte"</string>
+    <string name="chart_ready_count">"Ceantair réidh: %1$d as %2$d"</string>
+    <string name="chart_pause">"Cuir ar sos"</string>
+    <string name="chart_resume">"Lean ar aghaidh"</string>
+    <string name="chart_remove">"Bain na pacáistí cairte"</string>
+    <string name="chart_remove_question">"Bain na ceantair chairte a íoslódáladh?"</string>
+    <string name="chart_removed">"Baineadh na pacáistí cairte"</string>
+    <string name="chart_paused">"Íoslódálacha ar sos"</string>
+    <string name="chart_storage">"Níl an stóras ar fáil"</string>
+    <string name="chart_quota">"Baineadh teorainn na dtíleanna amach"</string>
+    <string name="chart_failed">"Theip ar an íoslódáil"</string>
+    <string name="chart_data_saver">"Tá na híoslódálacha ar sos mar gheall ar an modh sábhála sonraí"</string>
+    <string name="chart_inputs_unavailable">"Níl cuid den eolas faoi na stáisiúin shábháilte ar fáil"</string>
+    <string name="chart_area_bytes">"%1$s san iomlán do na ceantair chairte"</string>
 </resources>

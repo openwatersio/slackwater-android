@@ -293,5 +293,21 @@
   "map_fix_missing": "Chan eil an suidheachadh ri fhaighinn",
   "map_units_legend": "Làn-mara ann an %1$s. Sruthan ann an %2$s. Chan ann airson seòladh. Roghainnean a’ chlàir.",
   "map_zoom_out": "Sùm a-mach",
-  "map_zoom_in": "Sùm a-steach"
+  "map_zoom_in": "Sùm a-steach",
+  "chart_downloads": "Luchdaidhean a-nuas",
+  "chart_offline": "Cairt far loidhne",
+  "chart_coverage": "Mapa an t-saoghail, sgìrean faisg ort agus stèiseanan a chaidh a shàbhaladh",
+  "chart_ready_count": "Sgìrean deiseil: %1$d à %2$d",
+  "chart_pause": "Cuir air stad",
+  "chart_resume": "Lean air adhart",
+  "chart_remove": "Thoir air falbh pacaidean chairtean",
+  "chart_remove_question": "A bheil thu airson na sgìrean a chaidh a luchdadh a-nuas a thoirt air falbh?",
+  "chart_removed": "Chaidh pacaidean nan cairtean a thoirt air falbh",
+  "chart_paused": "Tha na luchdaidhean a-nuas air stad",
+  "chart_storage": "Chan eil an stòras ri làimh",
+  "chart_quota": "Ràinig thu crìoch nan leacagan",
+  "chart_failed": "Dh’fhàillig an luchdadh a-nuas",
+  "chart_data_saver": "Tha na luchdaidhean a-nuas air stad gus dàta a chaomhnadh",
+  "chart_inputs_unavailable": "Chan eil cuid den fhiosrachadh mu na stèiseanan a chaidh a shàbhaladh ri fhaighinn",
+  "chart_area_bytes": "%1$s gu h-iomlan airson nan sgìrean air a’ chairt"
 }

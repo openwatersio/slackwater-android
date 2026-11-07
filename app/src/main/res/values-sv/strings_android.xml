@@ -288,4 +288,20 @@
     <string name="map_units_legend">"Tidvatten i %1$s. Strömmar i %2$s. Inte för navigering. Diagraminställningar."</string>
     <string name="map_zoom_out">"Zooma ut"</string>
     <string name="map_zoom_in">"Zooma in"</string>
+    <string name="chart_downloads">"Hämtningar"</string>
+    <string name="chart_offline">"Sjökort för offlinebruk"</string>
+    <string name="chart_coverage">"Världskarta, närområden och sparade stationer"</string>
+    <string name="chart_ready_count">"%1$d av %2$d områden klara"</string>
+    <string name="chart_pause">"Pausa"</string>
+    <string name="chart_resume">"Återuppta"</string>
+    <string name="chart_remove">"Ta bort sjökortspaket"</string>
+    <string name="chart_remove_question">"Ta bort hämtade sjökortsområden?"</string>
+    <string name="chart_removed">"Sjökortspaket borttagna"</string>
+    <string name="chart_paused">"Hämtningar pausade"</string>
+    <string name="chart_storage">"Lagring är inte tillgänglig"</string>
+    <string name="chart_quota">"Gränsen för kartrutor har nåtts"</string>
+    <string name="chart_failed">"Hämtningen misslyckades"</string>
+    <string name="chart_data_saver">"Databesparing har pausat hämtningarna"</string>
+    <string name="chart_inputs_unavailable">"Vissa uppgifter om sparade stationer är inte tillgängliga"</string>
+    <string name="chart_area_bytes">"Totalt %1$s för sjökortets områden"</string>
 </resources>

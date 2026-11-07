@@ -288,4 +288,20 @@
     <string name="map_units_legend">"Getijden in %1$s. Stromingen in %2$s. Niet voor navigatie. Grafiekinstellingen."</string>
     <string name="map_zoom_out">"Uitzoomen"</string>
     <string name="map_zoom_in">"Inzoomen"</string>
+    <string name="chart_downloads">"Downloads"</string>
+    <string name="chart_offline">"Offlinekaart"</string>
+    <string name="chart_coverage">"Wereldkaart, nabijgelegen gebieden en opgeslagen stations"</string>
+    <string name="chart_ready_count">"%1$d van %2$d gebieden gereed"</string>
+    <string name="chart_pause">"Pauzeren"</string>
+    <string name="chart_resume">"Hervatten"</string>
+    <string name="chart_remove">"Kaartpakketten verwijderen"</string>
+    <string name="chart_remove_question">"Gedownloade kaartgebieden verwijderen?"</string>
+    <string name="chart_removed">"Kaartpakketten verwijderd"</string>
+    <string name="chart_paused">"Downloads gepauzeerd"</string>
+    <string name="chart_storage">"Opslag niet beschikbaar"</string>
+    <string name="chart_quota">"Limiet voor kaarttegels bereikt"</string>
+    <string name="chart_failed">"Download mislukt"</string>
+    <string name="chart_data_saver">"Downloads gepauzeerd door Databesparing"</string>
+    <string name="chart_inputs_unavailable">"Sommige gegevens van opgeslagen stations zijn niet beschikbaar"</string>
+    <string name="chart_area_bytes">"%1$s in totaal voor alle kaartgebieden"</string>
 </resources>

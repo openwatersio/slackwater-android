@@ -288,4 +288,20 @@
     <string name="map_units_legend">"Gezeiten in %1$s. Strömungen in %2$s. Nicht zur Navigation. Diagrammeinstellungen."</string>
     <string name="map_zoom_out">"Verkleinern"</string>
     <string name="map_zoom_in">"Vergrößern"</string>
+    <string name="chart_downloads">"Downloads"</string>
+    <string name="chart_offline">"Offline-Karte"</string>
+    <string name="chart_coverage">"Weltkarte, umliegende Gebiete und gespeicherte Stationen"</string>
+    <string name="chart_ready_count">"%1$d von %2$d Gebieten bereit"</string>
+    <string name="chart_pause">"Pausieren"</string>
+    <string name="chart_resume">"Fortsetzen"</string>
+    <string name="chart_remove">"Kartenpakete entfernen"</string>
+    <string name="chart_remove_question">"Heruntergeladene Kartengebiete entfernen?"</string>
+    <string name="chart_removed">"Kartenpakete entfernt"</string>
+    <string name="chart_paused">"Downloads pausiert"</string>
+    <string name="chart_storage">"Speicher nicht verfügbar"</string>
+    <string name="chart_quota">"Limit für Kartenkacheln erreicht"</string>
+    <string name="chart_failed">"Download fehlgeschlagen"</string>
+    <string name="chart_data_saver">"Downloads durch den Datensparmodus pausiert"</string>
+    <string name="chart_inputs_unavailable">"Einige Angaben zu gespeicherten Stationen sind nicht verfügbar"</string>
+    <string name="chart_area_bytes">"%1$s insgesamt für die Kartengebiete"</string>
 </resources>

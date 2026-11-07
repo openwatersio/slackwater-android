@@ -285,5 +285,21 @@
   "map_fix_missing": "Location unavailable",
   "map_units_legend": "Tides in %1$s. Currents in %2$s. Not for navigation. Chart settings.",
   "map_zoom_out": "Zoom out",
-  "map_zoom_in": "Zoom in"
+  "map_zoom_in": "Zoom in",
+  "chart_downloads": "Downloads",
+  "chart_offline": "Offline chart",
+  "chart_coverage": "World, nearby areas, and saved stations",
+  "chart_ready_count": "%1$d of %2$d areas ready",
+  "chart_pause": "Pause",
+  "chart_resume": "Resume",
+  "chart_remove": "Remove chart packs",
+  "chart_remove_question": "Remove downloaded chart areas?",
+  "chart_removed": "Chart packs removed",
+  "chart_paused": "Downloads paused",
+  "chart_storage": "Storage unavailable",
+  "chart_quota": "Tile limit reached",
+  "chart_failed": "Download failed",
+  "chart_data_saver": "Downloads paused by Data Saver",
+  "chart_inputs_unavailable": "Some saved station information is unavailable",
+  "chart_area_bytes": "%1$s across chart areas"
 }

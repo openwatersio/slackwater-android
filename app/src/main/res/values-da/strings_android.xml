@@ -288,4 +288,20 @@
     <string name="map_units_legend">"Tidevand i %1$s. Strøm i %2$s. Ikke til navigation. Diagramindstillinger."</string>
     <string name="map_zoom_out">"Zoom ud"</string>
     <string name="map_zoom_in">"Zoom ind"</string>
+    <string name="chart_downloads">"Downloads"</string>
+    <string name="chart_offline">"Offlinekort"</string>
+    <string name="chart_coverage">"Verden, nærliggende områder og gemte stationer"</string>
+    <string name="chart_ready_count">"%1$d af %2$d områder er klar"</string>
+    <string name="chart_pause">"Sæt på pause"</string>
+    <string name="chart_resume">"Fortsæt"</string>
+    <string name="chart_remove">"Fjern kortpakker"</string>
+    <string name="chart_remove_question">"Fjern downloadede kortområder?"</string>
+    <string name="chart_removed">"Kortpakker fjernet"</string>
+    <string name="chart_paused">"Downloads sat på pause"</string>
+    <string name="chart_storage">"Lagerplads utilgængelig"</string>
+    <string name="chart_quota">"Grænsen for kortfelter er nået"</string>
+    <string name="chart_failed">"Download mislykkedes"</string>
+    <string name="chart_data_saver">"Downloads er sat på pause af Datasparefunktion"</string>
+    <string name="chart_inputs_unavailable">"Nogle oplysninger om gemte stationer er ikke tilgængelige"</string>
+    <string name="chart_area_bytes">"%1$s i alt for kortområderne"</string>
 </resources>

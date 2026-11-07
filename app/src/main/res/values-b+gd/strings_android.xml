@@ -296,4 +296,20 @@
     <string name="map_units_legend">"Làn-mara ann an %1$s. Sruthan ann an %2$s. Chan ann airson seòladh. Roghainnean a’ chlàir."</string>
     <string name="map_zoom_out">"Sùm a-mach"</string>
     <string name="map_zoom_in">"Sùm a-steach"</string>
+    <string name="chart_downloads">"Luchdaidhean a-nuas"</string>
+    <string name="chart_offline">"Cairt far loidhne"</string>
+    <string name="chart_coverage">"Mapa an t-saoghail, sgìrean faisg ort agus stèiseanan a chaidh a shàbhaladh"</string>
+    <string name="chart_ready_count">"Sgìrean deiseil: %1$d à %2$d"</string>
+    <string name="chart_pause">"Cuir air stad"</string>
+    <string name="chart_resume">"Lean air adhart"</string>
+    <string name="chart_remove">"Thoir air falbh pacaidean chairtean"</string>
+    <string name="chart_remove_question">"A bheil thu airson na sgìrean a chaidh a luchdadh a-nuas a thoirt air falbh?"</string>
+    <string name="chart_removed">"Chaidh pacaidean nan cairtean a thoirt air falbh"</string>
+    <string name="chart_paused">"Tha na luchdaidhean a-nuas air stad"</string>
+    <string name="chart_storage">"Chan eil an stòras ri làimh"</string>
+    <string name="chart_quota">"Ràinig thu crìoch nan leacagan"</string>
+    <string name="chart_failed">"Dh’fhàillig an luchdadh a-nuas"</string>
+    <string name="chart_data_saver">"Tha na luchdaidhean a-nuas air stad gus dàta a chaomhnadh"</string>
+    <string name="chart_inputs_unavailable">"Chan eil cuid den fhiosrachadh mu na stèiseanan a chaidh a shàbhaladh ri fhaighinn"</string>
+    <string name="chart_area_bytes">"%1$s gu h-iomlan airson nan sgìrean air a’ chairt"</string>
 </resources>

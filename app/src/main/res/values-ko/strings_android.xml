@@ -288,4 +288,20 @@
     <string name="map_units_legend">"조석 단위: %1$s. 조류 단위: %2$s. 항해용으로 사용 금지. 차트 설정."</string>
     <string name="map_zoom_out">"축소"</string>
     <string name="map_zoom_in">"확대"</string>
+    <string name="chart_downloads">"다운로드"</string>
+    <string name="chart_offline">"오프라인 해도"</string>
+    <string name="chart_coverage">"세계 지도, 주변 해역 및 저장한 관측소"</string>
+    <string name="chart_ready_count">"영역 준비 완료: %1$d/%2$d"</string>
+    <string name="chart_pause">"일시 중지"</string>
+    <string name="chart_resume">"재개"</string>
+    <string name="chart_remove">"해도 팩 삭제"</string>
+    <string name="chart_remove_question">"다운로드한 해도 영역을 삭제할까요?"</string>
+    <string name="chart_removed">"해도 팩을 삭제했습니다"</string>
+    <string name="chart_paused">"다운로드 일시 중지됨"</string>
+    <string name="chart_storage">"저장 공간을 사용할 수 없음"</string>
+    <string name="chart_quota">"지도 타일 수 한도에 도달함"</string>
+    <string name="chart_failed">"다운로드 실패"</string>
+    <string name="chart_data_saver">"데이터 절약 모드로 인해 다운로드가 일시 중지되었습니다"</string>
+    <string name="chart_inputs_unavailable">"저장한 관측소의 정보 중 일부를 사용할 수 없습니다"</string>
+    <string name="chart_area_bytes">"해도 영역 합계: %1$s"</string>
 </resources>

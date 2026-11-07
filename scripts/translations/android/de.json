@@ -285,5 +285,21 @@
   "map_fix_missing": "Standort nicht verfügbar",
   "map_units_legend": "Gezeiten in %1$s. Strömungen in %2$s. Nicht zur Navigation. Diagrammeinstellungen.",
   "map_zoom_out": "Verkleinern",
-  "map_zoom_in": "Vergrößern"
+  "map_zoom_in": "Vergrößern",
+  "chart_downloads": "Downloads",
+  "chart_offline": "Offline-Karte",
+  "chart_coverage": "Weltkarte, umliegende Gebiete und gespeicherte Stationen",
+  "chart_ready_count": "%1$d von %2$d Gebieten bereit",
+  "chart_pause": "Pausieren",
+  "chart_resume": "Fortsetzen",
+  "chart_remove": "Kartenpakete entfernen",
+  "chart_remove_question": "Heruntergeladene Kartengebiete entfernen?",
+  "chart_removed": "Kartenpakete entfernt",
+  "chart_paused": "Downloads pausiert",
+  "chart_storage": "Speicher nicht verfügbar",
+  "chart_quota": "Limit für Kartenkacheln erreicht",
+  "chart_failed": "Download fehlgeschlagen",
+  "chart_data_saver": "Downloads durch den Datensparmodus pausiert",
+  "chart_inputs_unavailable": "Einige Angaben zu gespeicherten Stationen sind nicht verfügbar",
+  "chart_area_bytes": "%1$s insgesamt für die Kartengebiete"
 }

@@ -288,4 +288,20 @@
     <string name="map_units_legend">"潮汐の単位：%1$s。潮流の単位：%2$s。航海には使用できません。グラフ設定。"</string>
     <string name="map_zoom_out">"縮小"</string>
     <string name="map_zoom_in">"拡大"</string>
+    <string name="chart_downloads">"ダウンロード"</string>
+    <string name="chart_offline">"オフライン海図"</string>
+    <string name="chart_coverage">"世界地図、周辺エリア、保存済みの観測所"</string>
+    <string name="chart_ready_count">"準備完了：%1$d / %2$d エリア"</string>
+    <string name="chart_pause">"一時停止"</string>
+    <string name="chart_resume">"再開"</string>
+    <string name="chart_remove">"海図パックを削除"</string>
+    <string name="chart_remove_question">"ダウンロードした海図エリアを削除しますか？"</string>
+    <string name="chart_removed">"海図パックを削除しました"</string>
+    <string name="chart_paused">"ダウンロードを一時停止しました"</string>
+    <string name="chart_storage">"ストレージを使用できません"</string>
+    <string name="chart_quota">"地図タイル数の上限に達しました"</string>
+    <string name="chart_failed">"ダウンロードに失敗しました"</string>
+    <string name="chart_data_saver">"データセーバーによりダウンロードを一時停止しています"</string>
+    <string name="chart_inputs_unavailable">"保存済みの観測所に関する情報の一部を利用できません"</string>
+    <string name="chart_area_bytes">"海図エリアの合計：%1$s"</string>
 </resources>

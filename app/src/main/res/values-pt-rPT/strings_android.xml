@@ -292,4 +292,20 @@
     <string name="map_units_legend">"Marés em %1$s. Correntes em %2$s. Não usar para navegação. Definições do gráfico."</string>
     <string name="map_zoom_out">"Reduzir zoom"</string>
     <string name="map_zoom_in">"Ampliar"</string>
+    <string name="chart_downloads">"Transferências"</string>
+    <string name="chart_offline">"Carta offline"</string>
+    <string name="chart_coverage">"Mapa-múndi, áreas próximas e estações guardadas"</string>
+    <string name="chart_ready_count">"Áreas prontas: %1$d de %2$d"</string>
+    <string name="chart_pause">"Pausar"</string>
+    <string name="chart_resume">"Retomar"</string>
+    <string name="chart_remove">"Remover pacotes de cartas"</string>
+    <string name="chart_remove_question">"Remover as áreas da carta transferidas?"</string>
+    <string name="chart_removed">"Pacotes de cartas removidos"</string>
+    <string name="chart_paused">"Transferências em pausa"</string>
+    <string name="chart_storage">"Armazenamento indisponível"</string>
+    <string name="chart_quota">"Limite de mosaicos do mapa atingido"</string>
+    <string name="chart_failed">"Falha na transferência"</string>
+    <string name="chart_data_saver">"Transferências em pausa devido à poupança de dados"</string>
+    <string name="chart_inputs_unavailable">"Algumas informações sobre as estações guardadas não estão disponíveis"</string>
+    <string name="chart_area_bytes">"%1$s no total nas áreas da carta"</string>
 </resources>

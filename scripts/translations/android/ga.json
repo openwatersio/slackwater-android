@@ -297,5 +297,21 @@
   "map_fix_missing": "Suíomh gan fáil",
   "map_units_legend": "Taoidí in %1$s. Sruthanna in %2$s. Ní le haghaidh loingseoireachta. Socruithe cairte.",
   "map_zoom_out": "Zúmáil amach",
-  "map_zoom_in": "Zúmáil isteach"
+  "map_zoom_in": "Zúmáil isteach",
+  "chart_downloads": "Íoslódálacha",
+  "chart_offline": "Cairt as líne",
+  "chart_coverage": "Léarscáil an domhain, ceantair in aice láimhe agus stáisiúin shábháilte",
+  "chart_ready_count": "Ceantair réidh: %1$d as %2$d",
+  "chart_pause": "Cuir ar sos",
+  "chart_resume": "Lean ar aghaidh",
+  "chart_remove": "Bain na pacáistí cairte",
+  "chart_remove_question": "Bain na ceantair chairte a íoslódáladh?",
+  "chart_removed": "Baineadh na pacáistí cairte",
+  "chart_paused": "Íoslódálacha ar sos",
+  "chart_storage": "Níl an stóras ar fáil",
+  "chart_quota": "Baineadh teorainn na dtíleanna amach",
+  "chart_failed": "Theip ar an íoslódáil",
+  "chart_data_saver": "Tá na híoslódálacha ar sos mar gheall ar an modh sábhála sonraí",
+  "chart_inputs_unavailable": "Níl cuid den eolas faoi na stáisiúin shábháilte ar fáil",
+  "chart_area_bytes": "%1$s san iomlán do na ceantair chairte"
 }
