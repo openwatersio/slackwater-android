@@ -87,21 +87,34 @@ class ChartPackChangesTest {
         val candidates = (1..100).map { spec.copy(key = "station/%03d".format(it), minZoom = 9) } +
             spec.copy(key = "world", minZoom = 0)
         val creating = setOf("station/001", "station/003")
-        assertEquals(setOf("station/100", "world"), chartWorkKeys(candidates, creating, setOf("station/100")))
+        assertEquals(setOf("station/100", "world"), chartWorkKeys(candidates, creating, setOf("station/100"), emptyMap(), 0L))
         assertEquals(setOf("world", "station/001", "station/002", "station/003"),
-            chartWorkKeys(candidates, emptySet(), emptySet()))
+            chartWorkKeys(candidates, emptySet(), emptySet(), emptyMap(), 0L))
     }
 
     @Test fun stalledTransferYieldsItsSlotToAnotherPack() {
         val candidates = (1..5).map { spec.copy(key = "station/$it") }
         val underway = candidates.take(4).map { it.key }.toSet()
         assertEquals(setOf("station/2", "station/3", "station/4", "station/5"),
-            chartWorkKeys(candidates, emptySet(), underway, mapOf("station/1" to 60_000L)))
+            chartWorkKeys(candidates, emptySet(), underway, mapOf("station/1" to 60_000L), 60_000L))
     }
 
-    @Test fun pixelRatioSurvivesSerializationButTracksDisplayDensityChanges() {
-        assertTrue(sameChartDensity(2.625f, Math.nextUp(2.625f)))
-        assertFalse(sameChartDensity(2.625f, 3.0f))
+    @Test fun oldStallExpiresAndWorldRegionRegainsPriority() {
+        val world = spec.copy(key = "world", minZoom = 0)
+        val stations = (1..4).map { spec.copy(key = "station/$it", minZoom = 9) }
+        val options = stations + world
+        val underway = stations.mapTo(mutableSetOf()) { it.key }
+        val stalls = mapOf(world.key to 20_000L)
+        assertFalse(world.key in chartWorkKeys(options, emptySet(), underway, stalls, 79_999L))
+        assertTrue(world.key in chartWorkKeys(options, emptySet(), underway, stalls, 80_000L))
+    }
+
+    @Test fun temporaryNetworkErrorsStayWithNativeRetry() {
+        for (reason in listOf("REASON_CONNECTION", "REASON_SERVER", "REASON_RATE_LIMIT")) {
+            assertTrue(nativeRetriesDownload(reason))
+        }
+        assertFalse(nativeRetriesDownload("REASON_OTHER"))
+        assertFalse(nativeRetriesDownload("REASON_NOT_FOUND"))
     }
 
     @Test fun duplicateOfRetainedAreaIsRemoved() {

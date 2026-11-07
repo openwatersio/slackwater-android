@@ -49,9 +49,12 @@ private const val REGION_WORK_LIMIT = 4
 private const val STALL_CHECK_MS = 60_000L
 
 internal fun chartWorkKeys(
-    eligible: List<ChartPackSpec>, creating: Set<String>, underway: Set<String>, lastStall: Map<String, Long> = emptyMap(),
+    eligible: List<ChartPackSpec>, creating: Set<String>, underway: Set<String>,
+    lastStall: Map<String, Long>, now: Long,
 ): Set<String> {
-    val order = compareBy<ChartPackSpec> { lastStall[it.key] ?: 0L }.thenBy { it.key !in underway }.thenBy { it.minZoom }.thenBy { it.key }
+    val order = compareBy<ChartPackSpec> { spec ->
+        lastStall[spec.key]?.takeIf { now - it < STALL_CHECK_MS } ?: 0L
+    }.thenBy { it.minZoom }.thenBy { it.key !in underway }.thenBy { it.key }
     val free = REGION_WORK_LIMIT - creating.size
     if (free <= 0) return emptySet()
     val best = PriorityQueue(free, order.reversed())
@@ -63,7 +66,9 @@ internal fun chartWorkKeys(
     return best.mapTo(mutableSetOf()) { it.key }
 }
 
-internal fun sameChartDensity(saved: Float, current: Float) = kotlin.math.abs(saved - current) < 0.0001f
+internal fun nativeRetriesDownload(reason: String): Boolean =
+    reason == OfflineRegionError.REASON_CONNECTION || reason == OfflineRegionError.REASON_SERVER ||
+        reason == "REASON_RATE_LIMIT" // JNI returns this value without a Kotlin constant.
 
 internal fun chartPackChanges(
     wanted: Map<String, ChartPackSpec>, stored: List<StoredChartArea>, creating: Set<String>,
@@ -312,7 +317,7 @@ internal class ChartPackManager private constructor(context: Context) {
             }
         }
         val stalled = packs.values.filter { it.lastStall > 0 }.associate { it.key to it.lastStall }
-        val slots = if (allowWork) chartWorkKeys(candidates, creating, underway, stalled) else emptySet()
+        val slots = if (allowWork) chartWorkKeys(candidates, creating, underway, stalled, now) else emptySet()
         // Release old slots before assigning new ones so even briefly the
         // FileSource never has more active regions than the configured limit.
         for (pack in packs.values) if (pack.active && (pack.key !in slots || pack.deletion.requested)) setActive(pack, false)
@@ -370,7 +375,7 @@ internal class ChartPackManager private constructor(context: Context) {
 
     private fun attach(region: OfflineRegion, key: String, style: String) {
         val definition = region.definition as? OfflineTilePyramidRegionDefinition
-        val spec = definition?.takeIf { style == BASEMAP_STYLE_URL && it.styleURL == style && sameChartDensity(it.pixelRatio, pixelRatio) }?.let {
+        val spec = definition?.takeIf { style == BASEMAP_STYLE_URL && it.styleURL == style }?.let {
             val bounds = it.bounds ?: return@let null
             ChartPackSpec(key, bounds.latitudeSouth, bounds.longitudeWest, bounds.latitudeNorth, bounds.longitudeEast,
                 it.minZoom.toInt(), it.maxZoom.toInt()).takeIf { spec ->
@@ -382,7 +387,7 @@ internal class ChartPackManager private constructor(context: Context) {
         region.setObserver(object : OfflineRegion.OfflineRegionObserver {
             override fun onStatusChanged(status: OfflineRegionStatus) = acceptStatus(pack, status)
             override fun onError(error: OfflineRegionError) {
-                if (pack.deletion.requested) return
+                if (pack.deletion.requested || nativeRetriesDownload(error.reason)) return
                 pack.problem = classify(error.message)
                 setActive(pack, false)
                 scheduleRetry(pack.problem)

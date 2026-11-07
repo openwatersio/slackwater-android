@@ -21,6 +21,7 @@ class ChartTileBudgetTest {
 
     @Test fun partialRegionGetsPriorityOverANewRegionButNotACompleteOne() {
         assertEquals(setOf(west.key), deferredChartKeys(listOf(west, world, east), emptySet(), 2, setOf(east.key)))
+        assertEquals(setOf(east.key), deferredChartKeys(listOf(world, east), emptySet(), 1, setOf(east.key)))
         assertEquals(setOf(east.key), deferredChartKeys(listOf(west, east), setOf(west.key), 1, setOf(east.key)))
     }
 

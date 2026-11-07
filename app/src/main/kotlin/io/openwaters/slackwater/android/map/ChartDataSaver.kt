@@ -15,20 +15,43 @@ import androidx.core.content.ContextCompat
 internal fun watchChartDataSaver(context: Context, update: (Boolean) -> Unit) {
     val connectivity = context.getSystemService(ConnectivityManager::class.java) ?: return
     val main = Handler(Looper.getMainLooper())
+    var network = connectivity.activeNetwork
+    var capabilities = connectivity.getNetworkCapabilities(network)
+    var blocked = false
     fun refresh() {
-        val active = connectivity.activeNetwork
-        val capabilities = connectivity.getNetworkCapabilities(active)
-        update(capabilities != null && !capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_NOT_METERED) &&
-            connectivity.restrictBackgroundStatus == ConnectivityManager.RESTRICT_BACKGROUND_STATUS_ENABLED)
+        // A blocked default network can be invisible to activeNetwork. Wait for
+        // an unmetered capability before resuming transfers under Data Saver.
+        val unmetered = capabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_NOT_METERED) == true
+        update(connectivity.restrictBackgroundStatus == ConnectivityManager.RESTRICT_BACKGROUND_STATUS_ENABLED &&
+            (blocked || !unmetered))
     }
     connectivity.registerDefaultNetworkCallback(object : ConnectivityManager.NetworkCallback() {
-        override fun onCapabilitiesChanged(network: Network, capabilities: NetworkCapabilities) {
-            if (network == connectivity.activeNetwork) {
-                update(!capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_NOT_METERED) &&
-                    connectivity.restrictBackgroundStatus == ConnectivityManager.RESTRICT_BACKGROUND_STATUS_ENABLED)
+        override fun onAvailable(available: Network) {
+            network = available
+            capabilities = null
+            blocked = false
+            refresh()
+        }
+        override fun onCapabilitiesChanged(changed: Network, current: NetworkCapabilities) {
+            if (network == changed) {
+                capabilities = current
+                refresh()
             }
         }
-        override fun onLost(network: Network) = refresh()
+        override fun onBlockedStatusChanged(changed: Network, isBlocked: Boolean) {
+            if (network == changed) {
+                blocked = isBlocked
+                refresh()
+            }
+        }
+        override fun onLost(lost: Network) {
+            if (network == lost) {
+                network = null
+                capabilities = null
+                blocked = false
+                refresh()
+            }
+        }
     }, main)
     ContextCompat.registerReceiver(context, object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) = refresh()

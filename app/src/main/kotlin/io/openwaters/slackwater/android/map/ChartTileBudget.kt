@@ -19,7 +19,7 @@ internal fun deferredChartKeys(
     val rows = mutableMapOf<Pair<Int, Int>, BitSet>()
     val deferred = mutableSetOf<String>()
     var used = 0L
-    val ordered = wanted.sortedWith(compareBy<ChartPackSpec> { it.key !in complete }.thenBy { it.key !in underway }.thenBy { it.minZoom }.thenBy { it.key })
+    val ordered = wanted.sortedWith(compareBy<ChartPackSpec> { it.key !in complete }.thenBy { it.minZoom }.thenBy { it.key !in underway }.thenBy { it.key })
     for (spec in ordered) {
         val boxes = (spec.minZoom..spec.maxZoom).map { tileBox(spec, it) }
         var extra = 0L
