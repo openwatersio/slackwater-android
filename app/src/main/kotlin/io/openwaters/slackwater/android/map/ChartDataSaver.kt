@@ -16,11 +16,11 @@ internal fun watchChartDataSaver(context: Context, update: (Boolean) -> Unit) {
     watchDownloadNetwork(context) { _, restricted, _ -> update(restricted) }
 }
 
-internal fun watchDownloadNetwork(context: Context, update: (online: Boolean, restricted: Boolean, validated: Boolean) -> Unit) {
+internal fun watchDownloadNetwork(context: Context, preserveHandoffs: Boolean = false, update: (online: Boolean, restricted: Boolean, validated: Boolean) -> Unit) {
     val connectivity = context.getSystemService(ConnectivityManager::class.java) ?: return
     val main = Handler(Looper.getMainLooper())
     val initial = connectivity.activeNetwork
-    val callback = DownloadNetworkCallback(initial, connectivity.getNetworkCapabilities(initial), main) { capabilities, blocked ->
+    val callback = DownloadNetworkCallback(initial, connectivity.getNetworkCapabilities(initial), main, preserveHandoffs) { capabilities, blocked ->
         val unmetered = capabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_NOT_METERED) == true
         val restricted = connectivity.restrictBackgroundStatus == ConnectivityManager.RESTRICT_BACKGROUND_STATUS_ENABLED &&
             (blocked || !unmetered)
@@ -32,13 +32,14 @@ internal fun watchDownloadNetwork(context: Context, update: (online: Boolean, re
     ContextCompat.registerReceiver(context, object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) = callback.refresh()
     }, IntentFilter(ConnectivityManager.ACTION_RESTRICT_BACKGROUND_CHANGED), ContextCompat.RECEIVER_NOT_EXPORTED)
-    callback.refresh()
+    main.post { callback.refresh() }
 }
 
 internal class DownloadNetworkCallback(
     private var network: Network?,
     private var capabilities: NetworkCapabilities?,
     private val main: Handler,
+    private val preserveHandoffs: Boolean,
     private val publish: (NetworkCapabilities?, Boolean) -> Unit,
 ) : ConnectivityManager.NetworkCallback() {
     private var blocked = false
@@ -57,8 +58,10 @@ internal class DownloadNetworkCallback(
         main.removeCallbacks(loss)
         confirmingLoss = false
         network = available
-        awaitingCapabilities = true
+        awaitingCapabilities = preserveHandoffs
+        capabilities = null
         blocked = false
+        refresh()
     }
 
     override fun onCapabilitiesChanged(changed: Network, current: NetworkCapabilities) {
@@ -81,7 +84,7 @@ internal class DownloadNetworkCallback(
         blocked = false
         awaitingCapabilities = false
         // A replacement default network can arrive immediately after the old network is lost.
-        confirmingLoss = true
-        main.postDelayed(loss, 1_000)
+        confirmingLoss = preserveHandoffs
+        if (confirmingLoss) main.postDelayed(loss, 1_000) else refresh()
     }
 }

@@ -46,7 +46,9 @@ internal class OnlineGateDownloads(
 
     internal fun reconnected() {
         for ((week, failure) in failedWeeks) {
-            if (failure == Failure.TRANSIENT) failedWeeks.remove(week, failure)
+            if (failure == Failure.TRANSIENT && failedWeeks.remove(week, failure)) {
+                mutableStates.update { if (it[week] == OnlineDownloadState.FAILED) it - week else it }
+            }
         }
         mutableStates.update { states -> states.filterValues { it != OnlineDownloadState.OFFLINE } }
     }
@@ -146,7 +148,7 @@ internal class OnlineGateDownloads(
                 if (pending[key] === completion) status(id, day, null)
                 throw cancelled
             } catch (_: Exception) {
-                failedWeeks[id to day] = Failure.PERMANENT
+                failedWeeks[id to day] = Failure.TRANSIENT
                 status(id, day, OnlineDownloadState.FAILED)
                 result = false
                 return false
@@ -216,7 +218,7 @@ internal class OnlineGateDownloads(
                 val result = source.fetch(station, anchor)
                 store.save(station.id, OnlineWindowBlock(result.points, result.floodDirection, result.ebbDirection), today)
             }, online, restricted)
-            watchDownloadNetwork(app) { available, limited, _ ->
+            watchDownloadNetwork(app, preserveHandoffs = true) { available, limited, _ ->
                 restricted.value = limited
                 if (available && !online.value) service.reconnected()
                 online.value = available

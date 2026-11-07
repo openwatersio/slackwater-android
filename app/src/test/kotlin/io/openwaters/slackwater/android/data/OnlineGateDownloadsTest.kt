@@ -165,6 +165,20 @@ class OnlineGateDownloadsTest {
         assertEquals(listOf(full), saved[other.id])
     }
 
+    @Test fun reconnectAllowsTransientStorageFailureToRecover() = runBlocking {
+        var attempts = 0
+        val downloads = service {
+            if (++attempts == 1) throw IllegalStateException("temporary storage failure")
+            blocks = listOf(full)
+        }
+        assertFalse(downloads.fetch(gate.id, day))
+        assertFalse(downloads.fetch(gate.id, day))
+        downloads.reconnected()
+        assertNull(downloads.weekStates.value[gate.id to day])
+        assertTrue(downloads.fetch(gate.id, day))
+        assertEquals(2, attempts)
+    }
+
     @Test fun incompleteResponseNeverClaimsCoverage() = runBlocking {
         var attempts = 0
         val downloads = service { attempts++; blocks = listOf(full.copy(start = now)) }
