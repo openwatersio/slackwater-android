@@ -314,4 +314,5 @@
     <string name="tide_download_restricted">"En attente d’un réseau sans restriction"</string>
     <string name="tide_download_failed">"Impossible de télécharger l’aperçu des marées"</string>
     <string name="tide_download_saved">"Aperçu des marées enregistré pour utilisation hors ligne"</string>
+    <string name="tide_download_edit_failed">"Impossible d’enregistrer cette modification des téléchargements. Réessayez."</string>
 </resources>

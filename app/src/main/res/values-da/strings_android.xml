@@ -310,4 +310,5 @@
     <string name="tide_download_restricted">"Venter på et netværk uden begrænsninger"</string>
     <string name="tide_download_failed">"Kunne ikke hente tidevandsoversigten"</string>
     <string name="tide_download_saved">"Tidevandsoversigten er gemt til offlinebrug"</string>
+    <string name="tide_download_edit_failed">"Ændringen af dine downloads kunne ikke gemmes. Prøv igen."</string>
 </resources>

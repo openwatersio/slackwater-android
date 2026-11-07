@@ -319,5 +319,6 @@
   "tide_download_network": "Ag fanacht le nasc líonra",
   "tide_download_restricted": "Ag fanacht le líonra gan srianta",
   "tide_download_failed": "Níorbh fhéidir an réamhamharc taoide a íoslódáil",
-  "tide_download_saved": "Sábháladh an réamhamharc taoide lena úsáid as líne"
+  "tide_download_saved": "Sábháladh an réamhamharc taoide lena úsáid as líne",
+  "tide_download_edit_failed": "Níorbh fhéidir an t-athrú ar d’íoslódálacha a shábháil. Bain triail eile as."
 }

@@ -39,17 +39,18 @@ internal class TidePreviewDownloads(
 
     init {
         scope.launch {
-            intents.state.collect { observation ->
-                if (observation.isFailure) return@collect
+            intents.state.onEach { observation ->
+                if (observation.isFailure) return@onEach
                 lock.withLock {
-                    val requested = intents.state.first().getOrNull()?.requested ?: return@withLock
+                    // A queued observation may predate an explicit cancel or retry that held this lock.
+                    val requested = intents.state.first().getOrThrow().previewRequested
                     for (id in jobs.keys.toList() - requested) stop(id)
                     for (id in requested - jobs.keys) {
                         val station = liveStation(id) ?: continue
                         start(station)
                     }
                 }
-            }
+            }.retryAlertReads().collect()
         }
     }
 
@@ -58,13 +59,13 @@ internal class TidePreviewDownloads(
 
     suspend fun request(id: StationId) = lock.withLock {
         val station = liveStation(id) ?: return@withLock
-        intents.requestDownloads(listOf(id))
+        intents.requestPreviews(listOf(id))
         if (states.value[id] == TideDownloadState.RETRY) stop(id)
         if (id !in jobs) start(station)
     }
 
     suspend fun cancel(id: StationId) = lock.withLock {
-        intents.cancelDownloads(listOf(id))
+        intents.releasePreviews(listOf(id))
         stop(id)
     }
 
@@ -91,7 +92,7 @@ internal class TidePreviewDownloads(
     private suspend fun finish(id: StationId, record: JSONObject? = null, failed: Boolean = false) = lock.withLock {
         currentCoroutineContext().ensureActive()
         if (record != null) models.write(id, ModelKind.TIDE_PREVIEW, record)
-        intents.releaseDownloadRequests(listOf(id))
+        intents.releasePreviews(listOf(id))
         stop(id)
         if (failed) status(id, TideDownloadState.RETRY)
     }
@@ -153,8 +154,8 @@ internal class TidePreviewDownloads(
                 val network = MutableStateFlow<TideDownloadState?>(TideDownloadState.WAITING_FOR_NETWORK)
                 watchDownloadNetwork(app) { online, restricted ->
                     network.value = when {
-                        restricted -> TideDownloadState.DATA_SAVER
                         !online -> TideDownloadState.WAITING_FOR_NETWORK
+                        restricted -> TideDownloadState.DATA_SAVER
                         else -> null
                     }
                 }

@@ -7,6 +7,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import java.io.IOException
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -20,8 +24,26 @@ import io.openwaters.slackwater.android.stations.StationListModel
 internal fun TideDownloadControls(id: StationId, model: StationListModel) {
     val downloads = TidePreviewDownloads.get(LocalContext.current)
     val states by downloads.states.collectAsState()
-    TideDownloadActions(states[id], { model.launchEdit { downloads.request(id) } },
-        { model.launchEdit { downloads.cancel(id) } })
+    TideDownloadEdits(states[id], model::launchEdit, { downloads.request(id) }, { downloads.cancel(id) })
+}
+
+@Composable
+internal fun TideDownloadEdits(state: TideDownloadState?, launch: (suspend () -> Unit) -> Unit,
+                              request: suspend () -> Unit, cancel: suspend () -> Unit) {
+    var failed by remember { mutableStateOf(false) }
+    fun edit(action: suspend () -> Unit) {
+        launch {
+            try {
+                action()
+                failed = false
+            } catch (error: IOException) {
+                failed = true
+                throw error
+            }
+        }
+    }
+    if (failed) Text(stringResource(R.string.tide_download_edit_failed))
+    TideDownloadActions(state, { edit(request) }, { edit(cancel) })
 }
 
 @Composable

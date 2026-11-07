@@ -26,9 +26,10 @@ internal fun watchDownloadNetwork(context: Context, update: (online: Boolean, re
         // A blocked default network can be invisible to activeNetwork. Wait for
         // an unmetered capability before resuming transfers under Data Saver.
         val unmetered = capabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_NOT_METERED) == true
-        update(capabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED) == true && !blocked,
-            connectivity.restrictBackgroundStatus == ConnectivityManager.RESTRICT_BACKGROUND_STATUS_ENABLED &&
-            (blocked || !unmetered))
+        val restricted = connectivity.restrictBackgroundStatus == ConnectivityManager.RESTRICT_BACKGROUND_STATUS_ENABLED &&
+            (blocked || !unmetered)
+        val internet = capabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) == true
+        update(internet && (!blocked || restricted), restricted)
     }
     connectivity.registerDefaultNetworkCallback(object : ConnectivityManager.NetworkCallback() {
         override fun onAvailable(available: Network) {

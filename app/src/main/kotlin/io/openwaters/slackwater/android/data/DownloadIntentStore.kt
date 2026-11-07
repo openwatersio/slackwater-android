@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.*
 data class DownloadIntent(
     val requested: Set<StationId> = emptySet(),
     val cancelled: Set<StationId> = emptySet(),
+    val previewRequested: Set<StationId> = emptySet(),
 ) {
     /** Filter existing queue candidates by current catalog ID after checking stored coverage. */
     fun allowsRestore(canonicalId: StationId, ready: Boolean): Boolean =
@@ -23,25 +24,29 @@ data class DownloadIntent(
 
 private val versionKey = intPreferencesKey("version")
 private val requestedKey = stringSetPreferencesKey("requested")
+private val previewRequestedKey = stringSetPreferencesKey("previewRequested")
 private val cancelledKey = stringSetPreferencesKey("cancelled")
+
+private class InvalidDownloadIntent(message: String) : IOException(message)
 
 private fun Preferences.readIntent(): DownloadIntent {
     val fields = asMap()
     val version = fields[versionKey]
-    if (version != null && version != 1) throw IOException("Unsupported download intent version: $version")
+    if (version != null && version != 1) throw InvalidDownloadIntent("Unsupported download intent version: $version")
     fun ids(key: Preferences.Key<Set<String>>): Set<StationId> {
         val value = fields[key] ?: return emptySet()
-        if (value !is Set<*>) throw IOException("Invalid download intent: ${key.name}")
+        if (value !is Set<*>) throw InvalidDownloadIntent("Invalid download intent: ${key.name}")
         return value.mapTo(mutableSetOf()) {
-            StationId(it as? String ?: throw IOException("Invalid station ID in ${key.name}"))
+            StationId(it as? String ?: throw InvalidDownloadIntent("Invalid station ID in ${key.name}"))
         }
     }
-    return DownloadIntent(ids(requestedKey), ids(cancelledKey))
+    return DownloadIntent(ids(requestedKey), ids(cancelledKey), ids(previewRequestedKey))
 }
 
 private fun MutablePreferences.storeIntent(intent: DownloadIntent) {
     this[versionKey] = 1
     this[requestedKey] = intent.requested.mapTo(mutableSetOf()) { it.value }
+    this[previewRequestedKey] = intent.previewRequested.mapTo(mutableSetOf()) { it.value }
     this[cancelledKey] = intent.cancelled.mapTo(mutableSetOf()) { it.value }
 }
 
@@ -51,16 +56,17 @@ class DownloadIntentStore internal constructor(
 ) {
     val state: Flow<Result<DownloadIntent>> = data.data.map { Result.success(it.readIntent()) }
         .retryWhen { cause, attempt ->
-            if (cause !is IOException) return@retryWhen false
+            if (cause !is IOException || cause is InvalidDownloadIntent || cause is androidx.datastore.core.CorruptionException) return@retryWhen false
             emit(Result.failure(cause))
             delay(1_000L shl attempt.coerceAtMost(5).toInt())
             true
         }
+        .catch { if (it is IOException) emit(Result.failure(it)) else throw it }
         .distinctUntilChanged()
 
     /** A direct request or explicit retry also resumes a previously trimmed job. */
     suspend fun requestDownloads(ids: Collection<StationId>) = editDownloads(ids) { intent, stations ->
-        DownloadIntent(intent.requested + stations, intent.cancelled - stations)
+        intent.copy(requested = intent.requested + stations, cancelled = intent.cancelled - stations)
     }
 
     /** A successful download or permanent failure releases its request. Transient failures retain it. */
@@ -68,8 +74,12 @@ class DownloadIntentStore internal constructor(
         intent.copy(requested = intent.requested - stations)
     }
 
-    suspend fun cancelDownloads(ids: Collection<StationId>) = editDownloads(ids) { intent, stations ->
-        DownloadIntent(intent.requested - stations, intent.cancelled + stations)
+    suspend fun requestPreviews(ids: Collection<StationId>) = editDownloads(ids) { intent, stations ->
+        intent.copy(previewRequested = intent.previewRequested + stations)
+    }
+
+    suspend fun releasePreviews(ids: Collection<StationId>) = editDownloads(ids) { intent, stations ->
+        intent.copy(previewRequested = intent.previewRequested - stations)
     }
 
     /** Narrowing the download tier cancels automatic jobs while preserving explicit requests. */
@@ -103,6 +113,7 @@ class DownloadIntentStore internal constructor(
                     val next = DownloadIntent(
                         catalog.remapSavedIds(previous.requested.toList()).toSet(),
                         catalog.remapSavedIds(previous.cancelled.toList()).toSet(),
+                        catalog.remapSavedIds(previous.previewRequested.toList()).toSet(),
                     )
                     if (next == previous) return currentData
                     return currentData.toMutablePreferences().apply { storeIntent(next) }

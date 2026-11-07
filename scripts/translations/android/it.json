@@ -311,5 +311,6 @@
   "tide_download_network": "In attesa di una connessione di rete",
   "tide_download_restricted": "In attesa di una rete senza restrizioni",
   "tide_download_failed": "Impossibile scaricare l’anteprima delle maree",
-  "tide_download_saved": "Anteprima delle maree salvata per l’uso offline"
+  "tide_download_saved": "Anteprima delle maree salvata per l’uso offline",
+  "tide_download_edit_failed": "Impossibile salvare la modifica ai download. Riprova."
 }

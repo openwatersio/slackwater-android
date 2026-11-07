@@ -307,5 +307,6 @@
   "tide_download_network": "ネットワーク接続を待機中",
   "tide_download_restricted": "制限のないネットワークを待機中",
   "tide_download_failed": "潮汐プレビューをダウンロードできませんでした",
-  "tide_download_saved": "潮汐プレビューをオフライン用に保存しました"
+  "tide_download_saved": "潮汐プレビューをオフライン用に保存しました",
+  "tide_download_edit_failed": "ダウンロードの変更を保存できませんでした。もう一度お試しください。"
 }

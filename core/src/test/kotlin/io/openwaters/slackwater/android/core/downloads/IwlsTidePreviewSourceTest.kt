@@ -71,12 +71,45 @@ class IwlsTidePreviewSourceTest {
         assertThrows(CancellationException::class.java) { runBlocking { cancelled.fetch(station, now) } }
     }
 
-    @Test fun holesAndShortResponsesFailCoverageValidation() {
+    @Test fun cachedMissAndTruncatedCacheRefreshOnce() {
+        val cache = folder.newFile("IwlsStations.json")
+        for (body in listOf("[]", list.dropLast(1), "{}")) {
+            cache.writeText(body)
+            cache.setLastModified(now.toEpochMilli())
+            val paths = mutableListOf<String>()
+            val source = IwlsTidePreviewSource(folder.root, IwlsTransport { url ->
+                paths += url.path
+                IwlsResponse(200, if (url.path.endsWith("/data")) samples() else list, null)
+            })
+            runBlocking { source.fetch(station, now) }
+            assertEquals(listOf("/api/v1/stations", "/api/v1/stations/water/data"), paths)
+            assertEquals(list, cache.readText())
+        }
+    }
+
+    @Test fun malformedRefreshFallsBackOnlyToAResolvedStation() {
+        val cache = folder.newFile("IwlsStations.json")
+        cache.writeText(list)
+        cache.setLastModified(now.minus(Duration.ofDays(8)).toEpochMilli())
+        val truncated = list.dropLast(1)
+        val source = IwlsTidePreviewSource(folder.root, IwlsTransport { url ->
+            IwlsResponse(200, if (url.path.endsWith("/data")) samples() else truncated, null)
+        })
+        runBlocking { source.fetch(station, now) }
+        assertEquals(list, cache.readText())
+        cache.writeText("[]")
+        val offline = IwlsTidePreviewSource(folder.root, IwlsTransport {
+            throw javax.net.ssl.SSLHandshakeException("offline during refresh")
+        })
+        assertThrows(IwlsException.Transient::class.java) { runBlocking { offline.fetch(station, now) } }
+    }
+
+    @Test fun holesAndShortResponsesRequireManualRetry() {
         for (response in listOf(samples(skip = 10..11), samples(last = 3 * 96))) {
             val source = IwlsTidePreviewSource(folder.root, IwlsTransport { url ->
                 IwlsResponse(200, if (url.path.endsWith("/data")) response else list, null)
             })
-            assertThrows(IwlsException.Transient::class.java) { runBlocking { source.fetch(station, now) } }
+            assertThrows(IwlsException.Permanent::class.java) { runBlocking { source.fetch(station, now) } }
         }
     }
 }

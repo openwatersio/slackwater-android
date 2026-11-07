@@ -310,4 +310,5 @@
     <string name="tide_download_restricted">"Venter på et nettverk uten begrensninger"</string>
     <string name="tide_download_failed">"Kunne ikke laste ned tidevannsoversikten"</string>
     <string name="tide_download_saved">"Tidevannsoversikten er lagret for bruk uten nett"</string>
+    <string name="tide_download_edit_failed">"Kunne ikke lagre endringen i nedlastingene. Prøv igjen."</string>
 </resources>

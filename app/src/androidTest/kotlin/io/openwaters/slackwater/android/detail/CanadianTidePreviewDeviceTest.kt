@@ -44,7 +44,7 @@ class CanadianTidePreviewDeviceTest {
                 val button = context.getString(R.string.detail_download)
                 compose.waitUntil(60_000) { compose.onAllNodesWithText(button).fetchSemanticsNodes().isNotEmpty() }
                 compose.onNodeWithText(button).performScrollTo().performClick()
-                runBlocking { withTimeout(20_000) { intents.state.first { id in it.getOrThrow().requested } } }
+                runBlocking { withTimeout(20_000) { intents.state.first { id in it.getOrThrow().previewRequested } } }
                 val expected = if (phase == "queueRestricted") TideDownloadState.DATA_SAVER else TideDownloadState.WAITING_FOR_NETWORK
                 compose.waitUntil(20_000) { TidePreviewDownloads.get(context).states.value[id] == expected }
                 return

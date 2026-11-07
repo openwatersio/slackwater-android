@@ -35,7 +35,7 @@ class IwlsTidePreviewSource internal constructor(cacheDirectory: File, private v
 
     suspend fun fetch(station: StationIdentity, now: Instant): List<TidePoint> = withContext(Dispatchers.IO) {
         if (station.kind != StationKind.CanadianTide) throw IwlsException.Permanent("Station is not a Canadian tide port")
-        val iwls = IwlsFetch.resolve(station.name, station.latitude, station.longitude, "wlp", stationList(now))
+        val iwls = resolveStation(station, now)
         val zone = try {
             station.timezone?.let(ZoneId::of) ?: ZoneId.systemDefault()
         } catch (_: DateTimeException) {
@@ -50,17 +50,22 @@ class IwlsTidePreviewSource internal constructor(cacheDirectory: File, private v
         val required = TimeSpan(now, midnight.plus(Duration.ofDays(2)))
         val preview = BoundedPredictions.tide(station.id, required, points)
         if (preview !is PredictionResult.Ready || preview.coverage != required) {
-            throw IwlsException.Transient("Incomplete tide preview")
+            throw IwlsException.Permanent("Incomplete tide preview")
         }
         points
     }
 
-    private suspend fun stationList(now: Instant): List<IwlsStation> {
+    private suspend fun resolveStation(station: StationIdentity, now: Instant): IwlsStation {
+        fun resolve(list: List<IwlsStation>) =
+            IwlsFetch.resolve(station.name, station.latitude, station.longitude, "wlp", list)
         val cached = try {
-            if (stationsFile.isFile) IwlsFetch.decodeStations(stationsFile.readText()) else null
+            if (stationsFile.isFile) resolve(IwlsFetch.decodeStations(stationsFile.readText())) else null
         } catch (_: IOException) {
             null
         } catch (_: IllegalArgumentException) {
+            null
+        } catch (_: IwlsException.Permanent) {
+            // IWLS may have added or moved a station since this list was written.
             null
         }
         val age = Duration.between(Instant.ofEpochMilli(stationsFile.lastModified()), now)
@@ -87,6 +92,6 @@ class IwlsTidePreviewSource internal constructor(cacheDirectory: File, private v
         } catch (_: IOException) {
             // The fetched list still resolves this station when cache storage is unavailable.
         }
-        return stations
+        return resolve(stations)
     }
 }

@@ -322,4 +322,5 @@
     <string name="tide_download_restricted">"Ag fanacht le líonra gan srianta"</string>
     <string name="tide_download_failed">"Níorbh fhéidir an réamhamharc taoide a íoslódáil"</string>
     <string name="tide_download_saved">"Sábháladh an réamhamharc taoide lena úsáid as líne"</string>
+    <string name="tide_download_edit_failed">"Níorbh fhéidir an t-athrú ar d’íoslódálacha a shábháil. Bain triail eile as."</string>
 </resources>

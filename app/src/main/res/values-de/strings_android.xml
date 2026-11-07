@@ -310,4 +310,5 @@
     <string name="tide_download_restricted">"Warten auf ein uneingeschränktes Netzwerk"</string>
     <string name="tide_download_failed">"Gezeitenvorschau konnte nicht heruntergeladen werden"</string>
     <string name="tide_download_saved">"Gezeitenvorschau für die Offline-Nutzung gespeichert"</string>
+    <string name="tide_download_edit_failed">"Die Änderung an deinen Downloads konnte nicht gespeichert werden. Versuche es erneut."</string>
 </resources>

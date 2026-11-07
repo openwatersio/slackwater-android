@@ -307,5 +307,6 @@
   "tide_download_network": "Odotetaan verkkoyhteyttä",
   "tide_download_restricted": "Odotetaan rajoittamatonta verkkoyhteyttä",
   "tide_download_failed": "Vuorovesiennusteen esikatselua ei voitu ladata",
-  "tide_download_saved": "Vuorovesiennusteen esikatselu tallennettu offline-käyttöön"
+  "tide_download_saved": "Vuorovesiennusteen esikatselu tallennettu offline-käyttöön",
+  "tide_download_edit_failed": "Latausten muutosta ei voitu tallentaa. Yritä uudelleen."
 }

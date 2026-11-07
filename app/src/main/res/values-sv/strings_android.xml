@@ -310,4 +310,5 @@
     <string name="tide_download_restricted">"Väntar på ett nätverk utan begränsningar"</string>
     <string name="tide_download_failed">"Det gick inte att ladda ned tidvattenöversikten"</string>
     <string name="tide_download_saved">"Tidvattenöversikten har sparats för användning offline"</string>
+    <string name="tide_download_edit_failed">"Det gick inte att spara ändringen av hämtningarna. Försök igen."</string>
 </resources>

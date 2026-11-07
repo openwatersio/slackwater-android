@@ -314,4 +314,5 @@
     <string name="tide_download_restricted">"Aguardando uma rede sem restrições"</string>
     <string name="tide_download_failed">"Não foi possível baixar a prévia das marés"</string>
     <string name="tide_download_saved">"Prévia das marés salva para uso offline"</string>
+    <string name="tide_download_edit_failed">"Não foi possível salvar a alteração nos seus downloads. Tente novamente."</string>
 </resources>

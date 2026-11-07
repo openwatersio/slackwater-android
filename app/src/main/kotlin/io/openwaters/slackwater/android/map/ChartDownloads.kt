@@ -27,7 +27,8 @@ import io.openwaters.slackwater.android.core.map.desiredChartPacks
 import io.openwaters.slackwater.android.core.station.LocationPermission
 import io.openwaters.slackwater.android.core.station.LocationSlot
 import io.openwaters.slackwater.android.core.station.fixCoordinate
-import io.openwaters.slackwater.android.detail.TideDownloadActions
+import androidx.compose.runtime.key
+import io.openwaters.slackwater.android.detail.TideDownloadEdits
 import io.openwaters.slackwater.android.data.TidePreviewDownloads
 import io.openwaters.slackwater.android.data.ModelKind
 import io.openwaters.slackwater.android.data.ModelStore
@@ -64,7 +65,7 @@ internal fun chartCoverage(context: Context): Flow<DesiredChartCoverage> {
         ModelKind.entries.flatMap { kind -> models.storedIds(kind) }.toSet()
     }.chartInput()
     val saved = list.places.places.map { it.getOrThrow() }.chartInput()
-    val requested = list.places.downloads.state.map { it.getOrThrow().requested }.chartInput()
+    val requested = list.places.downloads.state.map { result -> result.getOrThrow().let { it.requested + it.previewRequested } }.chartInput()
     val stations = combine(list.catalog, saved, stored, requested) { catalog, places, modelIds, requests ->
         val incomplete = catalog == null || places == null || modelIds == null || requests == null
         val ids = modelIds.orEmpty() + requests.orEmpty() + places?.favorites.orEmpty() + places?.recents.orEmpty()
@@ -103,9 +104,10 @@ internal fun ChartDownloads(manager: ChartPackManager, close: () -> Unit) {
                 val catalog by model.catalog.collectAsState()
                 if (states.isNotEmpty()) Text(stringResource(R.string.tide_downloads))
                 for ((id, state) in states.entries.sortedBy { catalog?.byId?.get(it.key)?.name ?: it.key.value }) {
-                    Text(catalog?.byId?.get(id)?.name ?: id.value)
-                    TideDownloadActions(state, { model.launchEdit { downloads.request(id) } },
-                        { model.launchEdit { downloads.cancel(id) } })
+                    key(id) {
+                        Text(catalog?.byId?.get(id)?.name ?: id.value)
+                        TideDownloadEdits(state, model::launchEdit, { downloads.request(id) }, { downloads.cancel(id) })
+                    }
                 }
                 Text(stringResource(R.string.chart_offline))
                 Text(stringResource(R.string.chart_coverage))

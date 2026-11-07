@@ -307,5 +307,6 @@
   "tide_download_network": "Wachten op een netwerkverbinding",
   "tide_download_restricted": "Wachten op een netwerk zonder beperkingen",
   "tide_download_failed": "Kan het getijdenoverzicht niet downloaden",
-  "tide_download_saved": "Getijdenoverzicht opgeslagen voor offlinegebruik"
+  "tide_download_saved": "Getijdenoverzicht opgeslagen voor offlinegebruik",
+  "tide_download_edit_failed": "De wijziging in je downloads kon niet worden opgeslagen. Probeer het opnieuw."
 }

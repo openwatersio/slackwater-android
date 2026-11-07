@@ -307,5 +307,6 @@
   "tide_download_network": "Väntar på en nätverksanslutning",
   "tide_download_restricted": "Väntar på ett nätverk utan begränsningar",
   "tide_download_failed": "Det gick inte att ladda ned tidvattenöversikten",
-  "tide_download_saved": "Tidvattenöversikten har sparats för användning offline"
+  "tide_download_saved": "Tidvattenöversikten har sparats för användning offline",
+  "tide_download_edit_failed": "Det gick inte att spara ändringen av hämtningarna. Försök igen."
 }

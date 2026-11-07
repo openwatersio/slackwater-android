@@ -139,19 +139,23 @@ class UserStateStoreTest {
         withScope { scope ->
             val store = UserStateStore.open(file, catalog, scope).downloads
             val migrated = store.state.first().getOrThrow()
+            assertTrue(migrated.previewRequested.isEmpty())
             assertEquals(setOf(millBay), migrated.requested)
             assertEquals(setOf(millBay, other), migrated.cancelled)
             assertTrue(migrated.allowsRestore(millBay, ready = false))
             assertFalse(migrated.allowsRestore(other, ready = false))
             assertTrue(migrated.allowsRestore(other, ready = true))
+            store.requestPreviews(listOf(former))
             store.requestDownloads(listOf(former))
             store.trimDownloads(listOf(millBay, other))
         }
         withScope { scope ->
             val store = UserStateStore.open(file, catalog, scope).downloads
-            assertEquals(DownloadIntent(setOf(millBay), setOf(other)), store.state.first().getOrThrow())
+            assertEquals(DownloadIntent(setOf(millBay), setOf(other), setOf(millBay)), store.state.first().getOrThrow())
             store.resumeAutomaticDownloads(listOf(other))
             store.releaseDownloadRequests(listOf(former))
+            assertEquals(setOf(millBay), store.state.first().getOrThrow().previewRequested)
+            store.releasePreviews(listOf(former))
             assertEquals(DownloadIntent(), store.state.first().getOrThrow())
         }
     }
