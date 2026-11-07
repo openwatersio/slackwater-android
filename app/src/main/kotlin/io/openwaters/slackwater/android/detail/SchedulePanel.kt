@@ -88,18 +88,10 @@ internal fun SchedulePanel(
         Text(stringResource(R.string.schedule_title), style = MaterialTheme.typography.titleLarge)
         val end = if (preview) data.covered.lastOrNull()?.end?.minusNanos(1)?.atZone(zone)?.toLocalDate() ?: start
             else start.plusDays(6)
-        val year = moment.atZone(zone).year
-        val skeleton = if (start.year == year && end.year == year) "MMMd" else "yMMMd"
-        val range = remember(start, end, locale, zone, skeleton) {
-            android.icu.text.DateIntervalFormat.getInstance(skeleton, locale).apply {
-                timeZone = android.icu.util.TimeZone.getTimeZone(zone.id)
-            }.format(android.icu.util.DateInterval(anchor.toEpochMilli(), end.atStartOfDay(zone).toInstant().toEpochMilli()))
-        }
-        if (preview || onChooseDate == null) Text(range) else TextButton(onClick = onChooseDate, modifier = Modifier.testTag("schedule-week")) { Text("▦  $range  ›") }
-        if (!preview) Row {
-            TextButton(onClick = { if (timeline == null) offset-- else timeline.dispatch(TimelineAction.PickDay(start.minusWeeks(1))) }) { Text(stringResource(R.string.schedule_earlier)) }
-            TextButton(onClick = { if (timeline == null) offset++ else timeline.dispatch(TimelineAction.PickDay(start.plusWeeks(1))) }) { Text(stringResource(R.string.schedule_later)) }
-        }
+        ScheduleWeekBar(start, end, moment, zone, onChooseDate.takeUnless { preview },
+            if (preview) null else { change ->
+                if (timeline == null) offset += change else timeline.dispatch(TimelineAction.PickDay(start.plusWeeks(change.toLong())))
+            })
         format.coverage()?.let { Text(it) }
         if (data.unavailableReason != null) Text(stringResource(R.string.schedule_unavailable))
         else for (day in days.filter { it.entries.isNotEmpty() }) {
@@ -173,6 +165,25 @@ internal fun DetailSchedule(
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
+@Composable
+internal fun ScheduleWeekBar(start: LocalDate, end: LocalDate, moment: Instant, zone: ZoneId,
+                             choose: (() -> Unit)?, change: ((Int) -> Unit)?) {
+    val locale = LocalConfiguration.current.locales[0]
+    val year = moment.atZone(zone).year
+    val skeleton = if (start.year == year && end.year == year) "MMMd" else "yMMMd"
+    val range = remember(start, end, locale, zone, skeleton) {
+        android.icu.text.DateIntervalFormat.getInstance(skeleton, locale).apply {
+            timeZone = android.icu.util.TimeZone.getTimeZone(zone.id)
+        }.format(android.icu.util.DateInterval(start.atStartOfDay(zone).toInstant().toEpochMilli(),
+            end.atStartOfDay(zone).toInstant().toEpochMilli()))
+    }
+    if (choose == null) Text(range) else TextButton(onClick = choose, modifier = Modifier.testTag("schedule-week")) { Text("▦  $range  ›") }
+    if (change != null) Row {
+        TextButton(onClick = { change(-1) }) { Text(stringResource(R.string.schedule_earlier)) }
+        TextButton(onClick = { change(1) }) { Text(stringResource(R.string.schedule_later)) }
+    }
+}
+
 @Composable
 internal fun DetailDatePicker(initial: LocalDate, onPick: (LocalDate) -> Unit, onDismiss: () -> Unit) {
     val state = rememberDatePickerState(initialSelectedDateMillis = initial.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli(),

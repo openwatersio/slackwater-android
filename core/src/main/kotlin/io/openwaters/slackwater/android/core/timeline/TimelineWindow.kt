@@ -33,10 +33,11 @@ data class TimelineWindow(val start: Instant, val end: Instant) {
     }
 
     companion object {
+        val forward = Duration.ofHours(180)
         const val SECONDS_PER_DP = 200.0
         fun fixed(anchor: LocalDate, zone: ZoneId): TimelineWindow {
             val midnight = anchor.atStartOfDay(zone).toInstant()
-            return TimelineWindow(midnight.minus(Duration.ofHours(48)), midnight.plus(Duration.ofHours(180)))
+            return TimelineWindow(midnight.minus(Duration.ofHours(48)), midnight.plus(forward))
         }
     }
 }

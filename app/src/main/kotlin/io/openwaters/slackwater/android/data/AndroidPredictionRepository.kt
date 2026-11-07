@@ -171,23 +171,9 @@ class AndroidPredictionRepository(
         if (gate.online) {
             if (!StationCapabilities.ONLINE_CURRENT.supports(purpose)) bad(Reason.UNSUPPORTED_PURPOSE)
             val window = record(id, ModelKind.ONLINE_WINDOW) ?: bad(Reason.MISSING_DOWNLOAD)
-            val blocks = window.optJSONArray("blocks") ?: JSONArray().put(window)
-            val cached = (0 until blocks.length()).map { i ->
-                val block = blocks.getJSONObject(i)
-                val times = block.getJSONArray("times")
-                val speeds = block.getJSONArray("speeds")
-                require(times.length() > 0 && times.length() == speeds.length())
-                val points = (0 until times.length()).map { n ->
-                    val epoch = times.getDouble(n)
-                    require(epoch.isFinite() && epoch == epoch.toLong().toDouble())
-                    CurrentPoint(Instant.ofEpochSecond(epoch.toLong()), speeds.getDouble(n).also { require(it.isFinite()) })
-                }
-                require(points.zipWithNext().all { (a,b) -> a.time < b.time })
-                OnlineBlock(points, block.getDouble("floodDirection"), block.getDouble("ebbDirection"))
-            }
             val covered = mutableListOf<PredictionResult.Ready>()
-            for (block in mergeBlocks(cached)) {
-                when (val result = BoundedPredictions.current(id, span, block.points, block.flood, block.ebb)) {
+            for (block in OnlineWindowStore.blocks(window)) {
+                when (val result = BoundedPredictions.current(id, span, block.points, block.floodDirection, block.ebbDirection)) {
                     is PredictionResult.Ready -> covered += result
                     is PredictionResult.Disjoint -> covered.addAll(result.blocks)
                     is PredictionResult.Unavailable -> if (result.reason != Reason.OUTSIDE_COVERAGE) return result
@@ -258,20 +244,3 @@ internal fun JSONObject.fittedTide() = Station(constants(), getDouble("offset"))
 internal fun JSONObject.currentStation() = CurrentStation(constants(), optional("floodDirection"), optional("ebbDirection"),
     getDouble("meanFlow"), if (isNull("minorConstituents")) null else constants("minorConstituents"),
     optional("minorMeanFlow") ?: 0.0, optional("azimuth"))
-
-private data class OnlineBlock(val points: List<CurrentPoint>, val flood: Double, val ebb: Double)
-
-/** Adjacent weeks form one trace. On duplicate timestamps the later block supplies the sample. */
-private fun mergeBlocks(blocks: List<OnlineBlock>): List<OnlineBlock> {
-    val merged = mutableListOf<OnlineBlock>()
-    for (block in blocks.sortedBy { it.points.first().time }) {
-        val last = merged.lastOrNull()
-        if (last == null || java.time.Duration.between(last.points.last().time, block.points.first().time) > java.time.Duration.ofMinutes(15)) {
-            merged.add(block)
-        } else {
-            val points = (last.points + block.points).associateBy { it.time }.values.sortedBy { it.time }
-            merged[merged.lastIndex] = block.copy(points = points)
-        }
-    }
-    return merged
-}

@@ -172,7 +172,7 @@ internal class TidePreviewDownloads(
             val app = context.applicationContext
             return shared ?: run {
                 val network = TideDownloadNetwork()
-                watchDownloadNetwork(app, network::update)
+                watchDownloadNetwork(app, update = network::update)
                 TidePreviewDownloads(CoroutineScope(SupervisorJob() + Dispatchers.IO),
                     UserStateStore.get(app).downloads, ModelStore.get(app), BundledStationCatalog(app.assets),
                     network.paused, AndroidPredictionRepository(app), network.recovery, IwlsTidePreviewSource(app.cacheDir)::fetch)

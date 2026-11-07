@@ -1424,6 +1424,70 @@
       "key": "There were not enough CHS events to validate the on-device fit in every quarter."
     },
     {
+      "name": "gate_downloading",
+      "key": "Downloading"
+    },
+    {
+      "name": "gate_waiting",
+      "key": "Waiting to retry"
+    },
+    {
+      "name": "gate_failed",
+      "key": "Download failed"
+    },
+    {
+      "name": "gate_offline",
+      "key": "Waiting for signal"
+    },
+    {
+      "name": "gate_expired",
+      "key": "Expired"
+    },
+    {
+      "name": "gate_download",
+      "key": "Download"
+    },
+    {
+      "name": "gate_retry",
+      "key": "Retry"
+    },
+    {
+      "name": "gate_retry_now",
+      "key": "Retry now"
+    },
+    {
+      "name": "gate_connect",
+      "key": "Connect to download"
+    },
+    {
+      "name": "gate_all_downloads",
+      "key": "See all downloads"
+    },
+    {
+      "name": "gate_expectation",
+      "key": "Downloads cover about a month and can be refreshed at any time."
+    },
+    {
+      "name": "gate_expectation_offline",
+      "key": "Connect for a moment to download about a month of predictions."
+    },
+    {
+      "name": "gate_retry_expectation",
+      "key": "Slackwater will try again automatically."
+    },
+    {
+      "name": "gate_offline_available",
+      "key": "Offline available"
+    },
+    {
+      "name": "gate_offline_expectation",
+      "key": "Slackwater keeps about a month on this device and refreshes it whenever you're online."
+    },
+    {
+      "name": "gate_update",
+      "key": "Update now"
+    },
+    {
       "name": "tour_read_title",
       "key": "Reading the strip",
       "english": "Reading the strip"

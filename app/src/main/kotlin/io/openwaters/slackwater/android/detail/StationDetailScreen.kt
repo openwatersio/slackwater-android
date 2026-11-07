@@ -30,6 +30,7 @@ import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 
@@ -48,7 +49,8 @@ private val waterColors = darkColorScheme(
 
 @Composable
 internal fun StationDetailScreen(model: StationListModel, id: StationId, clock: Instant, linkedTime: Instant?,
-                                onOpen: (StationId) -> Unit, onBack: () -> Unit, recordVisit: Boolean = true) {
+                                onOpen: (StationId) -> Unit, onBack: () -> Unit, recordVisit: Boolean = true,
+                                downloads: OnlineGateDownloads = OnlineGateDownloads.get(LocalContext.current)) {
     val activity = androidx.activity.compose.LocalActivity.current
     DisposableEffect(activity) {
         val bars = activity?.let { androidx.core.view.WindowCompat.getInsetsController(it.window, it.window.decorView) }
@@ -61,15 +63,16 @@ internal fun StationDetailScreen(model: StationListModel, id: StationId, clock: 
             if (lightNavigation != null) bars.isAppearanceLightNavigationBars = lightNavigation
         }
     }
-    MaterialTheme(colorScheme = waterColors) { StationDetailBody(model, id, clock, linkedTime, onOpen, onBack, recordVisit) }
+    MaterialTheme(colorScheme = waterColors) { StationDetailBody(model, id, clock, linkedTime, onOpen, onBack, recordVisit, downloads) }
 }
 
 @Composable
 private fun StationDetailBody(model: StationListModel, id: StationId, clock: Instant, linkedTime: Instant?,
-                                onOpen: (StationId) -> Unit, onBack: () -> Unit, recordVisit: Boolean = true) {
+                                onOpen: (StationId) -> Unit, onBack: () -> Unit, recordVisit: Boolean, downloads: OnlineGateDownloads) {
     val context = LocalContext.current.applicationContext
     val repository = remember { AndroidPredictionRepository(context) }
     val catalog = remember { BundledStationCatalog(context.assets) }
+    val online by downloads.online.collectAsState()
     val records = remember { DetailRecords(context.assets) }
     val identity by produceState<StationResolution?>(null, id) { value = catalog.resolve(id) }
     val resolved = identity
@@ -86,6 +89,7 @@ private fun StationDetailBody(model: StationListModel, id: StationId, clock: Ins
     val zone = station?.plotZone() ?: ZoneOffset.UTC
     var restoredTime by rememberSaveable { mutableStateOf(linkedTime?.toString()) }
     var restoredDay by rememberSaveable { mutableStateOf<String?>(null) }
+    var pickerRevision by remember { mutableIntStateOf(0) }
     var loaded by remember { mutableStateOf<LoadedDetail?>(null) }
     var loading by remember { mutableStateOf(true) }
     var reloadAt by remember { mutableStateOf<Instant?>(null) }
@@ -102,9 +106,12 @@ private fun StationDetailBody(model: StationListModel, id: StationId, clock: Ins
         }
     }
     DisposableEffect(Unit) { onDispose { loaded?.timeline?.close() } }
-    LaunchedEffect(station, revision, reloadAt) {
+    LaunchedEffect(station, revision, reloadAt, pickerRevision) {
         if (station == null || !live) { loading = resolved == null; return@LaunchedEffect }
         val previous = loaded?.timeline
+        if (previous?.mode == TimelineMode.ONLINE && (previous.missingDay != null || previous.state.onlineDayRequested != null)) {
+            return@LaunchedEffect
+        }
         val anchor = restoredDay?.let(LocalDate::parse)
         val instant = previous?.state?.selected ?: restoredTime?.let(Instant::parse) ?: clock.takeIf { restoredDay != null }
         val now = previous?.state?.now ?: reloadAt ?: clock
@@ -112,14 +119,14 @@ private fun StationDetailBody(model: StationListModel, id: StationId, clock: Ins
         val window = TimelineWindow.fixed(day, zone)
         var next: DetailTimeline? = null
         try {
-            loading = previous == null
+            loading = previous == null && (loading || metadata?.gate?.online != true)
             var result = repository.load(station.id, TimeSpan(window.start, window.end), PredictionPurpose.DISPLAY)
             if (result is PredictionResult.Unavailable && instant != null && station.kind == StationKind.CanadianTide) {
                 result = repository.load(station.id, TimeSpan(now, now), PredictionPurpose.DISPLAY)
             }
-            val ready = result as? PredictionResult.Ready
+            val ready = result.onlineTimelineBlock(window) ?: result as? PredictionResult.Ready
             if (ready != null) next = openDetailTimeline(repository, station, zone, now, ready,
-                !ValueAnimator.areAnimatorsEnabled(), instant, anchor)
+                !ValueAnimator.areAnimatorsEnabled(), instant, day.takeIf { ready.capabilities == StationCapabilities.ONLINE_CURRENT } ?: anchor)
             if (previous != null && next != null) {
                 do {
                     val settled = snapshotFlow { previous.state }.first { !it.busy }
@@ -142,7 +149,9 @@ private fun StationDetailBody(model: StationListModel, id: StationId, clock: Ins
     val timeline = detail?.timeline
     DetailHinge(timeline)
     if (timeline != null && station != null) {
-        DetailTimelineEffects(timeline, station, prefs.effectiveThresholdKn(station.id), prefs.showSky)
+        DetailTimelineEffects(timeline, station, prefs.effectiveThresholdKn(station.id), prefs.showSky, online) { day ->
+            downloads.fetch(station.id, day)
+        }
         LaunchedEffect(timeline) {
             snapshotFlow { timeline.state }.collect { state ->
                 if (state.viewport > 0.0 && state.motion != TimelineMotion.INITIAL_POSITIONING) {
@@ -153,7 +162,33 @@ private fun StationDetailBody(model: StationListModel, id: StationId, clock: Ins
             }
         }
     }
+    val gate = metadata?.gate?.online == true
+    val today = (timeline?.state?.now ?: clock).atZone(zone).toLocalDate()
+    val requestedDay = timeline?.missingDay ?: restoredDay?.let(LocalDate::parse)
+        ?: (restoredTime?.let(Instant::parse) ?: clock).atZone(zone).toLocalDate()
+    val gateId = station?.id?.takeIf { gate }
+    val missing = gate && !loading && (detail == null || timeline?.missingDay != null)
+    var retry by remember(id, requestedDay) { mutableIntStateOf(0) }
+    LaunchedEffect(gateId, today, online, detail != null) {
+        if (gateId != null && online && detail != null) downloads.refreshIfStale(gateId, today)
+    }
+    LaunchedEffect(gateId, missing, requestedDay, retry, online) {
+        if (gateId != null && missing && online) {
+            val covered = downloads.fetch(gateId, requestedDay, manual = retry > 0)
+            if (covered && timeline?.missingDay == requestedDay) timeline.dispatch(TimelineAction.PickDay(requestedDay))
+            if (requestedDay != today) downloads.refreshIfStale(gateId, today)
+        }
+    }
     var picker by rememberSaveable { mutableStateOf<String?>(null) }
+    fun pickDay(day: LocalDate) {
+        if (timeline != null) timeline.dispatch(TimelineAction.PickDay(day))
+        else {
+            restoredDay = day.toString()
+            restoredTime = day.atTime(12, 0).atZone(zone).toInstant().toString()
+            pickerRevision++
+        }
+        picker = null
+    }
     val scroll = rememberScrollState()
     val page = rememberDetailPageScroll(scroll)
     val tour by model.tour.state.collectAsState()
@@ -175,8 +210,24 @@ private fun StationDetailBody(model: StationListModel, id: StationId, clock: Ins
                     Text(stringResource(R.string.detail_gap))
                     if (station != null) DetailFeedback(station, selected ?: clock, link, unavailable = true)
                 }
-                detail == null -> MissingPredictions(station, metadata, model, repository, clock, prefs, onOpen)
-                else -> DetailContent(station, detail, prefs, repository, revision, metadata, page.scheduleModifier(scroll),
+                missing -> {
+                    val saved = onlineCoverage(station.id, revision)
+                    if (saved.isNotEmpty()) ScheduleWeekBar(requestedDay, requestedDay.plusDays(6), clock, zone,
+                        choose = { picker = requestedDay.toString() }, change = { pickDay(requestedDay.plusWeeks(it.toLong())) })
+                    OnlineGateStatus(downloads, station.id, requestedDay, today, zone, revision, online,
+                        explanation = { GateExplanation(metadata?.gate, prefs.speedUnit) }, retry = { retry++ }) {
+                        val now = Instant.now()
+                        if (timeline != null) timeline.dispatch(TimelineAction.Now(now))
+                        else {
+                            restoredDay = now.atZone(zone).toLocalDate().toString()
+                            restoredTime = now.toString()
+                            reloadAt = now
+                        }
+                    }
+                    OnlineAlternative(station, model, repository, clock, revision, onOpen)
+                }
+                detail == null -> MissingPredictions(station, metadata, model)
+                else -> DetailContent(station, detail, prefs, repository, downloads, revision, metadata, page.scheduleModifier(scroll),
                     related = { DetailRelated(station, metadata, model, onOpen, nearby = false) }) {
                     page.cancelRestore()
                     picker = it.toString()
@@ -184,12 +235,14 @@ private fun StationDetailBody(model: StationListModel, id: StationId, clock: Ins
             }
             if (station != null) {
                 if (live) {
-                    StationCalendarButton(station.id)
-                    Text(stringResource(R.string.detail_notice), style = MaterialTheme.typography.bodySmall)
-                    DetailProvenance(station, metadata, detail?.ready,
-                        metadata?.reference?.let { data?.stations?.get(StationId(it))?.name })
-                    DetailFeedback(station, timeline?.state?.selected ?: clock, link)
-                    StationDetails(station, metadata, detail?.ready)
+                    if (!missing && (station.kind != StationKind.CanadianCurrent || metadata != null) && (!gate || detail != null)) {
+                        StationCalendarButton(station.id)
+                        Text(stringResource(R.string.detail_notice), style = MaterialTheme.typography.bodySmall)
+                        DetailProvenance(station, metadata, detail?.ready,
+                            metadata?.reference?.let { data?.stations?.get(StationId(it))?.name })
+                        DetailFeedback(station, timeline?.state?.selected ?: clock, link)
+                    }
+                    StationDetails(station, metadata, detail?.ready, prefs.speedUnit, today, zone, revision)
                 }
                 if (!live) DetailProvenance(station, metadata, null, null)
                 DetailRelated(station, metadata, model, onOpen, nearby = true)
@@ -197,14 +250,14 @@ private fun StationDetailBody(model: StationListModel, id: StationId, clock: Ins
         }
         DetailTour(model.tour, tour, id, station?.name.orEmpty(), timeline, anchors, scroll, prefs.showSky, page::cancelRestore)
     } } }
-    if (timeline != null) picker?.let { day ->
-        DetailDatePicker(LocalDate.parse(day), { timeline.dispatch(TimelineAction.PickDay(it)); picker = null }, { picker = null })
+    picker?.let { day ->
+        DetailDatePicker(LocalDate.parse(day), ::pickDay, { picker = null })
     }
 }
 
 @Composable
 private fun DetailContent(station: StationIdentity, detail: LoadedDetail, prefs: ReadingPreferences,
-                          repository: PredictionRepository, revision: Long, metadata: DetailMetadata?, scheduleModifier: Modifier, related: @Composable () -> Unit, pick: (LocalDate) -> Unit) {
+                          repository: PredictionRepository, downloads: OnlineGateDownloads, revision: Long, metadata: DetailMetadata?, scheduleModifier: Modifier, related: @Composable () -> Unit, pick: (LocalDate) -> Unit) {
     val timeline = detail.timeline
     val state = timeline.state
     val series = timeline.series
@@ -257,10 +310,24 @@ private fun DetailContent(station: StationIdentity, detail: LoadedDetail, prefs:
                     DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withZone(timeline.zone).format(state.coverage.end)))
             }
         }
-        if (state.onlineDayRequested != null) Text(stringResource(R.string.detail_no_week))
+        if (timeline.mode == TimelineMode.ONLINE) {
+            val today = state.now.atZone(timeline.zone).toLocalDate()
+            OnlineGateValidity(downloads, station.id, today, timeline.zone, revision)
+            state.onlineDayRequested?.let { day ->
+                val online by downloads.online.collectAsState()
+                val scope = rememberCoroutineScope()
+                OnlineGateStatus(downloads, station.id, day, today, timeline.zone, revision, online, retry = {
+                    val generation = timeline.state.generation
+                    scope.launch {
+                        if (downloads.fetch(station.id, day, manual = true) && timeline.state.generation == generation && timeline.state.onlineDayRequested == day) {
+                            timeline.online(day, generation)
+                        }
+                    }
+                }) { timeline.dispatch(TimelineAction.Now(Instant.now())) }
+            }
+        }
         DetailSummary(station, timeline, prefs, repository, metadata?.pairedTide?.let { StationListModel.get(LocalContext.current).catalog.collectAsState().value?.byId?.get(it)?.name },
             cap == StationCapabilities.PROVISIONAL_CURRENT || cap == StationCapabilities.BOUNDED_CURRENT)
-        GateExplanation(metadata?.gate, prefs.speedUnit)
         metadata?.magnitudeNote?.let { Text(stringResource(R.string.detail_context, it)) }
         related()
         Box(scheduleModifier.fillMaxWidth()) {
@@ -271,14 +338,12 @@ private fun DetailContent(station: StationIdentity, detail: LoadedDetail, prefs:
 }
 
 @Composable
-private fun MissingPredictions(station: StationIdentity, metadata: DetailMetadata?, model: StationListModel,
-                               repository: PredictionRepository, now: Instant, prefs: ReadingPreferences, open: (StationId) -> Unit) {
-    Text(stringResource(if (metadata?.gate?.online == true) R.string.detail_no_week else R.string.detail_no_data))
-    GateExplanation(metadata?.gate, prefs.speedUnit)
+private fun MissingPredictions(station: StationIdentity, metadata: DetailMetadata?, model: StationListModel) {
+    Text(stringResource(R.string.detail_no_data))
     metadata?.magnitudeNote?.let { Text(stringResource(R.string.detail_context, it)) }
     if (station.kind == StationKind.CanadianTide) {
         TideDownloadControls(station.id, model)
-    } else if (station.kind == StationKind.CanadianCurrent || station.kind == StationKind.DerivedGate) {
+    } else if (metadata != null && metadata.gate?.online != true && (station.kind == StationKind.CanadianCurrent || station.kind == StationKind.DerivedGate)) {
         val store = model.places.downloads
         val intent by store.state.collectAsState(null)
         val requestedId = metadata?.pairedTide?.takeIf { station.kind == StationKind.DerivedGate } ?: station.id
@@ -287,20 +352,23 @@ private fun MissingPredictions(station: StationIdentity, metadata: DetailMetadat
             Text(stringResource(if (queued) R.string.detail_queued else R.string.detail_download))
         }
     }
-    if (metadata?.gate?.online == true) {
-        val catalog by model.catalog.collectAsState()
-        val alternative by produceState<StationIdentity?>(null, station.id, catalog) {
-            value = withContext(Dispatchers.Default) {
-                val candidates = rankByDistance(catalog?.byId?.values.orEmpty().filter {
-                    it.id != station.id && it.series == StationSeries.Current && it.kind != StationKind.DerivedGate
-                }, station.coordinate)
-                val span = TimeSpan(now, now.plusSeconds(600))
-                candidates.firstOrNull {
-                    val result = repository.load(it.id, span, PredictionPurpose.DISPLAY) as? PredictionResult.Ready
-                    result?.capabilities?.continuous == true
-                }?.identity
-            }
+}
+
+@Composable
+private fun OnlineAlternative(station: StationIdentity, model: StationListModel, repository: PredictionRepository,
+                              now: Instant, revision: Long, open: (StationId) -> Unit) {
+    val catalog by model.catalog.collectAsState()
+    val alternative by produceState<StationIdentity?>(null, station.id, catalog, revision) {
+        value = withContext(Dispatchers.Default) {
+            val span = TimeSpan(now, now.plusSeconds(600))
+            val candidates = rankByDistance(catalog?.byId?.values.orEmpty().filter {
+                it.id != station.id && (it.kind == StationKind.Current || it.kind == StationKind.CanadianCurrent)
+            }, station.coordinate).sortedBy { it.identity.kind != StationKind.CanadianCurrent }
+            candidates.firstOrNull {
+                val result = repository.load(it.id, span, PredictionPurpose.DISPLAY) as? PredictionResult.Ready
+                result?.capabilities?.continuous == true
+            }?.identity
         }
-        alternative?.let { TextButton(onClick = { open(it.id) }) { Text(stringResource(R.string.detail_instead, it.name)) } }
     }
+    alternative?.let { TextButton(onClick = { open(it.id) }) { Text(stringResource(R.string.detail_instead, it.name)) } }
 }

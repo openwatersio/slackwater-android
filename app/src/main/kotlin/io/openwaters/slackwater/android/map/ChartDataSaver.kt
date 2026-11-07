@@ -16,15 +16,11 @@ internal fun watchChartDataSaver(context: Context, update: (Boolean) -> Unit) {
     watchDownloadNetwork(context) { _, restricted, _ -> update(restricted) }
 }
 
-internal fun watchDownloadNetwork(context: Context, update: (online: Boolean, restricted: Boolean, validated: Boolean) -> Unit) {
+internal fun watchDownloadNetwork(context: Context, preserveHandoffs: Boolean = false, update: (online: Boolean, restricted: Boolean, validated: Boolean) -> Unit) {
     val connectivity = context.getSystemService(ConnectivityManager::class.java) ?: return
     val main = Handler(Looper.getMainLooper())
-    var network = connectivity.activeNetwork
-    var capabilities = connectivity.getNetworkCapabilities(network)
-    var blocked = false
-    fun refresh() {
-        // A blocked default network can be invisible to activeNetwork. Wait for
-        // an unmetered capability before resuming transfers under Data Saver.
+    val initial = connectivity.activeNetwork
+    val callback = DownloadNetworkCallback(initial, connectivity.getNetworkCapabilities(initial), main, preserveHandoffs) { capabilities, blocked ->
         val unmetered = capabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_NOT_METERED) == true
         val restricted = connectivity.restrictBackgroundStatus == ConnectivityManager.RESTRICT_BACKGROUND_STATUS_ENABLED &&
             (blocked || !unmetered)
@@ -32,36 +28,63 @@ internal fun watchDownloadNetwork(context: Context, update: (online: Boolean, re
         update(internet && (!blocked || restricted), restricted,
             capabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED) == true && !blocked)
     }
-    connectivity.registerDefaultNetworkCallback(object : ConnectivityManager.NetworkCallback() {
-        override fun onAvailable(available: Network) {
-            network = available
-            capabilities = null
-            blocked = false
-            refresh()
-        }
-        override fun onCapabilitiesChanged(changed: Network, current: NetworkCapabilities) {
-            if (network == changed) {
-                capabilities = current
-                refresh()
-            }
-        }
-        override fun onBlockedStatusChanged(changed: Network, isBlocked: Boolean) {
-            if (network == changed) {
-                blocked = isBlocked
-                refresh()
-            }
-        }
-        override fun onLost(lost: Network) {
-            if (network == lost) {
-                network = null
-                capabilities = null
-                blocked = false
-                refresh()
-            }
-        }
-    }, main)
+    connectivity.registerDefaultNetworkCallback(callback, main)
     ContextCompat.registerReceiver(context, object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) = refresh()
+        override fun onReceive(context: Context, intent: Intent) = callback.refresh()
     }, IntentFilter(ConnectivityManager.ACTION_RESTRICT_BACKGROUND_CHANGED), ContextCompat.RECEIVER_NOT_EXPORTED)
-    refresh()
+    main.post { callback.refresh() }
+}
+
+internal class DownloadNetworkCallback(
+    private var network: Network?,
+    private var capabilities: NetworkCapabilities?,
+    private val main: Handler,
+    private val preserveHandoffs: Boolean,
+    private val publish: (NetworkCapabilities?, Boolean) -> Unit,
+) : ConnectivityManager.NetworkCallback() {
+    private var blocked = false
+    private var awaitingCapabilities = false
+    private var confirmingLoss = false
+    private val loss = Runnable {
+        confirmingLoss = false
+        refresh()
+    }
+
+    fun refresh() {
+        if (!awaitingCapabilities && !confirmingLoss) publish(capabilities, blocked)
+    }
+
+    override fun onAvailable(available: Network) {
+        main.removeCallbacks(loss)
+        confirmingLoss = false
+        network = available
+        awaitingCapabilities = preserveHandoffs
+        capabilities = null
+        blocked = false
+        refresh()
+    }
+
+    override fun onCapabilitiesChanged(changed: Network, current: NetworkCapabilities) {
+        if (network != changed) return
+        capabilities = current
+        awaitingCapabilities = false
+        refresh()
+    }
+
+    override fun onBlockedStatusChanged(changed: Network, isBlocked: Boolean) {
+        if (network != changed) return
+        blocked = isBlocked
+        refresh()
+    }
+
+    override fun onLost(lost: Network) {
+        if (network != lost) return
+        network = null
+        capabilities = null
+        blocked = false
+        awaitingCapabilities = false
+        // A replacement default network can arrive immediately after the old network is lost.
+        confirmingLoss = preserveHandoffs
+        if (confirmingLoss) main.postDelayed(loss, 1_000) else refresh()
+    }
 }

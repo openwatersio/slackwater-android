@@ -30,6 +30,8 @@ import io.openwaters.slackwater.android.core.station.fixCoordinate
 import androidx.compose.runtime.key
 import io.openwaters.slackwater.android.detail.TideDownloadEdits
 import io.openwaters.slackwater.android.data.TidePreviewDownloads
+import io.openwaters.slackwater.android.data.OnlineGateDownloads
+import io.openwaters.slackwater.android.data.OnlineDownloadState
 import io.openwaters.slackwater.android.data.ModelKind
 import io.openwaters.slackwater.android.data.ModelStore
 import io.openwaters.slackwater.android.stations.StationListModel
@@ -107,6 +109,21 @@ internal fun ChartDownloads(manager: ChartPackManager, close: () -> Unit) {
                     key(id) {
                         Text(catalog?.byId?.get(id)?.name ?: id.value)
                         TideDownloadEdits(state, model::launchEdit, { downloads.request(id) }, { downloads.cancel(id) })
+                    }
+                }
+                val onlineGates = OnlineGateDownloads.get(LocalContext.current)
+                val gateStates by onlineGates.weekStates.collectAsState()
+                for ((week, state) in gateStates.entries.sortedBy { catalog?.byId?.get(it.key.first)?.name ?: it.key.first.value }) {
+                    val (id, day) = week
+                    Text(catalog?.byId?.get(id)?.name ?: id.value)
+                    Text(day.format(java.time.format.DateTimeFormatter.ofLocalizedDate(java.time.format.FormatStyle.MEDIUM)))
+                    when (state) {
+                        OnlineDownloadState.DOWNLOADING -> LinearProgressIndicator()
+                        OnlineDownloadState.OFFLINE -> Text(stringResource(R.string.gate_offline))
+                        OnlineDownloadState.WAITING_TO_RETRY, OnlineDownloadState.FAILED ->
+                            TextButton(onClick = { model.launchEdit { onlineGates.fetch(id, day, manual = true) } }) {
+                                Text(stringResource(if (state == OnlineDownloadState.FAILED) R.string.gate_retry else R.string.gate_retry_now))
+                            }
                     }
                 }
                 Text(stringResource(R.string.chart_offline))
