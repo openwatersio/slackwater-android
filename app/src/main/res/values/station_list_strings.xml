@@ -79,4 +79,11 @@
     <string name="list_catalog_unavailable">Station data is unavailable on this device.</string>
     <!-- An approximate value spoken, such as "approximately 1.2". -->
     <string name="card_spoken_approximate">approximately %1$s</string>
+    <!-- A card curve's spoken summary; the argument lists its moments, such as "high tide 6.2 feet at 8:33 AM, low tide 1.5 feet at 2:08 PM", "1.2 knots flood at 9:10 AM, Slack at 12:40 PM" or "Slack at 4:12 PM". -->
+    <string name="curve_spoken">25-hour curve: %1$s</string>
+    <!-- One spoken moment: a turn or peak with its value and unit, or "Slack", then its time. -->
+    <string name="curve_spoken_item">%1$s at %2$s</string>
+    <!-- Spoken after a current peak's speed in the curve summary, saying which way the water runs. -->
+    <string name="curve_spoken_flood">flood</string>
+    <string name="curve_spoken_ebb">ebb</string>
 </resources>

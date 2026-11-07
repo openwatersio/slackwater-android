@@ -77,7 +77,7 @@ internal fun DetailRelated(station: StationIdentity, meta: DetailMetadata?, mode
         val shown = ranked.filter { filter == null || it.identity.series == filter }.take(6)
         shown.forEach { row ->
             key(row.id) {
-                StationCard(row.identity, row.distanceKm, now, prefs, { model.reading(row.id, it) }, { open(row.id) })
+                StationCard(row.identity, row.distanceKm, now, prefs, { at, threshold -> model.card(row.id, at, threshold) }, { open(row.id) })
                 val provider = when {
                     row.id.value.startsWith("chs-") -> "CHS"
                     row.id.value.removePrefix("current:").startsWith("noaa/") -> "NOAA"
