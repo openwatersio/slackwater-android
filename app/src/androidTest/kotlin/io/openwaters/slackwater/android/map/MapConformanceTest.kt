@@ -1,7 +1,7 @@
 package io.openwaters.slackwater.android.map
 
 import androidx.compose.ui.test.*
-import androidx.compose.ui.test.junit4.createEmptyComposeRule
+import androidx.compose.ui.test.junit4.v2.createEmptyComposeRule
 import androidx.test.core.app.ActivityScenario
 import io.openwaters.slackwater.android.MainActivity
 import io.openwaters.slackwater.android.openStation

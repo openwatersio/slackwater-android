@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generated from scripts/translations/android/fr-CA.json. Edit the JSON source. -->
+<resources>
+    <string name="alert_plot_tide">"Hauteur de marée (%1$s)"</string>
+    <string name="alert_plot_current">"Vitesse du courant (kn)"</string>
+    <string name="alert_plot_derived">"Étales prévues"</string>
+    <string name="alert_plot_range">"Du %1$s au %2$s"</string>
+    <string name="alert_plot_reset_event">"Revenir à l’événement"</string>
+    <string name="alert_rise">"franchissement de %1$s m à la montée"</string>
+    <string name="alert_fall">"franchissement de %1$s m à la descente"</string>
+    <string name="alert_edit">"Modifier l’alerte"</string>
+    <string name="alert_on_time">"À l’heure prévue"</string>
+    <string name="alert_15min">"15 minutes avant"</string>
+    <string name="alert_30min">"30 minutes avant"</string>
+    <string name="alert_1hour">"1 heure avant"</string>
+    <string name="alert_3hours">"3 heures avant"</string>
+    <string name="alert_1day">"1 jour avant"</string>
+    <string name="alert_seconds">"%1$d secondes avant"</string>
+    <string name="alert_overdue">"L’heure du rappel est passée. Il sera envoyé dès l’enregistrement."</string>
+    <string name="alert_review_height">"Saisir de nouveau la hauteur (mètres)"</string>
+    <string name="alert_height">"Hauteur (mètres)"</string>
+    <string name="alert_screen_empty">"Aucune alerte. Créez-en une depuis la page d’une station."</string>
+    <plurals name="alert_plot_markers">
+        <item quantity="one">"%1$d alerte indiquée"</item>
+        <item quantity="other">"%1$d alertes indiquées"</item>
+        <item quantity="many">"%1$d alertes indiquées"</item>
+    </plurals>
+    <string name="alert_plot_previous">"Événement précédent, %1$s, %2$s"</string>
+    <string name="alert_plot_next">"Événement suivant, %1$s, %2$s"</string>
+    <string name="alert_plot_earlier">"Reculer de cinq minutes"</string>
+    <string name="alert_plot_later">"Avancer de cinq minutes"</string>
+    <string name="alert_show_events">"Afficher les événements du graphique"</string>
+    <string name="alert_hide_events">"Masquer les événements du graphique"</string>
+    <string name="alert_event_speed">"%1$s · %2$.1f kn"</string>
+    <string name="station_calendars_title">"Calendriers des stations"</string>
+    <string name="station_calendars_about">"Publiez les événements des 90 prochains jours dans un calendrier sur cet appareil. Ils restent sur cet appareil et ne comportent aucun rappel."</string>
+    <string name="station_calendar_subscribe">"Publier le calendrier"</string>
+    <string name="station_calendar_remove">"Supprimer le calendrier"</string>
+    <string name="station_calendar_remove_title">"Supprimer %1$s?"</string>
+    <plurals name="station_calendar_remove_count">
+        <item quantity="one">"Slackwater supprimera %1$d événement publié. Les événements personnels et ceux en cours seront conservés."</item>
+        <item quantity="other">"Slackwater supprimera %1$d événements publiés. Les événements personnels et ceux en cours seront conservés."</item>
+        <item quantity="many">"Slackwater supprimera %1$d événements publiés. Les événements personnels et ceux en cours seront conservés."</item>
+    </plurals>
+    <string name="station_calendar_offline_needed">"Téléchargez les prévisions avant de publier le calendrier."</string>
+    <string name="station_calendar_pending">"Des modifications sont en attente. Les événements publiés peuvent rester visibles jusqu’à la prochaine mise à jour du calendrier."</string>
+    <string name="station_calendar_permission">"Autorisez l’accès au calendrier pour que Slackwater puisse retrouver et mettre à jour ses événements."</string>
+    <string name="station_calendar_premium">"La publication d’un nouveau calendrier de station nécessite Premium."</string>
+    <string name="station_calendar_trial">"Publication pendant votre journée gratuite."</string>
+    <string name="station_calendar_active">"Abonnement actif"</string>
+    <string name="station_calendar_failed">"Impossible de mettre à jour le calendrier. Vérifiez les autorisations et réessayez."</string>
+    <string name="station_calendar_pending_remove">"Suppression en attente"</string>
+    <plurals name="chart_minutes">
+        <item quantity="one">"%1$d minute"</item>
+        <item quantity="other">"%1$d minutes"</item>
+        <item quantity="many">"%1$d minutes"</item>
+    </plurals>
+    <plurals name="chart_hours">
+        <item quantity="one">"%1$d heure"</item>
+        <item quantity="other">"%1$d heures"</item>
+        <item quantity="many">"%1$d heures"</item>
+    </plurals>
+    <string name="detail_related_currents">"Courants à %1$s"</string>
+    <string name="detail_namesakes">"Autres emplacements (%1$d)"</string>
+    <string name="detail_position">"Position"</string>
+    <string name="detail_zone">"Fuseau horaire"</string>
+    <string name="detail_reference">"Référence"</string>
+    <string name="detail_datum">"Zéro des cartes"</string>
+    <string name="detail_datum_note">"Les hauteurs sont mesurées depuis le zéro des cartes. Une valeur négative indique moins d’eau que la profondeur indiquée sur la carte."</string>
+    <string name="detail_shape_note">"La courbe entre les étales sert de guide. Seuls ses passages à zéro indiquent des heures prévues."</string>
+    <string name="detail_lags">"Décalages des étales"</string>
+    <string name="detail_lag_value">"%1$d min après la pleine mer · %2$d min après la basse mer"</string>
+    <string name="detail_prediction">"Prévision"</string>
+    <string name="detail_fitted">"Calculée sur cet appareil à partir des observations enregistrées"</string>
+    <string name="detail_official">"Prévisions officielles du SHC téléchargées pour utilisation hors ligne"</string>
+    <string name="detail_derived">"Seules les heures des étales sont estimées. Aucune prévision de vitesse pour ce passage."</string>
+    <string name="detail_harmonic">"Prévision harmonique"</string>
+    <string name="detail_subordinate">"Prévision corrigée à partir de la station de référence"</string>
+    <string name="detail_bound">"À %1$s, l’étale peut différer de la prévision du SHC de %2$d minutes au maximum."</string>
+    <string name="detail_gap">"Slackwater ne dispose pas de prévisions pour cette station."</string>
+    <string name="detail_queued">"Téléchargement demandé"</string>
+    <string name="detail_no_week">"Aucune prévision enregistrée ne couvre cette semaine."</string>
+    <string name="detail_no_data">"Aucune prévision enregistrée pour cette station."</string>
+    <string name="detail_loading">"Chargement des prévisions"</string>
+    <string name="detail_copied">"Votre rapport a été copié. Envoyez-le à slackwater@openwaters.io."</string>
+    <string name="detail_flow">"Courant moyen"</string>
+    <string name="detail_license">"Licence"</string>
+    <string name="detail_source">"Source"</string>
+    <string name="detail_datum_source">"Zéro des cartes : %1$s."</string>
+    <string name="detail_noaa_tide">"Prévision harmonique de marée de la NOAA."</string>
+    <string name="detail_noaa_sub">"Calculée sur cet appareil à partir des marées à %1$s et des corrections publiées par la NOAA."</string>
+    <string name="detail_publisher">"Constantes harmoniques de %1$s."</string>
+    <string name="detail_chs_fit">"Données du SHC (SINECO), ajustées et calculées sur cet appareil. Ces prévisions ne sont pas publiées par le SHC."</string>
+    <string name="detail_chs_preview">"Prévisions de marée officielles du SHC téléchargées sur cet appareil. Hauteurs au-dessus du zéro des cartes (BMIGC)."</string>
+    <string name="detail_noaa_current">"Prévision harmonique de courant de la NOAA."</string>
+    <string name="detail_sub_current">"Les étales et maxima à la station de référence sont corrigés selon les décalages publiés par la NOAA."</string>
+    <string name="detail_flood">"Le flot porte au %1$d° vrai."</string>
+    <string name="detail_derived_source">"Slackwater estime l’étale à %1$s à partir des marées hautes et basses à %2$s. Le SHC ne publie pas de prévisions de courant pour ce passage."</string>
+    <string name="detail_map">"Voir sur la carte"</string>
+    <string name="detail_invalid_link">"Impossible d’ouvrir le lien vers cette station."</string>
+    <string name="detail_chart_settings">"Réglages du graphique"</string>
+    <string name="panel_reference">"Estimé à partir des marées de référence"</string>
+    <string name="panel_daylight">"%1$d h %2$d min de jour"</string>
+    <string name="panel_lit">"%1$d %% éclairée"</string>
+    <string name="panel_moonrise">"Lever de la lune"</string>
+    <string name="panel_moonset">"Coucher de la lune"</string>
+    <string name="panel_earth_distance">"Distance de la Terre · %1$s km"</string>
+    <string name="panel_at">"%1$s à %2$s"</string>
+    <string name="panel_biggest">"Le plus grand de la quinzaine"</string>
+    <string name="panel_marked">"Supérieur à la normale ici"</string>
+    <string name="panel_hardest">"%1$s le plus fort · %2$s"</string>
+    <string name="panel_strong">"Fort %1$s · %2$s"</string>
+    <string name="panel_swing_rank">"Seuls %1$d des %2$d marnages de la quinzaine sont plus grands."</string>
+    <string name="panel_max_rank">"Seuls %1$d des %2$d maxima de la quinzaine dans cette direction sont plus forts."</string>
+    <string name="panel_biggest_day">"Chaque barre représente le plus grand marnage du jour."</string>
+    <string name="panel_max_day">"Chaque barre représente le plus fort %1$s du jour."</string>
+    <string-array name="panel_phases">
+        <item>"Nouvelle lune"</item>
+        <item>"Premier croissant"</item>
+        <item>"Premier quartier"</item>
+        <item>"Lune gibbeuse croissante"</item>
+        <item>"Pleine lune"</item>
+        <item>"Lune gibbeuse décroissante"</item>
+        <item>"Dernier quartier"</item>
+        <item>"Dernier croissant"</item>
+    </string-array>
+    <string name="panel_full">"Prochaine pleine lune"</string>
+    <string name="panel_new">"Prochaine nouvelle lune"</string>
+    <string name="panel_last_lunar">"Dernière éclipse lunaire visible"</string>
+    <string name="panel_last_solar">"Dernière éclipse solaire visible"</string>
+    <string name="panel_rise_def">"Le bord supérieur du Soleil apparaît au-dessus d’un horizon dégagé."</string>
+    <string name="panel_set_def">"Le bord supérieur du Soleil disparaît sous un horizon dégagé."</string>
+    <string name="panel_noon_def">"Le Soleil traverse le méridien local."</string>
+    <string name="panel_twilight_rising">"Le Soleil montant se trouve à %1$d° sous l’horizon."</string>
+    <string name="panel_twilight_setting">"Le Soleil descendant se trouve à %1$d° sous l’horizon."</string>
+    <string name="panel_edge_def">"Le centre du Soleil franchit %1$d° par rapport à l’horizon."</string>
+    <string name="panel_next_total">"Prochaine éclipse lunaire totale"</string>
+    <string name="panel_next_partial">"Prochaine éclipse lunaire partielle"</string>
+    <string name="panel_next_penumbral">"Prochaine éclipse lunaire pénombrale"</string>
+    <string name="panel_mostly">"Surtout saisonnier"</string>
+    <string name="panel_partly">"En partie saisonnier"</string>
+    <string name="panel_ends">"Par rapport aux limites de cette station"</string>
+    <string name="panel_season_large">"La variation annuelle dépasse de loin la marée quotidienne."</string>
+    <string name="panel_hat">"Plus haute marée astronomique · %1$s"</string>
+    <string name="panel_lat">"Plus basse marée astronomique · %1$s"</string>
+    <string name="panel_turn">"Étale sélectionnée · %1$s"</string>
+    <string name="panel_ratio">"Variation annuelle · %1$.1f× la marée quotidienne"</string>
+    <string name="panel_slack_compared">"L’étale dure %1$d minutes près de ce maximum, contre environ %2$d minutes habituellement."</string>
+    <string name="panel_swing_explain">"La différence entre la pleine et la basse mer, %1$s."</string>
+    <string name="panel_springs_follow">"Les vives-eaux suivent la nouvelle et la pleine lune."</string>
+    <string name="panel_orbit_scale">"La forme de l’orbite est exagérée pour illustrer la variation de distance."</string>
+    <string name="panel_hat_label">"Plus haute marée astronomique"</string>
+    <string name="panel_lat_label">"Plus basse marée astronomique"</string>
+    <string name="panel_high_label">"Plus haute pleine mer de la quinzaine"</string>
+    <string name="panel_low_label">"Plus basse mer de la quinzaine"</string>
+    <string name="panel_turn_label">"Étale sélectionnée"</string>
+    <string name="panel_explain">"À propos de %1$s"</string>
+    <string name="panel_season_equal">"La variation annuelle est comparable à la marée quotidienne."</string>
+    <string name="panel_season_river">"À %1$s, le niveau d’eau varie bien davantage au fil de l’année qu’au cours d’une journée. Le ruissellement, les précipitations et le vent peuvent déplacer toute la marée quotidienne."</string>
+    <string name="panel_season_tide">"À %1$s, la marée quotidienne et le cycle annuel sont de taille comparable. L’heure de pleine ou basse mer reste prévisible malgré la variation saisonnière."</string>
+    <string name="panel_spring_explain">"Les attractions du Soleil et de la Lune sont alignées. Leurs effets combinés tendent à accroître le marnage."</string>
+    <string name="panel_neap_explain">"Au quartier, les attractions du Soleil et de la Lune forment un angle droit. Le marnage tend à diminuer."</string>
+    <string name="panel_perigee_explain">"La Lune est près de son point le plus proche de la Terre, où son effet sur les marées est plus fort."</string>
+    <string name="panel_apogee_explain">"La Lune est près de son point le plus éloigné de la Terre, où son effet sur les marées est plus faible."</string>
+    <string-array name="panel_phase_explanation">
+        <item>"La Lune se situe presque entre la Terre et le Soleil."</item>
+        <item>"Un croissant de plus en plus large de la moitié éclairée fait face à la Terre."</item>
+        <item>"La Lune a parcouru le quart de son cycle."</item>
+        <item>"Plus de la moitié du disque visible est éclairée et la partie éclairée grandit."</item>
+        <item>"La Lune se trouve à l’opposé du Soleil dans notre ciel."</item>
+        <item>"Plus de la moitié du disque visible est éclairée et la partie éclairée diminue."</item>
+        <item>"La Lune a parcouru les trois quarts de son cycle."</item>
+        <item>"Le croissant s’amincit avant la prochaine nouvelle lune."</item>
+    </string-array>
+    <string name="prediction_shortcuts">"Raccourcis de prédiction"</string>
+    <string name="pdf_daylight">"Lever du soleil %1$s · Coucher du soleil %2$s"</string>
+    <string name="pdf_kmh">"km/h"</string>
+    <string name="pdf_ms">"m/s"</string>
+    <string name="pdf_flood_set">"Flot %1$s"</string>
+    <string name="pdf_ebb_set">"Jusant %1$s"</string>
+    <string name="pdf_page">"%1$d / %2$d"</string>
+    <string-array name="pdf_compass">
+        <item>"N"</item>
+        <item>"NNE"</item>
+        <item>"NE"</item>
+        <item>"ENE"</item>
+        <item>"E"</item>
+        <item>"ESE"</item>
+        <item>"SE"</item>
+        <item>"SSE"</item>
+        <item>"S"</item>
+        <item>"SSO"</item>
+        <item>"SO"</item>
+        <item>"OSO"</item>
+        <item>"O"</item>
+        <item>"ONO"</item>
+        <item>"NO"</item>
+        <item>"NNO"</item>
+    </string-array>
+    <string name="table_sheet_share">"Partager le PDF"</string>
+    <string name="table_sheet_print">"Imprimer"</string>
+    <string name="table_sheet_page">"Page %1$d sur %2$d"</string>
+    <string name="table_sheet_failed">"Impossible de préparer le PDF."</string>
+    <string name="table_sheet_export_failed">"Impossible d’ouvrir le PDF pour l’imprimer ou le partager."</string>
+    <string name="table_sheet_locked">"Les tables imprimables nécessitent Premium."</string>
+    <string name="table_sheet_download_current">"Téléchargez les prévisions de courant pour imprimer d’autres jours."</string>
+    <string name="table_sheet_download_tide">"Pour imprimer d’autres jours, téléchargez les prévisions de marée complètes de cette station."</string>
+    <string name="table_sheet_letter">"Format lettre fixe (8,5 × 11 po). Choisissez ce papier pour conserver les dimensions de l’aperçu."</string>
+    <string name="table_sheet_a4">"Format A4 fixe (210 × 297 mm). Choisissez ce papier pour conserver les dimensions de l’aperçu."</string>
+    <string name="query_invalid">"Ce raccourci de prévision est illisible."</string>
+    <string name="query_nearby_hint">"Laissez ce champ vide pour utiliser votre position."</string>
+    <string name="query_date_hint">"Entrez AAAA-MM-JJ ou laissez ce champ vide pour le prochain événement."</string>
+    <string name="query_show">"Afficher la prévision"</string>
+    <string name="query_missing">"Impossible de trouver %1$s. Vérifiez le nom du lieu dans Slackwater."</string>
+    <string name="query_location">"Une position récente est requise. Utilisez votre position ou entrez un lieu ci-dessus."</string>
+    <string name="query_use_location">"Utiliser ma position"</string>
+    <string name="query_choose">"Choisir une station"</string>
+    <string name="query_pin">"Épingler ce raccourci"</string>
+    <string name="query_pin_failed">"Le lanceur n’a pas pu épingler ce raccourci."</string>
+    <string name="query_off">"Les fenêtres d’étale sont désactivées dans les réglages du courant de confort."</string>
+    <string name="query_none_date">"Aucun événement correspondant le %1$s."</string>
+    <string name="query_none_window">"Aucune fenêtre d’étale dans les 48 prochaines heures."</string>
+    <string name="query_none_tide">"Aucune marée correspondante dans les 48 prochaines heures."</string>
+    <string name="query_tide_ft">"%1$s · %2$.1f pi"</string>
+    <string name="query_tide_m">"%1$s · %2$.2f m"</string>
+    <string name="query_window">"Du %1$s au %2$s"</string>
+    <string name="query_window_from">"Début le %1$s. Fin inconnue."</string>
+    <string name="query_window_until">"Fin le %1$s. Début inconnu."</string>
+    <string name="query_window_at">"Courant sous le seuil de confort le %1$s. Début et fin inconnus."</string>
+    <string name="query_curve_extent">"%1$s – %2$s"</string>
+    <string name="query_high_day">"Pleines mers"</string>
+    <string name="query_low_day">"Basses mers"</string>
+    <string name="query_slack_day">"Fenêtres d’étale"</string>
+    <string name="query_tide_wait">"Dans environ %1$s."</string>
+    <string name="query_open">"Fenêtre ouverte."</string>
+    <string name="query_remaining">"Fenêtre ouverte pour encore environ %1$s."</string>
+    <string name="query_opens">"Début dans environ %1$s."</string>
+    <string name="query_opens_duration">"Début dans environ %1$s, pour une durée d’environ %2$s."</string>
+    <string name="reminder_notify_blocked">"Alerte enregistrée. Autorisez les notifications dans les paramètres Android pour la recevoir."</string>
+    <string name="reminder_inexact_saved">"Alerte enregistrée. Android peut retarder les rappels sur cet appareil."</string>
+    <string name="reminder_back_to_stations">"Revenir aux stations"</string>
+    <string name="reminder_my_alerts">"Mes alertes"</string>
+    <string name="reminder_reset_height">"Saisir une nouvelle hauteur"</string>
+    <string name="reminder_premium_required">"Premium requis"</string>
+    <string name="reminder_notifications_blocked">"Notifications bloquées"</string>
+    <string name="reminder_no_scheduled">"Aucun rappel à venir"</string>
+    <string name="reminder_inexact">"Android peut retarder l’envoi"</string>
+    <string name="reminder_save_premium">"L’enregistrement d’une alerte nécessite Premium."</string>
+    <string name="reminder_through">"Rappels programmés jusqu’au %1$s"</string>
+    <string name="reminder_write_failed">"Impossible d’enregistrer l’alerte. Réessayez."</string>
+    <string name="schedule_title">"Horaire"</string>
+    <string name="schedule_earlier">"Semaine précédente"</string>
+    <string name="schedule_later">"Semaine suivante"</string>
+    <string name="schedule_premium_message">"L’impression et le partage des tables nécessitent Premium. Vous pouvez consulter l’horaire ici."</string>
+    <string name="schedule_reset">"Revenir à la semaine sélectionnée"</string>
+    <string name="list_region_distance">"%1$s • %2$s"</string>
+    <string name="card_unavailable">"Aucune prévision pour l’instant"</string>
+    <string name="card_value_unit_approximate">"~%1$s %2$s"</string>
+    <string name="card_spoken_reading">"%1$s %2$s, %3$s"</string>
+    <string name="card_spoken_set">"vers %1$s"</string>
+    <string name="search_truncated">"Les 60 plus proches — continuez à taper pour préciser"</string>
+    <string name="list_catalog_unavailable">"Les données des stations ne sont pas disponibles sur cet appareil."</string>
+    <string name="card_spoken_approximate">"environ %1$s"</string>
+    <string name="data_and_licenses">"Données et licences"</string>
+    <string name="data_credits">"Sources des données"</string>
+    <string name="reminder_channel">"Rappels de stations"</string>
+    <string name="notification_window_opens">"La fenêtre d’étale s’ouvre"</string>
+    <string name="notification_eclipse_begins">"L’éclipse commence"</string>
+    <string name="notification_rise">"Franchissement de %1$s m à la montée"</string>
+    <string name="notification_fall">"Franchissement de %1$s m à la descente"</string>
+    <string name="curve_spoken">"Courbe de 25 heures : %1$s"</string>
+    <string name="curve_spoken_item">"%1$s à %2$s"</string>
+    <string name="map_open">"Carte"</string>
+    <string name="map_list">"Liste"</string>
+    <string name="map_locate">"Ma position"</string>
+    <string name="map_pick">"Choisissez une station"</string>
+    <string name="map_pick_hint">"Les marées et les courants s’affichent ici."</string>
+    <string name="map_legend">"● Marées (%1$s)   ➤ Courants (%2$s)"</string>
+    <string name="map_disclaimer">"Ne pas utiliser pour la navigation"</string>
+    <string name="map_tide_units">"Hauteurs de marée"</string>
+    <string name="map_current_units">"Vitesses de courant"</string>
+    <string name="map_slow">"Le fond de carte tarde à charger"</string>
+    <string name="map_loading">"Chargement du fond de carte…"</string>
+    <string name="map_local">"Repères locaux affichés"</string>
+    <string name="map_use_local">"Utiliser les repères locaux"</string>
+    <string name="map_retry">"Réessayer la carte"</string>
+    <string name="map_failure">"Fond de carte indisponible"</string>
+    <string name="map_stations">"Stations visibles"</string>
+    <string name="map_close">"Fermer l’aperçu"</string>
+    <string name="map_empty">"Aucune station dans cette zone"</string>
+    <string name="map_fix_missing">"Position indisponible"</string>
+    <string name="map_units_legend">"Marées en %1$s. Courants en %2$s. Ne pas utiliser pour la navigation. Réglages du graphique."</string>
+    <string name="map_zoom_out">"Zoom arrière"</string>
+    <string name="map_zoom_in">"Zoom avant"</string>
+</resources>

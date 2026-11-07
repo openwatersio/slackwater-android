@@ -1,6 +1,0 @@
-<resources>
-    <string name="detail_timeline_tide">Tide timeline</string>
-    <string name="detail_timeline_current">Current timeline</string>
-    <string name="detail_timeline_next">Next event</string>
-    <string name="detail_timeline_previous">Previous event</string>
-</resources>

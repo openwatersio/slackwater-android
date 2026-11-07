@@ -2,6 +2,7 @@ package io.openwaters.slackwater.android.calendars
 
 import android.content.Context
 import android.util.Log
+import io.openwaters.slackwater.android.R
 import io.openwaters.slackwater.android.alerts.ReminderAccessStore
 import io.openwaters.slackwater.android.core.planning.*
 import io.openwaters.slackwater.android.core.prediction.*
@@ -139,7 +140,7 @@ class CalendarRepository private constructor(private val app: Context) {
             settings.heightUnits() == HeightUnits.IMPERIAL, result)
         val rejected = result is PredictionResult.Unavailable && result.reason != PredictionResult.Reason.OUTSIDE_COVERAGE
         if (models.revision.value != revision) throw java.io.IOException("Calendar input changed during calculation")
-        return Publication(revision, source, stationCalendarTitle(station), events, rejected)
+        return Publication(revision, source, localizedStationCalendarTitle(app, station), events, rejected)
     }
 
     private suspend fun process(id: StationId, firstPlan: Publication? = null): Boolean {
@@ -200,5 +201,14 @@ class CalendarRepository private constructor(private val app: Context) {
         private var shared: CalendarRepository? = null
         @Synchronized fun get(context: Context): CalendarRepository =
             shared ?: CalendarRepository(context.applicationContext).also { shared = it }
+    }
+}
+
+internal fun localizedStationCalendarTitle(context: Context, station: StationIdentity): String? {
+    if (context.resources.configuration.locales[0].language == "en") return stationCalendarTitle(station)
+    return when (station.series) {
+        StationSeries.Tide -> context.getString(R.string.panel_port, station.name)
+        StationSeries.Current -> context.getString(R.string.detail_related_currents, station.name)
+        null -> null
     }
 }

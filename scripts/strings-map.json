@@ -1,0 +1,1372 @@
+{
+  "catalog": "Slackwater/Localizable.xcstrings",
+  "entries": [
+    {
+      "name": "alert_plot_reset",
+      "key": "Return to now",
+      "english": "Return to now"
+    },
+    {
+      "name": "alert_set_action",
+      "key": "Set an alert",
+      "english": "Set an alert"
+    },
+    {
+      "name": "alert_set_subject",
+      "key": "Alert set · %@",
+      "english": "Alert set · %1$s",
+      "overrides": {
+        "fr-CA": "Alerte programmée · %1$s"
+      }
+    },
+    {
+      "name": "alert_pressed_subject",
+      "key": "Set alert for %@ · %@",
+      "english": "Set alert for %1$s · %2$s",
+      "overrides": {
+        "fr-CA": "Créer une alerte pour %1$s · %2$s"
+      }
+    },
+    {
+      "name": "alert_subject_time",
+      "key": "%@ · %@",
+      "english": "%1$s · %2$s"
+    },
+    {
+      "name": "alert_every",
+      "key": "Every %@",
+      "english": "Every %1$s",
+      "overrides": {
+        "fr-CA": "À chaque %1$s"
+      }
+    },
+    {
+      "name": "alert_slack",
+      "key": "Slack",
+      "english": "slack",
+      "overrides": {
+        "fr-CA": "étale"
+      }
+    },
+    {
+      "name": "alert_slack_window",
+      "key": "Slack window",
+      "english": "slack window",
+      "overrides": {
+        "fr-CA": "période d’étale"
+      }
+    },
+    {
+      "name": "alert_eclipse",
+      "key": "Lunar eclipse",
+      "english": "lunar eclipse",
+      "overrides": {
+        "fr-CA": "éclipse lunaire"
+      }
+    },
+    {
+      "name": "alert_flood",
+      "key": "Maximum flood current",
+      "english": "maximum flood",
+      "overrides": {
+        "fr-CA": "flot maximal"
+      }
+    },
+    {
+      "name": "alert_ebb",
+      "key": "Maximum ebb current",
+      "english": "maximum ebb",
+      "overrides": {
+        "fr-CA": "jusant maximal"
+      }
+    },
+    {
+      "name": "alert_low",
+      "key": "Low tide",
+      "english": "low tide",
+      "overrides": {
+        "fr-CA": "basse mer"
+      }
+    },
+    {
+      "name": "alert_high",
+      "key": "High tide",
+      "english": "high tide",
+      "overrides": {
+        "fr-CA": "pleine mer"
+      }
+    },
+    {
+      "name": "alert_higher_high",
+      "key": "Higher high tide",
+      "english": "higher high tide",
+      "overrides": {
+        "fr-CA": "pleine mer supérieure"
+      }
+    },
+    {
+      "name": "alert_lower_low",
+      "key": "Lower low tide",
+      "english": "lower low tide",
+      "overrides": {
+        "fr-CA": "basse mer inférieure"
+      }
+    },
+    {
+      "name": "alert_once",
+      "key": "Does not repeat",
+      "english": "Does not repeat"
+    },
+    {
+      "name": "alert_repeat",
+      "key": "Repeat",
+      "english": "Repeat"
+    },
+    {
+      "name": "alert_remind",
+      "key": "Remind me",
+      "english": "Remind me"
+    },
+    {
+      "name": "alert_sun",
+      "key": "Sun",
+      "english": "Sun"
+    },
+    {
+      "name": "alert_any_time",
+      "key": "Any time",
+      "english": "Any time",
+      "overrides": {
+        "fr-CA": "N’importe quand"
+      }
+    },
+    {
+      "name": "alert_daylight",
+      "key": "In daylight",
+      "english": "In daylight"
+    },
+    {
+      "name": "alert_golden",
+      "key": "Golden hour",
+      "english": "Golden hour"
+    },
+    {
+      "name": "alert_blue",
+      "key": "Blue hour",
+      "english": "Blue hour"
+    },
+    {
+      "name": "alert_past",
+      "key": "This moment has passed",
+      "english": "This moment has passed"
+    },
+    {
+      "name": "alert_switch",
+      "key": "On",
+      "english": "On"
+    },
+    {
+      "name": "alert_delete",
+      "key": "Delete Alert",
+      "english": "Delete alert"
+    },
+    {
+      "name": "alert_save",
+      "key": "Save",
+      "english": "Save"
+    },
+    {
+      "name": "alert_cancel",
+      "key": "Cancel",
+      "english": "Cancel"
+    },
+    {
+      "name": "alert_screen_back",
+      "key": "Back",
+      "english": "Back"
+    },
+    {
+      "name": "alert_screen_title",
+      "key": "Alerts",
+      "english": "Alerts"
+    },
+    {
+      "name": "station_calendar_settings",
+      "key": "Open Settings",
+      "english": "Open app settings",
+      "overrides": {
+        "fr-CA": "Ouvrir les paramètres de l’application"
+      }
+    },
+    {
+      "name": "station_calendar_stopped",
+      "key": "Stopped — needs Premium",
+      "english": "Stopped — needs Premium"
+    },
+    {
+      "name": "station_calendar_cancel",
+      "key": "Cancel",
+      "english": "Cancel"
+    },
+    {
+      "name": "chart_high",
+      "key": "High",
+      "english": "High",
+      "overrides": {
+        "fr-CA": "Pleine mer"
+      }
+    },
+    {
+      "name": "chart_low",
+      "key": "Low",
+      "english": "Low",
+      "overrides": {
+        "fr-CA": "Basse mer"
+      }
+    },
+    {
+      "name": "chart_max_flood",
+      "key": "Max flood",
+      "english": "Max flood",
+      "overrides": {
+        "fr-CA": "Flot maximal"
+      }
+    },
+    {
+      "name": "chart_max_ebb",
+      "key": "Max ebb",
+      "english": "Max ebb",
+      "overrides": {
+        "fr-CA": "Jusant maximal"
+      }
+    },
+    {
+      "name": "chart_fast_rise",
+      "key": "Fastest rise",
+      "english": "Fastest rise"
+    },
+    {
+      "name": "chart_fast_fall",
+      "key": "Fastest fall",
+      "english": "Fastest fall"
+    },
+    {
+      "name": "chart_window",
+      "key": "Slack window",
+      "english": "Slack window"
+    },
+    {
+      "name": "chart_closes",
+      "key": "Slack window closes",
+      "english": "Slack window closes"
+    },
+    {
+      "name": "chart_now",
+      "key": "Now",
+      "english": "Now"
+    },
+    {
+      "name": "chart_return",
+      "key": "Return to now",
+      "english": "Return to now"
+    },
+    {
+      "name": "chart_in",
+      "key": "%@ in %@",
+      "english": "%1$s in %2$s"
+    },
+    {
+      "name": "detail_share",
+      "key": "Share",
+      "english": "Share"
+    },
+    {
+      "name": "detail_related_tides",
+      "key": "Tide at %@",
+      "english": "Tide at %1$s"
+    },
+    {
+      "name": "detail_nearby",
+      "key": "Nearby",
+      "english": "Nearby"
+    },
+    {
+      "name": "detail_station",
+      "key": "Station",
+      "english": "Station"
+    },
+    {
+      "name": "detail_details",
+      "key": "Station details",
+      "english": "Station details"
+    },
+    {
+      "name": "detail_notice",
+      "key": "Predictions — not for navigation",
+      "english": "Predictions — not for navigation",
+      "overrides": {
+        "fr-CA": "Prévisions — ne pas utiliser pour la navigation"
+      }
+    },
+    {
+      "name": "detail_preview",
+      "key": "Predictions available through %@",
+      "english": "Predictions available through %1$s"
+    },
+    {
+      "name": "detail_more_data",
+      "key": "Additional data is required to improve accuracy",
+      "english": "Additional data is required to improve accuracy"
+    },
+    {
+      "name": "detail_unavailable",
+      "key": "Predictions unavailable",
+      "english": "Predictions unavailable"
+    },
+    {
+      "name": "detail_download",
+      "key": "Download for offline use",
+      "english": "Download for offline use"
+    },
+    {
+      "name": "detail_feedback",
+      "key": "Concerns or Feedback",
+      "english": "Concerns or Feedback"
+    },
+    {
+      "name": "detail_wrong_place",
+      "key": "Station is in the wrong place",
+      "english": "Station is in the wrong place"
+    },
+    {
+      "name": "detail_wrong_name",
+      "key": "Station name or details are wrong",
+      "english": "Station name or details are wrong"
+    },
+    {
+      "name": "detail_wrong_prediction",
+      "key": "Predictions look wrong",
+      "english": "Predictions look wrong"
+    },
+    {
+      "name": "detail_share_details",
+      "key": "Share station details",
+      "english": "Share station details"
+    },
+    {
+      "name": "detail_help",
+      "key": "If you know who operates this station or how its data is licensed, let us know.",
+      "english": "If you know who operates this station or how its data is licensed, let us know.",
+      "overrides": {
+        "fr-CA": "Si vous connaissez l’exploitant de cette station ou la licence des données, écrivez-nous."
+      }
+    },
+    {
+      "name": "detail_mail_unavailable",
+      "key": "Mail unavailable",
+      "english": "Mail unavailable",
+      "overrides": {
+        "fr-CA": "Courriel indisponible"
+      }
+    },
+    {
+      "name": "detail_all",
+      "key": "All",
+      "english": "All",
+      "overrides": {
+        "fr-CA": "Toutes"
+      }
+    },
+    {
+      "name": "detail_tides",
+      "key": "Tides",
+      "english": "Tides"
+    },
+    {
+      "name": "detail_currents",
+      "key": "Currents",
+      "english": "Currents"
+    },
+    {
+      "name": "detail_none",
+      "key": "None measured",
+      "english": "None measured",
+      "overrides": {
+        "fr-CA": "Aucun mesuré"
+      }
+    },
+    {
+      "name": "detail_network_missing",
+      "key": "Offline through %@",
+      "english": "Offline through %1$s",
+      "overrides": {
+        "fr-CA": "Disponible hors ligne jusqu’au %1$s"
+      }
+    },
+    {
+      "name": "detail_context",
+      "key": "Large-tide context: %@. This is not a prediction for this pass.",
+      "english": "Large-tide context: %1$s. This is not a prediction for this pass.",
+      "overrides": {
+        "fr-CA": "Contexte des grandes marées : %1$s. Il ne s’agit pas d’une prévision pour ce passage."
+      }
+    },
+    {
+      "name": "detail_instead",
+      "key": "Try %@ instead",
+      "english": "Try %1$s instead",
+      "overrides": {
+        "fr-CA": "Consulter plutôt %1$s"
+      }
+    },
+    {
+      "name": "detail_show_sky",
+      "key": "Sun, moon and stars",
+      "english": "Sun, moon and stars",
+      "overrides": {
+        "fr-CA": "Soleil, Lune et étoiles"
+      }
+    },
+    {
+      "name": "panel_today",
+      "key": "Today",
+      "english": "Today"
+    },
+    {
+      "name": "panel_tomorrow",
+      "key": "Tomorrow",
+      "english": "Tomorrow"
+    },
+    {
+      "name": "panel_yesterday",
+      "key": "Yesterday",
+      "english": "Yesterday"
+    },
+    {
+      "name": "panel_show",
+      "key": "Show",
+      "english": "Show"
+    },
+    {
+      "name": "panel_choose_date",
+      "key": "Choose a date",
+      "english": "Choose a date"
+    },
+    {
+      "name": "panel_range",
+      "key": "Range",
+      "english": "Range"
+    },
+    {
+      "name": "panel_max",
+      "key": "Next max",
+      "english": "Next max"
+    },
+    {
+      "name": "panel_shape",
+      "key": "Shape only",
+      "english": "Shape only",
+      "overrides": {
+        "fr-CA": "Schéma seulement"
+      }
+    },
+    {
+      "name": "panel_no_speed",
+      "key": "No speed",
+      "english": "No speed",
+      "overrides": {
+        "fr-CA": "Vitesse inconnue"
+      }
+    },
+    {
+      "name": "panel_port",
+      "key": "%@ tides",
+      "english": "%1$s tides",
+      "overrides": {
+        "fr-CA": "Marées à %1$s"
+      }
+    },
+    {
+      "name": "panel_low_high",
+      "key": "low to high",
+      "english": "low to high",
+      "overrides": {
+        "fr-CA": "de la basse à la pleine mer"
+      }
+    },
+    {
+      "name": "panel_high_low",
+      "key": "high to low",
+      "english": "high to low",
+      "overrides": {
+        "fr-CA": "de la pleine à la basse mer"
+      }
+    },
+    {
+      "name": "panel_moon",
+      "key": "Moon",
+      "english": "Moon"
+    },
+    {
+      "name": "panel_sun",
+      "key": "Sun",
+      "english": "Sun"
+    },
+    {
+      "name": "panel_spring",
+      "key": "Spring tide",
+      "english": "Spring tide"
+    },
+    {
+      "name": "panel_neap",
+      "key": "Neap tide",
+      "english": "Neap tide"
+    },
+    {
+      "name": "panel_rise",
+      "key": "Sunrise",
+      "english": "Sunrise"
+    },
+    {
+      "name": "panel_set",
+      "key": "Sunset",
+      "english": "Sunset"
+    },
+    {
+      "name": "panel_rank_title",
+      "key": "Is this beyond normal?",
+      "english": "Is this beyond normal?",
+      "overrides": {
+        "fr-CA": "Est-ce au-dessus de la normale ?"
+      }
+    },
+    {
+      "name": "panel_closest",
+      "key": "Closest",
+      "english": "Closest",
+      "overrides": {
+        "fr-CA": "Au plus près"
+      }
+    },
+    {
+      "name": "panel_farthest",
+      "key": "Farthest",
+      "english": "Farthest",
+      "overrides": {
+        "fr-CA": "Au plus loin"
+      }
+    },
+    {
+      "name": "panel_next_solar",
+      "key": "Next solar eclipse",
+      "english": "Next solar eclipse",
+      "overrides": {
+        "fr-CA": "Prochaine éclipse solaire"
+      }
+    },
+    {
+      "name": "panel_noon",
+      "key": "Solar noon",
+      "english": "Solar noon"
+    },
+    {
+      "name": "panel_astro_dawn",
+      "key": "Astronomical dawn",
+      "english": "Astronomical dawn"
+    },
+    {
+      "name": "panel_astro_dusk",
+      "key": "Astronomical dusk",
+      "english": "Astronomical dusk"
+    },
+    {
+      "name": "panel_naut_dawn",
+      "key": "Nautical dawn",
+      "english": "Nautical dawn"
+    },
+    {
+      "name": "panel_naut_dusk",
+      "key": "Nautical dusk",
+      "english": "Nautical dusk"
+    },
+    {
+      "name": "panel_civil_dawn",
+      "key": "Civil dawn",
+      "english": "Civil dawn"
+    },
+    {
+      "name": "panel_civil_dusk",
+      "key": "Civil dusk",
+      "english": "Civil dusk"
+    },
+    {
+      "name": "panel_golden_end",
+      "key": "Golden hour ends",
+      "english": "Golden hour ends"
+    },
+    {
+      "name": "panel_golden_start",
+      "key": "Golden hour begins",
+      "english": "Golden hour begins"
+    },
+    {
+      "name": "panel_blue_start",
+      "key": "Blue hour begins",
+      "english": "Blue hour begins"
+    },
+    {
+      "name": "panel_blue_end",
+      "key": "Blue hour ends",
+      "english": "Blue hour ends"
+    },
+    {
+      "name": "panel_perihelion",
+      "key": "Perihelion",
+      "english": "Perihelion"
+    },
+    {
+      "name": "panel_aphelion",
+      "key": "Aphelion",
+      "english": "Aphelion"
+    },
+    {
+      "name": "panel_solar_eclipse",
+      "key": "Solar Eclipse",
+      "english": "Solar Eclipse"
+    },
+    {
+      "name": "panel_total_eclipse",
+      "key": "Total Eclipse",
+      "english": "Total Eclipse"
+    },
+    {
+      "name": "panel_partial_eclipse",
+      "key": "Partial Eclipse",
+      "english": "Partial Eclipse"
+    },
+    {
+      "name": "panel_penumbra",
+      "key": "Penumbral Eclipse",
+      "english": "Penumbral Eclipse"
+    },
+    {
+      "name": "panel_year_tide",
+      "key": "When this station runs biggest",
+      "english": "When this station runs biggest",
+      "overrides": {
+        "fr-CA": "Quand le marnage est le plus grand"
+      }
+    },
+    {
+      "name": "panel_year_current",
+      "key": "When this gate runs hardest",
+      "english": "When this gate runs hardest"
+    },
+    {
+      "name": "panel_widest_month",
+      "key": "Widest around %@.",
+      "english": "Widest around %1$s.",
+      "overrides": {
+        "fr-CA": "Marnage maximal vers %1$s."
+      }
+    },
+    {
+      "name": "panel_hardest_month",
+      "key": "Hardest around %@.",
+      "english": "Hardest around %1$s.",
+      "overrides": {
+        "fr-CA": "Courant maximal vers %1$s."
+      }
+    },
+    {
+      "name": "panel_perigean_spring",
+      "key": "Perigean spring tide",
+      "english": "Perigean spring tide",
+      "overrides": {
+        "fr-CA": "Vive-eau de périgée"
+      }
+    },
+    {
+      "name": "panel_apogean_spring",
+      "key": "Apogean spring tide",
+      "english": "Apogean spring tide",
+      "overrides": {
+        "fr-CA": "Vive-eau d’apogée"
+      }
+    },
+    {
+      "name": "panel_perigean_neap",
+      "key": "Perigean neap tide",
+      "english": "Perigean neap tide",
+      "overrides": {
+        "fr-CA": "Morte-eau de périgée"
+      }
+    },
+    {
+      "name": "panel_apogean_neap",
+      "key": "Apogean neap tide",
+      "english": "Apogean neap tide",
+      "overrides": {
+        "fr-CA": "Morte-eau d’apogée"
+      }
+    },
+    {
+      "name": "panel_perigean",
+      "key": "Perigean tide",
+      "english": "Perigean tide",
+      "overrides": {
+        "fr-CA": "Marée de périgée"
+      }
+    },
+    {
+      "name": "panel_apogean",
+      "key": "Apogean tide",
+      "english": "Apogean tide",
+      "overrides": {
+        "fr-CA": "Marée d’apogée"
+      }
+    },
+    {
+      "name": "panel_flood",
+      "key": "Flood",
+      "english": "Flood"
+    },
+    {
+      "name": "panel_ebb",
+      "key": "Ebb",
+      "english": "Ebb"
+    },
+    {
+      "name": "panel_widest_solstice",
+      "key": "Widest around %@, near the solstice.",
+      "english": "Widest around %1$s, near the solstice.",
+      "overrides": {
+        "fr-CA": "Marnage maximal vers %1$s, près du solstice."
+      }
+    },
+    {
+      "name": "panel_hardest_solstice",
+      "key": "Hardest around %@, near the solstice.",
+      "english": "Hardest around %1$s, near the solstice.",
+      "overrides": {
+        "fr-CA": "Courant maximal vers %1$s, près du solstice."
+      }
+    },
+    {
+      "name": "panel_widest_equinox",
+      "key": "Widest around %@, near the equinox.",
+      "english": "Widest around %1$s, near the equinox.",
+      "overrides": {
+        "fr-CA": "Marnage maximal vers %1$s, près de l’équinoxe."
+      }
+    },
+    {
+      "name": "panel_hardest_equinox",
+      "key": "Hardest around %@, near the equinox.",
+      "english": "Hardest around %1$s, near the equinox.",
+      "overrides": {
+        "fr-CA": "Courant maximal vers %1$s, près de l’équinoxe."
+      }
+    },
+    {
+      "name": "panel_max_explain",
+      "key": "The hardest the water runs before it turns, at %@.",
+      "english": "The hardest the water runs before it turns, at %1$s.",
+      "overrides": {
+        "fr-CA": "Le courant le plus fort avant la renverse, à %1$s."
+      }
+    },
+    {
+      "name": "panel_expanded",
+      "key": "Expanded",
+      "english": "Expanded",
+      "overrides": {
+        "fr-CA": "Développé"
+      }
+    },
+    {
+      "name": "panel_collapsed",
+      "key": "Collapsed",
+      "english": "Collapsed",
+      "overrides": {
+        "fr-CA": "Réduit"
+      }
+    },
+    {
+      "name": "panel_biggest_swing",
+      "key": "The biggest swing of the fortnight.",
+      "english": "The biggest swing of the fortnight."
+    },
+    {
+      "name": "panel_hardest_max",
+      "key": "The hardest %@ of the fortnight.",
+      "english": "The hardest %1$s of the fortnight.",
+      "overrides": {
+        "fr-CA": "Le plus fort %1$s de la quinzaine."
+      }
+    },
+    {
+      "name": "detail_timeline_tide",
+      "key": "Tide timeline",
+      "english": "Tide timeline"
+    },
+    {
+      "name": "detail_timeline_current",
+      "key": "Current timeline",
+      "english": "Current timeline"
+    },
+    {
+      "name": "detail_timeline_next",
+      "key": "Next event",
+      "english": "Next event"
+    },
+    {
+      "name": "detail_timeline_previous",
+      "key": "Previous event",
+      "english": "Previous event"
+    },
+    {
+      "name": "launcher_low",
+      "key": "Next Low Tide",
+      "english": "Next low tide",
+      "overrides": {
+        "fr-CA": "Prochaine marée basse"
+      }
+    },
+    {
+      "name": "launcher_high",
+      "key": "Next High Tide",
+      "english": "Next high tide",
+      "overrides": {
+        "fr-CA": "Prochaine marée haute"
+      }
+    },
+    {
+      "name": "launcher_slack",
+      "key": "Next Slack Window",
+      "english": "Next slack window",
+      "overrides": {
+        "fr-CA": "Prochaine étale"
+      }
+    },
+    {
+      "name": "pdf_time",
+      "key": "Time",
+      "english": "Time"
+    },
+    {
+      "name": "pdf_event",
+      "key": "Event",
+      "english": "Event"
+    },
+    {
+      "name": "pdf_height",
+      "key": "Height",
+      "english": "Height"
+    },
+    {
+      "name": "pdf_speed",
+      "key": "Speed",
+      "english": "Speed"
+    },
+    {
+      "name": "pdf_set",
+      "key": "Set",
+      "english": "Set",
+      "overrides": {
+        "fr-CA": "Direction"
+      }
+    },
+    {
+      "name": "pdf_day",
+      "key": "Day",
+      "english": "Day"
+    },
+    {
+      "name": "pdf_high",
+      "key": "High",
+      "english": "High",
+      "overrides": {
+        "fr-CA": "Pleine mer"
+      }
+    },
+    {
+      "name": "pdf_low",
+      "key": "Low",
+      "english": "Low",
+      "overrides": {
+        "fr-CA": "Basse mer"
+      }
+    },
+    {
+      "name": "pdf_slack",
+      "key": "Slack",
+      "english": "Slack"
+    },
+    {
+      "name": "pdf_flood",
+      "key": "Max flood",
+      "english": "Max flood",
+      "overrides": {
+        "fr-CA": "Flot maximal"
+      }
+    },
+    {
+      "name": "pdf_ebb",
+      "key": "Max ebb",
+      "english": "Max ebb",
+      "overrides": {
+        "fr-CA": "Jusant maximal"
+      }
+    },
+    {
+      "name": "pdf_solar",
+      "key": "Solar eclipse",
+      "english": "Solar eclipse"
+    },
+    {
+      "name": "pdf_lunar",
+      "key": "Lunar eclipse",
+      "english": "Lunar eclipse"
+    },
+    {
+      "name": "pdf_peak",
+      "key": "%@ (peak %@)",
+      "english": "%1$s (peak %2$s)",
+      "overrides": {
+        "fr-CA": "%1$s (maximum à %2$s)"
+      }
+    },
+    {
+      "name": "pdf_feet",
+      "key": "feet",
+      "english": "feet"
+    },
+    {
+      "name": "pdf_metres",
+      "key": "metres",
+      "english": "metres"
+    },
+    {
+      "name": "pdf_knots",
+      "key": "knots",
+      "english": "knots"
+    },
+    {
+      "name": "pdf_derived",
+      "key": "Estimated from %@ tides",
+      "english": "Estimated from %1$s tides",
+      "overrides": {
+        "fr-CA": "Estimation à partir des marées de %1$s"
+      }
+    },
+    {
+      "name": "pdf_sets",
+      "key": "Flood %@, ebb %@",
+      "english": "Flood %1$s, ebb %2$s"
+    },
+    {
+      "name": "pdf_printed",
+      "key": "Printed %@",
+      "english": "Printed %1$s"
+    },
+    {
+      "name": "pdf_disclaimer",
+      "key": "Predictions are not observations. Not for navigation.",
+      "english": "Predictions are not observations. Not for navigation."
+    },
+    {
+      "name": "pdf_coverage",
+      "key": "Predictions available %@ only.",
+      "english": "Predictions available %1$s only.",
+      "overrides": {
+        "fr-CA": "Les prévisions sont disponibles uniquement pour les dates suivantes : %1$s."
+      }
+    },
+    {
+      "name": "pdf_empty",
+      "key": "No predictions available for these days.",
+      "english": "No predictions available for these days."
+    },
+    {
+      "name": "table_sheet_title",
+      "key": "Printable tables",
+      "english": "Printable tables"
+    },
+    {
+      "name": "table_sheet_week",
+      "key": "Week",
+      "english": "Week"
+    },
+    {
+      "name": "table_sheet_month",
+      "key": "Month",
+      "english": "Month"
+    },
+    {
+      "name": "table_sheet_done",
+      "key": "Done",
+      "english": "Done"
+    },
+    {
+      "name": "table_sheet_retry",
+      "key": "Try again",
+      "english": "Try again"
+    },
+    {
+      "name": "query_low_title",
+      "key": "Next Low Tide",
+      "english": "Next low tide",
+      "overrides": {
+        "fr-CA": "Prochaine basse mer"
+      }
+    },
+    {
+      "name": "query_high_title",
+      "key": "Next High Tide",
+      "english": "Next high tide",
+      "overrides": {
+        "fr-CA": "Prochaine pleine mer"
+      }
+    },
+    {
+      "name": "query_slack_title",
+      "key": "Next Slack Window",
+      "english": "Next slack window",
+      "overrides": {
+        "fr-CA": "Prochaine fenêtre d’étale"
+      }
+    },
+    {
+      "name": "query_place",
+      "key": "Place",
+      "english": "Place"
+    },
+    {
+      "name": "query_date",
+      "key": "Date",
+      "english": "Date"
+    },
+    {
+      "name": "query_unavailable",
+      "key": "Predictions unavailable",
+      "english": "Predictions are unavailable.",
+      "overrides": {
+        "fr-CA": "Les prévisions sont indisponibles."
+      }
+    },
+    {
+      "name": "reminder_status_off",
+      "key": "Off",
+      "english": "Off"
+    },
+    {
+      "name": "schedule_table_action",
+      "key": "Printable tables",
+      "english": "Printable tables"
+    },
+    {
+      "name": "schedule_unavailable",
+      "key": "No predictions available for these days.",
+      "english": "No predictions available for these days."
+    },
+    {
+      "name": "schedule_support_title",
+      "key": "Support Slackwater",
+      "english": "Support Slackwater"
+    },
+    {
+      "name": "list_my_location",
+      "key": "My Location",
+      "english": "My Location"
+    },
+    {
+      "name": "list_favorites",
+      "key": "Favorites",
+      "english": "Favorites"
+    },
+    {
+      "name": "list_near_me",
+      "key": "Near Me",
+      "english": "Near Me"
+    },
+    {
+      "name": "list_recents",
+      "key": "Recents",
+      "english": "Recents"
+    },
+    {
+      "name": "list_finding_location",
+      "key": "Finding your location…",
+      "english": "Finding your location…"
+    },
+    {
+      "name": "list_location_unavailable",
+      "key": "Location unavailable",
+      "english": "Location unavailable"
+    },
+    {
+      "name": "list_showing_near",
+      "key": "Showing places near %@",
+      "english": "Showing places near %1$s"
+    },
+    {
+      "name": "list_go_to_settings",
+      "key": "Go to Settings",
+      "english": "Go to Settings",
+      "overrides": {
+        "fr-CA": "Accéder aux paramètres"
+      }
+    },
+    {
+      "name": "list_find_tides_near_me",
+      "key": "Find tides near me",
+      "english": "Find tides near me"
+    },
+    {
+      "name": "list_approximate_location",
+      "key": "Approximate location",
+      "english": "Approximate location"
+    },
+    {
+      "name": "list_filter_all",
+      "key": "All",
+      "english": "All"
+    },
+    {
+      "name": "list_filter_tides",
+      "key": "Tides",
+      "english": "Tides"
+    },
+    {
+      "name": "list_filter_currents",
+      "key": "Currents",
+      "english": "Currents"
+    },
+    {
+      "name": "list_filter_show_all",
+      "key": "Show all",
+      "english": "Show all"
+    },
+    {
+      "name": "list_filter_show_tides",
+      "key": "Show tides",
+      "english": "Show tides"
+    },
+    {
+      "name": "list_filter_show_currents",
+      "key": "Show currents",
+      "english": "Show currents"
+    },
+    {
+      "name": "list_search",
+      "key": "Search",
+      "english": "Search"
+    },
+    {
+      "name": "list_by_open_waters",
+      "key": "by Open Waters",
+      "english": "by Open Waters"
+    },
+    {
+      "name": "list_not_for_navigation",
+      "key": "Predictions — not for navigation",
+      "english": "Predictions — not for navigation.",
+      "overrides": {
+        "fr-CA": "Prévisions non destinées à la navigation."
+      }
+    },
+    {
+      "name": "list_distance_nm",
+      "key": "%@ nm",
+      "english": "%1$s nm"
+    },
+    {
+      "name": "card_rising",
+      "key": "Rising",
+      "english": "Rising"
+    },
+    {
+      "name": "card_falling",
+      "key": "Falling",
+      "english": "Falling"
+    },
+    {
+      "name": "card_slack",
+      "key": "Slack",
+      "english": "Slack"
+    },
+    {
+      "name": "card_flooding",
+      "key": "Flooding",
+      "english": "Flooding"
+    },
+    {
+      "name": "card_ebbing",
+      "key": "Ebbing",
+      "english": "Ebbing"
+    },
+    {
+      "name": "card_not_downloaded",
+      "key": "Not downloaded",
+      "english": "Not downloaded"
+    },
+    {
+      "name": "card_value_unit",
+      "key": "%@ %@",
+      "english": "%1$s %2$s"
+    },
+    {
+      "name": "card_state_set",
+      "key": "%@ %@",
+      "english": "%1$s %2$s"
+    },
+    {
+      "name": "spoken_feet",
+      "key": "printable.unit.ft",
+      "english": "feet"
+    },
+    {
+      "name": "spoken_metres",
+      "key": "printable.unit.m",
+      "english": "metres"
+    },
+    {
+      "name": "spoken_knots",
+      "key": "printable.unit.kn",
+      "english": "knots"
+    },
+    {
+      "name": "spoken_kilometres_per_hour",
+      "key": "printable.unit.kmh",
+      "english": "kilometres per hour"
+    },
+    {
+      "name": "spoken_metres_per_second",
+      "key": "printable.unit.ms",
+      "english": "metres per second"
+    },
+    {
+      "name": "action_favorite",
+      "key": "Favorite",
+      "english": "Favorite"
+    },
+    {
+      "name": "action_unfavorite",
+      "key": "Unfavorite",
+      "english": "Unfavorite"
+    },
+    {
+      "name": "action_remove",
+      "key": "Remove",
+      "english": "Remove"
+    },
+    {
+      "name": "removed_title",
+      "key": "Station removed",
+      "english": "Station removed"
+    },
+    {
+      "name": "removed_withdrawn",
+      "key": "%@ — no longer published.",
+      "english": "%1$s — no longer published."
+    },
+    {
+      "name": "removed_gone",
+      "key": "%@ — no longer in Slackwater.",
+      "english": "%1$s — no longer in Slackwater."
+    },
+    {
+      "name": "removed_gone_unknown",
+      "key": "This station is no longer in Slackwater.",
+      "english": "This station is no longer in Slackwater."
+    },
+    {
+      "name": "removed_withdrawn_detail",
+      "key": "It has been withdrawn from the hydrographic service, so it has no readings to show. Swipe to remove it.",
+      "english": "It has been withdrawn from the hydrographic service, so it has no readings to show. Swipe to remove it."
+    },
+    {
+      "name": "removed_gone_detail",
+      "key": "Slackwater no longer carries this station, so it has no readings to show. Swipe to remove it.",
+      "english": "Slackwater no longer carries this station, so it has no readings to show. Swipe to remove it."
+    },
+    {
+      "name": "removed_choose",
+      "key": "Choose another station",
+      "english": "Choose another station"
+    },
+    {
+      "name": "removed_choose_prompt",
+      "key": "Choose a replacement near the removed station.",
+      "english": "Choose a replacement near the removed station."
+    },
+    {
+      "name": "search_placeholder",
+      "key": "Harbor, bay, or channel",
+      "english": "Harbor, bay, or channel"
+    },
+    {
+      "name": "search_clear",
+      "key": "Clear search text",
+      "english": "Clear search text"
+    },
+    {
+      "name": "search_close",
+      "key": "Close search",
+      "english": "Close search"
+    },
+    {
+      "name": "search_no_matches",
+      "key": "No matches",
+      "english": "No matches"
+    },
+    {
+      "name": "station_back",
+      "key": "Back",
+      "english": "Back"
+    },
+    {
+      "name": "station_star",
+      "key": "Add favorite",
+      "english": "Add to favorites"
+    },
+    {
+      "name": "station_unstar",
+      "key": "Remove favorite",
+      "english": "Remove from favorites"
+    },
+    {
+      "name": "close",
+      "key": "Close",
+      "english": "Close"
+    },
+    {
+      "name": "notification_high",
+      "key": "High tide",
+      "english": "High tide"
+    },
+    {
+      "name": "notification_low",
+      "key": "Low tide",
+      "english": "Low tide"
+    },
+    {
+      "name": "curve_spoken_flood",
+      "key": "Flood",
+      "english": "flood",
+      "overrides": {
+        "fr-CA": "flot"
+      }
+    },
+    {
+      "name": "curve_spoken_ebb",
+      "key": "Ebb",
+      "english": "ebb",
+      "overrides": {
+        "fr-CA": "jusant"
+      }
+    }
+  ],
+  "androidDirectory": "scripts/translations/android"
+}

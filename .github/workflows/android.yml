@@ -28,6 +28,7 @@ jobs:
       - run: node scripts/sync-upstream.mjs
       - run: test -z "$(git status --porcelain --untracked-files=all -- app/src/main/assets)"
       - run: node scripts/sync-upstream.mjs --check
+      - run: node scripts/export-strings.mjs --check
       - run: ./gradlew :app:checkStudioSources :core:test :core:nationalTideDirectionSweep :app:testDebugUnitTest :app:assembleDebug :app:assembleRelease :app:assembleBenchmark :benchmark:assembleBenchmark :app:lintDebug :app:assembleDebugAndroidTest
       - run: python3 scripts/check-apk.py app/build/outputs/apk/benchmark/app-benchmark.apk
       - run: python3 scripts/check-apk.py app/build/outputs/apk/debug/app-debug.apk

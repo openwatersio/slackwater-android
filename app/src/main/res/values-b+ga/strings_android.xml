@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generated from scripts/translations/android/ga.json. Edit the JSON source. -->
+<resources>
+    <string name="alert_plot_tide">"Airde taoide (%1$s)"</string>
+    <string name="alert_plot_current">"Luas srutha (kn)"</string>
+    <string name="alert_plot_derived">"Uiscí marbha tuartha"</string>
+    <string name="alert_plot_range">"%1$s go %2$s"</string>
+    <string name="alert_plot_reset_event">"Fill ar an imeacht"</string>
+    <string name="alert_rise">"ag ardú thar %1$s m"</string>
+    <string name="alert_fall">"ag titim faoi %1$s m"</string>
+    <string name="alert_edit">"Cuir foláireamh in eagar"</string>
+    <string name="alert_on_time">"Ag an am"</string>
+    <string name="alert_15min">"15 nóiméad roimh ré"</string>
+    <string name="alert_30min">"30 nóiméad roimh ré"</string>
+    <string name="alert_1hour">"1 uair roimh ré"</string>
+    <string name="alert_3hours">"3 huaire roimh ré"</string>
+    <string name="alert_1day">"1 lá roimh ré"</string>
+    <string name="alert_seconds">"%1$d soicind roimh ré"</string>
+    <string name="alert_overdue">"Tá am an mheabhrúcháin thart. Seolfar anois é má shábhálann tú é."</string>
+    <string name="alert_review_height">"Socraigh an airde arís (méadair)"</string>
+    <string name="alert_height">"Airde (méadair)"</string>
+    <string name="alert_screen_empty">"Níl foláirimh ann fós. Socraigh foláireamh ó stáisiún."</string>
+    <plurals name="alert_plot_markers">
+        <item quantity="one">"Líon foláireamh marcáilte: %1$d"</item>
+        <item quantity="two">"Líon foláireamh marcáilte: %1$d"</item>
+        <item quantity="few">"Líon foláireamh marcáilte: %1$d"</item>
+        <item quantity="many">"Líon foláireamh marcáilte: %1$d"</item>
+        <item quantity="other">"Líon foláireamh marcáilte: %1$d"</item>
+    </plurals>
+    <string name="alert_plot_previous">"An t-imeacht roimhe, %1$s, %2$s"</string>
+    <string name="alert_plot_next">"An chéad imeacht eile, %1$s, %2$s"</string>
+    <string name="alert_plot_earlier">"Cúig nóiméad níos luaithe"</string>
+    <string name="alert_plot_later">"Cúig nóiméad níos déanaí"</string>
+    <string name="alert_show_events">"Taispeáin imeachtaí na cairte"</string>
+    <string name="alert_hide_events">"Folaigh imeachtaí na cairte"</string>
+    <string name="alert_event_speed">"%1$s · %2$.1f kn"</string>
+    <string name="station_calendars_title">"Féilirí stáisiún"</string>
+    <string name="station_calendars_about">"Foilsigh imeachtaí stáisiúin don chéad 90 lá eile i bhféilire ar an ngléas seo. Níl meabhrúcháin ag na himeachtaí agus fanann siad ar an ngléas seo."</string>
+    <string name="station_calendar_subscribe">"Foilsigh féilire"</string>
+    <string name="station_calendar_remove">"Bain féilire"</string>
+    <string name="station_calendar_remove_title">"Bain %1$s?"</string>
+    <plurals name="station_calendar_remove_count">
+        <item quantity="one">"Líon imeachtaí a d\'fhoilsigh Slackwater agus a bhainfidh sé: %1$d. Fanfaidh imeachtaí pearsanta agus imeachtaí atá tosaithe cheana san Fhéilire."</item>
+        <item quantity="two">"Líon imeachtaí a d\'fhoilsigh Slackwater agus a bhainfidh sé: %1$d. Fanfaidh imeachtaí pearsanta agus imeachtaí atá tosaithe cheana san Fhéilire."</item>
+        <item quantity="few">"Líon imeachtaí a d\'fhoilsigh Slackwater agus a bhainfidh sé: %1$d. Fanfaidh imeachtaí pearsanta agus imeachtaí atá tosaithe cheana san Fhéilire."</item>
+        <item quantity="many">"Líon imeachtaí a d\'fhoilsigh Slackwater agus a bhainfidh sé: %1$d. Fanfaidh imeachtaí pearsanta agus imeachtaí atá tosaithe cheana san Fhéilire."</item>
+        <item quantity="other">"Líon imeachtaí a d\'fhoilsigh Slackwater agus a bhainfidh sé: %1$d. Fanfaidh imeachtaí pearsanta agus imeachtaí atá tosaithe cheana san Fhéilire."</item>
+    </plurals>
+    <string name="station_calendar_offline_needed">"Tá íoslódáil de dhíth sular féidir foilsiú."</string>
+    <string name="station_calendar_pending">"Tá athruithe féilire ar feitheamh. D\'fhéadfadh imeachtaí atá foilsithe cheana fanacht ann go dtí go mbeidh Slackwater in ann an Féilire a nuashonrú."</string>
+    <string name="station_calendar_permission">"Ceadaigh rochtain ar an bhféilire ionas gur féidir le Slackwater a chuid imeachtaí a aimsiú agus a nuashonrú."</string>
+    <string name="station_calendar_premium">"Tá Premium de dhíth chun féilire stáisiúin nua a fhoilsiú."</string>
+    <string name="station_calendar_trial">"Foilsítear le linn do lae saor in aisce."</string>
+    <string name="station_calendar_active">"Liostáilte"</string>
+    <string name="station_calendar_failed">"Níorbh fhéidir an féilire a nuashonrú. Seiceáil an rochtain agus bain triail eile as."</string>
+    <string name="station_calendar_pending_remove">"Baint ar feitheamh"</string>
+    <plurals name="chart_minutes">
+        <item quantity="one">"%1$d nóim"</item>
+        <item quantity="two">"%1$d nóim"</item>
+        <item quantity="few">"%1$d nóim"</item>
+        <item quantity="many">"%1$d nóim"</item>
+        <item quantity="other">"%1$d nóim"</item>
+    </plurals>
+    <plurals name="chart_hours">
+        <item quantity="one">"%1$d u"</item>
+        <item quantity="two">"%1$d u"</item>
+        <item quantity="few">"%1$d u"</item>
+        <item quantity="many">"%1$d u"</item>
+        <item quantity="other">"%1$d u"</item>
+    </plurals>
+    <string name="detail_related_currents">"Sruthanna ag %1$s"</string>
+    <string name="detail_namesakes">"Suíomhanna eile (%1$d)"</string>
+    <string name="detail_position">"Suíomh"</string>
+    <string name="detail_zone">"Crios ama"</string>
+    <string name="detail_reference">"Tagairt"</string>
+    <string name="detail_datum">"Bonnleibhéal cairte"</string>
+    <string name="detail_datum_note">"Tomhaistear airde ón mbonnleibhéal cairte. Tuarann luach diúltach doimhneacht níos lú ná an doimhneacht ar an gcairt."</string>
+    <string name="detail_shape_note">"Is treoir é an cuar idir amanna an uisce mhairbh. Ní léiríonn ach na trasnuithe nialais amanna tuartha."</string>
+    <string name="detail_lags">"Moilleanna uisce mhairbh"</string>
+    <string name="detail_lag_value">"%1$d nóiméad tar éis lán mara · %2$d nóiméad tar éis lag trá"</string>
+    <string name="detail_prediction">"Tuar"</string>
+    <string name="detail_fitted">"Ríomhtha ar an ngléas seo ó bhreathnuithe sábháilte"</string>
+    <string name="detail_official">"Tuar oifigiúil CHS íoslódáilte le húsáid as líne"</string>
+    <string name="detail_derived">"Amanna measta uisce mhairbh amháin. Níl tuar luais ar fáil don chaolas seo."</string>
+    <string name="detail_harmonic">"Tuar armónach"</string>
+    <string name="detail_subordinate">"Tuar ón stáisiún tagartha le ceartúcháin don stáisiún tánaisteach"</string>
+    <string name="detail_bound">"D\'fhéadfadh uisce marbh ag %1$s bheith suas le %2$d nóiméad éagsúil le tuar CHS."</string>
+    <string name="detail_gap">"Níl aon tuar ag Slackwater don stáisiún seo."</string>
+    <string name="detail_queued">"Iarradh íoslódáil"</string>
+    <string name="detail_no_week">"Ní chlúdaíonn aon tuar sábháilte an tseachtain seo."</string>
+    <string name="detail_no_data">"Níl aon tuar sábháilte ar fáil don stáisiún seo."</string>
+    <string name="detail_loading">"Tuar á luchtú"</string>
+    <string name="detail_copied">"Cóipeáladh do thuairisc. Seol chuig slackwater@openwaters.io í."</string>
+    <string name="detail_flow">"Meánsruth"</string>
+    <string name="detail_license">"Ceadúnas"</string>
+    <string name="detail_source">"Foinse"</string>
+    <string name="detail_datum_source">"Bonnleibhéal cairte %1$s."</string>
+    <string name="detail_noaa_tide">"Tuar armónach taoide NOAA."</string>
+    <string name="detail_noaa_sub">"Bunaithe ar thaoidí ag %1$s agus ar cheartúcháin fhoilsithe NOAA, ríomhtha ar an ngléas seo."</string>
+    <string name="detail_publisher">"Tairisigh armónacha ó %1$s."</string>
+    <string name="detail_chs_fit">"Íoslódáilte ó CHS (IWLS), ansin feistithe agus ríomhtha ar an ngléas seo. Ní tuar foilsithe ag CHS é seo."</string>
+    <string name="detail_chs_preview">"Tuar oifigiúil taoide CHS íoslódáilte ar an ngléas seo. Tá airde os cionn bhonnleibhéal cairte LLWLT."</string>
+    <string name="detail_noaa_current">"Tuar armónach srutha NOAA."</string>
+    <string name="detail_sub_current">"Ceartaítear uiscí marbha agus uasluasanna an stáisiúin tagartha le ceartúcháin fhoilsithe NOAA."</string>
+    <string name="detail_flood">"Téann sruth na tuile i dtreo %1$d°T."</string>
+    <string name="detail_derived_source">"Measann Slackwater uisce marbh ag %1$s ó lán mara agus lag trá ag %2$s. Ní fhoilsíonn CHS tuar srutha don chaolas seo."</string>
+    <string name="detail_map">"Féach ar an léarscáil"</string>
+    <string name="detail_invalid_link">"Níorbh fhéidir an nasc stáisiúin seo a oscailt."</string>
+    <string name="detail_chart_settings">"Socruithe cairte"</string>
+    <string name="panel_reference">"Measta ó thaoidí tagartha"</string>
+    <string name="panel_daylight">"%1$d h %2$d min de sholas an lae"</string>
+    <string name="panel_lit">"%1$d%% soilsithe"</string>
+    <string name="panel_moonrise">"Éirí na gealaí"</string>
+    <string name="panel_moonset">"Luí na gealaí"</string>
+    <string name="panel_earth_distance">"Fad ón Domhan · %1$s km"</string>
+    <string name="panel_at">"%1$s ag %2$s"</string>
+    <string name="panel_biggest">"An ceann is mó sa choicís"</string>
+    <string name="panel_marked">"Thar an ngnáth anseo"</string>
+    <string name="panel_hardest">"%1$s is láidre · %2$s"</string>
+    <string name="panel_strong">"%1$s láidir · %2$s"</string>
+    <string name="panel_swing_rank">"Níos mó ná gach ceann ach %1$d den %2$d raon taoide sa choicís seo."</string>
+    <string name="panel_max_rank">"Níos láidre ná gach ceann ach %1$d den %2$d uasluas sa treo seo sa choicís seo."</string>
+    <string name="panel_biggest_day">"Léiríonn gach barra an raon taoide is mó in aon lá amháin."</string>
+    <string name="panel_max_day">"Léiríonn gach barra an %1$s is láidre in aon lá amháin."</string>
+    <string-array name="panel_phases">
+        <item>"Gealach nua"</item>
+        <item>"Corrán gealaí ag líonadh"</item>
+        <item>"An chéad cheathrú"</item>
+        <item>"Gealach dhronnach ag líonadh"</item>
+        <item>"Gealach lán"</item>
+        <item>"Gealach dhronnach ag meath"</item>
+        <item>"An cheathrú dheireanach"</item>
+        <item>"Corrán gealaí ag meath"</item>
+    </string-array>
+    <string name="panel_full">"An chéad ghealach lán eile"</string>
+    <string name="panel_new">"An chéad ghealach nua eile"</string>
+    <string name="panel_last_lunar">"An urú gealaí infheicthe is déanaí"</string>
+    <string name="panel_last_solar">"An urú gréine infheicthe is déanaí"</string>
+    <string name="panel_rise_def">"Tagann imeall uachtarach na Gréine os cionn léaslíne gan bhac."</string>
+    <string name="panel_set_def">"Téann imeall uachtarach na Gréine faoi léaslíne gan bhac."</string>
+    <string name="panel_noon_def">"Trasnaíonn an Ghrian an fhadlíne áitiúil."</string>
+    <string name="panel_twilight_rising">"Sroicheann an Ghrian atá ag éirí %1$d° faoi bhun na léaslíne."</string>
+    <string name="panel_twilight_setting">"Sroicheann an Ghrian atá ag dul faoi %1$d° faoi bhun na léaslíne."</string>
+    <string name="panel_edge_def">"Trasnaíonn lár na Gréine %1$d° i gcoibhneas leis an léaslíne."</string>
+    <string name="panel_next_total">"An chéad urú iomlán gealaí eile"</string>
+    <string name="panel_next_partial">"An chéad pháirturú gealaí eile"</string>
+    <string name="panel_next_penumbral">"An chéad urú leathscátha gealaí eile"</string>
+    <string name="panel_mostly">"Séasúrach den chuid is mó"</string>
+    <string name="panel_partly">"Séasúrach go páirteach"</string>
+    <string name="panel_ends">"I gcomparáid le foircinn an stáisiúin féin"</string>
+    <string name="panel_season_large">"Tá an t-athrú bliantúil i bhfad níos mó ná an taoide laethúil."</string>
+    <string name="panel_hat">"An taoide réalteolaíoch is airde · %1$s"</string>
+    <string name="panel_lat">"An taoide réalteolaíoch is ísle · %1$s"</string>
+    <string name="panel_turn">"Casadh roghnaithe · %1$s"</string>
+    <string name="panel_ratio">"Athrú bliantúil · %1$.1f× an taoide laethúil"</string>
+    <string name="panel_slack_compared">"Maireann an t-uisce marbh %1$d nóiméad timpeall an uasluais seo, i gcomparáid le thart ar %2$d nóiméad anseo de ghnáth."</string>
+    <string name="panel_swing_explain">"An difríocht idir lán mara agus lag trá an raoin seo, %1$s."</string>
+    <string name="panel_springs_follow">"Leanann rabharta an ghealach nua agus an ghealach lán."</string>
+    <string name="panel_orbit_scale">"Tá cruth na fithise áibhéalta chun an t-athrú faid a léiriú."</string>
+    <string name="panel_hat_label">"An taoide réalteolaíoch is airde"</string>
+    <string name="panel_lat_label">"An taoide réalteolaíoch is ísle"</string>
+    <string name="panel_high_label">"An lán mara is airde sa choicís"</string>
+    <string name="panel_low_label">"An lag trá is ísle sa choicís"</string>
+    <string name="panel_turn_label">"Casadh roghnaithe"</string>
+    <string name="panel_explain">"Maidir le %1$s"</string>
+    <string name="panel_season_equal">"Tá an t-athrú bliantúil ar cóimhéid leis an taoide laethúil, a bheag nó a mhór."</string>
+    <string name="panel_season_river">"Athraíonn an t-uisce ag %1$s i bhfad níos mó thar bhliain ná thar lá. Is féidir le rith chun srutha, báisteach agus gaoth an taoide laethúil iomlán a ardú nó a ísliú."</string>
+    <string name="panel_season_tide">"Leanann an t-uisce ag %1$s taoide laethúil agus timthriall bliantúil atá ar cóimhéid, a bheag nó a mhór. Fanann amanna lán mara agus lag trá intuartha agus an leibhéal séasúrach ag athrú."</string>
+    <string name="panel_spring_explain">"Tarraingíonn an Ghrian agus an Ghealach feadh na líne céanna. Is gnách go méadaíonn a gcomhéifeacht an raon taoide."</string>
+    <string name="panel_neap_explain">"Ag an gceathrú gealaí, tarraingíonn an Ghrian agus an Ghealach ar dronuillinn. Is gnách go laghdaíonn an raon taoide."</string>
+    <string name="panel_perigee_explain">"Tá an Ghealach gar don phointe is gaire di don Domhan, áit a bhfuil a tarraingt taoide níos láidre."</string>
+    <string name="panel_apogee_explain">"Tá an Ghealach gar don phointe is faide di ón Domhan, áit a bhfuil a tarraingt taoide níos laige."</string>
+    <string-array name="panel_phase_explanation">
+        <item>"Tá an Ghealach beagnach idir an Domhan agus an Ghrian."</item>
+        <item>"Tá corrán méadaitheach den leath den Ghealach atá faoi sholas na Gréine os comhair an Domhain."</item>
+        <item>"Tá an Ghealach tar éis ceathrú dá timthriall céime a dhéanamh."</item>
+        <item>"Tá níos mó ná leath an diosca infheicthe soilsithe agus an chuid soilsithe ag méadú."</item>
+        <item>"Tá an Ghealach os coinne na Gréine sa spéir."</item>
+        <item>"Tá níos mó ná leath an diosca infheicthe soilsithe agus an chuid soilsithe ag laghdú."</item>
+        <item>"Tá an Ghealach tar éis trí cheathrú dá timthriall céime a dhéanamh."</item>
+        <item>"Tá corrán ag caolú fágtha roimh an gcéad ghealach nua eile."</item>
+    </string-array>
+    <string name="prediction_shortcuts">"Aicearraí tuartha"</string>
+    <string name="pdf_daylight">"Éirí gréine %1$s · Luí gréine %2$s"</string>
+    <string name="pdf_kmh">"km/h"</string>
+    <string name="pdf_ms">"m/s"</string>
+    <string name="pdf_flood_set">"Sruth tuile %1$s"</string>
+    <string name="pdf_ebb_set">"Sruth trá %1$s"</string>
+    <string name="pdf_page">"%1$d / %2$d"</string>
+    <string-array name="pdf_compass">
+        <item>"Tuaisceart"</item>
+        <item>"Tuaisceart-thuaisceart-thoir"</item>
+        <item>"Tuaisceart-thoir"</item>
+        <item>"Oirthear-thuaisceart-thoir"</item>
+        <item>"Oirthear"</item>
+        <item>"Oirthear-dheisceart-thoir"</item>
+        <item>"Deisceart-thoir"</item>
+        <item>"Deisceart-dheisceart-thoir"</item>
+        <item>"Deisceart"</item>
+        <item>"Deisceart-dheisceart-thiar"</item>
+        <item>"Deisceart-thiar"</item>
+        <item>"Iarthar-dheisceart-thiar"</item>
+        <item>"Iarthar"</item>
+        <item>"Iarthar-thuaisceart-thiar"</item>
+        <item>"Tuaisceart-thiar"</item>
+        <item>"Tuaisceart-thuaisceart-thiar"</item>
+    </string-array>
+    <string name="table_sheet_share">"Comhroinn PDF"</string>
+    <string name="table_sheet_print">"Priontáil"</string>
+    <string name="table_sheet_page">"Leathanach %1$d as %2$d"</string>
+    <string name="table_sheet_failed">"Níorbh fhéidir an PDF a ullmhú."</string>
+    <string name="table_sheet_export_failed">"Níorbh fhéidir an PDF a oscailt lena phriontáil nó lena chomhroinnt."</string>
+    <string name="table_sheet_locked">"Tá Premium de dhíth le haghaidh táblaí inphriontáilte."</string>
+    <string name="table_sheet_download_current">"Is féidir tuilleadh laethanta a phriontáil nuair a bheidh a dtuar srutha íoslódáilte."</string>
+    <string name="table_sheet_download_tide">"Tá an tuar iomlán taoide don stáisiún seo de dhíth chun tuilleadh laethanta a phriontáil."</string>
+    <string name="table_sheet_letter">"Leagan amach seasta US Letter (8.5 × 11 in). Roghnaigh páipéar a oireann don mhéid sa réamhamharc."</string>
+    <string name="table_sheet_a4">"Leagan amach seasta A4 (210 × 297 mm). Roghnaigh páipéar a oireann don mhéid sa réamhamharc."</string>
+    <string name="query_invalid">"Níorbh fhéidir an t-aicearra tuartha seo a léamh."</string>
+    <string name="query_nearby_hint">"Fág bán chun do shuíomh a úsáid."</string>
+    <string name="query_date_hint">"Iontráil YYYY-MM-DD nó fág bán don chéad imeacht eile."</string>
+    <string name="query_show">"Taispeáin tuar"</string>
+    <string name="query_missing">"Níorbh fhéidir %1$s a aimsiú. Seiceáil an logainm in Slackwater."</string>
+    <string name="query_location">"Tá suíomh le déanaí de dhíth. Úsáid do shuíomh nó iontráil áit thuas."</string>
+    <string name="query_use_location">"Úsáid mo shuíomh"</string>
+    <string name="query_choose">"Roghnaigh stáisiún"</string>
+    <string name="query_pin">"Pionnáil an t-aicearra seo"</string>
+    <string name="query_pin_failed">"Níorbh fhéidir leis an lainseálaí an t-aicearra seo a phionnáil."</string>
+    <string name="query_off">"Tá tréimhsí uisce mhairbh múchta i do shocruithe srutha chompordaigh."</string>
+    <string name="query_none_date">"Níl imeacht comhoiriúnach ar %1$s."</string>
+    <string name="query_none_window">"Níl tréimhse uisce mhairbh sa chéad 48 uair eile."</string>
+    <string name="query_none_tide">"Níl taoide chomhoiriúnach sa chéad 48 uair eile."</string>
+    <string name="query_tide_ft">"%1$s · %2$.1f ft"</string>
+    <string name="query_tide_m">"%1$s · %2$.2f m"</string>
+    <string name="query_window">"%1$s go %2$s"</string>
+    <string name="query_window_from">"Tosaíonn ag %1$s. Ní fios an t-am deiridh."</string>
+    <string name="query_window_until">"Críochnaíonn ag %1$s. Ní fios an t-am tosaigh."</string>
+    <string name="query_window_at">"Laistigh den sruth compordach ag %1$s. Ní fios na hamanna tosaigh ná deiridh."</string>
+    <string name="query_curve_extent">"%1$s – %2$s"</string>
+    <string name="query_high_day">"Lán mara"</string>
+    <string name="query_low_day">"Lag trá"</string>
+    <string name="query_slack_day">"Tréimhsí uisce mhairbh"</string>
+    <string name="query_tide_wait">"I gceann thart ar %1$s."</string>
+    <string name="query_open">"Ar oscailt anois."</string>
+    <string name="query_remaining">"Ar oscailt anois, agus thart ar %1$s fágtha."</string>
+    <string name="query_opens">"Osclaíonn i gceann thart ar %1$s."</string>
+    <string name="query_opens_duration">"Osclaíonn i gceann thart ar %1$s agus maireann thart ar %2$s."</string>
+    <string name="reminder_notify_blocked">"Sábháladh do fholáireamh. Ceadaigh fógraí i socruithe Android chun é a fháil."</string>
+    <string name="reminder_inexact_saved">"Sábháladh do fholáireamh. D\'fhéadfadh Android moill a chur ar mheabhrúcháin ar an ngléas seo."</string>
+    <string name="reminder_back_to_stations">"Ar ais chuig stáisiúin"</string>
+    <string name="reminder_my_alerts">"Mo chuid foláireamh"</string>
+    <string name="reminder_reset_height">"Socraigh airde nua"</string>
+    <string name="reminder_premium_required">"Premium de dhíth"</string>
+    <string name="reminder_notifications_blocked">"Fógraí blocáilte"</string>
+    <string name="reminder_no_scheduled">"Níl aon mheabhrúchán le teacht sceidealaithe"</string>
+    <string name="reminder_inexact">"D\'fhéadfadh Android moill a chur ar sheachadadh"</string>
+    <string name="reminder_save_premium">"Tá Premium de dhíth chun foláireamh a shábháil."</string>
+    <string name="reminder_through">"Sceidealaithe go dtí %1$s"</string>
+    <string name="reminder_write_failed">"Níorbh fhéidir do fholáireamh a shábháil. Bain triail eile as."</string>
+    <string name="schedule_title">"Sceideal"</string>
+    <string name="schedule_earlier">"An tseachtain roimhe"</string>
+    <string name="schedule_later">"An chéad seachtain eile"</string>
+    <string name="schedule_premium_message">"Tá Premium de dhíth chun táblaí a phriontáil agus a chomhroinnt. Is féidir leat an sceideal a léamh anseo."</string>
+    <string name="schedule_reset">"Fill ar an tseachtain roghnaithe"</string>
+    <string name="list_region_distance">"%1$s • %2$s"</string>
+    <string name="card_unavailable">"Níl tuar ar fáil anois"</string>
+    <string name="card_value_unit_approximate">"~%1$s %2$s"</string>
+    <string name="card_spoken_reading">"%1$s %2$s, %3$s"</string>
+    <string name="card_spoken_set">"i dtreo %1$s"</string>
+    <string name="search_truncated">"An 60 is gaire — lean ort ag clóscríobh chun an cuardach a chúngú"</string>
+    <string name="list_catalog_unavailable">"Níl sonraí stáisiúin ar fáil ar an ngléas seo."</string>
+    <string name="card_spoken_approximate">"thart ar %1$s"</string>
+    <string name="data_and_licenses">"Sonraí agus ceadúnais"</string>
+    <string name="data_credits">"Admhálacha sonraí"</string>
+    <string name="reminder_channel">"Meabhrúcháin stáisiúin"</string>
+    <string name="notification_window_opens">"Tosaíonn tréimhse fáfaill"</string>
+    <string name="notification_eclipse_begins">"Tosaíonn an t-urú"</string>
+    <string name="notification_rise">"Ag ardú thar %1$s m"</string>
+    <string name="notification_fall">"Ag titim faoi %1$s m"</string>
+    <string name="curve_spoken">"Cuar 25 uair an chloig: %1$s"</string>
+    <string name="curve_spoken_item">"%1$s ag %2$s"</string>
+    <string name="map_open">"Léarscáil"</string>
+    <string name="map_list">"Liosta"</string>
+    <string name="map_locate">"Mo shuíomh"</string>
+    <string name="map_pick">"Roghnaigh stáisiún"</string>
+    <string name="map_pick_hint">"Osclaítear taoidí agus sruthanna anseo."</string>
+    <string name="map_legend">"● Taoidí (%1$s)   ➤ Sruthanna (%2$s)"</string>
+    <string name="map_disclaimer">"Ní le haghaidh loingseoireachta"</string>
+    <string name="map_tide_units">"Airde taoide"</string>
+    <string name="map_current_units">"Luasanna srutha"</string>
+    <string name="map_slow">"Tá an bonnléarscáil mall á lódáil"</string>
+    <string name="map_loading">"Bonnléarscáil á lódáil…"</string>
+    <string name="map_local">"Pionnaí áitiúla á dtaispeáint"</string>
+    <string name="map_use_local">"Úsáid pionnaí áitiúla"</string>
+    <string name="map_retry">"Bain triail as an léarscáil arís"</string>
+    <string name="map_failure">"Bonnléarscáil gan fáil"</string>
+    <string name="map_stations">"Stáisiúin sa radharc"</string>
+    <string name="map_close">"Dún an réamhamharc"</string>
+    <string name="map_empty">"Níl aon stáisiún sa cheantar seo"</string>
+    <string name="map_fix_missing">"Suíomh gan fáil"</string>
+    <string name="map_units_legend">"Taoidí in %1$s. Sruthanna in %2$s. Ní le haghaidh loingseoireachta. Socruithe cairte."</string>
+    <string name="map_zoom_out">"Zúmáil amach"</string>
+    <string name="map_zoom_in">"Zúmáil isteach"</string>
+</resources>

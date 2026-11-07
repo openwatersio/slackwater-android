@@ -67,7 +67,7 @@ private fun CalendarSettingsScreen(current: StationId, close: () -> Unit) {
                 is StationResolution.Successor -> resolution.target.identity
                 else -> null
             }
-            CalendarRow(id, station?.let(::stationCalendarTitle) ?: station?.name ?: id.value)
+            CalendarRow(id, station?.let { localizedStationCalendarTitle(context, it) } ?: station?.name ?: id.value)
         }
     }
     var busy by remember { mutableStateOf(false) }

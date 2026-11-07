@@ -11,6 +11,7 @@ Use Node 24.2 or later, Python 3, Git, and Android SDK platform 37. Gradle invok
 ```sh
 node scripts/sync-upstream.mjs
 node scripts/sync-upstream.mjs --check
+node scripts/export-strings.mjs --check
 node --test scripts/*.test.mjs
 ./gradlew :core:test :app:assembleDebug :app:lintDebug
 python3 scripts/check-apk.py app/build/outputs/apk/debug/app-debug.apk
@@ -23,13 +24,21 @@ The device check requires an attached emulator/device. CI runs it on API 26 and 
 
 Cards map the uncompressed tide database directly from the APK and look up each station by ID with the pinned Kotlin database reader. Runtime clock injection lives in the pure core. Test data never enters the release APK.
 
+When a pin changes, inspect `git -C vendor/slackwater-ios status --short`, fetch the commit recorded in the lock, then switch that clean checkout to the commit with `git switch --detach`. Sync deliberately preserves dependency checkouts instead of replacing them.
+
 Gradle checks the source pins and packaged inputs during configuration, including Android Studio sync. Kotlin compiler scratch files under `kotlin/.kotlin/` are excluded from the source cleanliness check. CI audits the debug, release and optimized benchmark APKs.
 
 Dependency checksums are in `gradle/verification-metadata.xml`; the wrapper has a distribution checksum. CI resolves published source variants for the debug app and tests. After updating Gradle or a dependency, sync the project in Android Studio to check the additional archives requested by the IDE. Verify any new sources, samples and Javadoc archives against the publisher before adding their SHA-256 pins. A wrapper update also needs the matching Gradle source ZIP checksum. Keep Studio’s generated .idea directory local. Upstream fixture provenance is recorded in the shared test fixture; data credits and third-party notices are available from the launch screen.
 
 ## Development plan
 
-The [implementation plan](docs/superpowers/plans/2026-11-05-android-development.md) and [parity ledger](docs/ios-parity.md) define the remaining work against iOS PR #900. Work is tracked in [repository issues](https://github.com/openwatersio/slackwater-android/issues).
+The [implementation plan](docs/superpowers/plans/2026-11-05-android-development.md) and [parity ledger](docs/ios-parity.md) define the remaining work against iOS main at the merge commit of PR #900 (`02188f2a2f5ef4166cd74c373a5885736d7ef159`). Work is tracked in [repository issues](https://github.com/openwatersio/slackwater-android/issues).
+
+## Translations
+
+The app follows the device language, or its per-app language setting on Android 13 and later. It supports English and the 15 locales shipped by the pinned iOS app: Danish, German, Spanish (Spain), Finnish, French (Canada), Irish, Scottish Gaelic, Italian, Japanese, Korean, Norwegian Bokmål, Dutch, Portuguese (Brazil and Portugal), and Swedish.
+
+`node scripts/export-strings.mjs` exports shared text from the exact iOS commit in `upstream.lock.json`. `scripts/strings-map.json` maps existing Android resource IDs to iOS keys and preserves Android's English wording and the existing Canadian French copy through explicit migration overrides. Edit Android-specific copy in `scripts/translations/android/*.json`; the exporter writes it separately to `strings_android.xml`. Generated files record their source, and `--check` rejects stale output, incomplete locale coverage and incompatible format arguments. See [translation validation](docs/validation/localization.md) for coverage and device evidence.
 
 ## Android reminders
 

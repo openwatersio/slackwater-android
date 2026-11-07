@@ -1,89 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="list_my_location">My Location</string>
-    <string name="list_favorites">Favorites</string>
-    <string name="list_near_me">Near Me</string>
-    <string name="list_recents">Recents</string>
-    <!-- The fallback anchor's region on a launch where nothing has been opened. Keep this proper name unchanged in every language. -->
+    <!-- Proper names and scientific unit symbols stay unchanged in every language. -->
+    <string name="app_name" translatable="false">Slackwater</string>
     <string name="list_first_run_region" translatable="false">Chesapeake Bay</string>
-    <string name="list_finding_location">Finding your location…</string>
-    <string name="list_location_unavailable">Location unavailable</string>
-    <!-- The argument is the last-opened place name, or the unchanged proper name Chesapeake Bay. -->
-    <string name="list_showing_near">Showing places near %1$s</string>
-    <string name="list_go_to_settings">Go to Settings</string>
-    <string name="list_find_tides_near_me">Find tides near me</string>
-    <string name="list_approximate_location">Approximate location</string>
-    <string name="list_filter_all">All</string>
-    <string name="list_filter_tides">Tides</string>
-    <string name="list_filter_currents">Currents</string>
-    <string name="list_filter_show_all">Show all</string>
-    <string name="list_filter_show_tides">Show tides</string>
-    <string name="list_filter_show_currents">Show currents</string>
-    <string name="list_search">Search</string>
     <string name="list_wordmark" translatable="false">Slackwater</string>
-    <string name="list_by_open_waters">by Open Waters</string>
-    <string name="list_not_for_navigation">Predictions — not for navigation.</string>
-    <!-- Distance in nautical miles; the argument is a locale-formatted number. -->
-    <string name="list_distance_nm">%1$s nm</string>
-    <string name="list_region_distance">%1$s • %2$s</string>
-
-    <string name="card_rising">Rising</string>
-    <string name="card_falling">Falling</string>
-    <string name="card_slack">Slack</string>
-    <string name="card_flooding">Flooding</string>
-    <string name="card_ebbing">Ebbing</string>
-    <string name="card_not_downloaded">Not downloaded</string>
-    <string name="card_unavailable">No predictions now</string>
-    <!-- A value and its unit, such as "4.2 ft". -->
-    <string name="card_value_unit">%1$s %2$s</string>
-    <!-- An approximate value from an early or bounded Canadian model, such as "~1.2 kn". -->
-    <string name="card_value_unit_approximate">~%1$s %2$s</string>
-    <!-- The state word and the set, such as "Flooding SW". -->
-    <string name="card_state_set">%1$s %2$s</string>
     <string name="unit_feet" translatable="false">ft</string>
     <string name="unit_metres" translatable="false">m</string>
     <string name="unit_knots" translatable="false">kn</string>
     <string name="unit_kilometres_per_hour" translatable="false">km/h</string>
     <string name="unit_metres_per_second" translatable="false">m/s</string>
-    <string name="spoken_feet">feet</string>
-    <string name="spoken_metres">metres</string>
-    <string name="spoken_knots">knots</string>
-    <string name="spoken_kilometres_per_hour">kilometres per hour</string>
-    <string name="spoken_metres_per_second">metres per second</string>
-    <!-- One spoken phrase for a card's reading, such as "4.2 feet, rising". -->
-    <string name="card_spoken_reading">%1$s %2$s, %3$s</string>
-    <string name="card_spoken_set">toward %1$s</string>
-
-    <string name="action_favorite">Favorite</string>
-    <string name="action_unfavorite">Unfavorite</string>
-    <string name="action_remove">Remove</string>
-
-    <string name="removed_title">Station removed</string>
-    <string name="removed_withdrawn">%1$s — no longer published.</string>
-    <string name="removed_gone">%1$s — no longer in Slackwater.</string>
-    <string name="removed_gone_unknown">This station is no longer in Slackwater.</string>
-    <string name="removed_withdrawn_detail">It has been withdrawn from the hydrographic service, so it has no readings to show. Swipe to remove it.</string>
-    <string name="removed_gone_detail">Slackwater no longer carries this station, so it has no readings to show. Swipe to remove it.</string>
-    <string name="removed_choose">Choose another station</string>
-    <string name="removed_choose_prompt">Choose a replacement near the removed station.</string>
-
-    <string name="search_placeholder">Harbor, bay, or channel</string>
-    <string name="search_clear">Clear search text</string>
-    <string name="search_close">Close search</string>
-    <string name="search_truncated">Nearest 60 — keep typing to narrow</string>
-    <string name="search_no_matches">No matches</string>
-
-    <string name="station_back">Back</string>
-    <string name="station_star">Add to favorites</string>
-    <string name="station_unstar">Remove from favorites</string>
-    <string name="list_catalog_unavailable">Station data is unavailable on this device.</string>
-    <!-- An approximate value spoken, such as "approximately 1.2". -->
-    <string name="card_spoken_approximate">approximately %1$s</string>
-    <!-- A card curve's spoken summary; the argument lists its moments, such as "high tide 6.2 feet at 8:33 AM, low tide 1.5 feet at 2:08 PM", "1.2 knots flood at 9:10 AM, Slack at 12:40 PM" or "Slack at 4:12 PM". -->
-    <string name="curve_spoken">25-hour curve: %1$s</string>
-    <!-- One spoken moment: a turn or peak with its value and unit, or "Slack", then its time. -->
-    <string name="curve_spoken_item">%1$s at %2$s</string>
-    <!-- Spoken after a current peak's speed in the curve summary, saying which way the water runs. -->
-    <string name="curve_spoken_flood">flood</string>
-    <string name="curve_spoken_ebb">ebb</string>
 </resources>

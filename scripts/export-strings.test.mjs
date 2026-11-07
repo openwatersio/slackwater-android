@@ -1,0 +1,99 @@
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { androidFormat, localeDirectory, renderResource } from './export-strings.mjs';
+
+test('converts indexed Objective-C formats without losing argument order or literal percent', () => {
+ assert.equal(androidFormat('%2$@ / %1$lld (100%%)'), '%2$s / %1$d (100%%)');
+ assert.equal(androidFormat('%@ · %.2f'), '%1$s · %2$.2f');
+ assert.throws(() => androidFormat('%{private}@'), /Unsupported/);
+});
+test('maps regional locales without dropping language identity', () => {
+ assert.equal(localeDirectory('fr-CA'), 'values-fr-rCA');
+ assert.equal(localeDirectory('pt-PT'), 'values-pt-rPT');
+ assert.equal(localeDirectory('es-ES'), 'values-es-rES');
+ assert.equal(localeDirectory('gd'), 'values-b+gd');
+ assert.throws(() => localeDirectory('../bad'), /Invalid/);
+});
+test('preserves Irish plurals, XML entities, apostrophes, Unicode and whitespace', () => {
+ const entry={localizations:{ga:{variations:{plural:{one:{stringUnit:{state:'translated',value:"%lld station's & <bay>"}},two:{stringUnit:{state:'translated',value:'%lld dhá'}},other:{stringUnit:{state:'translated',value:'%lld eile'}}}}}}};
+ const xml=renderResource('station_count','%lld stations',entry,'ga');
+ assert.match(xml, /<plurals name="station_count">/);
+ assert.match(xml, /quantity="two">"%1\$d dhá"/);
+ assert.ok(xml.includes('station'+String.fromCharCode(92)+"'s &amp; &lt;bay&gt;"));
+ assert.equal(renderResource('missing','Hello',{localizations:{}},'ga'), null);
+ assert.throws(()=>renderResource('broken','Hello %@',{localizations:{ga:{stringUnit:{state:'translated',value:'Dia duit'}}}},'ga'),/placeholder/i);
+});
+
+test('English source remains usable when Xcode marks its string unit new', () => {
+ assert.equal(renderResource('pair','%@ %@',{localizations:{en:{stringUnit:{state:'new',value:'%1$@ %2$@'}}}},'en'), '    <string name="pair">"%1$s %2$s"</string>');
+});
+
+import { mkdtemp, mkdir, writeFile, readFile, rm } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { execFileSync } from 'node:child_process';
+import { exportStrings } from './export-strings.mjs';
+
+test('freshness uses the pinned tree and rejects edits, missing files and stale locale directories', async () => {
+ const root = await mkdtemp(join(tmpdir(), 'strings-export-'));
+ try {
+  const ios = join(root, 'vendor/slackwater-ios');
+  await mkdir(ios, { recursive: true });
+  const git = (...args) => execFileSync('git', args, { cwd: ios }).toString().trim();
+  git('init', '--quiet');
+  const catalog = { sourceLanguage: 'en', strings: { Untranslated: {}, Hello: { localizations: { de: { stringUnit: { state: 'translated', value: 'Hallo' } } } } } };
+  await writeFile(join(ios, 'Localizable.xcstrings'), JSON.stringify(catalog));
+  git('add', '.');
+  git('-c', 'user.name=Fixture', '-c', 'user.email=fixture@example.test', '-c', 'commit.gpgsign=false', 'commit', '--quiet', '-m', 'Pinned catalog');
+  const commit = git('rev-parse', 'HEAD');
+  await mkdir(join(root, 'scripts'));
+  await writeFile(join(root, 'upstream.lock.json'), JSON.stringify({ productDocs: { repository: 'fixture/ios', commit } }));
+  await writeFile(join(root, 'scripts/strings-map.json'), JSON.stringify({ catalog: 'Localizable.xcstrings', entries: [{ name: 'hello', key: 'Hello', english: 'Hello!', overrides: { de: 'Guten Tag' } }], androidDirectory: 'scripts/translations/android' }));
+  const android = join(root, 'scripts/translations/android');
+  await mkdir(android, { recursive: true });
+  await writeFile(join(android, 'en.json'), JSON.stringify({ android_only: 'Android %1$s' }));
+  await writeFile(join(android, 'de.json'), JSON.stringify({ android_only: 'Android %1$s' }));
+  const handwritten = join(root, 'app/src/main/res/values/handwritten.xml');
+  await mkdir(join(handwritten, '..'), { recursive: true });
+  await writeFile(handwritten, '<resources><string name="android_only">Android</string></resources>');
+  await exportStrings(root);
+  // A different checkout/worktree must not silently change which translations we export.
+  await writeFile(join(ios, 'Localizable.xcstrings'), '{}');
+  await exportStrings(root, true);
+  assert.equal(await readFile(handwritten, 'utf8'), '<resources><string name="android_only">Android</string></resources>');
+  const de = join(root, 'app/src/main/res/values-de/ios_strings.xml');
+  assert.match(await readFile(de, 'utf8'), />"Guten Tag"<\/string>/);
+  await writeFile(de, (await readFile(de, 'utf8')).replace('Guten Tag', 'tampered'));
+  await assert.rejects(exportStrings(root, true), /Stale generated/);
+  await exportStrings(root);
+  await rm(de);
+  await assert.rejects(exportStrings(root, true), /Missing generated/);
+  await exportStrings(root);
+  const stale = join(root, 'app/src/main/res/values-it/ios_strings.xml');
+  await mkdir(join(stale, '..'), { recursive: true });
+  await writeFile(stale, '<!-- Generated by scripts/export-strings.mjs from fixture. -->stale');
+  await assert.rejects(exportStrings(root, true), /Unexpected generated/);
+  await exportStrings(root);
+  await assert.rejects(readFile(stale), { code: 'ENOENT' });
+  await writeFile(join(android, 'de.json'), JSON.stringify({}));
+  await assert.rejects(exportStrings(root, true), /Incomplete Android translations/);
+  await writeFile(join(android, 'de.json'), JSON.stringify({ android_only: 'Android %1$s' }));
+  await writeFile(de, '<resources>handwritten</resources>');
+  await assert.rejects(exportStrings(root), /Refusing to overwrite handwritten/);
+  const mappingPath = join(root, 'scripts/strings-map.json');
+  const mapping = JSON.parse(await readFile(mappingPath, 'utf8'));
+  mapping.entries.push({ name: 'untranslated', key: 'Untranslated' });
+  await writeFile(mappingPath, JSON.stringify(mapping));
+  await assert.rejects(exportStrings(root, true), /Missing iOS translations/);
+ } finally { await rm(root, { recursive: true, force: true }); }
+});
+
+import { renderAndroidResource } from './export-strings.mjs';
+test('Android-only resources retain arrays, plurals and typed placeholders', () => {
+ assert.match(renderAndroidResource('directions', ['N', 'E'], ['N', 'O']), /<item>"O"<\/item>/);
+ assert.match(renderAndroidResource('hours', {one:'%d hour',other:'%d hours'}, {one:'%d Stunde',other:'%d Stunden'}), /%1\$d Stunden/);
+ assert.throws(()=>renderAndroidResource('height','%1$.2f m','%1$s m'), /placeholder/i);
+ assert.throws(()=>renderAndroidResource('directions',['N','E'],['N']), /array/i);
+ assert.throws(()=>renderAndroidResource('hours',{other:'%d hours'}, {one:'%d Stunde'}), /other/);
+ assert.throws(()=>renderAndroidResource('hours',{one:'%d hour',other:'%d hours'}, {one:'%d uair',other:'%d uair'}, 'ga'), /Missing ga plural/);
+});

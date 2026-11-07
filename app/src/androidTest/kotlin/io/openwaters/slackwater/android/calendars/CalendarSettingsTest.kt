@@ -34,7 +34,8 @@ class CalendarSettingsTest {
             // The loaded chart moves the calendar button below the schedule.
             compose.waitUntil(60_000) { compose.onAllNodesWithTag("detailTimeline").fetchSemanticsNodes().isNotEmpty() }
             compose.onNodeWithText("Station calendars").performScrollTo().performSemanticsAction(androidx.compose.ui.semantics.SemanticsActions.OnClick)
-            compose.waitUntil(20_000) { compose.onAllNodes(hasText("Publish calendar") and isEnabled()).fetchSemanticsNodes().isNotEmpty() }
+            // Availability evaluates the same full forecast horizon as publishing.
+            compose.waitUntil(90_000) { compose.onAllNodes(hasText("Publish calendar") and isEnabled()).fetchSemanticsNodes().isNotEmpty() }
             compose.onNodeWithText("Publish calendar").performClick()
             compose.onNodeWithText("Publishing a new station calendar requires Premium.").assertExists()
             assertFalse(runBlocking { repository.subscriptions.first().any { it.stationId == fridayHarbor } })
