@@ -156,7 +156,7 @@ private fun StationDetailBody(model: StationListModel, id: StationId, clock: Ins
             snapshotFlow { timeline.state }.collect { state ->
                 if (state.viewport > 0.0 && state.motion != TimelineMotion.INITIAL_POSITIONING) {
                     val position = state.move?.to?.takeIf { state.motion == TimelineMotion.HINGE_FOLLOW } ?: state.selected
-                    restoredTime = if (Duration.between(position, state.now).abs() <= Duration.ofSeconds(200)) null else position.toString()
+                    restoredTime = if (io.openwaters.slackwater.android.core.timeline.isNearSessionNow(position, state.now)) null else position.toString()
                     restoredDay = state.anchor.toString()
                 }
             }
@@ -198,7 +198,7 @@ private fun StationDetailBody(model: StationListModel, id: StationId, clock: Ins
             .onGloballyPositioned { page.measureViewport(it, scroll) }.verticalScroll(scroll).padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)) {
             val selected = timeline?.state?.let { if (it.home) null else it.selected }
-            val link = detailShareLink(metadata?.route, selected, zone)
+            val link = detailShareLink(metadata?.route, timeline?.state?.selected.takeUnless { missing }, timeline?.state?.now ?: clock, zone)
             DetailHeader(station, id, live, data, link, linkedTime != null, onBack) {
                 if (station != null) model.launchEdit { model.places.setFavorite(station.id, data?.favorites?.contains(station.id) != true) }
             }

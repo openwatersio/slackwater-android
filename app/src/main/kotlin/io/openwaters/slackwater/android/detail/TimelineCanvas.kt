@@ -318,7 +318,7 @@ internal fun TimelineCanvas(
             Text(dateTime, color = Color.White, style = MaterialTheme.typography.labelMedium)
         }
         if (controlsVisible) {
-            val away = Duration.between(now, selected).abs() > Duration.ofSeconds(200)
+            val away = !io.openwaters.slackwater.android.core.timeline.isNearSessionNow(selected, now)
             val pillTop = (112f + extra).dp
             if (stop != null) {
                 val duration = Duration.between(selected, stop.at).toMinutes().coerceAtLeast(0)

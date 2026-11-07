@@ -2,6 +2,7 @@ package io.openwaters.slackwater.android.detail
 
 import android.content.res.AssetManager
 import android.net.Uri
+import io.openwaters.slackwater.android.core.timeline.isNearSessionNow
 import io.openwaters.slackwater.android.core.station.*
 import io.openwaters.slackwater.android.core.prediction.CurrentGateEvidence
 import io.openwaters.slackwater.android.data.BundledCurrentGates
@@ -31,7 +32,13 @@ internal class DetailRecords(private val assets: AssetManager) {
     }
     private val derived by lazy { gates("chs-gates") }
     private val measured = BundledCurrentGates(assets)
-    fun destination(uri: Uri): Pair<StationId, Instant?>? {
+    private val catalog = io.openwaters.slackwater.android.data.BundledStationCatalog(assets)
+
+    suspend fun destination(uri: Uri): Pair<StationId, Instant?>? {
+        internalStationId(uri)?.let { id ->
+            val station = catalog.resolve(id)
+            return if (station is StationResolution.Unknown) null else station.id to null
+        }
         if (uri.scheme != "https" || !uri.authority.equals("slackwater.xyz", ignoreCase = true)) return null
         val parts = uri.pathSegments
         if (parts.size !in 2..3) return null
@@ -70,8 +77,24 @@ internal class DetailRecords(private val assets: AssetManager) {
     }
 }
 
-internal fun detailShareLink(route: String?, selected: Instant?, zone: ZoneId): String? {
-    if (route == null || selected == null) return route
+
+internal fun internalStationId(uri: Uri): StationId? {
+    if (uri.scheme != "slackwater" || uri.authority != "station") return null
+    val id = uri.path?.removePrefix("/") ?: return null
+    return StationId(id).takeIf { id.isNotBlank() && id.split('/').none(String::isEmpty) }
+}
+
+internal fun internalStationLink(id: StationId): Uri {
+    val encoded = id.value.toByteArray(Charsets.UTF_8).joinToString("") { byte ->
+        val c = (byte.toInt() and 255).toChar()
+        if (c in 'a'..'z' || c in 'A'..'Z' || c in '0'..'9' || c in "-._~") c.toString()
+        else "%%%02X".format(Locale.ROOT, byte.toInt() and 255)
+    }
+    return Uri.parse("slackwater://station/$encoded")
+}
+
+internal fun detailShareLink(route: String?, selected: Instant?, now: Instant, zone: ZoneId): String? {
+    if (route == null || selected == null || isNearSessionNow(selected, now)) return route
     val moment = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mmxxx", Locale.ROOT).withZone(zone).format(selected)
     return "$route/$moment"
 }
