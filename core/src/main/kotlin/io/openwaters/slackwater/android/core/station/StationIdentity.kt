@@ -1,5 +1,8 @@
 package io.openwaters.slackwater.android.core.station
 
+import java.time.ZoneId
+import java.time.ZoneOffset
+
 @JvmInline
 value class StationId(val value: String)
 
@@ -17,6 +20,9 @@ data class StationIdentity(
     val source: String? = null,
     val license: String? = null,
 )
+
+fun StationIdentity.currentGateZone(): ZoneId =
+    timezone?.let { runCatching { ZoneId.of(it) }.getOrNull() } ?: ZoneOffset.UTC
 
 data class StationPlace(val series: StationSeries, val name: String)
 

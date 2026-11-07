@@ -1,6 +1,9 @@
 package io.openwaters.slackwater.android.data
 
 import androidx.test.platform.app.InstrumentationRegistry
+import io.openwaters.slackwater.CurrentPoint
+import io.openwaters.slackwater.CurrentEventKind
+import io.openwaters.slackwater.ExtremeKind
 import io.openwaters.slackwater.ChsCurrentFit
 import io.openwaters.slackwater.android.core.prediction.*
 import io.openwaters.slackwater.android.core.station.StationId
@@ -14,6 +17,107 @@ import java.time.Instant
 import java.util.UUID
 
 class AndroidPredictionRepositoryTest {
+    @Test fun malformedSiblingDoesNotDiscardReadableWeeksOrTheirMilliseconds() = runBlocking {
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        val dir = File(context.cacheDir, "mixed-online-${UUID.randomUUID()}")
+        val id = StationId("chs-arran-rapids")
+        val models = ModelStore(dir)
+        val store = OnlineWindowStore(models)
+        fun row(vararg seconds: Number) = JSONObject().put("times", JSONArray(seconds.toList()))
+            .put("speeds", JSONArray(listOf(-1.0, 1.0))).put("floodDirection", 20).put("ebbDirection", 215)
+        try {
+            val records = JSONArray().put(row(1.001, 901.001)).put(row(5.0001, 6))
+                .put("corrupt").put(row(10_000, 10_900))
+            models.write(id, ModelKind.ONLINE_WINDOW, JSONObject().put("blocks", records))
+            val fractional = TimeSpan(Instant.ofEpochMilli(1001), Instant.ofEpochMilli(901001))
+            val whole = TimeSpan(Instant.ofEpochSecond(10_000), Instant.ofEpochSecond(10_900))
+            assertEquals(listOf(fractional, whole), store.coverage(id))
+            val incoming = OnlineWindowBlock(listOf(CurrentPoint(Instant.ofEpochMilli(30_000_001), 2.0)), 22.0, 215.0)
+            store.save(id, incoming, incoming.span.start)
+            assertEquals(listOf(fractional, whole, incoming.span), OnlineWindowStore(ModelStore(dir)).coverage(id))
+            val saved = (models.read(id, ModelKind.ONLINE_WINDOW) as StoredModel.Ready).record.getJSONArray("blocks")
+            assertEquals(1.001, saved.getJSONObject(0).getJSONArray("times").getDouble(0), 0.0)
+            assertEquals(10_000L, saved.getJSONObject(1).getJSONArray("times").getLong(0))
+        } finally { dir.deleteRecursively() }
+        Unit
+    }
+
+    @Test fun reopenedOnlineStoreReadsDisjointWeeksAndRepairsMalformedRecords() = runBlocking {
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        val dir = File(context.cacheDir, "reopened-online-${UUID.randomUUID()}")
+        val id = StationId("chs-arran-rapids")
+        val today = Instant.parse("2026-07-15T00:00:00Z")
+        fun week(start: Instant) = OnlineWindowBlock(
+            listOf(CurrentPoint(start, -1.0), CurrentPoint(start.plusSeconds(900), 1.0)), 20.0, 215.0)
+        val first = week(today)
+        val second = week(today.plusSeconds(7 * 86400L))
+        try {
+            val writer = OnlineWindowStore(ModelStore(dir))
+            writer.save(id, first, today)
+            writer.save(id, second, today)
+            val models = ModelStore(dir)
+            val reopened = OnlineWindowStore(models)
+            assertEquals(listOf(first.span, second.span), reopened.coverage(id))
+            val repo = AndroidPredictionRepository(context, models)
+            for (block in listOf(first, second)) {
+                val ready = repo.load(id, block.span, PredictionPurpose.QUERY) as PredictionResult.Ready
+                assertEquals(block.points, (ready.series as PredictionSeries.Current).points)
+            }
+            val hole = today.plusSeconds(86400)
+            assertEquals(PredictionResult.Unavailable(PredictionResult.Reason.OUTSIDE_COVERAGE),
+                repo.load(id, TimeSpan(hole, hole), PredictionPurpose.QUERY))
+            models.write(id, ModelKind.ONLINE_WINDOW, JSONObject().put("blocks", "invalid"))
+            assertTrue(models.read(id, ModelKind.ONLINE_WINDOW) is StoredModel.Ready)
+            assertTrue(reopened.coverage(id).isEmpty())
+            reopened.save(id, second, today)
+            assertEquals(listOf(second.span), reopened.coverage(id))
+
+            dir.listFiles()!!.single().writeText("{")
+            assertEquals(StoredModel.Unavailable(StoredModel.Unavailable.Reason.CORRUPT),
+                models.read(id, ModelKind.ONLINE_WINDOW))
+            reopened.save(id, first, today)
+            assertEquals(listOf(first.span), reopened.coverage(id))
+        } finally { dir.deleteRecursively() }
+        Unit
+    }
+
+    @Test fun onlineWeeksMergeBySampleTimeAndAgeOutOnlyOnSave() = runBlocking {
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        val dir = File(context.cacheDir, "online-${UUID.randomUUID()}")
+        val models = ModelStore(dir)
+        val store = OnlineWindowStore(models)
+        val repo = AndroidPredictionRepository(context, models)
+        val id = StationId("chs-arran-rapids")
+        val today = Instant.parse("2026-07-15T00:00:00Z")
+        fun block(start: Instant, vararg speeds: Double) = OnlineWindowBlock(
+            speeds.mapIndexed { i, speed -> CurrentPoint(start.plusSeconds(i * 600L), speed) }, 22.0, 215.0)
+        try {
+            val old = block(today.minusSeconds(90 * 86400L), 1.0, 2.0)
+            store.save(id, old, today)
+            assertTrue(store.covers(id, old.span))
+            val boundary = today.minusSeconds(60 * 86400L)
+            store.save(id, block(boundary.minusSeconds(600), 1.0, 2.0, 3.0), today)
+            val newer = block(today.plusSeconds(1200), -1.0, 0.0, 0.0, 2.0)
+            store.save(id, newer, today)
+            val first = block(today, 2.0, 1.0, -3.0)
+            store.save(id, first, today)
+            val span = TimeSpan(today, newer.span.end)
+            assertEquals(listOf(TimeSpan(boundary, boundary.plusSeconds(600)), span), store.coverage(id))
+            assertFalse(store.covers(id, TimeSpan(boundary, today)))
+            assertFalse(store.covers(id, TimeSpan(today, newer.span.end.plusSeconds(1))))
+            val result = repo.load(id, span, PredictionPurpose.QUERY) as PredictionResult.Ready
+            val current = result.series as PredictionSeries.Current
+            assertEquals(22.0, current.floodBearing!!, 0.0)
+            assertEquals(215.0, current.ebbBearing!!, 0.0)
+            assertEquals(listOf(2.0, 1.0, -3.0, 0.0, 0.0, 2.0), current.points.map { it.speedKnots })
+            assertEquals(listOf(CurrentEventKind.MAX_FLOOD, CurrentEventKind.SLACK, CurrentEventKind.MAX_EBB,
+                CurrentEventKind.SLACK, CurrentEventKind.MAX_FLOOD), current.events.map { it.kind })
+            assertEquals(listOf(today.plusSeconds(750), today.plusSeconds(1800)),
+                current.events.filter { it.kind == CurrentEventKind.SLACK }.map { it.time })
+        } finally { dir.deleteRecursively() }
+        Unit
+    }
+
     @Test fun everyCapabilityUsesPackagedDataOrACompatibleLocalRecord() = runBlocking {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
         val dir = File(context.cacheDir,"predictions-${UUID.randomUUID()}")
@@ -46,6 +150,12 @@ class AndroidPredictionRepositoryTest {
             store.write(StationId(port),ModelKind.TIDE,fit())
             ready(port,StationCapabilities.FITTED_TIDE)
             val derived = ready("chs-malibu-rapids",StationCapabilities.DERIVED_TIMING).series as PredictionSeries.Derived
+            val referenceTurns = fit().fittedTide().extremes(span.start.minusSeconds(35 * 60L), span.end.minusSeconds(25 * 60L))
+            val expected = referenceTurns.map { turn ->
+                val lagMinutes = if (turn.kind == ExtremeKind.HIGH) 25 else 35
+                PredictionSeries.DerivedSlack(turn.time.plusSeconds(lagMinutes * 60L), turn.kind)
+            }.filter { it.time in span }
+            assertEquals(expected, derived.slacks)
             assertEquals(2,derived.slacks.map { it.referenceTurn }.distinct().size)
             assertEquals(PredictionResult.Unavailable(PredictionResult.Reason.UNSUPPORTED_PURPOSE),load("chs-malibu-rapids",PredictionPurpose.QUERY))
             val fits = listOf(
@@ -90,7 +200,7 @@ class AndroidPredictionRepositoryTest {
             val online = "chs-arran-rapids"
             val block = JSONObject().put("times",JSONArray(listOf(start.epochSecond,start.epochSecond+900,start.epochSecond+3600)))
                 .put("speeds",JSONArray(listOf(-1.0,1.0,2.0))).put("floodDirection",20).put("ebbDirection",215)
-            store.write(StationId(online),ModelKind.ONLINE_WINDOW,JSONObject().put("blocks",JSONArray().put(block)))
+            store.write(StationId(online),ModelKind.ONLINE_WINDOW,block)
             val windows = (load(online) as PredictionResult.Disjoint).blocks
             assertEquals(2,windows.size)
             assertTrue(windows.all { it.capabilities == StationCapabilities.ONLINE_CURRENT })

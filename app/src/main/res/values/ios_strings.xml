@@ -245,4 +245,20 @@
     <string name="gate_peak_speed">"The on-device fit\'s median peak-speed difference from CHS was %1$s %2$s in its worst quarter."</string>
     <string name="gate_unknown">"The on-device fit did not pass validation here. Slackwater uses CHS predictions."</string>
     <string name="gate_too_few">"There were not enough CHS events to validate the on-device fit in every quarter."</string>
+    <string name="gate_downloading">"Downloading"</string>
+    <string name="gate_waiting">"Waiting to retry"</string>
+    <string name="gate_failed">"Download failed"</string>
+    <string name="gate_offline">"Waiting for signal"</string>
+    <string name="gate_expired">"Expired"</string>
+    <string name="gate_download">"Download"</string>
+    <string name="gate_retry">"Retry"</string>
+    <string name="gate_retry_now">"Retry now"</string>
+    <string name="gate_connect">"Connect to download"</string>
+    <string name="gate_all_downloads">"See all downloads"</string>
+    <string name="gate_expectation">"Downloads cover about a month and can be refreshed at any time."</string>
+    <string name="gate_expectation_offline">"Connect for a moment to download about a month of predictions."</string>
+    <string name="gate_retry_expectation">"Slackwater will try again automatically."</string>
+    <string name="gate_offline_available">"Offline available"</string>
+    <string name="gate_offline_expectation">"Slackwater keeps about a month on this device and refreshes it whenever you\'re online."</string>
+    <string name="gate_update">"Update now"</string>
 </resources>

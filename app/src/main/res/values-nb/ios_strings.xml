@@ -245,4 +245,20 @@
     <string name="gate_peak_speed">"Tilpasningens medianavvik fra CHS for maksimal strømhastighet var %1$s %2$s i det dårligste kvartalet."</string>
     <string name="gate_unknown">"Tilpasningen på enheten bestod ikke valideringen her. Slackwater bruker CHS-prognoser."</string>
     <string name="gate_too_few">"Det var ikke nok CHS-hendelser til å validere tilpasningen på enheten i hvert kvartal."</string>
+    <string name="gate_downloading">"Laster ned"</string>
+    <string name="gate_waiting">"Venter på nytt forsøk"</string>
+    <string name="gate_failed">"Nedlasting mislyktes"</string>
+    <string name="gate_offline">"Venter på signal"</string>
+    <string name="gate_expired">"Utløpt"</string>
+    <string name="gate_download">"Last ned"</string>
+    <string name="gate_retry">"Prøv igjen"</string>
+    <string name="gate_retry_now">"Prøv igjen nå"</string>
+    <string name="gate_connect">"Koble til for å laste ned"</string>
+    <string name="gate_all_downloads">"Se alle nedlastinger"</string>
+    <string name="gate_expectation">"Nedlastingene dekker omtrent en måned og kan oppdateres når som helst."</string>
+    <string name="gate_expectation_offline">"Koble til et øyeblikk for å laste ned omtrent en måned med prognoser."</string>
+    <string name="gate_retry_expectation">"Slackwater prøver igjen automatisk."</string>
+    <string name="gate_offline_available">"Tilgjengelig frakoblet"</string>
+    <string name="gate_offline_expectation">"Slackwater lagrer omtrent en måned på denne enheten og oppdaterer den når du er på nett."</string>
+    <string name="gate_update">"Oppdater nå"</string>
 </resources>

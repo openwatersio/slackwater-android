@@ -245,4 +245,20 @@
     <string name="gate_peak_speed">"가장 나쁜 분기에 기기 내 적합 모델과 CHS의 최대 유속 차이 중앙값은 %1$s %2$s였습니다."</string>
     <string name="gate_unknown">"이곳에서는 기기 내 적합 모델이 검증을 통과하지 못했습니다. Slackwater는 CHS 예측을 사용합니다."</string>
     <string name="gate_too_few">"모든 분기에 기기 내 적합 모델을 검증하기에는 CHS 이벤트가 부족했습니다."</string>
+    <string name="gate_downloading">"다운로드 중"</string>
+    <string name="gate_waiting">"재시도 대기 중"</string>
+    <string name="gate_failed">"다운로드 실패"</string>
+    <string name="gate_offline">"연결 대기 중"</string>
+    <string name="gate_expired">"만료됨"</string>
+    <string name="gate_download">"다운로드"</string>
+    <string name="gate_retry">"다시 시도"</string>
+    <string name="gate_retry_now">"지금 다시 시도"</string>
+    <string name="gate_connect">"연결하여 다운로드"</string>
+    <string name="gate_all_downloads">"모든 다운로드 보기"</string>
+    <string name="gate_expectation">"다운로드는 약 한 달 분량이며 언제든 새로 받을 수 있습니다."</string>
+    <string name="gate_expectation_offline">"잠시 연결하면 약 한 달 분량의 예측을 다운로드할 수 있습니다."</string>
+    <string name="gate_retry_expectation">"Slackwater가 자동으로 다시 시도합니다."</string>
+    <string name="gate_offline_available">"오프라인 사용 가능"</string>
+    <string name="gate_offline_expectation">"Slackwater는 약 한 달 분량을 이 기기에 저장하고 온라인일 때마다 새로 받습니다."</string>
+    <string name="gate_update">"지금 업데이트"</string>
 </resources>

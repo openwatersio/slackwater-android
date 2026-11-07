@@ -11,6 +11,7 @@ import io.openwaters.slackwater.android.core.station.StationIdentity
 import io.openwaters.slackwater.android.core.timeline.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.future.await
+import kotlinx.coroutines.flow.collectLatest
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -37,10 +38,15 @@ internal class DetailTimeline(
         private set
     var targets = MagneticTargets()
         private set
+    var missingDay by mutableStateOf<LocalDate?>(null)
+        private set
     var showSky = true
     var closed = false
         private set
     private var published: TimelineChunkData? = null
+    private data class OnlinePage(val day: LocalDate, val generation: Long, val window: TimelineWindow,
+                                  val series: PredictionSeries, val days: List<TimelineDay>)
+    private var pendingPage: OnlinePage? = null
 
     init { sync() }
 
@@ -62,6 +68,7 @@ internal class DetailTimeline(
 
     fun dispatch(action: TimelineAction) {
         if (closed) return
+        if (action is TimelineAction.Now || action is TimelineAction.PickDay || action is TimelineAction.BeginDrag) missingDay = null
         if (action is TimelineAction.Targets) targets = action.value
         if (continuous == null) controller.dispatch(action)
         else {
@@ -69,6 +76,23 @@ internal class DetailTimeline(
             if (!completion.isDone) completion.whenCompleteAsync({ _, _ -> sync() }, mainExecutor)
         }
         sync()
+        publishOnlinePage()
+    }
+
+    private fun publishOnlinePage() {
+        val page = pendingPage ?: return
+        if (page.generation != state.generation || page.day != state.onlineDayRequested) {
+            pendingPage = null
+            return
+        }
+        if (state.motion == TimelineMotion.DRAG) return
+        pendingPage = null
+        controller.dispatch(TimelineAction.OnlineBlock(page.day, page.window))
+        sync()
+        if (state.coverage == page.window) {
+            series = page.series
+            days = page.days
+        }
     }
 
     fun jump(target: Instant) {
@@ -104,25 +128,24 @@ internal class DetailTimeline(
         try { request.thenApply { it }.await() } finally { sync() }
     }
 
-    suspend fun online(day: LocalDate, generation: Long) {
+    suspend fun online(day: LocalDate, generation: Long, fetch: (suspend (LocalDate) -> Boolean)? = null) {
         val window = TimelineWindow.fixed(day, zone)
-        val block = withContext(Dispatchers.IO) {
+        suspend fun readBlock() = withContext(Dispatchers.IO) {
             repository.load(station.id, TimeSpan(window.start, window.end), PredictionPurpose.DISPLAY)
                 .onlineTimelineBlock(window)
         }
+        val block = readBlock() ?: if (fetch?.invoke(day) == true) readBlock() else null
         val chrome = block?.let { fixedDays(station, zone, window) }
         if (closed || state.generation != generation || state.onlineDayRequested != day) return
         if (block == null) {
-            if (state.awaitingCoverage) dispatch(TimelineAction.RequestFailed(generation))
+            if (state.awaitingCoverage) {
+                missingDay = day
+                dispatch(TimelineAction.RequestFailed(generation))
+            }
             return
         }
-        // If a request arrives during a drag, defer the entire block until release.
-        if (state.motion == TimelineMotion.DRAG) return
-        dispatch(TimelineAction.OnlineBlock(day, window))
-        if (state.coverage == window) {
-            series = block.series
-            days = chrome.orEmpty()
-        }
+        pendingPage = OnlinePage(day, generation, window, block.series, chrome.orEmpty())
+        publishOnlinePage()
     }
 
     override fun close() {
@@ -171,7 +194,7 @@ private suspend fun fixedDays(station: StationIdentity, zone: ZoneId, window: Ti
     withContext(Dispatchers.Default) { timelineDays(station, zone, window) }
 
 @Composable
-internal fun DetailTimelineEffects(timeline: DetailTimeline, station: StationIdentity, thresholdKnots: Double, showSky: Boolean) {
+internal fun DetailTimelineEffects(timeline: DetailTimeline, station: StationIdentity, thresholdKnots: Double, showSky: Boolean, onlineAvailable: Boolean = false, fetch: (suspend (LocalDate) -> Boolean)? = null) {
     val state = timeline.state
     val series = timeline.series
     val lifecycle = LocalLifecycleOwner.current.lifecycle
@@ -224,11 +247,36 @@ internal fun DetailTimelineEffects(timeline: DetailTimeline, station: StationIde
         try { timeline.refresh() } catch (e: CancellationException) { throw e }
         catch (_: Exception) { /* A failed neighbor leaves the published strip reachable. */ }
     }
-    LaunchedEffect(timeline, state.onlineDayRequested, state.generation, state.motion == TimelineMotion.DRAG) {
-        val day = state.onlineDayRequested ?: return@LaunchedEffect
-        if (state.motion != TimelineMotion.DRAG) try {
-            timeline.online(day, state.generation)
-        } catch (e: CancellationException) { throw e }
-        catch (_: Exception) { timeline.dispatch(TimelineAction.RequestFailed(state.generation)) }
+    if (timeline.mode == TimelineMode.ONLINE) OnlineTimelineRequests(timeline, onlineAvailable, fetch)
+}
+
+@Composable
+internal fun OnlineTimelineRequests(timeline: DetailTimeline, available: Boolean, fetch: (suspend (LocalDate) -> Boolean)?) {
+    val online by rememberUpdatedState(available)
+    val transfer by rememberUpdatedState(fetch)
+    LaunchedEffect(timeline) {
+        val transfers = mutableMapOf<LocalDate, Deferred<Boolean>>()
+        // A gesture can supersede publication while the same transfer still supplies a later request.
+        val owner = this
+        snapshotFlow { Triple(timeline.state.onlineDayRequested, timeline.state.generation, online) }
+            .collectLatest { (day, generation, connected) ->
+                if (day != null) try {
+                    timeline.online(day, generation) {
+                        val active = transfers[day]
+                        if (active != null) active.await()
+                        else if (connected && transfer != null) {
+                            val task = owner.async(start = CoroutineStart.LAZY) {
+                                try { transfer?.invoke(day) == true }
+                                catch (cancelled: CancellationException) { throw cancelled }
+                                catch (_: Exception) { false }
+                                finally { transfers.remove(day) }
+                            }
+                            transfers[day] = task
+                            task.await()
+                        } else false
+                    }
+                } catch (e: CancellationException) { throw e }
+                catch (_: Exception) { timeline.dispatch(TimelineAction.RequestFailed(generation)) }
+            }
     }
 }
