@@ -33,7 +33,8 @@ class CalendarSettingsTest {
             compose.openStation("Friday Harbor", "San Juan Island")
             compose.waitUntil(30_000) { compose.onAllNodesWithText("Station calendars").fetchSemanticsNodes().isNotEmpty() }
             compose.onNodeWithText("Station calendars").performScrollTo().performClick()
-            compose.waitUntil(20_000) { compose.onAllNodes(hasText("Publish calendar") and isEnabled()).fetchSemanticsNodes().isNotEmpty() }
+            // Availability evaluates the same full forecast horizon as publishing.
+            compose.waitUntil(90_000) { compose.onAllNodes(hasText("Publish calendar") and isEnabled()).fetchSemanticsNodes().isNotEmpty() }
             compose.onNodeWithText("Publish calendar").performClick()
             compose.onNodeWithText("Publishing a new station calendar requires Premium.").assertExists()
             assertFalse(runBlocking { repository.subscriptions.first().any { it.stationId == fridayHarbor } })
