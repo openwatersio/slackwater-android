@@ -24,6 +24,18 @@ class DetailConformanceTest {
     private val context get() = InstrumentationRegistry.getInstrumentation().targetContext
     private val now = Instant.parse("2026-11-06T18:00:00Z")
 
+    @Test fun onlineGateExplanationUsesLocalContextAndPrioritizesNearBarEvidence() {
+        val gates = BundledCurrentGates(context.assets)
+        val arran = requireNotNull(gates[StationId("chs-arran-rapids")])
+        val beazley = requireNotNull(gates[StationId("chs-beazley-passage")])
+        val worst = context.getString(io.openwaters.slackwater.android.R.string.gate_slack_worst,
+            "%.1f".format(context.resources.configuration.locales[0], arran.onlineMiss!!.value))
+        assertEquals(context.getString(io.openwaters.slackwater.android.R.string.gate_rapids) + " " + worst,
+            arran.onlineExplanation(context, SpeedUnit.KNOTS))
+        assertTrue(beazley.onlineExplanation(context, SpeedUnit.KNOTS).endsWith(
+            context.getString(io.openwaters.slackwater.android.R.string.gate_near_bar)))
+    }
+
     @Test fun tidePage() = scene("tide", "noaa/9449880")
     @Test fun measuredCurrentPage() = scene("current", "current:noaa/PCT3896")
     @Test fun longStationName() = scene("long-label", "ticon/sunnyvale_east_channel_below_caribbean_drive-sun-usa-cm")

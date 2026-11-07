@@ -32,7 +32,7 @@ private fun JSONObject.toGateEvidence() = CurrentGateEvidence(
         CurrentGateMiss(it.getString("clause"), (it.opt("value") as? Number)?.toDouble(), it.optBoolean("nearBar"))
     },
     missContext = opt("missContext") as? String,
-    magnitudeNote = opt("magnitudeNote") as? String,
+    magnitudeNote = (opt("magnitudeNote") as? String)?.takeIf(String::isNotBlank),
     tideReference = (opt("tideReference") as? String)?.let(::StationId),
 )
 
