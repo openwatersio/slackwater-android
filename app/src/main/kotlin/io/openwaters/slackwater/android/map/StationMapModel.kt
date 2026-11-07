@@ -25,7 +25,7 @@ class StationMapModel(context: Context, private val models: ModelStore = ModelSt
     private val catalog = BundledStationCatalog(assets)
     private val tides = BundledTideDatabase(assets)
     private val repository = AndroidPredictionRepository(context, models)
-    private val fields by lazy { CurrentMapFieldSource(context, repository) }
+    private val fields by lazy { CurrentMapFieldSource(context, repository::currentAt) }
     internal suspend fun currentFields(at: Instant) = fields.evaluate(at)
     val revision = models.revision
     private val referenceEvents = ReferenceCurrentEvents()

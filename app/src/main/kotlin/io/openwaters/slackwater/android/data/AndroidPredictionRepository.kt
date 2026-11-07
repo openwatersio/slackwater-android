@@ -69,6 +69,12 @@ class AndroidPredictionRepository(
     }
 
     override suspend fun load(id: StationId, span: TimeSpan, purpose: PredictionPurpose): PredictionResult =
+        load(id, span, purpose, currentStepSeconds = 600.0)
+
+    internal suspend fun currentAt(id: StationId, at: Instant): PredictionResult =
+        load(id, TimeSpan(at, at), PredictionPurpose.DISPLAY, currentStepSeconds = 1.0)
+
+    private suspend fun load(id: StationId, span: TimeSpan, purpose: PredictionPurpose, currentStepSeconds: Double): PredictionResult =
         withContext(Dispatchers.IO) {
             try {
                 val resolved = catalog.resolve(id)
@@ -79,9 +85,9 @@ class AndroidPredictionRepository(
                 } ?: return@withContext PredictionResult.Unavailable(Reason.UNKNOWN_STATION)
                 val prediction = when (item.kind) {
                     StationKind.Tide -> bundledTide(item.id, span)
-                    StationKind.Current -> bundledCurrent(item.id, span)
+                    StationKind.Current -> bundledCurrent(item.id, span, currentStepSeconds)
                     StationKind.CanadianTide -> canadianTide(item.id, span, purpose)
-                    StationKind.CanadianCurrent -> canadianCurrent(item.id, span, purpose)
+                    StationKind.CanadianCurrent -> canadianCurrent(item.id, span, purpose, currentStepSeconds)
                     StationKind.DerivedGate -> if (StationCapabilities.DERIVED_TIMING.supports(purpose)) derivedGate(item.id, span)
                         else PredictionResult.Unavailable(Reason.UNSUPPORTED_PURPOSE)
                     else -> PredictionResult.Unavailable(Reason.UNKNOWN_STATION)
@@ -121,17 +127,17 @@ class AndroidPredictionRepository(
         return PredictionResult.Ready(id, span, record.attribution, StationCapabilities.SUBORDINATE_TIDE, EngineAdapter.tide(station, span), chartModel = ChartModel.Tide(station::heights))
     }
 
-    private fun bundledCurrent(id: StationId, span: TimeSpan): PredictionResult {
+    private fun bundledCurrent(id: StationId, span: TimeSpan, stepSeconds: Double): PredictionResult {
         val row = currents[id.value.removePrefix("current:")] ?: bad()
         val ref = row.optString("reference")
         val (capability, series, model) = if (ref.isEmpty()) {
             val station = row.currentStation()
-            Triple(StationCapabilities.HARMONIC_CURRENT, EngineAdapter.current(station, span).copy(
+            Triple(StationCapabilities.HARMONIC_CURRENT, EngineAdapter.current(station, span, stepSeconds).copy(
                 hasCrossAxis = (row.optJSONArray("minorConstituents")?.length() ?: 0) > 0 || row.optDouble("minorMeanFlow", 0.0) != 0.0,
             ), ChartModel.Current(station::speeds, station::events))
         } else {
             val station = row.subordinateCurrent(currents[ref]?.currentStation() ?: bad())
-            Triple(StationCapabilities.SUBORDINATE_CURRENT, EngineAdapter.current(station, span), ChartModel.Current(station::speeds, station::events))
+            Triple(StationCapabilities.SUBORDINATE_CURRENT, EngineAdapter.current(station, span, stepSeconds), ChartModel.Current(station::speeds, station::events))
         }
         return PredictionResult.Ready(id, span, "NOAA", capability, series, chartModel = model)
     }
@@ -166,7 +172,7 @@ class AndroidPredictionRepository(
         return BoundedPredictions.tide(id, span, points)
     }
 
-    private suspend fun canadianCurrent(id: StationId, span: TimeSpan, purpose: PredictionPurpose): PredictionResult {
+    private suspend fun canadianCurrent(id: StationId, span: TimeSpan, purpose: PredictionPurpose, stepSeconds: Double): PredictionResult {
         val gate = gates[id] ?: bad()
         if (gate.online) {
             if (!StationCapabilities.ONLINE_CURRENT.supports(purpose)) bad(Reason.UNSUPPORTED_PURPOSE)
@@ -190,7 +196,7 @@ class AndroidPredictionRepository(
         if (!fit.capability.supports(purpose)) bad(Reason.UNSUPPORTED_PURPOSE)
         val station = CurrentStation(model.constants(), model.getDouble("floodDirection"),
             model.getDouble("ebbDirection"), model.getDouble("offset"))
-        return PredictionResult.Ready(id, span, "CHS", fit.capability, EngineAdapter.current(station, span), fit.slackBoundMinutes,
+        return PredictionResult.Ready(id, span, "CHS", fit.capability, EngineAdapter.current(station, span, stepSeconds), fit.slackBoundMinutes,
             chartModel = ChartModel.Current(station::speeds, station::events))
     }
 

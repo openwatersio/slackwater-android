@@ -100,6 +100,50 @@ class MapNativeConformanceTest {
         }
     }
 
+    @Test fun doddDirectionIsVisibleAndSelectableBesideTheStationDot() {
+        val id = StationId("chs-dodd-narrows")
+        val center = Coordinate(49.135, -123.817)
+        val station = StationIdentity(id, "Dodd Narrows", "", center.latitude, center.longitude, StationKind.CanadianCurrent)
+        val fields = mutableStateOf<CurrentFieldFeatures?>(CurrentMapFields(emptyList(), emptyList(), center to 0.0).features())
+        val selection = AtomicReference<StationId?>()
+        compose.setContent {
+            NativeStationMap(listOf(StationMapPin(station, MapPinState())), null, null, center, 12.5, 0, 0,
+                { _, _, _, _, _, _ -> }, selection::set, {}, modifier = Modifier.fillMaxSize().testTag("map"),
+                localOnly = true, fields = fields.value)
+        }
+        val native = AtomicReference<MapLibreMap>()
+        compose.runOnIdle {
+            (compose.activity.window.decorView as ViewGroup).descendants.filterIsInstance<MapView>().single()
+                .getMapAsync(native::set)
+        }
+        var arrowTap = androidx.compose.ui.geometry.Offset.Zero
+        compose.waitUntil(20_000) {
+            compose.runOnIdle {
+                val map = native.get() ?: return@runOnIdle false
+                val origin = map.projection.toScreenLocation(org.maplibre.android.geometry.LatLng(center.latitude, center.longitude))
+                if (map.queryRenderedFeatures(origin, "station-dots").isEmpty()) return@runOnIdle false
+                val radius = (60 * compose.activity.resources.displayMetrics.density).toInt()
+                for (dy in radius downTo 1) {
+                    val point = android.graphics.PointF(origin.x, origin.y - dy)
+                    if (map.queryRenderedFeatures(point, "station-vectors").any { it.getStringProperty("id") == id.value } &&
+                        map.queryRenderedFeatures(point, "station-dots").isEmpty()) {
+                        arrowTap = androidx.compose.ui.geometry.Offset(point.x, point.y)
+                        return@runOnIdle true
+                    }
+                }
+                false
+            }
+        }
+        compose.onNodeWithTag("map").performTouchInput { click(arrowTap) }
+        compose.waitUntil(5_000) { selection.get() == id }
+        compose.runOnIdle { fields.value = null }
+        compose.waitUntil(10_000) {
+            compose.runOnIdle {
+                native.get().queryRenderedFeatures(android.graphics.PointF(arrowTap.x, arrowTap.y), "station-vectors").isEmpty()
+            }
+        }
+    }
+
     @Test fun shippedSeymourPatchDisappearsWhenTheSelectedMinuteIsOutsideCoverage() {
         val time = Instant.parse("2026-11-07T16:00:00Z")
         val repository = object : PredictionRepository {
@@ -108,7 +152,7 @@ class MapNativeConformanceTest {
                     listOf(CurrentPoint(time, 3.0), CurrentPoint(time.plusSeconds(1800), -1.0)), 30.0, 210.0)
                 else PredictionResult.Unavailable(PredictionResult.Reason.MISSING_DOWNLOAD)
         }
-        val source = CurrentMapFieldSource(compose.activity, repository)
+        val source = CurrentMapFieldSource(compose.activity) { id, at -> repository.load(id, TimeSpan(at, at), PredictionPurpose.DISPLAY) }
         val covered = runBlocking { source.evaluate(time) }
         val cell = covered.patches.first()
         val center = Coordinate(cell.polygon.map { it.latitude }.average(), cell.polygon.map { it.longitude }.average())

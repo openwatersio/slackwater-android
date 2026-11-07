@@ -15,7 +15,7 @@ import kotlinx.coroutines.withContext
 
 internal class CurrentMapFieldSource(
     context: Context,
-    private val predictions: PredictionRepository = AndroidPredictionRepository(context),
+    private val currentAt: suspend (StationId, Instant) -> PredictionResult = AndroidPredictionRepository(context)::currentAt,
 ) {
     private val assets = context.applicationContext.assets
     private val catalog = BundledStationCatalog(assets)
@@ -41,8 +41,7 @@ internal class CurrentMapFieldSource(
         }
         val dodd = StationId("chs-dodd-narrows")
         val readings = (anchors.values.filterNotNull().toSet() + dodd).associateWith { id ->
-            val span = TimeSpan(at, at)
-            val result = predictions.load(id, span, PredictionPurpose.DISPLAY)
+            val result = currentAt(id, at)
             val ready = when (result) {
                 is PredictionResult.Ready -> result
                 is PredictionResult.Disjoint -> result.blocks.firstOrNull { at in it.coverage }

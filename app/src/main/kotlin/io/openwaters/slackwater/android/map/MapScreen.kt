@@ -33,8 +33,6 @@ import io.openwaters.slackwater.android.core.station.*
 import io.openwaters.slackwater.android.data.*
 import io.openwaters.slackwater.android.stations.StationCard
 import io.openwaters.slackwater.android.stations.StationListModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import java.time.Instant
 import kotlin.math.abs
 import androidx.lifecycle.Lifecycle
@@ -58,14 +56,10 @@ internal fun MapScreen(list: StationListModel, engine: StationMapModel, now: Ins
     val listState by list.state.collectAsState()
     val prefs by list.readingPreferences.collectAsState()
     val revision by engine.revision.collectAsState()
-    val fieldsEnabled = LocalActivity.current?.intent?.getBooleanExtra("currentFillOff", false) != true
-    val fields = key(engine, fieldsEnabled, now.epochSecond / 60, revision) {
-        val result by produceState<CurrentFieldFeatures?>(null) {
-            if (fieldsEnabled) {
-                value = withContext(Dispatchers.Default) { engine.currentFields(now).features() }
-            }
-        }
-        result
+    val debuggable = context.applicationInfo.flags and android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE != 0
+    val fieldsEnabled = !debuggable || LocalActivity.current?.intent?.getBooleanExtra("currentFillOff", false) != true
+    val fields = key(engine, fieldsEnabled) {
+        if (fieldsEnabled) rememberCurrentFieldFeatures(now, revision) { time -> engine.currentFields(time).features() } else null
     }
     val savedFilter = listState?.filter
     var bypassFilter by rememberSaveable(savedFilter) { mutableStateOf(false) }

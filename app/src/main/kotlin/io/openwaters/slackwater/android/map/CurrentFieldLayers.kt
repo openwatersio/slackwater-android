@@ -1,5 +1,12 @@
 package io.openwaters.slackwater.android.map
 
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.produceState
+import java.time.Instant
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import io.openwaters.slackwater.android.core.map.FillCell
 import io.openwaters.slackwater.android.core.map.currentSpeedColor
 import io.openwaters.slackwater.android.core.map.triangleContains
@@ -24,6 +31,25 @@ internal data class CurrentMapFields(
 
 internal class CurrentFieldFeatures(val fill: FeatureCollection, val patches: FeatureCollection)
 
+@Composable
+internal fun rememberCurrentFieldFeatures(
+    at: Instant,
+    revision: Long,
+    evaluate: suspend (Instant) -> CurrentFieldFeatures,
+): CurrentFieldFeatures? {
+    val features by produceState<CurrentFieldFeatures?>(null, Math.floorDiv(at.epochSecond, 60L), revision) {
+        value = try {
+            withContext(Dispatchers.Default) { evaluate(at) }
+        } catch (cancelled: CancellationException) {
+            throw cancelled
+        } catch (error: Exception) {
+            android.util.Log.w("CurrentFieldLayers", "Could not evaluate current fields", error)
+            null
+        }
+    }
+    return features
+}
+
 private fun Coordinate.point() = Point.fromLngLat(longitude, latitude)
 
 private fun direction(center: Coordinate, bearing: Double) =
@@ -45,7 +71,9 @@ internal fun CurrentMapFields.features(): CurrentFieldFeatures {
                 result.add(direction(center, cell.bearingDeg))
             }
         }
-        stationDirection?.let { (center, bearing) -> result.add(direction(center, bearing)) }
+        stationDirection?.let { (center, bearing) ->
+            result.add(direction(center, bearing).apply { addStringProperty("id", "chs-dodd-narrows") })
+        }
         return FeatureCollection.fromFeatures(result)
     }
     return CurrentFieldFeatures(features(fill, patches), features(patches, emptyList(), dodd))
@@ -66,7 +94,7 @@ internal class CurrentFieldLayers(style: Style) {
                 fillOpacity(interpolate(linear(), get("kn"), stop(0.5, 0.18), stop(6, 0.65)))))
         }
         for ((source, layer) in listOf(fill to "current-directions", patch to "current-directions-patches")) {
-            style.addLayer(SymbolLayer(layer, source.id).withFilter(has("bearing")).withProperties(
+            style.addLayer(SymbolLayer(layer, source.id).withFilter(all(has("bearing"), not(has("id")))).withProperties(
                 iconImage("slackwater-arrow"), iconSize(0.65f), iconRotate(get("bearing")),
                 iconRotationAlignment("map"), iconPitchAlignment("map"), iconAllowOverlap(false),
                 iconIgnorePlacement(false), iconPadding(8f), iconColor("#152256")).also { it.minZoom = 9f })

@@ -23,7 +23,7 @@ class CurrentMapFieldSourceTest {
     @Test fun shippedFillAndNoaaPatchWorkOfflineWhileCanadianFlowDependsOnSavedPredictions() = runBlocking {
         val directory = File(context.cacheDir, "fields-${UUID.randomUUID()}")
         val models = ModelStore(directory)
-        val source = CurrentMapFieldSource(context, AndroidPredictionRepository(context, models))
+        val source = CurrentMapFieldSource(context, AndroidPredictionRepository(context, models)::currentAt)
         try {
             val initial = source.evaluate(time)
             assertEquals(13168, initial.fill.size)
@@ -51,6 +51,15 @@ class CurrentMapFieldSourceTest {
         Unit
     }
 
+    @Test fun mapRequestsSampleTheExactSecondWithoutChangingTheDisplaySeries() = runBlocking {
+        val repository = AndroidPredictionRepository(context)
+        val selected = time.plusSeconds(97)
+        val map = repository.currentAt(tacoma, selected) as PredictionResult.Ready
+        val display = repository.load(tacoma, TimeSpan(selected, selected), PredictionPurpose.DISPLAY) as PredictionResult.Ready
+        assertEquals(listOf(selected), (map.series as PredictionSeries.Current).points.map { it.time })
+        assertEquals(listOf(time, time.plusSeconds(600)), (display.series as PredictionSeries.Current).points.map { it.time })
+    }
+
     @Test fun anOnlineAnchorIsEvaluatedOnceAndCannotPaintThroughAHole() = runBlocking {
         val calls = mutableListOf<StationId>()
         val repository = object : PredictionRepository {
@@ -61,7 +70,7 @@ class CurrentMapFieldSourceTest {
                 else PredictionResult.Unavailable(PredictionResult.Reason.MISSING_DOWNLOAD)
             }
         }
-        val source = CurrentMapFieldSource(context, repository)
+        val source = CurrentMapFieldSource(context) { id, at -> repository.load(id, TimeSpan(at, at), PredictionPurpose.DISPLAY) }
         assertEquals(10, source.evaluate(time).patches.size)
         assertEquals(listOf(dodd, seymour, tacoma).sortedBy { it.value }, calls.sortedBy { it.value })
         calls.clear()

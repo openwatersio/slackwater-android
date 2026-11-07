@@ -25,7 +25,7 @@ private const val CAPTIONS = "slackwater-station-captions"
 private const val FIX = "slackwater-location"
 private const val INK = "#152256"
 private const val NEUTRAL = "#5888a8"
-internal val stationHitLayers = arrayOf("station-rings", "station-dots", "station-arrows", "station-gauges", "station-names", "station-readings")
+internal val stationHitLayers = arrayOf("station-rings", "station-dots", "station-arrows", "station-gauges", "station-names", "station-readings", "station-vectors")
 
 private fun pinColor(state: String) = when (state) {
     "rising" -> "#2dd4bf"
@@ -64,6 +64,13 @@ internal class StationLayers(style: Style, fieldsEnabled: Boolean = true) {
             iconImage("slackwater-arrow"), iconRotate(get("bearing")), iconRotationAlignment("map"),
             iconAllowOverlap(true), iconSize(size(1.0)), iconColor(toColor(get("color"))),
             iconHaloColor(INK), iconHaloWidth(1.2f)))
+        if (fieldsEnabled) {
+            style.addLayer(SymbolLayer("station-vectors", "current-fill-patches").withFilter(has("id")).withProperties(
+                iconImage("slackwater-arrow"), iconRotate(get("bearing")), iconRotationAlignment("map"),
+                iconPitchAlignment("map"), iconAllowOverlap(true), iconIgnorePlacement(true),
+                iconSize(size(0.75)), iconOffset(arrayOf(0f, -15f)), iconColor("#ffffff"),
+                iconHaloColor(INK), iconHaloWidth(1.2f)).also { it.minZoom = 9f })
+        }
         for (trend in listOf("rising", "falling")) for (bucket in 0..8) {
             style.addImage("station-$trend-$bucket", gaugeImage(trend, bucket))
         }
