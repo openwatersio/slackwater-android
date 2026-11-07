@@ -152,7 +152,9 @@ class ModelStore internal constructor(
     /** Stations with a file of [kind], whether or not it is readable. */
     suspend fun storedIds(kind: ModelKind): Set<StationId> = withContext(Dispatchers.IO) {
         val ending = ".${kind.suffix}.json"
-        directory.list().orEmpty().asSequence()
+        val names = directory.list() ?: if (!directory.exists()) emptyArray()
+            else throw IOException("Could not list stored models")
+        names.asSequence()
             .filter { it.endsWith(ending) && !it.startsWith(TEMPORARY_PREFIX) }
             .mapNotNull { decodeName(it.dropLast(ending.length))?.let(::StationId) }
             .toSet()

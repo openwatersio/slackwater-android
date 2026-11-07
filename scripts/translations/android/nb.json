@@ -285,5 +285,20 @@
   "map_fix_missing": "Posisjon utilgjengelig",
   "map_units_legend": "Tidevann i %1$s. Strøm i %2$s. Ikke til navigasjon. Diagraminnstillinger.",
   "map_zoom_out": "Zoom ut",
-  "map_zoom_in": "Zoom inn"
+  "map_zoom_in": "Zoom inn",
+  "chart_downloads": "Nedlastinger",
+  "chart_offline": "Frakoblet sjøkart",
+  "chart_coverage": "Verdenskart, nærområder og lagrede stasjoner",
+  "chart_ready_count": "%1$d av %2$d områder klare",
+  "chart_pause": "Sett på pause",
+  "chart_resume": "Fortsett",
+  "chart_remove": "Fjern kartpakker",
+  "chart_remove_question": "Fjern nedlastede kartområder?",
+  "chart_removed": "Kartpakker fjernet",
+  "chart_paused": "Nedlastinger satt på pause",
+  "chart_storage": "Lagring utilgjengelig",
+  "chart_quota": "Grensen for kartfliser er nådd",
+  "chart_failed": "Nedlastingen mislyktes",
+  "chart_data_saver": "Datasparing har satt nedlastingene på pause",
+  "chart_inputs_unavailable": "Enkelte opplysninger om lagrede stasjoner er utilgjengelige"
 }

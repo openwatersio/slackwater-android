@@ -17,6 +17,7 @@ import io.openwaters.slackwater.android.detail.DetailRecords
 import io.openwaters.slackwater.android.core.station.StationId
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
@@ -38,6 +39,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class MainActivity : ComponentActivity() {
+    internal companion object {
+        // Instrumented UI tests exercise real native downloads only against their bounded test regions.
+        internal var automaticChartDownloads = true
+    }
+
     private data class DetailDestination(val station: StationId, val event: Instant?)
     private var destination by mutableStateOf<DetailDestination?>(null)
     private val records by lazy { DetailRecords(assets) }
@@ -80,10 +86,18 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         handleDestination(intent)
+        val chartPacks by lazy { io.openwaters.slackwater.android.map.ChartPackManager.get(applicationContext) }
+        if (automaticChartDownloads) lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(androidx.lifecycle.Lifecycle.State.STARTED) {
+                io.openwaters.slackwater.android.map.observeChartCoverage(applicationContext, chartPacks)
+            }
+        }
         enableEdgeToEdge()
         setContent {
             MaterialTheme {
                 LaunchedEffect(Unit) { withContext(Dispatchers.IO) { ShortcutPublisher.publish(this@MainActivity) } }
+                var showDownloads by androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf(false) }
+                if (showDownloads) io.openwaters.slackwater.android.map.ChartDownloads(chartPacks) { showDownloads = false }
                 var showCredits by remember { mutableStateOf(false) }
                 if (badLink) {
                     AlertDialog(onDismissRequest = { badLink = false }, text = { Text(stringResource(R.string.detail_invalid_link)) },
@@ -116,6 +130,7 @@ class MainActivity : ComponentActivity() {
                     Box(if (destination == null) Modifier.fillMaxSize() else Modifier.fillMaxSize().clearAndSetSemantics {}) {
                         StationsHome(onCredits = { showCredits = true }, coveredByAlert = destination != null, externalMapFocus = focusMap,
                             consumeFocus = { focusMap = null }, onSettings = { chartSettings = true }) {
+                            TextButton(onClick = { showDownloads = true }) { Text(stringResource(R.string.chart_downloads)) }
                             TextButton(onClick = { chartSettings = true }) { Text(stringResource(R.string.detail_chart_settings)) }
                             var showQueries by remember { mutableStateOf(false) }
                             Box {

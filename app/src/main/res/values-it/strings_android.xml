@@ -292,4 +292,19 @@
     <string name="map_units_legend">"Maree in %1$s. Correnti in %2$s. Non usare per la navigazione. Impostazioni del grafico."</string>
     <string name="map_zoom_out">"Riduci zoom"</string>
     <string name="map_zoom_in">"Aumenta zoom"</string>
+    <string name="chart_downloads">"Download"</string>
+    <string name="chart_offline">"Carta offline"</string>
+    <string name="chart_coverage">"Mappamondo, aree vicine e stazioni salvate"</string>
+    <string name="chart_ready_count">"Aree pronte: %1$d su %2$d"</string>
+    <string name="chart_pause">"Pausa"</string>
+    <string name="chart_resume">"Riprendi"</string>
+    <string name="chart_remove">"Rimuovi i pacchetti di carte"</string>
+    <string name="chart_remove_question">"Rimuovere le aree della carta scaricate?"</string>
+    <string name="chart_removed">"Pacchetti di carte rimossi"</string>
+    <string name="chart_paused">"Download in pausa"</string>
+    <string name="chart_storage">"Archiviazione non disponibile"</string>
+    <string name="chart_quota">"Limite di tasselli raggiunto"</string>
+    <string name="chart_failed">"Download non riuscito"</string>
+    <string name="chart_data_saver">"Download sospesi dal risparmio dati"</string>
+    <string name="chart_inputs_unavailable">"Alcune informazioni sulle stazioni salvate non sono disponibili"</string>
 </resources>

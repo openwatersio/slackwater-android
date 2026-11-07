@@ -288,4 +288,19 @@
     <string name="map_units_legend">"Tidevann i %1$s. Strøm i %2$s. Ikke til navigasjon. Diagraminnstillinger."</string>
     <string name="map_zoom_out">"Zoom ut"</string>
     <string name="map_zoom_in">"Zoom inn"</string>
+    <string name="chart_downloads">"Nedlastinger"</string>
+    <string name="chart_offline">"Frakoblet sjøkart"</string>
+    <string name="chart_coverage">"Verdenskart, nærområder og lagrede stasjoner"</string>
+    <string name="chart_ready_count">"%1$d av %2$d områder klare"</string>
+    <string name="chart_pause">"Sett på pause"</string>
+    <string name="chart_resume">"Fortsett"</string>
+    <string name="chart_remove">"Fjern kartpakker"</string>
+    <string name="chart_remove_question">"Fjern nedlastede kartområder?"</string>
+    <string name="chart_removed">"Kartpakker fjernet"</string>
+    <string name="chart_paused">"Nedlastinger satt på pause"</string>
+    <string name="chart_storage">"Lagring utilgjengelig"</string>
+    <string name="chart_quota">"Grensen for kartfliser er nådd"</string>
+    <string name="chart_failed">"Nedlastingen mislyktes"</string>
+    <string name="chart_data_saver">"Datasparing har satt nedlastingene på pause"</string>
+    <string name="chart_inputs_unavailable">"Enkelte opplysninger om lagrede stasjoner er utilgjengelige"</string>
 </resources>

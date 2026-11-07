@@ -285,5 +285,20 @@
   "map_fix_missing": "Placering utilgængelig",
   "map_units_legend": "Tidevand i %1$s. Strøm i %2$s. Ikke til navigation. Diagramindstillinger.",
   "map_zoom_out": "Zoom ud",
-  "map_zoom_in": "Zoom ind"
+  "map_zoom_in": "Zoom ind",
+  "chart_downloads": "Downloads",
+  "chart_offline": "Offlinekort",
+  "chart_coverage": "Verden, nærliggende områder og gemte stationer",
+  "chart_ready_count": "%1$d af %2$d områder er klar",
+  "chart_pause": "Sæt på pause",
+  "chart_resume": "Fortsæt",
+  "chart_remove": "Fjern kortpakker",
+  "chart_remove_question": "Fjern downloadede kortområder?",
+  "chart_removed": "Kortpakker fjernet",
+  "chart_paused": "Downloads sat på pause",
+  "chart_storage": "Lagerplads utilgængelig",
+  "chart_quota": "Grænsen for kortfelter er nået",
+  "chart_failed": "Download mislykkedes",
+  "chart_data_saver": "Downloads er sat på pause af Datasparefunktion",
+  "chart_inputs_unavailable": "Nogle oplysninger om gemte stationer er ikke tilgængelige"
 }

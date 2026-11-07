@@ -289,5 +289,20 @@
   "map_fix_missing": "Ubicación no disponible",
   "map_units_legend": "Mareas en %1$s. Corrientes en %2$s. No apto para navegación. Ajustes del gráfico.",
   "map_zoom_out": "Alejar",
-  "map_zoom_in": "Acercar"
+  "map_zoom_in": "Acercar",
+  "chart_downloads": "Descargas",
+  "chart_offline": "Carta sin conexión",
+  "chart_coverage": "Mapa mundial, zonas cercanas y estaciones guardadas",
+  "chart_ready_count": "Zonas listas: %1$d de %2$d",
+  "chart_pause": "Pausar",
+  "chart_resume": "Reanudar",
+  "chart_remove": "Eliminar paquetes de cartas",
+  "chart_remove_question": "¿Eliminar las zonas de la carta descargadas?",
+  "chart_removed": "Paquetes de cartas eliminados",
+  "chart_paused": "Descargas en pausa",
+  "chart_storage": "Almacenamiento no disponible",
+  "chart_quota": "Se ha alcanzado el límite de teselas",
+  "chart_failed": "Error en la descarga",
+  "chart_data_saver": "El ahorro de datos ha pausado las descargas",
+  "chart_inputs_unavailable": "Parte de la información de las estaciones guardadas no está disponible"
 }

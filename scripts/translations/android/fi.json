@@ -285,5 +285,20 @@
   "map_fix_missing": "Sijainti ei ole käytettävissä",
   "map_units_legend": "Vuorovedet: %1$s. Virtaukset: %2$s. Ei navigointiin. Kaavioasetukset.",
   "map_zoom_out": "Loitonna",
-  "map_zoom_in": "Lähennä"
+  "map_zoom_in": "Lähennä",
+  "chart_downloads": "Lataukset",
+  "chart_offline": "Offline-kartta",
+  "chart_coverage": "Maailmankartta, lähialueet ja tallennetut asemat",
+  "chart_ready_count": "Alueita valmiina: %1$d/%2$d",
+  "chart_pause": "Keskeytä",
+  "chart_resume": "Jatka",
+  "chart_remove": "Poista karttapaketit",
+  "chart_remove_question": "Poistetaanko ladatut kartta-alueet?",
+  "chart_removed": "Karttapaketit poistettu",
+  "chart_paused": "Lataukset keskeytetty",
+  "chart_storage": "Tallennustila ei ole käytettävissä",
+  "chart_quota": "Karttaruutujen enimmäismäärä saavutettu",
+  "chart_failed": "Lataus epäonnistui",
+  "chart_data_saver": "Datansäästö on keskeyttänyt lataukset",
+  "chart_inputs_unavailable": "Kaikkia tallennettujen asemien tietoja ei ole saatavilla"
 }

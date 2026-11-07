@@ -292,4 +292,19 @@
     <string name="map_units_legend">"Mareas en %1$s. Corrientes en %2$s. No apto para navegación. Ajustes del gráfico."</string>
     <string name="map_zoom_out">"Alejar"</string>
     <string name="map_zoom_in">"Acercar"</string>
+    <string name="chart_downloads">"Descargas"</string>
+    <string name="chart_offline">"Carta sin conexión"</string>
+    <string name="chart_coverage">"Mapa mundial, zonas cercanas y estaciones guardadas"</string>
+    <string name="chart_ready_count">"Zonas listas: %1$d de %2$d"</string>
+    <string name="chart_pause">"Pausar"</string>
+    <string name="chart_resume">"Reanudar"</string>
+    <string name="chart_remove">"Eliminar paquetes de cartas"</string>
+    <string name="chart_remove_question">"¿Eliminar las zonas de la carta descargadas?"</string>
+    <string name="chart_removed">"Paquetes de cartas eliminados"</string>
+    <string name="chart_paused">"Descargas en pausa"</string>
+    <string name="chart_storage">"Almacenamiento no disponible"</string>
+    <string name="chart_quota">"Se ha alcanzado el límite de teselas"</string>
+    <string name="chart_failed">"Error en la descarga"</string>
+    <string name="chart_data_saver">"El ahorro de datos ha pausado las descargas"</string>
+    <string name="chart_inputs_unavailable">"Parte de la información de las estaciones guardadas no está disponible"</string>
 </resources>

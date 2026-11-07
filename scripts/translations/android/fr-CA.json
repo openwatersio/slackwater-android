@@ -289,5 +289,20 @@
   "map_fix_missing": "Position indisponible",
   "map_units_legend": "Marées en %1$s. Courants en %2$s. Ne pas utiliser pour la navigation. Réglages du graphique.",
   "map_zoom_out": "Zoom arrière",
-  "map_zoom_in": "Zoom avant"
+  "map_zoom_in": "Zoom avant",
+  "chart_downloads": "Téléchargements",
+  "chart_offline": "Carte hors ligne",
+  "chart_coverage": "Carte du monde, zones à proximité et stations enregistrées",
+  "chart_ready_count": "Zones prêtes : %1$d sur %2$d",
+  "chart_pause": "Suspendre",
+  "chart_resume": "Reprendre",
+  "chart_remove": "Supprimer les lots de cartes",
+  "chart_remove_question": "Supprimer les zones de carte téléchargées?",
+  "chart_removed": "Lots de cartes supprimés",
+  "chart_paused": "Téléchargements en pause",
+  "chart_storage": "Stockage indisponible",
+  "chart_quota": "Limite de tuiles atteinte",
+  "chart_failed": "Échec du téléchargement",
+  "chart_data_saver": "Téléchargements suspendus par l’économiseur de données",
+  "chart_inputs_unavailable": "Certains renseignements sur les stations enregistrées ne sont pas disponibles"
 }

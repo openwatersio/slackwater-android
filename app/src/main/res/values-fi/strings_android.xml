@@ -288,4 +288,19 @@
     <string name="map_units_legend">"Vuorovedet: %1$s. Virtaukset: %2$s. Ei navigointiin. Kaavioasetukset."</string>
     <string name="map_zoom_out">"Loitonna"</string>
     <string name="map_zoom_in">"Lähennä"</string>
+    <string name="chart_downloads">"Lataukset"</string>
+    <string name="chart_offline">"Offline-kartta"</string>
+    <string name="chart_coverage">"Maailmankartta, lähialueet ja tallennetut asemat"</string>
+    <string name="chart_ready_count">"Alueita valmiina: %1$d/%2$d"</string>
+    <string name="chart_pause">"Keskeytä"</string>
+    <string name="chart_resume">"Jatka"</string>
+    <string name="chart_remove">"Poista karttapaketit"</string>
+    <string name="chart_remove_question">"Poistetaanko ladatut kartta-alueet?"</string>
+    <string name="chart_removed">"Karttapaketit poistettu"</string>
+    <string name="chart_paused">"Lataukset keskeytetty"</string>
+    <string name="chart_storage">"Tallennustila ei ole käytettävissä"</string>
+    <string name="chart_quota">"Karttaruutujen enimmäismäärä saavutettu"</string>
+    <string name="chart_failed">"Lataus epäonnistui"</string>
+    <string name="chart_data_saver">"Datansäästö on keskeyttänyt lataukset"</string>
+    <string name="chart_inputs_unavailable">"Kaikkia tallennettujen asemien tietoja ei ole saatavilla"</string>
 </resources>

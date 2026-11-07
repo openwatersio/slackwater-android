@@ -289,5 +289,20 @@
   "map_fix_missing": "Localização indisponível",
   "map_units_legend": "Marés em %1$s. Correntes em %2$s. Não usar para navegação. Configurações do gráfico.",
   "map_zoom_out": "Diminuir zoom",
-  "map_zoom_in": "Aumentar zoom"
+  "map_zoom_in": "Aumentar zoom",
+  "chart_downloads": "Downloads",
+  "chart_offline": "Carta offline",
+  "chart_coverage": "Mapa-múndi, áreas próximas e estações salvas",
+  "chart_ready_count": "Áreas prontas: %1$d de %2$d",
+  "chart_pause": "Pausar",
+  "chart_resume": "Retomar",
+  "chart_remove": "Remover pacotes de cartas",
+  "chart_remove_question": "Remover as áreas da carta baixadas?",
+  "chart_removed": "Pacotes de cartas removidos",
+  "chart_paused": "Downloads pausados",
+  "chart_storage": "Armazenamento indisponível",
+  "chart_quota": "Limite de blocos do mapa atingido",
+  "chart_failed": "Falha no download",
+  "chart_data_saver": "Downloads pausados pela Economia de dados",
+  "chart_inputs_unavailable": "Algumas informações sobre as estações salvas estão indisponíveis"
 }

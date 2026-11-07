@@ -11,6 +11,7 @@ import kotlinx.coroutines.runBlocking
  */
 class SlackwaterTestRunner : AndroidJUnitRunner() {
     override fun onCreate(arguments: Bundle?) {
+        MainActivity.automaticChartDownloads = false
         super.onCreate(arguments)
         runBlocking {
             val list = ListPreferencesStore.get(targetContext)

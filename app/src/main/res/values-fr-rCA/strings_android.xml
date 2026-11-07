@@ -292,4 +292,19 @@
     <string name="map_units_legend">"Marées en %1$s. Courants en %2$s. Ne pas utiliser pour la navigation. Réglages du graphique."</string>
     <string name="map_zoom_out">"Zoom arrière"</string>
     <string name="map_zoom_in">"Zoom avant"</string>
+    <string name="chart_downloads">"Téléchargements"</string>
+    <string name="chart_offline">"Carte hors ligne"</string>
+    <string name="chart_coverage">"Carte du monde, zones à proximité et stations enregistrées"</string>
+    <string name="chart_ready_count">"Zones prêtes : %1$d sur %2$d"</string>
+    <string name="chart_pause">"Suspendre"</string>
+    <string name="chart_resume">"Reprendre"</string>
+    <string name="chart_remove">"Supprimer les lots de cartes"</string>
+    <string name="chart_remove_question">"Supprimer les zones de carte téléchargées?"</string>
+    <string name="chart_removed">"Lots de cartes supprimés"</string>
+    <string name="chart_paused">"Téléchargements en pause"</string>
+    <string name="chart_storage">"Stockage indisponible"</string>
+    <string name="chart_quota">"Limite de tuiles atteinte"</string>
+    <string name="chart_failed">"Échec du téléchargement"</string>
+    <string name="chart_data_saver">"Téléchargements suspendus par l’économiseur de données"</string>
+    <string name="chart_inputs_unavailable">"Certains renseignements sur les stations enregistrées ne sont pas disponibles"</string>
 </resources>

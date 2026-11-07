@@ -285,5 +285,20 @@
   "map_fix_missing": "Locatie niet beschikbaar",
   "map_units_legend": "Getijden in %1$s. Stromingen in %2$s. Niet voor navigatie. Grafiekinstellingen.",
   "map_zoom_out": "Uitzoomen",
-  "map_zoom_in": "Inzoomen"
+  "map_zoom_in": "Inzoomen",
+  "chart_downloads": "Downloads",
+  "chart_offline": "Offlinekaart",
+  "chart_coverage": "Wereldkaart, nabijgelegen gebieden en opgeslagen stations",
+  "chart_ready_count": "%1$d van %2$d gebieden gereed",
+  "chart_pause": "Pauzeren",
+  "chart_resume": "Hervatten",
+  "chart_remove": "Kaartpakketten verwijderen",
+  "chart_remove_question": "Gedownloade kaartgebieden verwijderen?",
+  "chart_removed": "Kaartpakketten verwijderd",
+  "chart_paused": "Downloads gepauzeerd",
+  "chart_storage": "Opslag niet beschikbaar",
+  "chart_quota": "Limiet voor kaarttegels bereikt",
+  "chart_failed": "Download mislukt",
+  "chart_data_saver": "Downloads gepauzeerd door Databesparing",
+  "chart_inputs_unavailable": "Sommige gegevens van opgeslagen stations zijn niet beschikbaar"
 }
