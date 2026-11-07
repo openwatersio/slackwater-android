@@ -1,5 +1,6 @@
 package io.openwaters.slackwater.android.detail
 
+import io.openwaters.slackwater.android.core.tour.TourStep
 import android.text.format.DateFormat
 import android.content.res.Resources
 import io.openwaters.slackwater.android.R
@@ -199,6 +200,7 @@ internal fun TimelineCanvas(
     }
     BoxWithConstraints(
         Modifier.testTag(if (sky != null && renderedSky?.first == selected.epochSecond / 10) "detailSkyReady" else "detailSkyPending").fillMaxWidth()
+            .tourAnchor(TourStep.STARS)
             .height(height.dp).clipToBounds().background(Color(0xff06182c))
     ) {
         val width = maxWidth.value
@@ -259,7 +261,7 @@ internal fun TimelineCanvas(
             }
         }
         Column(
-            Modifier.align(Alignment.TopCenter).onSizeChanged { leadSize = it }
+            Modifier.align(Alignment.TopCenter).onSizeChanged { leadSize = it }.tourAnchor(TourStep.READ)
             .padding(top = 12.dp).clearAndSetSemantics { contentDescription = description },
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(4.dp)

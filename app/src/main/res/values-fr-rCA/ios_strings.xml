@@ -261,4 +261,19 @@
     <string name="gate_offline_available">"Disponible hors ligne"</string>
     <string name="gate_offline_expectation">"Slackwater conserve environ un mois sur cet appareil et l’actualise dès que vous êtes en ligne."</string>
     <string name="gate_update">"Actualiser maintenant"</string>
+    <string name="tour_read_title">"Lire la bande"</string>
+    <string name="tour_read">"La ligne centrale indique le moment affiché ci-dessous."</string>
+    <string name="tour_swipe_title">"Balayez pour en voir plus"</string>
+    <string name="tour_swipe">"Balayez la courbe pour vous déplacer dans le temps."</string>
+    <string name="tour_stars_title">"Le vrai ciel"</string>
+    <string name="tour_stars">"Ce sont les vraies étoiles au-dessus de %1$s ce soir."</string>
+    <string name="tour_moon_title">"La lune"</string>
+    <string name="tour_moon">"Et c’est la vraie lune, dans sa phase de ce soir."</string>
+    <string name="tour_moon_card_title">"Détails de la lune"</string>
+    <string name="tour_moon_card">"Touchez la lune pour voir son lever, son coucher et sa phase."</string>
+    <string name="tour_star_title">"Favoris"</string>
+    <string name="tour_star">"Ajoutez une étoile à une station pour la garder en haut de votre liste."</string>
+    <string name="tour_next">"Suivant ›"</string>
+    <string name="tour_done">"Terminé"</string>
+    <string name="tour_skip">"Passer"</string>
 </resources>

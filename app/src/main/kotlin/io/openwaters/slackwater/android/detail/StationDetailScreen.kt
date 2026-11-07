@@ -191,7 +191,9 @@ private fun StationDetailBody(model: StationListModel, id: StationId, clock: Ins
     }
     val scroll = rememberScrollState()
     val page = rememberDetailPageScroll(scroll)
-    Surface(Modifier.fillMaxSize()) {
+    val tour by model.tour.state.collectAsState()
+    val anchors = remember(id) { TourAnchors() }
+    Surface(Modifier.fillMaxSize()) { CompositionLocalProvider(LocalTourAnchors provides anchors) { Box(Modifier.fillMaxSize()) {
         Column(Modifier.fillMaxSize().safeDrawingPadding().then(page.viewportModifier)
             .onGloballyPositioned { page.measureViewport(it, scroll) }.verticalScroll(scroll).padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -246,7 +248,8 @@ private fun StationDetailBody(model: StationListModel, id: StationId, clock: Ins
                 DetailRelated(station, metadata, model, onOpen, nearby = true)
             }
         }
-    }
+        DetailTour(model.tour, tour, id, station?.name.orEmpty(), timeline, anchors, scroll, prefs.showSky, page::cancelRestore)
+    } } }
     picker?.let { day ->
         DetailDatePicker(LocalDate.parse(day), ::pickDay, { picker = null })
     }

@@ -58,6 +58,8 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.first
+import io.openwaters.slackwater.android.core.tour.TourCoach
 import kotlinx.coroutines.withContext
 
 /** What a card shows at one moment: the reading on its right and the curve behind it. */
@@ -155,6 +157,18 @@ class StationListModel internal constructor(
     val preferences: StateFlow<ListPreferences?> = listPreferences.preferences
         .map { it.getOrThrow() }.retryAlertReads()
         .stateIn(scope, SharingStarted.Eagerly, null)
+
+    /** The first-run tour, shared by the list that opens its station and the detail that shows its marks. */
+    val tour = TourCoach { launchEdit { listPreferences.markTourSeen() } }
+
+    init {
+        // A seen flag that is lost to a corrupt file brings the tour back once, which is the cheaper failure.
+        scope.launch {
+            val first = preferences.first { it != null } ?: return@launch
+            if (!first.tourSeen && !first.tourSeenStored) launchEdit { listPreferences.markTourUnseen() }
+            tour.arm(first.tourSeen)
+        }
+    }
 
     /** Null until the catalog and saved places have loaded. */
     val state: StateFlow<StationListState?> = combine(

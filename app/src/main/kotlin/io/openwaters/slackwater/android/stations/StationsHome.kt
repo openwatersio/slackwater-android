@@ -18,6 +18,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
 import io.openwaters.slackwater.android.core.station.StationId
+import io.openwaters.slackwater.android.core.tour.tourStation
 import java.time.Instant
 import android.os.SystemClock
 import kotlinx.coroutines.delay
@@ -26,10 +27,15 @@ import kotlinx.coroutines.launch
 /** Visible cards refresh this often while the app is active. */
 private const val CARD_REFRESH_MILLIS = 60_000L
 
-/** Compact windows swap the saved list for a map or station. Expanded windows keep the list beside it. */
+/**
+ * Compact windows swap the saved list for a map or station. Expanded windows keep the list beside it. [linkPending]
+ * is a link still resolving and [linkOpened] one that opened a station; either keeps the first-run tour from opening
+ * its own station (list §11).
+ */
 @Composable
 fun StationsHome(onCredits: () -> Unit, coveredByAlert: Boolean = false, externalMapFocus: StationIdentity? = null,
-                 consumeFocus: () -> Unit = {}, onSettings: () -> Unit = {}, footerExtras: @Composable () -> Unit = {}) {
+                 consumeFocus: () -> Unit = {}, onSettings: () -> Unit = {}, linkPending: Boolean = false,
+                 linkOpened: Boolean = false, footerExtras: @Composable () -> Unit = {}) {
     val context = LocalContext.current
     val model = remember { StationListModel.get(context) }
     var searching by rememberSaveable { mutableStateOf(false) }
@@ -39,6 +45,12 @@ fun StationsHome(onCredits: () -> Unit, coveredByAlert: Boolean = false, externa
     var mapGeneration by rememberSaveable { mutableIntStateOf(0) }
     var automatic by rememberSaveable { mutableStateOf(false) }
     var initialChoiceMade by rememberSaveable { mutableStateOf(false) }
+    // The station the first-run tour opened, and whether the list has settled if it opens one at all.
+    var tourOpened by rememberSaveable { mutableStateOf<String?>(null) }
+    var tourDecided by rememberSaveable { mutableStateOf(false) }
+    val tour by model.tour.state.collectAsState()
+    val listPreferences by model.preferences.collectAsState()
+    val catalog by model.catalog.collectAsState()
     val mapModel = remember(context) { lazy { StationMapModel(context) } }
     val current by model.state.collectAsState()
     var now by remember { mutableStateOf(Instant.now()) }
@@ -75,6 +87,30 @@ fun StationsHome(onCredits: () -> Unit, coveredByAlert: Boolean = false, externa
     LaunchedEffect(externalMapFocus) {
         externalMapFocus?.let { focus(it); consumeFocus() }
     }
+    // An unseen tour opens its station on the list's first appearance, from the fix the device already holds; it never
+    // waits for a new one. A link that got there first keeps the tour for its own station, and search, the map or
+    // a station opened before the list has loaded keep the screen until the list itself shows again.
+    val listInView = !searching && !mapShowing && opened == null && !coveredByAlert
+    LaunchedEffect(listPreferences != null, catalog != null, linkPending, linkOpened, listInView) {
+        val preferences = listPreferences ?: return@LaunchedEffect
+        if (tourDecided || linkPending) return@LaunchedEffect
+        if (preferences.tourSeen || linkOpened) { tourDecided = true; return@LaunchedEffect }
+        val stations = catalog?.stations ?: return@LaunchedEffect
+        if (!listInView) return@LaunchedEffect
+        val fix = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) { model.location.cachedFix() }
+        if (tourDecided || searching || mapShowing || opened != null || coveredByAlert) return@LaunchedEffect
+        val station = tourStation(fix?.coordinate, stations)
+        tourDecided = true
+        if (stations.any { it.id == station }) {
+            open(station)
+            tourOpened = station.value
+        }
+    }
+    // A link that replaced the tour's station takes its place, as it replaces any open page.
+    LaunchedEffect(tour.reservedFor) {
+        val linked = tour.reservedFor
+        if (linked != null && opened != null && opened == tourOpened && opened != linked.value) closePage()
+    }
     BoxWithConstraints(Modifier.fillMaxSize()) {
         val expanded = maxWidth >= 600.dp && maxHeight >= 480.dp
         val wideLayout by rememberUpdatedState(expanded)
@@ -100,12 +136,14 @@ fun StationsHome(onCredits: () -> Unit, coveredByAlert: Boolean = false, externa
         }
         val listVisible = expanded || (!mapShowing && opened == null)
         val showing = listVisible && !searching && !coveredByAlert
+        // The first launch's location prompt may also rise over the tour's station, which opens in its place.
+        val ask = rememberLocationAsk(model, showing || (opened != null && opened == tourOpened && !searching && !coveredByAlert))
         LaunchedEffect(showing, lifecycle) {
             if (showing) lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) { model.refreshLocation() }
         }
-        LaunchedEffect(expanded, current, coveredByAlert) {
+        LaunchedEffect(expanded, current, coveredByAlert, tourDecided) {
             val sections = current?.sections
-            if (expanded && !initialChoiceMade && !coveredByAlert && !mapShowing && !searching && sections != null) {
+            if (expanded && tourDecided && !initialChoiceMade && !coveredByAlert && !mapShowing && !searching && sections != null) {
                 val first = sections.heroes.firstOrNull()?.id ?: sections.favorites.firstOrNull { current?.stations?.containsKey(it) == true }
                     ?: sections.nearMe.firstOrNull()?.id
                 if (first != null) {
@@ -127,7 +165,7 @@ fun StationsHome(onCredits: () -> Unit, coveredByAlert: Boolean = false, externa
                 pageState.SaveableStateProvider("list") {
                     StationListScreen(model, ::open, onSearch = { initialChoiceMade = true; searching = true }, onCredits = onCredits,
                         now = now, showing = showing, onMap = if (expanded && mapShowing && opened == null) null else ::toggleMap,
-                        footerExtras = footerExtras)
+                        onAsk = ask, footerExtras = footerExtras)
                 }
             }
             if (!coveredByAlert && (expanded || !listVisible)) {

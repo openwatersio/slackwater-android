@@ -261,4 +261,19 @@
     <string name="gate_offline_available">"오프라인 사용 가능"</string>
     <string name="gate_offline_expectation">"Slackwater는 약 한 달 분량을 이 기기에 저장하고 온라인일 때마다 새로 받습니다."</string>
     <string name="gate_update">"지금 업데이트"</string>
+    <string name="tour_read_title">"타임라인 읽기"</string>
+    <string name="tour_read">"가운데 선은 아래에 표시된 시점을 나타냅니다."</string>
+    <string name="tour_swipe_title">"쓸어넘겨 더 보기"</string>
+    <string name="tour_swipe">"곡선을 쓸어넘겨 시간을 앞뒤로 이동하세요."</string>
+    <string name="tour_stars_title">"실제 밤하늘"</string>
+    <string name="tour_stars">"오늘 밤 %1$s 상공에서 실제로 보이는 별들입니다."</string>
+    <string name="tour_moon_title">"달"</string>
+    <string name="tour_moon">"그리고 이것은 오늘 밤의 위상을 반영한 실제 달입니다."</string>
+    <string name="tour_moon_card_title">"달 정보"</string>
+    <string name="tour_moon_card">"달을 탭하면 월출, 월몰, 위상을 볼 수 있습니다."</string>
+    <string name="tour_star_title">"즐겨찾기"</string>
+    <string name="tour_star">"관측소에 별을 표시하면 목록 맨 위에 유지됩니다."</string>
+    <string name="tour_next">"다음 ›"</string>
+    <string name="tour_done">"완료"</string>
+    <string name="tour_skip">"건너뛰기"</string>
 </resources>

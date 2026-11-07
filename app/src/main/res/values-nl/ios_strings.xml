@@ -261,4 +261,19 @@
     <string name="gate_offline_available">"Offline beschikbaar"</string>
     <string name="gate_offline_expectation">"Slackwater bewaart ongeveer een maand op dit apparaat en vernieuwt die zodra je online bent."</string>
     <string name="gate_update">"Nu bijwerken"</string>
+    <string name="tour_read_title">"De tijdlijn lezen"</string>
+    <string name="tour_read">"De middenlijn markeert het tijdstip dat hieronder wordt weergegeven."</string>
+    <string name="tour_swipe_title">"Veeg om meer te zien"</string>
+    <string name="tour_swipe">"Veeg over de curve om door de tijd te bewegen."</string>
+    <string name="tour_stars_title">"De echte hemel"</string>
+    <string name="tour_stars">"Dat zijn de echte sterren boven %1$s vannacht."</string>
+    <string name="tour_moon_title">"De maan"</string>
+    <string name="tour_moon">"En dat is de echte maan, in de fase van vannacht."</string>
+    <string name="tour_moon_card_title">"Maandetails"</string>
+    <string name="tour_moon_card">"Tik op de maan voor de opkomst, ondergang en fase."</string>
+    <string name="tour_star_title">"Favorieten"</string>
+    <string name="tour_star">"Geef een station een ster om het bovenaan je lijst te houden."</string>
+    <string name="tour_next">"Volgende ›"</string>
+    <string name="tour_done">"Gereed"</string>
+    <string name="tour_skip">"Overslaan"</string>
 </resources>

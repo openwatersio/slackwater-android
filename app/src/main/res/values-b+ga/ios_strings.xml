@@ -261,4 +261,19 @@
     <string name="gate_offline_available">"Ar fáil as líne"</string>
     <string name="gate_offline_expectation">"Coinníonn Slackwater thart ar mhí ar an ngléas seo agus athnuann sé í aon uair a bhíonn tú ar líne."</string>
     <string name="gate_update">"Nuashonraigh anois"</string>
+    <string name="tour_read_title">"An stiall a léamh"</string>
+    <string name="tour_read">"Léiríonn an lárlíne an nóiméad a thaispeántar thíos."</string>
+    <string name="tour_swipe_title">"Svaidhpeáil chun tuilleadh a fheiceáil"</string>
+    <string name="tour_swipe">"Svaidhpeáil an cuar chun bogadh tríd an am."</string>
+    <string name="tour_stars_title">"An spéir fhíor"</string>
+    <string name="tour_stars">"Sin iad na fíorréaltaí os cionn %1$s anocht."</string>
+    <string name="tour_moon_title">"An ghealach"</string>
+    <string name="tour_moon">"Agus sin í an ghealach fhíor, ina céim anocht."</string>
+    <string name="tour_moon_card_title">"Sonraí na gealaí"</string>
+    <string name="tour_moon_card">"Tapáil an ghealach chun a héirí, a luí agus a céim a fheiceáil."</string>
+    <string name="tour_star_title">"Ceanáin"</string>
+    <string name="tour_star">"Cuir réalta le stáisiún chun é a choinneáil ag barr do liosta."</string>
+    <string name="tour_next">"Ar aghaidh ›"</string>
+    <string name="tour_done">"Déanta"</string>
+    <string name="tour_skip">"Scipeáil"</string>
 </resources>

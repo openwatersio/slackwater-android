@@ -261,4 +261,19 @@
     <string name="gate_offline_available">"Käytettävissä ilman verkkoyhteyttä"</string>
     <string name="gate_offline_expectation">"Slackwater säilyttää noin kuukauden ennusteet tällä laitteella ja päivittää ne aina, kun olet verkossa."</string>
     <string name="gate_update">"Päivitä nyt"</string>
+    <string name="tour_read_title">"Aikajanan lukeminen"</string>
+    <string name="tour_read">"Keskiviiva osoittaa alla näkyvän hetken."</string>
+    <string name="tour_swipe_title">"Näytä lisää pyyhkäisemällä"</string>
+    <string name="tour_swipe">"Liiku ajassa pyyhkäisemällä käyrää."</string>
+    <string name="tour_stars_title">"Todellinen taivas"</string>
+    <string name="tour_stars">"Nuo ovat todelliset tähdet paikan %1$s yllä tänä yönä."</string>
+    <string name="tour_moon_title">"Kuu"</string>
+    <string name="tour_moon">"Ja tuo on oikea kuu tämän yön vaiheessaan."</string>
+    <string name="tour_moon_card_title">"Kuun tiedot"</string>
+    <string name="tour_moon_card">"Napauta kuuta nähdäksesi sen nousun, laskun ja vaiheen."</string>
+    <string name="tour_star_title">"Suosikit"</string>
+    <string name="tour_star">"Merkitse asema tähdellä, niin se pysyy luettelosi alussa."</string>
+    <string name="tour_next">"Seuraava ›"</string>
+    <string name="tour_done">"Valmis"</string>
+    <string name="tour_skip">"Ohita"</string>
 </resources>

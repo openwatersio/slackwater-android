@@ -261,4 +261,19 @@
     <string name="gate_offline_available">"オフラインで利用可能"</string>
     <string name="gate_offline_expectation">"Slackwaterは約1か月分をこのデバイスに保存し、オンラインのときに自動で更新します。"</string>
     <string name="gate_update">"今すぐ更新"</string>
+    <string name="tour_read_title">"タイムラインの見方"</string>
+    <string name="tour_read">"中央の線は、下に表示されている時刻を示します。"</string>
+    <string name="tour_swipe_title">"スワイプしてもっと見る"</string>
+    <string name="tour_swipe">"曲線をスワイプすると、時刻を前後に移動できます。"</string>
+    <string name="tour_stars_title">"本物の星空"</string>
+    <string name="tour_stars">"これは今夜、%1$sの上空に実際に見える星です。"</string>
+    <string name="tour_moon_title">"月"</string>
+    <string name="tour_moon">"そして、これは今夜の月の形を反映した本物の月です。"</string>
+    <string name="tour_moon_card_title">"月の詳細"</string>
+    <string name="tour_moon_card">"月をタップすると、月の出・月の入り・月相が確認できます。"</string>
+    <string name="tour_star_title">"お気に入り"</string>
+    <string name="tour_star">"観測点に星を付けると、リストの先頭に表示されます。"</string>
+    <string name="tour_next">"次へ ›"</string>
+    <string name="tour_done">"完了"</string>
+    <string name="tour_skip">"スキップ"</string>
 </resources>

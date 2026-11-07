@@ -261,4 +261,19 @@
     <string name="gate_offline_available">"Tilgængelig offline"</string>
     <string name="gate_offline_expectation">"Slackwater gemmer cirka en måned på denne enhed og opdaterer den, når du er online."</string>
     <string name="gate_update">"Opdater nu"</string>
+    <string name="tour_read_title">"Sådan læser du tidslinjen"</string>
+    <string name="tour_read">"Midterlinjen markerer det tidspunkt, der vises nedenfor."</string>
+    <string name="tour_swipe_title">"Stryg for at se mere"</string>
+    <string name="tour_swipe">"Stryg på kurven for at bevæge dig gennem tiden."</string>
+    <string name="tour_stars_title">"Den virkelige himmel"</string>
+    <string name="tour_stars">"Det er de faktiske stjerner over %1$s i nat."</string>
+    <string name="tour_moon_title">"Månen"</string>
+    <string name="tour_moon">"Og det er den virkelige måne med nattens månefase."</string>
+    <string name="tour_moon_card_title">"Månedetaljer"</string>
+    <string name="tour_moon_card">"Tryk på månen for at se opgang, nedgang og fase."</string>
+    <string name="tour_star_title">"Favoritter"</string>
+    <string name="tour_star">"Giv en station en stjerne for at holde den øverst på din liste."</string>
+    <string name="tour_next">"Næste ›"</string>
+    <string name="tour_done">"OK"</string>
+    <string name="tour_skip">"Spring over"</string>
 </resources>
