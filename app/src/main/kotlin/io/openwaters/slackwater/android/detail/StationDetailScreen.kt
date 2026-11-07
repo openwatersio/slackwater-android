@@ -248,8 +248,11 @@ private fun DetailContent(station: StationIdentity, detail: LoadedDetail, prefs:
         detail.ready.slackErrorBoundMinutes?.let { Text(stringResource(R.string.detail_bound, station.name, it)) }
         if (cap == StationCapabilities.TIDE_PREVIEW || cap == StationCapabilities.PROVISIONAL_CURRENT) {
             Text(stringResource(R.string.detail_more_data))
-            if (cap == StationCapabilities.TIDE_PREVIEW) Text(stringResource(R.string.detail_preview,
-                DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withZone(timeline.zone).format(state.coverage.end)))
+            if (cap == StationCapabilities.TIDE_PREVIEW) {
+                Text(stringResource(R.string.tide_download_saved))
+                Text(stringResource(R.string.detail_preview,
+                    DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withZone(timeline.zone).format(state.coverage.end)))
+            }
         }
         if (state.onlineDayRequested != null) Text(stringResource(R.string.detail_no_week))
         DetailSummary(station, timeline, prefs, repository, metadata?.pairedTide?.let { StationListModel.get(LocalContext.current).catalog.collectAsState().value?.byId?.get(it)?.name },
@@ -267,7 +270,9 @@ private fun DetailContent(station: StationIdentity, detail: LoadedDetail, prefs:
 private fun MissingPredictions(station: StationIdentity, metadata: DetailMetadata?, model: StationListModel,
                                repository: PredictionRepository, now: Instant, open: (StationId) -> Unit) {
     Text(stringResource(if (metadata?.online == true) R.string.detail_no_week else R.string.detail_no_data))
-    if (station.kind in setOf(StationKind.CanadianCurrent, StationKind.CanadianTide, StationKind.DerivedGate)) {
+    if (station.kind == StationKind.CanadianTide) {
+        TideDownloadControls(station.id, model)
+    } else if (station.kind == StationKind.CanadianCurrent || station.kind == StationKind.DerivedGate) {
         val store = model.places.downloads
         val intent by store.state.collectAsState(null)
         val requestedId = metadata?.pairedTide?.takeIf { station.kind == StationKind.DerivedGate } ?: station.id

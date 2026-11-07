@@ -20,9 +20,9 @@ Stations marked "Predictions unavailable" are named from non-commercial records 
 
 Station names and pairings: Slackwater database (MIT).
 
-Prediction engine: Slackwater (MIT).
+Prediction engine and IWLS client: Slackwater (MIT).
 
-Canadian station identities and current-gate evidence: Canadian Hydrographic Service, Fisheries and Oceans Canada. DFO terms (clause 10). Derived gate evidence is not CHS-published prediction data and is not for navigation. This app target bundles no CHS predictions or user-fitted models.
+Canadian station identities, device-downloaded tide predictions, and current-gate evidence: Canadian Hydrographic Service, Fisheries and Oceans Canada. DFO terms (clause 10). Derived gate evidence is not CHS-published prediction data and is not for navigation. This app target bundles no CHS predictions or user-fitted models.
 
 Credits follow slackwater-ios/Slackwater/AboutView.swift at 02188f2a2f5ef4166cd74c373a5885736d7ef159.
 
@@ -111,7 +111,7 @@ Translation is pinned to Astronomy Engine commit
     SOFTWARE.
 
 
-AndroidX (including DataStore), Compose, Material, Okio, Kotlin, atomicfu, Kotlin coroutines and Google FlatBuffers — Apache License 2.0
+AndroidX (including DataStore), Compose, Material, Okio, Kotlin, atomicfu, Kotlin coroutines, Kotlin serialization and Google FlatBuffers — Apache License 2.0
 
 
                                  Apache License

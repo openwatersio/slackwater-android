@@ -308,4 +308,10 @@
     <string name="chart_data_saver">"Téléchargements suspendus par l’économiseur de données"</string>
     <string name="chart_inputs_unavailable">"Certains renseignements sur les stations enregistrées ne sont pas disponibles"</string>
     <string name="chart_area_bytes">"%1$s au total pour les zones de carte"</string>
+    <string name="tide_downloads">"Téléchargements des prévisions de marée"</string>
+    <string name="tide_download_active">"Téléchargement de l’aperçu des marées…"</string>
+    <string name="tide_download_network">"En attente d’une connexion réseau"</string>
+    <string name="tide_download_restricted">"En attente d’un réseau sans restriction"</string>
+    <string name="tide_download_failed">"Impossible de télécharger l’aperçu des marées"</string>
+    <string name="tide_download_saved">"Aperçu des marées enregistré pour utilisation hors ligne"</string>
 </resources>

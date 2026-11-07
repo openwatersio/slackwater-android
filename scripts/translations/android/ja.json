@@ -301,5 +301,11 @@
   "chart_failed": "ダウンロードに失敗しました",
   "chart_data_saver": "データセーバーによりダウンロードを一時停止しています",
   "chart_inputs_unavailable": "保存済みの観測所に関する情報の一部を利用できません",
-  "chart_area_bytes": "海図エリアの合計：%1$s"
+  "chart_area_bytes": "海図エリアの合計：%1$s",
+  "tide_downloads": "潮汐予測のダウンロード",
+  "tide_download_active": "潮汐プレビューをダウンロード中…",
+  "tide_download_network": "ネットワーク接続を待機中",
+  "tide_download_restricted": "制限のないネットワークを待機中",
+  "tide_download_failed": "潮汐プレビューをダウンロードできませんでした",
+  "tide_download_saved": "潮汐プレビューをオフライン用に保存しました"
 }

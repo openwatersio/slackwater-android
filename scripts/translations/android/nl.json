@@ -301,5 +301,11 @@
   "chart_failed": "Download mislukt",
   "chart_data_saver": "Downloads gepauzeerd door Databesparing",
   "chart_inputs_unavailable": "Sommige gegevens van opgeslagen stations zijn niet beschikbaar",
-  "chart_area_bytes": "%1$s in totaal voor alle kaartgebieden"
+  "chart_area_bytes": "%1$s in totaal voor alle kaartgebieden",
+  "tide_downloads": "Downloads van getijdenvoorspellingen",
+  "tide_download_active": "Getijdenoverzicht downloaden…",
+  "tide_download_network": "Wachten op een netwerkverbinding",
+  "tide_download_restricted": "Wachten op een netwerk zonder beperkingen",
+  "tide_download_failed": "Kan het getijdenoverzicht niet downloaden",
+  "tide_download_saved": "Getijdenoverzicht opgeslagen voor offlinegebruik"
 }

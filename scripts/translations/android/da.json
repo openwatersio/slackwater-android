@@ -301,5 +301,11 @@
   "chart_failed": "Download mislykkedes",
   "chart_data_saver": "Downloads er sat på pause af Datasparefunktion",
   "chart_inputs_unavailable": "Nogle oplysninger om gemte stationer er ikke tilgængelige",
-  "chart_area_bytes": "%1$s i alt for kortområderne"
+  "chart_area_bytes": "%1$s i alt for kortområderne",
+  "tide_downloads": "Download af tidevandsprognoser",
+  "tide_download_active": "Henter tidevandsoversigt…",
+  "tide_download_network": "Venter på netværksforbindelse",
+  "tide_download_restricted": "Venter på et netværk uden begrænsninger",
+  "tide_download_failed": "Kunne ikke hente tidevandsoversigten",
+  "tide_download_saved": "Tidevandsoversigten er gemt til offlinebrug"
 }

@@ -309,5 +309,11 @@
   "chart_failed": "Dh’fhàillig an luchdadh a-nuas",
   "chart_data_saver": "Tha na luchdaidhean a-nuas air stad gus dàta a chaomhnadh",
   "chart_inputs_unavailable": "Chan eil cuid den fhiosrachadh mu na stèiseanan a chaidh a shàbhaladh ri fhaighinn",
-  "chart_area_bytes": "%1$s gu h-iomlan airson nan sgìrean air a’ chairt"
+  "chart_area_bytes": "%1$s gu h-iomlan airson nan sgìrean air a’ chairt",
+  "tide_downloads": "Luchdaidhean a-nuas ro-innsean an làin",
+  "tide_download_active": "A’ luchdadh a-nuas ro-shealladh an làin…",
+  "tide_download_network": "A’ feitheamh ri ceangal lìonraidh",
+  "tide_download_restricted": "A’ feitheamh ri lìonra gun chuingeachaidhean",
+  "tide_download_failed": "Cha b’ urrainn dhuinn ro-shealladh an làin a luchdadh a-nuas",
+  "tide_download_saved": "Chaidh ro-shealladh an làin a shàbhaladh airson cleachdadh far loidhne"
 }

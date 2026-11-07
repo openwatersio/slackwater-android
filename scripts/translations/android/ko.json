@@ -301,5 +301,11 @@
   "chart_failed": "다운로드 실패",
   "chart_data_saver": "데이터 절약 모드로 인해 다운로드가 일시 중지되었습니다",
   "chart_inputs_unavailable": "저장한 관측소의 정보 중 일부를 사용할 수 없습니다",
-  "chart_area_bytes": "해도 영역 합계: %1$s"
+  "chart_area_bytes": "해도 영역 합계: %1$s",
+  "tide_downloads": "조석 예측 다운로드",
+  "tide_download_active": "조석 미리보기 다운로드 중…",
+  "tide_download_network": "네트워크 연결 대기 중",
+  "tide_download_restricted": "제한 없는 네트워크 대기 중",
+  "tide_download_failed": "조석 미리보기를 다운로드할 수 없습니다",
+  "tide_download_saved": "오프라인 사용을 위해 조석 미리보기를 저장했습니다"
 }

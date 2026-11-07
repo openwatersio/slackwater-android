@@ -4,6 +4,8 @@ Native Android app for offline tide and current predictions. It opens on the sta
 
 Slackwater automatically keeps a world overview, regional coverage around your location, and detail around favorite, recent, and downloaded stations. Detail extends about 20 km in each direction except near the polar limits of the map. Packs can download over mobile data. New coverage is limited to 200,000 distinct tile locations across zoom levels. On metered networks, Android Data Saver pauses automatic transfers. Once saved stations have loaded, revoking location access or letting a one-time grant expire drops regions held only for that fix. Open **Downloads** from the station list to check progress, pause or resume transfers, retry a failure, or remove chart packs. Removing packs disables automatic chart downloads until you enable them again.
 
+Open a Canadian tide station and tap **Download for offline use** to request its official tide preview from the Canadian Hydrographic Service. The app requests seven days of samples and shows the dates available on the chart. **Downloads** shows pending transfers and lets you cancel or retry. The saved chart reopens offline. An unfinished request resumes when the app is open and network access permits it. Canadian harmonic fitting is tracked in [#9](https://github.com/openwatersio/slackwater-android/issues/9).
+
 ## Build
 
 Install JDK 17 so Gradle can discover it for both Android Studio sync and command-line builds. If Gradle cannot find your installation, set `org.gradle.java.installations.paths=/absolute/path/to/jdk-17` in `~/.gradle/gradle.properties`, using the JDK home that contains `bin/java`.

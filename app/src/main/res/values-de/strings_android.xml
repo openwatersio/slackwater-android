@@ -304,4 +304,10 @@
     <string name="chart_data_saver">"Downloads durch den Datensparmodus pausiert"</string>
     <string name="chart_inputs_unavailable">"Einige Angaben zu gespeicherten Stationen sind nicht verfügbar"</string>
     <string name="chart_area_bytes">"%1$s insgesamt für die Kartengebiete"</string>
+    <string name="tide_downloads">"Downloads von Gezeitenvorhersagen"</string>
+    <string name="tide_download_active">"Gezeitenvorschau wird heruntergeladen…"</string>
+    <string name="tide_download_network">"Warten auf eine Netzwerkverbindung"</string>
+    <string name="tide_download_restricted">"Warten auf ein uneingeschränktes Netzwerk"</string>
+    <string name="tide_download_failed">"Gezeitenvorschau konnte nicht heruntergeladen werden"</string>
+    <string name="tide_download_saved">"Gezeitenvorschau für die Offline-Nutzung gespeichert"</string>
 </resources>

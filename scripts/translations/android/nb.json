@@ -301,5 +301,11 @@
   "chart_failed": "Nedlastingen mislyktes",
   "chart_data_saver": "Datasparing har satt nedlastingene på pause",
   "chart_inputs_unavailable": "Enkelte opplysninger om lagrede stasjoner er utilgjengelige",
-  "chart_area_bytes": "%1$s totalt for kartområdene"
+  "chart_area_bytes": "%1$s totalt for kartområdene",
+  "tide_downloads": "Nedlastinger av tidevannsprognoser",
+  "tide_download_active": "Laster ned tidevannsoversikt…",
+  "tide_download_network": "Venter på nettverkstilkobling",
+  "tide_download_restricted": "Venter på et nettverk uten begrensninger",
+  "tide_download_failed": "Kunne ikke laste ned tidevannsoversikten",
+  "tide_download_saved": "Tidevannsoversikten er lagret for bruk uten nett"
 }

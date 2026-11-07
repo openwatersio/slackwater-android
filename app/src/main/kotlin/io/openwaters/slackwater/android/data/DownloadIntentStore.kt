@@ -8,6 +8,7 @@ import io.openwaters.slackwater.android.core.station.StationId
 import io.openwaters.slackwater.android.core.station.remapSavedIds
 import java.io.File
 import java.io.IOException
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.*
 
@@ -44,12 +45,17 @@ private fun MutablePreferences.storeIntent(intent: DownloadIntent) {
     this[cancelledKey] = intent.cancelled.mapTo(mutableSetOf()) { it.value }
 }
 
-class DownloadIntentStore private constructor(
+class DownloadIntentStore internal constructor(
     private val data: DataStore<Preferences>,
     private val catalog: StationCatalog,
 ) {
     val state: Flow<Result<DownloadIntent>> = data.data.map { Result.success(it.readIntent()) }
-        .catch { if (it is IOException) emit(Result.failure(it)) else throw it }
+        .retryWhen { cause, attempt ->
+            if (cause !is IOException) return@retryWhen false
+            emit(Result.failure(cause))
+            delay(1_000L shl attempt.coerceAtMost(5).toInt())
+            true
+        }
         .distinctUntilChanged()
 
     /** A direct request or explicit retry also resumes a previously trimmed job. */
@@ -60,6 +66,10 @@ class DownloadIntentStore private constructor(
     /** A successful download or permanent failure releases its request. Transient failures retain it. */
     suspend fun releaseDownloadRequests(ids: Collection<StationId>) = editDownloads(ids) { intent, stations ->
         intent.copy(requested = intent.requested - stations)
+    }
+
+    suspend fun cancelDownloads(ids: Collection<StationId>) = editDownloads(ids) { intent, stations ->
+        DownloadIntent(intent.requested - stations, intent.cancelled + stations)
     }
 
     /** Narrowing the download tier cancels automatic jobs while preserving explicit requests. */

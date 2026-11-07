@@ -304,4 +304,10 @@
     <string name="chart_data_saver">"Downloads gepauzeerd door Databesparing"</string>
     <string name="chart_inputs_unavailable">"Sommige gegevens van opgeslagen stations zijn niet beschikbaar"</string>
     <string name="chart_area_bytes">"%1$s in totaal voor alle kaartgebieden"</string>
+    <string name="tide_downloads">"Downloads van getijdenvoorspellingen"</string>
+    <string name="tide_download_active">"Getijdenoverzicht downloaden…"</string>
+    <string name="tide_download_network">"Wachten op een netwerkverbinding"</string>
+    <string name="tide_download_restricted">"Wachten op een netwerk zonder beperkingen"</string>
+    <string name="tide_download_failed">"Kan het getijdenoverzicht niet downloaden"</string>
+    <string name="tide_download_saved">"Getijdenoverzicht opgeslagen voor offlinegebruik"</string>
 </resources>

@@ -27,6 +27,8 @@ import io.openwaters.slackwater.android.core.map.desiredChartPacks
 import io.openwaters.slackwater.android.core.station.LocationPermission
 import io.openwaters.slackwater.android.core.station.LocationSlot
 import io.openwaters.slackwater.android.core.station.fixCoordinate
+import io.openwaters.slackwater.android.detail.TideDownloadActions
+import io.openwaters.slackwater.android.data.TidePreviewDownloads
 import io.openwaters.slackwater.android.data.ModelKind
 import io.openwaters.slackwater.android.data.ModelStore
 import io.openwaters.slackwater.android.stations.StationListModel
@@ -95,6 +97,16 @@ internal fun ChartDownloads(manager: ChartPackManager, close: () -> Unit) {
     AlertDialog(onDismissRequest = close, title = { Text(stringResource(R.string.chart_downloads)) },
         text = {
             Column(Modifier.verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                val model = StationListModel.get(LocalContext.current)
+                val downloads = TidePreviewDownloads.get(LocalContext.current)
+                val states by downloads.states.collectAsState()
+                val catalog by model.catalog.collectAsState()
+                if (states.isNotEmpty()) Text(stringResource(R.string.tide_downloads))
+                for ((id, state) in states.entries.sortedBy { catalog?.byId?.get(it.key)?.name ?: it.key.value }) {
+                    Text(catalog?.byId?.get(id)?.name ?: id.value)
+                    TideDownloadActions(state, { model.launchEdit { downloads.request(id) } },
+                        { model.launchEdit { downloads.cancel(id) } })
+                }
                 Text(stringResource(R.string.chart_offline))
                 Text(stringResource(R.string.chart_coverage))
                 summary.problem?.let {

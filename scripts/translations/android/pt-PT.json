@@ -305,5 +305,11 @@
   "chart_failed": "Falha na transferência",
   "chart_data_saver": "Transferências em pausa devido à poupança de dados",
   "chart_inputs_unavailable": "Algumas informações sobre as estações guardadas não estão disponíveis",
-  "chart_area_bytes": "%1$s no total nas áreas da carta"
+  "chart_area_bytes": "%1$s no total nas áreas da carta",
+  "tide_downloads": "Transferências de previsões de maré",
+  "tide_download_active": "A transferir a pré-visualização das marés…",
+  "tide_download_network": "A aguardar uma ligação de rede",
+  "tide_download_restricted": "A aguardar uma rede sem restrições",
+  "tide_download_failed": "Não foi possível transferir a pré-visualização das marés",
+  "tide_download_saved": "Pré-visualização das marés guardada para utilização offline"
 }

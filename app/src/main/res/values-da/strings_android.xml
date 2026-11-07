@@ -304,4 +304,10 @@
     <string name="chart_data_saver">"Downloads er sat på pause af Datasparefunktion"</string>
     <string name="chart_inputs_unavailable">"Nogle oplysninger om gemte stationer er ikke tilgængelige"</string>
     <string name="chart_area_bytes">"%1$s i alt for kortområderne"</string>
+    <string name="tide_downloads">"Download af tidevandsprognoser"</string>
+    <string name="tide_download_active">"Henter tidevandsoversigt…"</string>
+    <string name="tide_download_network">"Venter på netværksforbindelse"</string>
+    <string name="tide_download_restricted">"Venter på et netværk uden begrænsninger"</string>
+    <string name="tide_download_failed">"Kunne ikke hente tidevandsoversigten"</string>
+    <string name="tide_download_saved">"Tidevandsoversigten er gemt til offlinebrug"</string>
 </resources>

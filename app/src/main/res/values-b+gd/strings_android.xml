@@ -312,4 +312,10 @@
     <string name="chart_data_saver">"Tha na luchdaidhean a-nuas air stad gus dàta a chaomhnadh"</string>
     <string name="chart_inputs_unavailable">"Chan eil cuid den fhiosrachadh mu na stèiseanan a chaidh a shàbhaladh ri fhaighinn"</string>
     <string name="chart_area_bytes">"%1$s gu h-iomlan airson nan sgìrean air a’ chairt"</string>
+    <string name="tide_downloads">"Luchdaidhean a-nuas ro-innsean an làin"</string>
+    <string name="tide_download_active">"A’ luchdadh a-nuas ro-shealladh an làin…"</string>
+    <string name="tide_download_network">"A’ feitheamh ri ceangal lìonraidh"</string>
+    <string name="tide_download_restricted">"A’ feitheamh ri lìonra gun chuingeachaidhean"</string>
+    <string name="tide_download_failed">"Cha b’ urrainn dhuinn ro-shealladh an làin a luchdadh a-nuas"</string>
+    <string name="tide_download_saved">"Chaidh ro-shealladh an làin a shàbhaladh airson cleachdadh far loidhne"</string>
 </resources>

@@ -316,4 +316,10 @@
     <string name="chart_data_saver">"Tá na híoslódálacha ar sos mar gheall ar an modh sábhála sonraí"</string>
     <string name="chart_inputs_unavailable">"Níl cuid den eolas faoi na stáisiúin shábháilte ar fáil"</string>
     <string name="chart_area_bytes">"%1$s san iomlán do na ceantair chairte"</string>
+    <string name="tide_downloads">"Íoslódálacha réamhaisnéisí taoide"</string>
+    <string name="tide_download_active">"Réamhamharc taoide á íoslódáil…"</string>
+    <string name="tide_download_network">"Ag fanacht le nasc líonra"</string>
+    <string name="tide_download_restricted">"Ag fanacht le líonra gan srianta"</string>
+    <string name="tide_download_failed">"Níorbh fhéidir an réamhamharc taoide a íoslódáil"</string>
+    <string name="tide_download_saved">"Sábháladh an réamhamharc taoide lena úsáid as líne"</string>
 </resources>

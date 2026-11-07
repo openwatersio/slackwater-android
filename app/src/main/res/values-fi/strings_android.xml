@@ -304,4 +304,10 @@
     <string name="chart_data_saver">"Datansäästö on keskeyttänyt lataukset"</string>
     <string name="chart_inputs_unavailable">"Kaikkia tallennettujen asemien tietoja ei ole saatavilla"</string>
     <string name="chart_area_bytes">"Kartta-alueiden koko yhteensä: %1$s"</string>
+    <string name="tide_downloads">"Vuorovesiennusteiden lataukset"</string>
+    <string name="tide_download_active">"Ladataan vuorovesiennusteen esikatselua…"</string>
+    <string name="tide_download_network">"Odotetaan verkkoyhteyttä"</string>
+    <string name="tide_download_restricted">"Odotetaan rajoittamatonta verkkoyhteyttä"</string>
+    <string name="tide_download_failed">"Vuorovesiennusteen esikatselua ei voitu ladata"</string>
+    <string name="tide_download_saved">"Vuorovesiennusteen esikatselu tallennettu offline-käyttöön"</string>
 </resources>

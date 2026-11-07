@@ -304,4 +304,10 @@
     <string name="chart_data_saver">"Databesparing har pausat hämtningarna"</string>
     <string name="chart_inputs_unavailable">"Vissa uppgifter om sparade stationer är inte tillgängliga"</string>
     <string name="chart_area_bytes">"Totalt %1$s för sjökortets områden"</string>
+    <string name="tide_downloads">"Nedladdningar av tidvattenprognoser"</string>
+    <string name="tide_download_active">"Laddar ned tidvattenöversikten…"</string>
+    <string name="tide_download_network">"Väntar på en nätverksanslutning"</string>
+    <string name="tide_download_restricted">"Väntar på ett nätverk utan begränsningar"</string>
+    <string name="tide_download_failed">"Det gick inte att ladda ned tidvattenöversikten"</string>
+    <string name="tide_download_saved">"Tidvattenöversikten har sparats för användning offline"</string>
 </resources>

@@ -305,5 +305,11 @@
   "chart_failed": "Échec du téléchargement",
   "chart_data_saver": "Téléchargements suspendus par l’économiseur de données",
   "chart_inputs_unavailable": "Certains renseignements sur les stations enregistrées ne sont pas disponibles",
-  "chart_area_bytes": "%1$s au total pour les zones de carte"
+  "chart_area_bytes": "%1$s au total pour les zones de carte",
+  "tide_downloads": "Téléchargements des prévisions de marée",
+  "tide_download_active": "Téléchargement de l’aperçu des marées…",
+  "tide_download_network": "En attente d’une connexion réseau",
+  "tide_download_restricted": "En attente d’un réseau sans restriction",
+  "tide_download_failed": "Impossible de télécharger l’aperçu des marées",
+  "tide_download_saved": "Aperçu des marées enregistré pour utilisation hors ligne"
 }

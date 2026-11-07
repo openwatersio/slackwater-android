@@ -2,6 +2,7 @@ plugins { alias(libs.plugins.kotlin.jvm); `java-test-fixtures`; `java-library` }
 kotlin { jvmToolchain(17) }
 dependencies {
     api("io.openwaters:slackwater-engine:0.1.0")
+    api("io.openwaters:slackwater-iwls:0.1.0")
     implementation("io.openwaters:almanac:0.12.2")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
     testFixturesImplementation("io.openwaters:slackwater-engine:0.1.0")
