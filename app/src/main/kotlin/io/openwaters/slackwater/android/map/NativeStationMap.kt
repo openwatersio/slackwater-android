@@ -141,8 +141,8 @@ internal fun NativeStationMap(
             } else {
                 val initialLoad = styleRequest == 0
                 reportStatus(if (initialLoad) BasemapStatus.Loading else BasemapStatus.Retrying)
-                // On first entry, bound the wait for pins. On retry, the user chooses how long to wait.
-                if (initialLoad) view.postDelayed(fallback, 2_000)
+                // Give an explicit retry more time, then restore pins even if the network never responds.
+                view.postDelayed(fallback, if (initialLoad) 2_000L else 30_000L)
                 ready.setStyle(styleUrl) {
                     if (active && !usingLocal) {
                         view.removeCallbacks(fallback)

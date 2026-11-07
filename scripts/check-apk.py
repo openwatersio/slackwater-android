@@ -13,10 +13,13 @@ def verify_current_ranges(catalog, index):
     if len(lines) != len(records):
         raise ValueError("Current index row count differs from catalog")
     for record, line in zip(records, lines):
-        station_id, offset, size, *_ = line.split("\t")
+        station_id, offset, size, subordinate, signal = line.split("\t")
         start, length = int(offset), int(size)
         if start < 0 or length <= 0 or start + length > len(catalog):
             raise ValueError(f"Invalid current byte range: {station_id}")
+        expected_signal = abs(record["meanFlow"]) + sum(c["amplitude"] for c in record["constituents"])
+        if int(subordinate) != int("reference" in record) or float(signal) != expected_signal:
+            raise ValueError(f"Current index rank differs from catalog: {station_id}")
         selected = json.loads(catalog[start:start + length])
         if record["id"] != station_id or selected != record:
             raise ValueError(f"Current index points to the wrong record: {station_id}")
