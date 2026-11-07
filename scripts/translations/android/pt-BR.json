@@ -304,5 +304,6 @@
   "chart_quota": "Limite de blocos do mapa atingido",
   "chart_failed": "Falha no download",
   "chart_data_saver": "Downloads pausados pela Economia de dados",
-  "chart_inputs_unavailable": "Algumas informações sobre as estações salvas estão indisponíveis"
+  "chart_inputs_unavailable": "Algumas informações sobre as estações salvas estão indisponíveis",
+  "chart_area_bytes": "%1$s no total nas áreas da carta"
 }

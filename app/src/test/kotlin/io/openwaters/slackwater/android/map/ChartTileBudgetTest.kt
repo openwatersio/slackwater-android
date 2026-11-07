@@ -19,6 +19,11 @@ class ChartTileBudgetTest {
         assertEquals(setOf(west.key), deferredChartKeys(listOf(west, world, east), setOf(east.key), 2))
     }
 
+    @Test fun partialRegionGetsPriorityOverANewRegionButNotACompleteOne() {
+        assertEquals(setOf(west.key), deferredChartKeys(listOf(west, world, east), emptySet(), 2, setOf(east.key)))
+        assertEquals(setOf(east.key), deferredChartKeys(listOf(west, east), setOf(west.key), 1, setOf(east.key)))
+    }
+
     @Test fun tierBoundsCountDistinctXyzAndEnforceFiordLimit() {
         val low = world.copy(maxZoom = 4)
         assertTrue(deferredChartKeys(listOf(low), emptySet(), 341).isEmpty())

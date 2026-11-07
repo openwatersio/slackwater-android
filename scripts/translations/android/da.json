@@ -300,5 +300,6 @@
   "chart_quota": "Grænsen for kortfelter er nået",
   "chart_failed": "Download mislykkedes",
   "chart_data_saver": "Downloads er sat på pause af Datasparefunktion",
-  "chart_inputs_unavailable": "Nogle oplysninger om gemte stationer er ikke tilgængelige"
+  "chart_inputs_unavailable": "Nogle oplysninger om gemte stationer er ikke tilgængelige",
+  "chart_area_bytes": "%1$s i alt for kortområderne"
 }

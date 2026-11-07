@@ -300,5 +300,6 @@
   "chart_quota": "Limit für Kartenkacheln erreicht",
   "chart_failed": "Download fehlgeschlagen",
   "chart_data_saver": "Downloads durch den Datensparmodus pausiert",
-  "chart_inputs_unavailable": "Einige Angaben zu gespeicherten Stationen sind nicht verfügbar"
+  "chart_inputs_unavailable": "Einige Angaben zu gespeicherten Stationen sind nicht verfügbar",
+  "chart_area_bytes": "%1$s insgesamt für die Kartengebiete"
 }

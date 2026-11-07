@@ -300,5 +300,6 @@
   "chart_quota": "Karttaruutujen enimmäismäärä saavutettu",
   "chart_failed": "Lataus epäonnistui",
   "chart_data_saver": "Datansäästö on keskeyttänyt lataukset",
-  "chart_inputs_unavailable": "Kaikkia tallennettujen asemien tietoja ei ole saatavilla"
+  "chart_inputs_unavailable": "Kaikkia tallennettujen asemien tietoja ei ole saatavilla",
+  "chart_area_bytes": "Kartta-alueiden koko yhteensä: %1$s"
 }

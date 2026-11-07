@@ -303,4 +303,5 @@
     <string name="chart_failed">"Hämtningen misslyckades"</string>
     <string name="chart_data_saver">"Databesparing har pausat hämtningarna"</string>
     <string name="chart_inputs_unavailable">"Vissa uppgifter om sparade stationer är inte tillgängliga"</string>
+    <string name="chart_area_bytes">"Totalt %1$s för sjökortets områden"</string>
 </resources>

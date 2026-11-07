@@ -304,5 +304,6 @@
   "chart_quota": "Limite de mosaicos do mapa atingido",
   "chart_failed": "Falha na transferência",
   "chart_data_saver": "Transferências em pausa devido à poupança de dados",
-  "chart_inputs_unavailable": "Algumas informações sobre as estações guardadas não estão disponíveis"
+  "chart_inputs_unavailable": "Algumas informações sobre as estações guardadas não estão disponíveis",
+  "chart_area_bytes": "%1$s no total nas áreas da carta"
 }

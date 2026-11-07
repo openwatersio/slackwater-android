@@ -14,12 +14,12 @@ internal const val CHART_TILE_LIMIT = 200_000
 // The Fiord budget counts XYZ locations once across overlapping regions and
 // style sources. Storage and progress use MapLibre’s actual resource sizes.
 internal fun deferredChartKeys(
-    wanted: Collection<ChartPackSpec>, complete: Set<String>, limit: Int = CHART_TILE_LIMIT,
+    wanted: Collection<ChartPackSpec>, complete: Set<String>, limit: Int = CHART_TILE_LIMIT, underway: Set<String> = emptySet(),
 ): Set<String> {
     val rows = mutableMapOf<Pair<Int, Int>, BitSet>()
     val deferred = mutableSetOf<String>()
     var used = 0L
-    val ordered = wanted.sortedWith(compareBy<ChartPackSpec> { it.key !in complete }.thenBy { it.minZoom }.thenBy { it.key })
+    val ordered = wanted.sortedWith(compareBy<ChartPackSpec> { it.key !in complete }.thenBy { it.key !in underway }.thenBy { it.minZoom }.thenBy { it.key })
     for (spec in ordered) {
         val boxes = (spec.minZoom..spec.maxZoom).map { tileBox(spec, it) }
         var extra = 0L

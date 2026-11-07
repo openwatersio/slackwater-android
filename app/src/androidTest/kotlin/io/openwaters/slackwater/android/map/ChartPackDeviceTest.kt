@@ -32,7 +32,9 @@ import java.util.concurrent.atomic.AtomicBoolean
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.json.JSONObject
-import kotlin.math.abs
+import kotlin.math.asinh
+import kotlin.math.floor
+import kotlin.math.tan
 import okhttp3.OkHttpClient
 import okhttp3.Protocol
 import okhttp3.Response
@@ -258,29 +260,50 @@ class ChartPackDeviceTest {
                         map.queryRenderedFeatures(android.graphics.RectF(0f, 0f, view.width.toFloat(), view.height.toFloat())).isNotEmpty()
                     }
                 } else {
-                    val shot = CompletableFuture<Bitmap>()
-                    compose.runOnIdle { map.snapshot { shot.complete(it) } }
-                    val bitmap = shot.get(5, TimeUnit.SECONDS)
-                    val observed = bitmap.getPixel(bitmap.width / 2, bitmap.height / 2)
-                    abs(Color.green(observed) - Color.green(tileColor(zoom))) <= 2
+                    compose.runOnIdle {
+                        val screen = map.projection.toScreenLocation(target)
+                        map.queryRenderedFeatures(screen, "chart").any { it.getStringProperty("tile") == tileAddress(zoom, target) }
+                    }
                 }
             }
             Log.i("ChartPackTest", "Rendered offline z$zoom at ${target.latitude},${target.longitude}")
         }
     }
 
-    private fun tileColor(zoom: Int) = Color.rgb(30, 25 + 14 * zoom, 176)
+    private fun tileAddress(zoom: Int, target: LatLng): String {
+        val count = 1 shl zoom
+        val x = floor((target.longitude + 180.0) / 360.0 * count).toInt()
+        val y = floor((1.0 - asinh(tan(Math.toRadians(target.latitude))) / Math.PI) / 2.0 * count).toInt()
+        return "$zoom/$x/$y"
+    }
+
+    // Every length-delimited field in this vector tile fits in one protobuf length byte.
+    private fun bytesField(number: Int, bytes: ByteArray): ByteArray {
+        require(bytes.size < 128)
+        return byteArrayOf(((number shl 3) or 2).toByte(), bytes.size.toByte()) + bytes
+    }
+
+    private fun vectorTile(path: String): ByteArray {
+        val address = path.substringAfter("/tiles/").substringBefore(".pbf").encodeToByteArray()
+        // In a 16×16 extent, move to (0,0), draw three edges with zigzag deltas, then close.
+        val ring = byteArrayOf(9, 0, 0, 26, 32, 0, 0, 32, 31, 0, 15)
+        val tags = bytesField(2, byteArrayOf(0, 0)) // First key and first value.
+        val polygon = tags + byteArrayOf(24, 3) + bytesField(4, ring)
+        val layer = bytesField(1, "chart".encodeToByteArray()) + bytesField(2, polygon) +
+            bytesField(3, "tile".encodeToByteArray()) + bytesField(4, bytesField(1, address)) +
+            byteArrayOf(40, 16, 120, 2) // Extent 16, vector tile specification v2.
+        return bytesField(3, layer)
+    }
 
     private fun fixture(path: String, base: String): ByteArray = when {
         path.endsWith("/style.json") -> """
             {"version":8,"glyphs":"$base/fonts/{fontstack}/{range}.pbf","sprite":"$base/sprite",
-             "sources":{"tiles":{"type":"raster","tileSize":512,"tiles":["$base/tiles/{z}/{x}/{y}.png"]},
+             "sources":{"tiles":{"type":"vector","tiles":["$base/tiles/{z}/{x}/{y}.pbf"]},
                         "labels":{"type":"geojson","data":{"type":"FeatureCollection","features":[]}}},
-             "layers":[{"id":"back","type":"background"},{"id":"chart","type":"raster","source":"tiles",
-                        "paint":{"raster-fade-duration":0}},
+             "layers":[{"id":"back","type":"background"},{"id":"chart","type":"fill","source":"tiles","source-layer":"chart"},
                        {"id":"label","type":"symbol","source":"labels","layout":{"text-font":["Test Font"],"text-field":"Test"}}]}
         """.trimIndent().toByteArray()
-        path.contains("/tiles/") -> png(tileColor(path.substringAfter("/tiles/").substringBefore('/').toInt()))
+        path.contains("/tiles/") -> vectorTile(path)
         path.contains("/sprite") && path.endsWith(".png") -> png(Color.WHITE)
         path.contains("/sprite") && path.endsWith(".json") -> "{}".toByteArray()
         path.contains("/fonts/") -> byteArrayOf()

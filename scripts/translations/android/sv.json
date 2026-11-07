@@ -300,5 +300,6 @@
   "chart_quota": "Gränsen för kartrutor har nåtts",
   "chart_failed": "Hämtningen misslyckades",
   "chart_data_saver": "Databesparing har pausat hämtningarna",
-  "chart_inputs_unavailable": "Vissa uppgifter om sparade stationer är inte tillgängliga"
+  "chart_inputs_unavailable": "Vissa uppgifter om sparade stationer är inte tillgängliga",
+  "chart_area_bytes": "Totalt %1$s för sjökortets områden"
 }

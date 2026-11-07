@@ -89,7 +89,9 @@ class MainActivity : ComponentActivity() {
         val chartPacks by lazy { io.openwaters.slackwater.android.map.ChartPackManager.get(applicationContext) }
         if (automaticChartDownloads) lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(androidx.lifecycle.Lifecycle.State.STARTED) {
-                io.openwaters.slackwater.android.map.observeChartCoverage(applicationContext, chartPacks)
+                io.openwaters.slackwater.android.map.chartCoverage(applicationContext).collect { coverage ->
+                    chartPacks.setDesired(coverage.specs, coverage.pendingFix, coverage.incompleteStations)
+                }
             }
         }
         enableEdgeToEdge()

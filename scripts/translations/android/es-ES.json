@@ -304,5 +304,6 @@
   "chart_quota": "Se ha alcanzado el límite de teselas",
   "chart_failed": "Error en la descarga",
   "chart_data_saver": "El ahorro de datos ha pausado las descargas",
-  "chart_inputs_unavailable": "Parte de la información de las estaciones guardadas no está disponible"
+  "chart_inputs_unavailable": "Parte de la información de las estaciones guardadas no está disponible",
+  "chart_area_bytes": "%1$s en total en las zonas de la carta"
 }

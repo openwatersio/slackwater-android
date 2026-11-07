@@ -300,5 +300,6 @@
   "chart_quota": "Limiet voor kaarttegels bereikt",
   "chart_failed": "Download mislukt",
   "chart_data_saver": "Downloads gepauzeerd door Databesparing",
-  "chart_inputs_unavailable": "Sommige gegevens van opgeslagen stations zijn niet beschikbaar"
+  "chart_inputs_unavailable": "Sommige gegevens van opgeslagen stations zijn niet beschikbaar",
+  "chart_area_bytes": "%1$s in totaal voor alle kaartgebieden"
 }

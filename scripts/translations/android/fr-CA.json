@@ -304,5 +304,6 @@
   "chart_quota": "Limite de tuiles atteinte",
   "chart_failed": "Échec du téléchargement",
   "chart_data_saver": "Téléchargements suspendus par l’économiseur de données",
-  "chart_inputs_unavailable": "Certains renseignements sur les stations enregistrées ne sont pas disponibles"
+  "chart_inputs_unavailable": "Certains renseignements sur les stations enregistrées ne sont pas disponibles",
+  "chart_area_bytes": "%1$s au total pour les zones de carte"
 }

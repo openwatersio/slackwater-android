@@ -83,6 +83,27 @@ class ChartPackChangesTest {
         assertTrue(summary.downloading)
     }
 
+    @Test fun workSlotsReserveCreationAndFavorUnderwayTransfers() {
+        val candidates = (1..100).map { spec.copy(key = "station/%03d".format(it), minZoom = 9) } +
+            spec.copy(key = "world", minZoom = 0)
+        val creating = setOf("station/001", "station/003")
+        assertEquals(setOf("station/100", "world"), chartWorkKeys(candidates, creating, setOf("station/100")))
+        assertEquals(setOf("world", "station/001", "station/002", "station/003"),
+            chartWorkKeys(candidates, emptySet(), emptySet()))
+    }
+
+    @Test fun stalledTransferYieldsItsSlotToAnotherPack() {
+        val candidates = (1..5).map { spec.copy(key = "station/$it") }
+        val underway = candidates.take(4).map { it.key }.toSet()
+        assertEquals(setOf("station/2", "station/3", "station/4", "station/5"),
+            chartWorkKeys(candidates, emptySet(), underway, mapOf("station/1" to 60_000L)))
+    }
+
+    @Test fun pixelRatioSurvivesSerializationButTracksDisplayDensityChanges() {
+        assertTrue(sameChartDensity(2.625f, Math.nextUp(2.625f)))
+        assertFalse(sameChartDensity(2.625f, 3.0f))
+    }
+
     @Test fun duplicateOfRetainedAreaIsRemoved() {
         val changes = chartPackChanges(desired, listOf(stored, stored.copy(id = 13)), emptySet())
         assertEquals(ChartPackChanges(setOf(13L), emptyList()), changes)

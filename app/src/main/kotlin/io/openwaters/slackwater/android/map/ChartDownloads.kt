@@ -22,6 +22,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.openwaters.slackwater.android.R
+import io.openwaters.slackwater.android.core.map.ChartPackSpec
 import io.openwaters.slackwater.android.core.map.desiredChartPacks
 import io.openwaters.slackwater.android.core.station.LocationPermission
 import io.openwaters.slackwater.android.core.station.LocationSlot
@@ -48,7 +49,13 @@ private fun <T> Flow<T>.chartInput(): Flow<T?> = transform<T, T?> { emit(it) }
         true
     }.onStart { emit(null) }
 
-internal suspend fun observeChartCoverage(context: Context, manager: ChartPackManager) {
+internal data class DesiredChartCoverage(
+    val specs: Set<ChartPackSpec>,
+    val pendingFix: Boolean,
+    val incompleteStations: Boolean,
+)
+
+internal fun chartCoverage(context: Context): Flow<DesiredChartCoverage> {
     val list = StationListModel.get(context)
     val models = ModelStore.get(context)
     val stored = models.revision.map {
@@ -67,11 +74,9 @@ internal suspend fun observeChartCoverage(context: Context, manager: ChartPackMa
         val pending = slot == null || slot == LocationSlot.Locating || slot == LocationSlot.Failed
         slot?.fixCoordinate.takeIf { allowed } to (allowed && pending)
     }.distinctUntilChanged()
-    combine(stations, locations) { (identities, incomplete), (fix, pending) ->
-        Triple(desiredChartPacks(fix, identities), pending, incomplete)
-    }.distinctUntilChanged().collect { (specs, pending, incomplete) ->
-        manager.setDesired(specs, keepExistingAreas = pending, keepExistingStations = incomplete)
-    }
+    return combine(stations, locations) { (identities, incomplete), (fix, pending) ->
+        DesiredChartCoverage(desiredChartPacks(fix, identities), pending, incomplete)
+    }.distinctUntilChanged()
 }
 
 @Composable
@@ -100,7 +105,7 @@ internal fun ChartDownloads(manager: ChartPackManager, close: () -> Unit) {
                     }))
                 }
                 if (summary.removing) {
-                    if (summary.problem != null) {
+                    if (summary.canRetry) {
                         TextButton(onClick = manager::retry) { Text(stringResource(R.string.table_sheet_retry)) }
                     } else {
                         LinearProgressIndicator()
@@ -110,7 +115,7 @@ internal fun ChartDownloads(manager: ChartPackManager, close: () -> Unit) {
                     TextButton(onClick = manager::resume) { Text(stringResource(R.string.detail_download)) }
                 } else {
                     Text(stringResource(R.string.chart_ready_count, summary.ready, summary.total))
-                    if (summary.bytes > 0) Text(Formatter.formatShortFileSize(LocalContext.current, summary.bytes))
+                    if (summary.bytes > 0) Text(stringResource(R.string.chart_area_bytes, Formatter.formatShortFileSize(LocalContext.current, summary.bytes)))
                     if (summary.downloading && !summary.paused && summary.total > 0) {
                         LinearProgressIndicator(progress = { summary.ready.toFloat() / summary.total })
                     }
@@ -123,7 +128,7 @@ internal fun ChartDownloads(manager: ChartPackManager, close: () -> Unit) {
                         } else if (summary.ready < summary.total) {
                             TextButton(onClick = manager::pause) { Text(stringResource(R.string.chart_pause)) }
                         }
-                        if (summary.problem != null) {
+                        if (summary.canRetry) {
                             TextButton(onClick = manager::retry) { Text(stringResource(R.string.table_sheet_retry)) }
                         }
                         TextButton(onClick = { confirming = true }) { Text(stringResource(R.string.chart_remove)) }

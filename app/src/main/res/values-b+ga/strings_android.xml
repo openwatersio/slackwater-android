@@ -315,4 +315,5 @@
     <string name="chart_failed">"Theip ar an íoslódáil"</string>
     <string name="chart_data_saver">"Tá na híoslódálacha ar sos mar gheall ar an modh sábhála sonraí"</string>
     <string name="chart_inputs_unavailable">"Níl cuid den eolas faoi na stáisiúin shábháilte ar fáil"</string>
+    <string name="chart_area_bytes">"%1$s san iomlán do na ceantair chairte"</string>
 </resources>

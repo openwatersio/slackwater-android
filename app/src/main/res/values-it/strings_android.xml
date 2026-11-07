@@ -307,4 +307,5 @@
     <string name="chart_failed">"Download non riuscito"</string>
     <string name="chart_data_saver">"Download sospesi dal risparmio dati"</string>
     <string name="chart_inputs_unavailable">"Alcune informazioni sulle stazioni salvate non sono disponibili"</string>
+    <string name="chart_area_bytes">"%1$s in totale per le aree della carta"</string>
 </resources>

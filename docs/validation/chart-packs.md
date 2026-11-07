@@ -18,7 +18,7 @@ After the fix, download PID 10056 recorded all 11 native region IDs and cleared 
 
 ## Reproducing the checks
 
-The default ChartPackDeviceTest uses a local HTTP interceptor, a unique style URL, and one raster color per zoom. It checks that MapLibre downloaded the sprite index, sprite image, tiles and glyph ranges, clears the ambient cache, disables SDK network access, and compares the center pixel at every camera position to that zoom's expected tile color. The run requested 17 unique tile URLs and 97 glyph-range URLs.
+The default ChartPackDeviceTest uses a local HTTP interceptor and a unique style URL. Each vector tile contains a polygon tagged with its own z/x/y address. The test checks that MapLibre downloaded the sprite index, sprite image, tiles and glyph ranges, clears the ambient cache, disables SDK network access, and queries the rendered polygon at each camera target. The returned address must match that target and zoom, so a cached parent tile cannot pass. The run requested 17 unique tile URLs and 97 glyph-range URLs.
 
 To reproduce the live check, use a fresh dedicated emulator with the debug and test APKs installed. Start with network connectivity and fresh app data so the download phase can observe every resource request. For full geometry, include `-e chartFull true` in every phase as shown below. Omit that flag in all three commands for the bounded check.
 

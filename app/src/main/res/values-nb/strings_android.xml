@@ -303,4 +303,5 @@
     <string name="chart_failed">"Nedlastingen mislyktes"</string>
     <string name="chart_data_saver">"Datasparing har satt nedlastingene på pause"</string>
     <string name="chart_inputs_unavailable">"Enkelte opplysninger om lagrede stasjoner er utilgjengelige"</string>
+    <string name="chart_area_bytes">"%1$s totalt for kartområdene"</string>
 </resources>

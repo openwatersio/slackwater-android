@@ -3,7 +3,9 @@ package io.openwaters.slackwater.android.map
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
+import android.os.SystemClock
 import io.openwaters.slackwater.android.core.map.ChartPackSpec
+import java.util.PriorityQueue
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import org.json.JSONObject
@@ -28,6 +30,7 @@ internal data class ChartPackSummary(
     val removed: Boolean = false,
     val removing: Boolean = false,
     val problem: ChartPackProblem? = null,
+    val canRetry: Boolean = false,
 ) {
     val downloading get() = !paused && !dataSaver && !removed && !removing && ready < total
 }
@@ -41,6 +44,26 @@ private fun ChartPackSpec?.matches(wanted: ChartPackSpec?): Boolean {
     fun near(a: Double, b: Double) = kotlin.math.abs(a - b) < 1e-8
     return near(west, wanted.west) && near(east, wanted.east) && near(north, wanted.north) && near(south, wanted.south)
 }
+
+private const val REGION_WORK_LIMIT = 4
+private const val STALL_CHECK_MS = 60_000L
+
+internal fun chartWorkKeys(
+    eligible: List<ChartPackSpec>, creating: Set<String>, underway: Set<String>, lastStall: Map<String, Long> = emptyMap(),
+): Set<String> {
+    val order = compareBy<ChartPackSpec> { lastStall[it.key] ?: 0L }.thenBy { it.key !in underway }.thenBy { it.minZoom }.thenBy { it.key }
+    val free = REGION_WORK_LIMIT - creating.size
+    if (free <= 0) return emptySet()
+    val best = PriorityQueue(free, order.reversed())
+    for (spec in eligible) {
+        if (spec.key in creating) continue
+        best.add(spec)
+        if (best.size > free) best.remove()
+    }
+    return best.mapTo(mutableSetOf()) { it.key }
+}
+
+internal fun sameChartDensity(saved: Float, current: Float) = kotlin.math.abs(saved - current) < 0.0001f
 
 internal fun chartPackChanges(
     wanted: Map<String, ChartPackSpec>, stored: List<StoredChartArea>, creating: Set<String>,
@@ -63,6 +86,8 @@ internal fun wantedChartAreas(
     if (!keepExistingAreas && !keepExistingStations) return desired
     val wanted = desired.toMutableMap()
     for (area in stored) {
+        // Area metadata identifies the cell, not whether a station or a fix
+        // requested it. Preserve both origins until station inputs recover.
         val keep = (area.key.startsWith("area/") && (keepExistingAreas || keepExistingStations)) ||
             (area.key.startsWith("station/") && keepExistingStations)
         if (!area.deleting && keep && area.spec != null) wanted.putIfAbsent(area.key, area.spec)
@@ -116,6 +141,9 @@ internal class ChartPackManager private constructor(context: Context) {
     private class Pack(val region: OfflineRegion, val key: String, val spec: ChartPackSpec?) {
         var status: OfflineRegionStatus? = null
         var statusRead = false
+        var active = false
+        var lastProgress = 0L
+        var lastStall = 0L
         val deletion = ChartPackDeletion()
         var problem: ChartPackProblem? = null
         val ready get() = status?.let { it.requiredResourceCount > 0 && it.isRequiredResourceCountPrecise && it.isComplete } == true
@@ -143,6 +171,8 @@ internal class ChartPackManager private constructor(context: Context) {
     private var removed = prefs.getBoolean("removed", false)
     private val state = MutableStateFlow(ChartPackSummary(paused = paused, removing = removed))
     val summary: StateFlow<ChartPackSummary> = state
+    private var reconcilePending = false
+    private var checkingStalls = false
     private var publishPending = false
     private var retryPending = false
     private val publish = Runnable {
@@ -154,7 +184,11 @@ internal class ChartPackManager private constructor(context: Context) {
         creationErrors.entries.removeAll { it.value != ChartPackProblem.Quota }
         for (pack in packs.values) {
             pack.deletion.retry(manual = false)
-            if (!pack.deletion.requested && pack.problem != ChartPackProblem.Quota && pack.status == null) requestStatus(pack)
+            if (pack.deletion.requested || pack.problem == ChartPackProblem.Quota) continue
+            if (pack.problem != null) {
+                pack.problem = null
+                requestStatus(pack)
+            }
         }
         reconcile()
     }
@@ -204,11 +238,20 @@ internal class ChartPackManager private constructor(context: Context) {
         for (pack in packs.values) {
             pack.deletion.retry(manual = true)
             if (pack.deletion.requested || pack.problem == null) continue
-            pack.region.setDownloadState(OfflineRegion.STATE_INACTIVE)
+            setActive(pack, false)
             pack.problem = null
             if (!removed) requestStatus(pack)
         }
         reconcile()
+    }
+
+    private fun scheduleReconcile() {
+        if (reconcilePending) return
+        reconcilePending = true
+        main.postDelayed({
+            reconcilePending = false
+            reconcile()
+        }, 32)
     }
 
     private fun reconcile() {
@@ -230,23 +273,51 @@ internal class ChartPackManager private constructor(context: Context) {
         val statusesKnown = packs.values.none { !it.statusRead && !it.deletion.requested }
         if (statusesKnown && budgetInputs != wanted) {
             val complete = packs.values.filter { it.ready && it.spec.matches(wanted[it.key]) }.mapTo(mutableSetOf()) { it.key }
-            deferred = deferredChartKeys(wanted.values, complete)
+            val underway = packs.values.filter { it.active || (it.status?.completedResourceCount ?: 0) > 0 }
+                .mapTo(mutableSetOf()) { it.key }
+            deferred = deferredChartKeys(wanted.values, complete, underway = underway)
             budgetInputs = wanted
         }
         budgetCurrent = budgetInputs == wanted
         creationErrors.keys.retainAll(wanted.keys)
         val changes = chartPackChanges(wanted, stored, creating)
-        for (pack in packs.values.toList()) {
+        val candidates = mutableListOf<ChartPackSpec>()
+        for (pack in packs.values) {
             val overBudget = budgetCurrent && pack.key in deferred && pack.status != null && !pack.ready
             if (pack.region.id in changes.delete || pack.deletion.requested || overBudget) {
                 if (pack.deletion.begin()) delete(pack)
-            } else {
-                updateDownload(pack)
+            } else if (pack.status != null && !pack.ready && pack.problem == null && pack.key !in deferred) {
+                wanted[pack.key]?.let { candidates += it }
             }
         }
-        if (!paused && !dataSaver && statusesKnown && packs.values.none { it.deletion.inFlight }) {
-            changes.create.filter { it.key !in creationErrors && it.key !in deferred }.forEach(::create)
+        val allowWork = !paused && !dataSaver && !removed && budgetCurrent
+        val mayCreate = statusesKnown && packs.values.none { it.deletion.inFlight }
+        val missing = changes.create.filter { it.key !in creationErrors && it.key !in deferred }
+        if (mayCreate) candidates.addAll(missing)
+        val underway = packs.values.filter { it.active || (it.status?.completedResourceCount ?: 0) > 0 }
+            .mapTo(mutableSetOf()) { it.key }
+        val queued = allowWork && candidates.size + creating.size > REGION_WORK_LIMIT
+        val now = SystemClock.elapsedRealtime()
+        if (queued) {
+            for (pack in packs.values) if (pack.active && now - pack.lastProgress >= STALL_CHECK_MS) {
+                pack.lastStall = now
+                pack.lastProgress = now
+            }
+            if (!checkingStalls) {
+                checkingStalls = true
+                main.postDelayed({
+                    checkingStalls = false
+                    reconcile()
+                }, STALL_CHECK_MS)
+            }
         }
+        val stalled = packs.values.filter { it.lastStall > 0 }.associate { it.key to it.lastStall }
+        val slots = if (allowWork) chartWorkKeys(candidates, creating, underway, stalled) else emptySet()
+        // Release old slots before assigning new ones so even briefly the
+        // FileSource never has more active regions than the configured limit.
+        for (pack in packs.values) if (pack.active && (pack.key !in slots || pack.deletion.requested)) setActive(pack, false)
+        for (pack in packs.values) if (!pack.deletion.requested && pack.key in slots) setActive(pack, true)
+        if (mayCreate) missing.filter { it.key in slots }.forEach(::create)
     }
 
     private fun load() {
@@ -261,7 +332,7 @@ internal class ChartPackManager private constructor(context: Context) {
                     val key = metadata.opt("chart") as? String ?: continue
                     attach(region, key, metadata.optString("style"))
                 }
-                reconcile()
+                scheduleReconcile()
             }
 
             override fun onError(error: String) {
@@ -283,7 +354,7 @@ internal class ChartPackManager private constructor(context: Context) {
             override fun onCreate(offlineRegion: OfflineRegion) {
                 creating.remove(spec.key)
                 attach(offlineRegion, spec.key, BASEMAP_STYLE_URL)
-                reconcile()
+                scheduleReconcile()
             }
 
             override fun onError(error: String) {
@@ -291,14 +362,15 @@ internal class ChartPackManager private constructor(context: Context) {
                 if (!removed && desired?.get(spec.key) == spec) {
                     creationErrors[spec.key] = classify(error)
                     scheduleRetry(creationErrors[spec.key])
-                } else reconcile()
+                }
+                scheduleReconcile()
             }
         })
     }
 
     private fun attach(region: OfflineRegion, key: String, style: String) {
         val definition = region.definition as? OfflineTilePyramidRegionDefinition
-        val spec = definition?.takeIf { style == BASEMAP_STYLE_URL && it.styleURL == style }?.let {
+        val spec = definition?.takeIf { style == BASEMAP_STYLE_URL && it.styleURL == style && sameChartDensity(it.pixelRatio, pixelRatio) }?.let {
             val bounds = it.bounds ?: return@let null
             ChartPackSpec(key, bounds.latitudeSouth, bounds.longitudeWest, bounds.latitudeNorth, bounds.longitudeEast,
                 it.minZoom.toInt(), it.maxZoom.toInt()).takeIf { spec ->
@@ -312,13 +384,15 @@ internal class ChartPackManager private constructor(context: Context) {
             override fun onError(error: OfflineRegionError) {
                 if (pack.deletion.requested) return
                 pack.problem = classify(error.message)
-                if (pack.problem == ChartPackProblem.Quota) updateDownload(pack)
-                scheduleSummary()
+                setActive(pack, false)
+                scheduleRetry(pack.problem)
+                scheduleReconcile()
             }
             override fun mapboxTileCountLimitExceeded(limit: Long) {
                 if (pack.deletion.requested) return
                 pack.problem = ChartPackProblem.Quota
-                updateDownload(pack)
+                setActive(pack, false)
+                scheduleReconcile()
                 scheduleSummary()
             }
         })
@@ -332,10 +406,9 @@ internal class ChartPackManager private constructor(context: Context) {
             }
             override fun onError(error: String?) {
                 if (pack.deletion.requested) return
-                val first = !pack.statusRead
                 pack.statusRead = true
                 pack.problem = classify(error.orEmpty())
-                if (first) reconcile()
+                scheduleReconcile()
                 scheduleRetry(pack.problem)
             }
         })
@@ -345,31 +418,38 @@ internal class ChartPackManager private constructor(context: Context) {
         if (pack.deletion.requested) return
         val first = !pack.statusRead
         pack.statusRead = true
+        val wasReady = pack.ready
+        val previousProblem = pack.problem
         val previous = pack.status
         pack.status = status
+        if (status.completedResourceCount > (previous?.completedResourceCount ?: 0)) {
+            pack.lastProgress = SystemClock.elapsedRealtime()
+            pack.lastStall = 0L
+        }
         if (pack.ready || (pack.problem != ChartPackProblem.Quota && status.completedResourceCount > (previous?.completedResourceCount ?: 0))) {
             pack.problem = null
         }
-        if (first) reconcile() else updateDownload(pack)
+        if (first || wasReady != pack.ready || previousProblem != pack.problem) scheduleReconcile()
         scheduleSummary()
     }
 
-    private fun updateDownload(pack: Pack) {
-        val active = pack.status != null && !pack.ready && !paused && !dataSaver && !removed && !pack.deletion.requested &&
-            pack.problem != ChartPackProblem.Quota && budgetCurrent && pack.key !in deferred && pack.spec.matches(wanted[pack.key])
+    private fun setActive(pack: Pack, active: Boolean) {
+        if (pack.active == active) return
+        pack.active = active
+        if (active) pack.lastProgress = SystemClock.elapsedRealtime()
         pack.region.setDownloadState(if (active) OfflineRegion.STATE_ACTIVE else OfflineRegion.STATE_INACTIVE)
     }
 
     private fun delete(pack: Pack) {
         pack.problem = null
-        pack.region.setDownloadState(OfflineRegion.STATE_INACTIVE)
+        setActive(pack, false)
         pack.region.delete(object : OfflineRegion.OfflineRegionDeleteCallback {
             override fun onDelete() {
                 packs.remove(pack.region.id)
                 // Releasing an owned region can free tiles against the native quota.
                 creationErrors.entries.removeAll { it.value == ChartPackProblem.Quota }
                 packs.values.filter { it.problem == ChartPackProblem.Quota }.forEach { it.problem = null }
-                reconcile()
+                scheduleReconcile()
             }
             override fun onError(error: String) {
                 pack.deletion.failed(classify(error, ChartPackProblem.Storage))
@@ -413,6 +493,7 @@ internal class ChartPackManager private constructor(context: Context) {
             bytes = packs.values.sumOf { it.status?.completedResourceSize ?: 0L },
             paused = paused, dataSaver = dataSaver, inputsUnavailable = keepExistingStations, removed = removed && empty, removing = removed && !empty,
             problem = if (quota.isNotEmpty()) ChartPackProblem.Quota else errors.minByOrNull { it.ordinal },
+            canRetry = errors.isNotEmpty(),
         )
     }
 }

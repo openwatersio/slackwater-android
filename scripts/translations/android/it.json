@@ -304,5 +304,6 @@
   "chart_quota": "Limite di tasselli raggiunto",
   "chart_failed": "Download non riuscito",
   "chart_data_saver": "Download sospesi dal risparmio dati",
-  "chart_inputs_unavailable": "Alcune informazioni sulle stazioni salvate non sono disponibili"
+  "chart_inputs_unavailable": "Alcune informazioni sulle stazioni salvate non sono disponibili",
+  "chart_area_bytes": "%1$s in totale per le aree della carta"
 }

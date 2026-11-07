@@ -300,5 +300,6 @@
   "chart_quota": "Tile limit reached",
   "chart_failed": "Download failed",
   "chart_data_saver": "Downloads paused by Data Saver",
-  "chart_inputs_unavailable": "Some saved station information is unavailable"
+  "chart_inputs_unavailable": "Some saved station information is unavailable",
+  "chart_area_bytes": "%1$s across chart areas"
 }

@@ -285,7 +285,7 @@
     <string name="map_close">"プレビューを閉じる"</string>
     <string name="map_empty">"この範囲に観測所はありません"</string>
     <string name="map_fix_missing">"位置情報を利用できません"</string>
-    <string name="map_units_legend">"潮汐の単位：%1$s。潮流の単位：%2$s。航海には使用できません。海図設定。"</string>
+    <string name="map_units_legend">"潮汐の単位：%1$s。潮流の単位：%2$s。航海には使用できません。グラフ設定。"</string>
     <string name="map_zoom_out">"縮小"</string>
     <string name="map_zoom_in">"拡大"</string>
     <string name="chart_downloads">"ダウンロード"</string>
@@ -303,4 +303,5 @@
     <string name="chart_failed">"ダウンロードに失敗しました"</string>
     <string name="chart_data_saver">"データセーバーによりダウンロードを一時停止しています"</string>
     <string name="chart_inputs_unavailable">"保存済みの観測所に関する情報の一部を利用できません"</string>
+    <string name="chart_area_bytes">"海図エリアの合計：%1$s"</string>
 </resources>

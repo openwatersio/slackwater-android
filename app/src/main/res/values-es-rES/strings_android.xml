@@ -307,4 +307,5 @@
     <string name="chart_failed">"Error en la descarga"</string>
     <string name="chart_data_saver">"El ahorro de datos ha pausado las descargas"</string>
     <string name="chart_inputs_unavailable">"Parte de la información de las estaciones guardadas no está disponible"</string>
+    <string name="chart_area_bytes">"%1$s en total en las zonas de la carta"</string>
 </resources>

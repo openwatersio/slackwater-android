@@ -311,4 +311,5 @@
     <string name="chart_failed">"Dh’fhàillig an luchdadh a-nuas"</string>
     <string name="chart_data_saver">"Tha na luchdaidhean a-nuas air stad gus dàta a chaomhnadh"</string>
     <string name="chart_inputs_unavailable">"Chan eil cuid den fhiosrachadh mu na stèiseanan a chaidh a shàbhaladh ri fhaighinn"</string>
+    <string name="chart_area_bytes">"%1$s gu h-iomlan airson nan sgìrean air a’ chairt"</string>
 </resources>

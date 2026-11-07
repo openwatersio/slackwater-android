@@ -300,5 +300,6 @@
   "chart_quota": "Grensen for kartfliser er nådd",
   "chart_failed": "Nedlastingen mislyktes",
   "chart_data_saver": "Datasparing har satt nedlastingene på pause",
-  "chart_inputs_unavailable": "Enkelte opplysninger om lagrede stasjoner er utilgjengelige"
+  "chart_inputs_unavailable": "Enkelte opplysninger om lagrede stasjoner er utilgjengelige",
+  "chart_area_bytes": "%1$s totalt for kartområdene"
 }

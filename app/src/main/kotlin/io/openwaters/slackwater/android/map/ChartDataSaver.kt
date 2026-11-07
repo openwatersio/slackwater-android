@@ -16,11 +16,18 @@ internal fun watchChartDataSaver(context: Context, update: (Boolean) -> Unit) {
     val connectivity = context.getSystemService(ConnectivityManager::class.java) ?: return
     val main = Handler(Looper.getMainLooper())
     fun refresh() {
-        update(connectivity.isActiveNetworkMetered &&
+        val active = connectivity.activeNetwork
+        val capabilities = connectivity.getNetworkCapabilities(active)
+        update(capabilities != null && !capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_NOT_METERED) &&
             connectivity.restrictBackgroundStatus == ConnectivityManager.RESTRICT_BACKGROUND_STATUS_ENABLED)
     }
     connectivity.registerDefaultNetworkCallback(object : ConnectivityManager.NetworkCallback() {
-        override fun onCapabilitiesChanged(network: Network, capabilities: NetworkCapabilities) = refresh()
+        override fun onCapabilitiesChanged(network: Network, capabilities: NetworkCapabilities) {
+            if (network == connectivity.activeNetwork) {
+                update(!capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_NOT_METERED) &&
+                    connectivity.restrictBackgroundStatus == ConnectivityManager.RESTRICT_BACKGROUND_STATUS_ENABLED)
+            }
+        }
         override fun onLost(network: Network) = refresh()
     }, main)
     ContextCompat.registerReceiver(context, object : BroadcastReceiver() {

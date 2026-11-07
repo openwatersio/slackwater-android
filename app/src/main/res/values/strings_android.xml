@@ -303,4 +303,5 @@
     <string name="chart_failed">"Download failed"</string>
     <string name="chart_data_saver">"Downloads paused by Data Saver"</string>
     <string name="chart_inputs_unavailable">"Some saved station information is unavailable"</string>
+    <string name="chart_area_bytes">"%1$s across chart areas"</string>
 </resources>
