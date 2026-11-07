@@ -184,6 +184,37 @@ class UserStateStoreTest {
         withScope { scope ->
             assertEquals(DownloadIntent(requested = setOf(direct, paired, later)), open(scope).state.first().getOrThrow())
         }
+        val oldRequest = StationId("chs-victoria")
+        withScope { scope ->
+            val raw = PreferenceDataStoreFactory.create(scope = scope) {
+                File(file.parentFile, file.nameWithoutExtension + ".downloads.preferences_pb")
+            }
+            val key = androidx.datastore.preferences.core.stringSetPreferencesKey("requested")
+            raw.edit { it[key] = it[key].orEmpty() + oldRequest.value }
+        }
+        withScope { scope ->
+            val migrated = open(scope).state.first().getOrThrow()
+            assertEquals(setOf(direct, paired, later, oldRequest), migrated.requested)
+            assertEquals(setOf(oldRequest), migrated.previewRequested)
+        }
+    }
+
+    @Test fun invalidBundledGateMetadataLeavesLegacyIntentAvailableForRecovery() = withFile { file ->
+        val direct = StationId("chs-mill-bay")
+        withScope { scope ->
+            PreferenceDataStoreFactory.create(scope = scope) { file }.edit {
+                it[androidx.datastore.preferences.core.stringSetPreferencesKey("requested")] = setOf(direct.value)
+            }
+        }
+        val before = file.readBytes()
+        withScope { scope ->
+            val store = DownloadIntentStore.open(file, catalog, scope) { throw org.json.JSONException("missing reference") }
+            assertTrue(store.state.first().exceptionOrNull() is IOException)
+        }
+        assertArrayEquals(before, file.readBytes())
+        withScope { scope ->
+            assertEquals(setOf(direct), DownloadIntentStore.open(file, catalog, scope).state.first().getOrThrow().previewRequested)
+        }
     }
 
     @Test fun unsupportedDownloadFilePreservesIntentAndLeavesFavoritesUsable() = withFile { file ->

@@ -79,17 +79,28 @@ class TidePreviewDownloadsTest {
     }
 
     @Test fun newlyValidatedNetworkWakesTransientBackoff() = withQueue { worker, catalog, store, models ->
-        val recovery = MutableStateFlow(0L)
+        val network = TideDownloadNetwork()
+        network.update(online = true, restricted = false, validated = false)
         val calls = AtomicInteger()
-        val queue = TidePreviewDownloads(worker, store, models, catalog, MutableStateFlow(null),
-            AndroidPredictionRepository(context, models), recovery) { _, _ ->
+        val fetching = CompletableDeferred<Unit>()
+        val response = CompletableDeferred<Unit>()
+        val queue = TidePreviewDownloads(worker, store, models, catalog, network.paused,
+            AndroidPredictionRepository(context, models), network.recovery) { _, _ ->
             if (calls.incrementAndGet() == 1) throw IwlsException.Transient("No route")
+            fetching.complete(Unit)
+            response.await()
             points
         }
         queue.activityStarted()
         queue.request(station)
         queue.states.first { it[station] == TideDownloadState.RETRY }
-        recovery.value++
+        network.update(online = true, restricted = false, validated = true)
+        network.update(online = true, restricted = false, validated = true)
+        assertEquals(1L, network.recovery.value)
+        fetching.await()
+        network.update(online = true, restricted = false, validated = false)
+        network.update(online = true, restricted = false, validated = true)
+        response.complete(Unit)
         queue.states.first { it.isEmpty() }
         assertEquals(2, calls.get())
         assertTrue(models.read(station, ModelKind.TIDE_PREVIEW) is StoredModel.Ready)

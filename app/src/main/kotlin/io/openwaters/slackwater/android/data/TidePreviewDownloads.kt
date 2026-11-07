@@ -18,6 +18,24 @@ import org.json.JSONObject
 
 enum class TideDownloadState { QUEUED, DOWNLOADING, WAITING_FOR_NETWORK, DATA_SAVER, RETRY }
 
+internal class TideDownloadNetwork {
+    private val pauseState = MutableStateFlow<TideDownloadState?>(TideDownloadState.WAITING_FOR_NETWORK)
+    private val validationCount = MutableStateFlow(0L)
+    private var wasValidated = false
+    val paused = pauseState.asStateFlow()
+    val recovery = validationCount.asStateFlow()
+
+    fun update(online: Boolean, restricted: Boolean, validated: Boolean) {
+        pauseState.value = when {
+            !online -> TideDownloadState.WAITING_FOR_NETWORK
+            restricted -> TideDownloadState.DATA_SAVER
+            else -> null
+        }
+        if (validated && !wasValidated) validationCount.value++
+        wasValidated = validated
+    }
+}
+
 internal class TidePreviewDownloads(
     private val scope: CoroutineScope,
     private val intents: DownloadIntentStore,
@@ -153,21 +171,11 @@ internal class TidePreviewDownloads(
         fun get(context: Context): TidePreviewDownloads {
             val app = context.applicationContext
             return shared ?: run {
-                val network = MutableStateFlow<TideDownloadState?>(TideDownloadState.WAITING_FOR_NETWORK)
-                val recovery = MutableStateFlow(0L)
-                var wasValidated = false
-                watchDownloadNetwork(app) { online, restricted, validated ->
-                    if (validated && !wasValidated) recovery.value++
-                    wasValidated = validated
-                    network.value = when {
-                        !online -> TideDownloadState.WAITING_FOR_NETWORK
-                        restricted -> TideDownloadState.DATA_SAVER
-                        else -> null
-                    }
-                }
+                val network = TideDownloadNetwork()
+                watchDownloadNetwork(app, network::update)
                 TidePreviewDownloads(CoroutineScope(SupervisorJob() + Dispatchers.IO),
                     UserStateStore.get(app).downloads, ModelStore.get(app), BundledStationCatalog(app.assets),
-                    network, AndroidPredictionRepository(app), recovery, IwlsTidePreviewSource(app.cacheDir)::fetch)
+                    network.paused, AndroidPredictionRepository(app), network.recovery, IwlsTidePreviewSource(app.cacheDir)::fetch)
             }.also { shared = it }
         }
     }

@@ -26,28 +26,31 @@ data class DownloadIntent(
 
 private val versionKey = intPreferencesKey("version")
 private val requestedKey = stringSetPreferencesKey("requested")
+private val knownRequestsKey = stringSetPreferencesKey("knownGeneralRequests")
 private val previewRequestedKey = stringSetPreferencesKey("previewRequested")
 private val cancelledKey = stringSetPreferencesKey("cancelled")
 
 private class InvalidDownloadIntent(message: String) : IOException(message)
 
+private fun Preferences.ids(key: Preferences.Key<Set<String>>): Set<StationId> {
+    val value = asMap()[key] ?: return emptySet()
+    if (value !is Set<*>) throw InvalidDownloadIntent("Invalid download intent: ${key.name}")
+    return value.mapTo(mutableSetOf()) {
+        StationId(it as? String ?: throw InvalidDownloadIntent("Invalid station ID in ${key.name}"))
+    }
+}
+
 private fun Preferences.readIntent(): DownloadIntent {
     val fields = asMap()
     val version = fields[versionKey]
     if (version != null && version != 1) throw InvalidDownloadIntent("Unsupported download intent version: $version")
-    fun ids(key: Preferences.Key<Set<String>>): Set<StationId> {
-        val value = fields[key] ?: return emptySet()
-        if (value !is Set<*>) throw InvalidDownloadIntent("Invalid download intent: ${key.name}")
-        return value.mapTo(mutableSetOf()) {
-            StationId(it as? String ?: throw InvalidDownloadIntent("Invalid station ID in ${key.name}"))
-        }
-    }
     return DownloadIntent(ids(requestedKey), ids(cancelledKey), ids(previewRequestedKey))
 }
 
 private fun MutablePreferences.storeIntent(intent: DownloadIntent) {
     this[versionKey] = 1
     this[requestedKey] = intent.requested.mapTo(mutableSetOf()) { it.value }
+    this[knownRequestsKey] = this[requestedKey].orEmpty()
     this[previewRequestedKey] = intent.previewRequested.mapTo(mutableSetOf()) { it.value }
     this[cancelledKey] = intent.cancelled.mapTo(mutableSetOf()) { it.value }
 }
@@ -116,16 +119,26 @@ class DownloadIntentStore internal constructor(
                 override suspend fun migrate(currentData: Preferences): Preferences {
                     val previous = currentData.readIntent()
                     val requested = catalog.remapSavedIds(previous.requested.toList()).toSet()
-                    val legacy = !currentData.contains(previewRequestedKey)
-                    val previews = if (legacy && requested.isNotEmpty()) {
+                    val known = when {
+                        currentData.contains(knownRequestsKey) -> currentData.ids(knownRequestsKey)
+                        currentData.contains(previewRequestedKey) -> previous.requested
+                        else -> emptySet()
+                    }
+                    val added = requested - catalog.remapSavedIds(known.toList()).toSet()
+                    val previews = catalog.remapSavedIds(previous.previewRequested.toList()).toMutableSet()
+                    if (added.isNotEmpty()) {
                         // A gate requested its reference tide under the same ID as a direct tide download.
-                        val references = gateReferences()
-                        requested.filterTo(mutableSetOf()) { id ->
+                        val references = try {
+                            gateReferences()
+                        } catch (invalid: org.json.JSONException) {
+                            throw InvalidDownloadIntent("Invalid bundled gate references: ${invalid.message}")
+                        }
+                        added.filterTo(previews) { id ->
                             id !in references && (catalog.resolve(id) as? StationResolution.Live)?.identity?.kind == StationKind.CanadianTide
                         }
-                    } else catalog.remapSavedIds(previous.previewRequested.toList()).toSet()
+                    }
                     val next = DownloadIntent(requested, catalog.remapSavedIds(previous.cancelled.toList()).toSet(), previews)
-                    if (!legacy && next == previous) return currentData
+                    if (currentData.contains(knownRequestsKey) && known == requested && next == previous) return currentData
                     return currentData.toMutablePreferences().apply { storeIntent(next) }
                 }
                 override suspend fun cleanUp() = Unit
