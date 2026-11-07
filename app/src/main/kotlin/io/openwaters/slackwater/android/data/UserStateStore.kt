@@ -157,10 +157,14 @@ class UserStateStore private constructor(
                 File(app.noBackupFilesDir, "saved_places.preferences_pb"),
                 BundledStationCatalog(app.assets),
                 CoroutineScope(SupervisorJob() + Dispatchers.IO),
+                { derivedGatesByReference(app.assets).keys },
             ).also { shared = it }
         }
 
-        internal fun open(file: File, catalog: StationCatalog, scope: CoroutineScope): UserStateStore {
+        internal fun open(
+            file: File, catalog: StationCatalog, scope: CoroutineScope,
+            gateReferences: () -> Set<StationId> = { emptySet() },
+        ): UserStateStore {
             // Run on each open because a catalog refresh can publish new successors.
             val migration = object : DataMigration<Preferences> {
                 override suspend fun shouldMigrate(currentData: Preferences) = true
@@ -181,7 +185,7 @@ class UserStateStore private constructor(
             }
             return UserStateStore(PreferenceDataStoreFactory.create(
                 migrations = listOf(migration), scope = scope, produceFile = { file },
-            ), catalog, DownloadIntentStore.open(File(file.parentFile, file.nameWithoutExtension + ".downloads.preferences_pb"), catalog, scope))
+            ), catalog, DownloadIntentStore.open(File(file.parentFile, file.nameWithoutExtension + ".downloads.preferences_pb"), catalog, scope, gateReferences))
         }
     }
 }

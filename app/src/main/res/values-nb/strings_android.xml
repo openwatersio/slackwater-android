@@ -304,4 +304,11 @@
     <string name="chart_data_saver">"Datasparing har satt nedlastingene på pause"</string>
     <string name="chart_inputs_unavailable">"Enkelte opplysninger om lagrede stasjoner er utilgjengelige"</string>
     <string name="chart_area_bytes">"%1$s totalt for kartområdene"</string>
+    <string name="tide_downloads">"Nedlastinger av tidevannsprognoser"</string>
+    <string name="tide_download_active">"Laster ned tidevannsoversikt…"</string>
+    <string name="tide_download_network">"Venter på nettverkstilkobling"</string>
+    <string name="tide_download_restricted">"Venter på et nettverk uten begrensninger"</string>
+    <string name="tide_download_failed">"Kunne ikke laste ned tidevannsoversikten"</string>
+    <string name="tide_download_saved">"Tidevannsoversikten er lagret for bruk uten nett"</string>
+    <string name="tide_download_edit_failed">"Kunne ikke lagre endringen i nedlastingene. Prøv igjen."</string>
 </resources>

@@ -75,3 +75,9 @@ class BundledStationCatalog(private val assets: AssetManager) : StationCatalog {
         @Volatile private var shared: StationIdentityIndex? = null
     }
 }
+
+internal fun derivedGatesByReference(assets: AssetManager): Map<StationId, List<StationId>> {
+    val gates = assets.open("slackwater/chs-gates.json").bufferedReader().use { JSONArray(it.readText()) }
+    return (0 until gates.length()).map(gates::getJSONObject)
+        .groupBy({ StationId(it.getString("reference")) }, { StationId(it.getString("id")) })
+}

@@ -308,4 +308,11 @@
     <string name="chart_data_saver">"Downloads pausados pela Economia de dados"</string>
     <string name="chart_inputs_unavailable">"Algumas informações sobre as estações salvas estão indisponíveis"</string>
     <string name="chart_area_bytes">"%1$s no total nas áreas da carta"</string>
+    <string name="tide_downloads">"Downloads de previsões de maré"</string>
+    <string name="tide_download_active">"Baixando a prévia das marés…"</string>
+    <string name="tide_download_network">"Aguardando uma conexão de rede"</string>
+    <string name="tide_download_restricted">"Aguardando uma rede sem restrições"</string>
+    <string name="tide_download_failed">"Não foi possível baixar a prévia das marés"</string>
+    <string name="tide_download_saved">"Prévia das marés salva para uso offline"</string>
+    <string name="tide_download_edit_failed">"Não foi possível salvar a alteração nos seus downloads. Tente novamente."</string>
 </resources>

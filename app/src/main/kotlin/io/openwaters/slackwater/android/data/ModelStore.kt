@@ -214,11 +214,7 @@ class ModelStore internal constructor(
         @Synchronized
         fun get(context: Context): ModelStore {
             val app = context.applicationContext
-            val dependents by lazy {
-                val rows = app.assets.open("slackwater/chs-gates.json").bufferedReader().use { org.json.JSONArray(it.readText()) }
-                (0 until rows.length()).map(rows::getJSONObject)
-                    .groupBy({ StationId(it.getString("reference")) }, { StationId(it.getString("id")) })
-            }
+            val dependents by lazy { derivedGatesByReference(app.assets) }
             return shared ?: ModelStore(File(app.noBackupFilesDir, "models")) { id, kind ->
                 val affected = if (kind == ModelKind.TIDE) setOf(id) + dependents[id].orEmpty() else setOf(id)
                 CalendarStateStore.get(app).invalidate(affected)

@@ -13,6 +13,10 @@ import androidx.core.content.ContextCompat
 
 /** The process-wide pack manager can keep downloading after its activity stops. */
 internal fun watchChartDataSaver(context: Context, update: (Boolean) -> Unit) {
+    watchDownloadNetwork(context) { _, restricted, _ -> update(restricted) }
+}
+
+internal fun watchDownloadNetwork(context: Context, update: (online: Boolean, restricted: Boolean, validated: Boolean) -> Unit) {
     val connectivity = context.getSystemService(ConnectivityManager::class.java) ?: return
     val main = Handler(Looper.getMainLooper())
     var network = connectivity.activeNetwork
@@ -22,8 +26,11 @@ internal fun watchChartDataSaver(context: Context, update: (Boolean) -> Unit) {
         // A blocked default network can be invisible to activeNetwork. Wait for
         // an unmetered capability before resuming transfers under Data Saver.
         val unmetered = capabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_NOT_METERED) == true
-        update(connectivity.restrictBackgroundStatus == ConnectivityManager.RESTRICT_BACKGROUND_STATUS_ENABLED &&
-            (blocked || !unmetered))
+        val restricted = connectivity.restrictBackgroundStatus == ConnectivityManager.RESTRICT_BACKGROUND_STATUS_ENABLED &&
+            (blocked || !unmetered)
+        val internet = capabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) == true
+        update(internet && (!blocked || restricted), restricted,
+            capabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED) == true && !blocked)
     }
     connectivity.registerDefaultNetworkCallback(object : ConnectivityManager.NetworkCallback() {
         override fun onAvailable(available: Network) {

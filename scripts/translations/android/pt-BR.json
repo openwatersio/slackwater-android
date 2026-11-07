@@ -305,5 +305,12 @@
   "chart_failed": "Falha no download",
   "chart_data_saver": "Downloads pausados pela Economia de dados",
   "chart_inputs_unavailable": "Algumas informações sobre as estações salvas estão indisponíveis",
-  "chart_area_bytes": "%1$s no total nas áreas da carta"
+  "chart_area_bytes": "%1$s no total nas áreas da carta",
+  "tide_downloads": "Downloads de previsões de maré",
+  "tide_download_active": "Baixando a prévia das marés…",
+  "tide_download_network": "Aguardando uma conexão de rede",
+  "tide_download_restricted": "Aguardando uma rede sem restrições",
+  "tide_download_failed": "Não foi possível baixar a prévia das marés",
+  "tide_download_saved": "Prévia das marés salva para uso offline",
+  "tide_download_edit_failed": "Não foi possível salvar a alteração nos seus downloads. Tente novamente."
 }

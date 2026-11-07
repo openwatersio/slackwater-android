@@ -1,0 +1,13 @@
+# Canadian tide preview downloads
+
+On November 7, 2026, the Android API 37 emulator fetched official water-level predictions directly from IWLS for Victoria (Inner Harbour) and Vancouver (Burrard Inlet). Each response supplied 673 samples at 15-minute intervals, from November 5 at 08:00 UTC through November 12 at 08:00 UTC. This is the seven-day request window anchored 48 elapsed hours before the station’s local midnight.
+
+Victoria’s request was saved from its station detail in airplane mode. The app was force-stopped, networking restored, and the app reopened. Its restored queue published the preview. After another force-stop, with airplane mode enabled and Wi-Fi and mobile data disabled, opening the station displayed its chart from the same saved samples.
+
+Vancouver’s request was saved on metered cellular with Android Data Saver enabled. The queue reported that it was waiting for an unrestricted network. After a force-stop it resumed on Wi-Fi, with Data Saver still enabled. A fresh process displayed Vancouver’s chart with both radios disabled. The test checks the stored coverage and finds the chart through the station list and search.
+
+## Reproducing the live checks
+
+Use a disposable emulator where the selected station has no saved model. The normal CI suite uses fixtures. To run the live check, select `CanadianTidePreviewDeviceTest` with the instrumentation argument `previewPhase`. Use `queueOffline` with both radios disabled, then force-stop, enable Wi-Fi and run `download`. Force-stop again, disable both radios and run `offline`. For the metered variant, pass `previewStation=vancouver` for all phases and use `queueRestricted` with Wi-Fi off, mobile data on, and Data Saver enabled. Restore the device’s network settings afterward.
+
+The queue runs while a Slackwater activity is started. Durable requests survive the app leaving the foreground or the process stopping. A preview supports the dates covered by its samples. Preview requests have their own persisted key. Completing, cancelling or retrying a preview leaves a gate’s request for its paired tide fit intact, including requests saved by earlier versions. On upgrade, unambiguous direct tide requests also enroll once for a preview. The store remembers the general request IDs last written by a preview-capable build, so a new direct request made during a downgrade enrolls on the next upgrade. A legacy request for a tide shared with a gate remains a fit request, and the station page can request its preview separately. An incomplete IWLS response preserves the existing model and exposes a manual retry. Full harmonic fits, bulk download tiers and Canadian current-gate downloads remain part of [Android #9](https://github.com/openwatersio/slackwater-android/issues/9).

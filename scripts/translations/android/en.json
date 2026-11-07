@@ -301,5 +301,12 @@
   "chart_failed": "Download failed",
   "chart_data_saver": "Downloads paused by Data Saver",
   "chart_inputs_unavailable": "Some saved station information is unavailable",
-  "chart_area_bytes": "%1$s across chart areas"
+  "chart_area_bytes": "%1$s across chart areas",
+  "tide_downloads": "Tide prediction downloads",
+  "tide_download_active": "Downloading tide preview…",
+  "tide_download_network": "Waiting for a network connection",
+  "tide_download_restricted": "Waiting for an unrestricted network",
+  "tide_download_failed": "Couldn’t download the tide preview",
+  "tide_download_saved": "Tide preview saved for offline use",
+  "tide_download_edit_failed": "Couldn’t save this change to your downloads. Try again."
 }

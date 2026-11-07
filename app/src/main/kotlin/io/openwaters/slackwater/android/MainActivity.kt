@@ -33,6 +33,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.openwaters.slackwater.android.data.ReadingPreferences
 import io.openwaters.slackwater.android.data.ReadingPreferencesStore
+import io.openwaters.slackwater.android.data.TidePreviewDownloads
 import io.openwaters.slackwater.android.data.AlertReconciliation
 import io.openwaters.slackwater.android.stations.StationsHome
 import kotlinx.coroutines.Dispatchers
@@ -79,8 +80,14 @@ class MainActivity : ComponentActivity() {
 
     override fun onStart() {
         super.onStart()
+        TidePreviewDownloads.get(applicationContext).activityStarted()
         AlertReconciliation.get(this).foreground()
         CalendarRepository.get(this).foreground()
+    }
+
+    override fun onStop() {
+        TidePreviewDownloads.get(applicationContext).activityStopped()
+        super.onStop()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

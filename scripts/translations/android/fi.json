@@ -301,5 +301,12 @@
   "chart_failed": "Lataus epäonnistui",
   "chart_data_saver": "Datansäästö on keskeyttänyt lataukset",
   "chart_inputs_unavailable": "Kaikkia tallennettujen asemien tietoja ei ole saatavilla",
-  "chart_area_bytes": "Kartta-alueiden koko yhteensä: %1$s"
+  "chart_area_bytes": "Kartta-alueiden koko yhteensä: %1$s",
+  "tide_downloads": "Vuorovesiennusteiden lataukset",
+  "tide_download_active": "Ladataan vuorovesiennusteen esikatselua…",
+  "tide_download_network": "Odotetaan verkkoyhteyttä",
+  "tide_download_restricted": "Odotetaan rajoittamatonta verkkoyhteyttä",
+  "tide_download_failed": "Vuorovesiennusteen esikatselua ei voitu ladata",
+  "tide_download_saved": "Vuorovesiennusteen esikatselu tallennettu offline-käyttöön",
+  "tide_download_edit_failed": "Latausten muutosta ei voitu tallentaa. Yritä uudelleen."
 }

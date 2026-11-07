@@ -313,5 +313,12 @@
   "chart_failed": "Theip ar an íoslódáil",
   "chart_data_saver": "Tá na híoslódálacha ar sos mar gheall ar an modh sábhála sonraí",
   "chart_inputs_unavailable": "Níl cuid den eolas faoi na stáisiúin shábháilte ar fáil",
-  "chart_area_bytes": "%1$s san iomlán do na ceantair chairte"
+  "chart_area_bytes": "%1$s san iomlán do na ceantair chairte",
+  "tide_downloads": "Íoslódálacha réamhaisnéisí taoide",
+  "tide_download_active": "Réamhamharc taoide á íoslódáil…",
+  "tide_download_network": "Ag fanacht le nasc líonra",
+  "tide_download_restricted": "Ag fanacht le líonra gan srianta",
+  "tide_download_failed": "Níorbh fhéidir an réamhamharc taoide a íoslódáil",
+  "tide_download_saved": "Sábháladh an réamhamharc taoide lena úsáid as líne",
+  "tide_download_edit_failed": "Níorbh fhéidir an t-athrú ar d’íoslódálacha a shábháil. Bain triail eile as."
 }

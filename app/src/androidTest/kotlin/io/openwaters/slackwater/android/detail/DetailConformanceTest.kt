@@ -94,6 +94,7 @@ class DetailConformanceTest {
             for (i in -8..8) samples.put(JSONObject().put("time", now.plusSeconds(i * 900L).toString()).put("height", kotlin.math.cos(i / 4.0)))
             runBlocking { store.write(id, ModelKind.TIDE_PREVIEW, JSONObject().put("samples", samples)) }
             compose.waitUntil(30_000) { compose.onAllNodesWithText("Predictions available through", substring = true).fetchSemanticsNodes().isNotEmpty() }
+            compose.onNodeWithText(context.getString(io.openwaters.slackwater.android.R.string.tide_download_saved)).assertExists()
             compose.onNodeWithTag("detailTimeline").assertExists()
             compose.onNodeWithText("Set an alert").assertDoesNotExist()
             runBlocking { store.write(id, ModelKind.TIDE, JSONObject("""{"offset":1.0,"constituents":[{"name":"M2","amplitude":1.2,"phase":10}]}""")) }

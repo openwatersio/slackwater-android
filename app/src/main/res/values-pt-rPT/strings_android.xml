@@ -308,4 +308,11 @@
     <string name="chart_data_saver">"Transferências em pausa devido à poupança de dados"</string>
     <string name="chart_inputs_unavailable">"Algumas informações sobre as estações guardadas não estão disponíveis"</string>
     <string name="chart_area_bytes">"%1$s no total nas áreas da carta"</string>
+    <string name="tide_downloads">"Transferências de previsões de maré"</string>
+    <string name="tide_download_active">"A transferir a pré-visualização das marés…"</string>
+    <string name="tide_download_network">"A aguardar uma ligação de rede"</string>
+    <string name="tide_download_restricted">"A aguardar uma rede sem restrições"</string>
+    <string name="tide_download_failed">"Não foi possível transferir a pré-visualização das marés"</string>
+    <string name="tide_download_saved">"Pré-visualização das marés guardada para utilização offline"</string>
+    <string name="tide_download_edit_failed">"Não foi possível guardar a alteração às transferências. Tente novamente."</string>
 </resources>

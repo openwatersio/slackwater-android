@@ -139,20 +139,81 @@ class UserStateStoreTest {
         withScope { scope ->
             val store = UserStateStore.open(file, catalog, scope).downloads
             val migrated = store.state.first().getOrThrow()
+            assertEquals(setOf(millBay), migrated.previewRequested)
             assertEquals(setOf(millBay), migrated.requested)
             assertEquals(setOf(millBay, other), migrated.cancelled)
             assertTrue(migrated.allowsRestore(millBay, ready = false))
             assertFalse(migrated.allowsRestore(other, ready = false))
             assertTrue(migrated.allowsRestore(other, ready = true))
+            store.requestPreviews(listOf(former))
             store.requestDownloads(listOf(former))
             store.trimDownloads(listOf(millBay, other))
         }
         withScope { scope ->
             val store = UserStateStore.open(file, catalog, scope).downloads
-            assertEquals(DownloadIntent(setOf(millBay), setOf(other)), store.state.first().getOrThrow())
+            assertEquals(DownloadIntent(setOf(millBay), setOf(other), setOf(millBay)), store.state.first().getOrThrow())
             store.resumeAutomaticDownloads(listOf(other))
             store.releaseDownloadRequests(listOf(former))
+            assertEquals(setOf(millBay), store.state.first().getOrThrow().previewRequested)
+            store.releasePreviews(listOf(former))
             assertEquals(DownloadIntent(), store.state.first().getOrThrow())
+        }
+    }
+
+    @Test fun legacyDirectTidesEnrollOnceWhileGateReferencesKeepOnlyTheirFitRequest() = withFile { file ->
+        val direct = StationId("chs-mill-bay")
+        val paired = StationId("chs-point-atkinson")
+        val later = StationId("chs-fulford-harbour")
+        withScope { scope ->
+            val raw = PreferenceDataStoreFactory.create(scope = scope) {
+                File(file.parentFile, file.nameWithoutExtension + ".downloads.preferences_pb")
+            }
+            raw.edit { it[androidx.datastore.preferences.core.stringSetPreferencesKey("requested")] = setOf(direct.value, paired.value) }
+        }
+        fun open(scope: CoroutineScope) = UserStateStore.open(file, catalog, scope) { derivedGatesByReference(context.assets).keys }.downloads
+        withScope { scope ->
+            val store = open(scope)
+            val migrated = store.state.first().getOrThrow()
+            assertEquals(setOf(direct, paired), migrated.requested)
+            assertEquals(setOf(direct), migrated.previewRequested)
+            store.requestPreviews(listOf(paired))
+            assertEquals(setOf(direct, paired), store.state.first().getOrThrow().previewRequested)
+            store.releasePreviews(listOf(direct, paired))
+            store.requestDownloads(listOf(later))
+        }
+        withScope { scope ->
+            assertEquals(DownloadIntent(requested = setOf(direct, paired, later)), open(scope).state.first().getOrThrow())
+        }
+        val oldRequest = StationId("chs-victoria")
+        withScope { scope ->
+            val raw = PreferenceDataStoreFactory.create(scope = scope) {
+                File(file.parentFile, file.nameWithoutExtension + ".downloads.preferences_pb")
+            }
+            val key = androidx.datastore.preferences.core.stringSetPreferencesKey("requested")
+            raw.edit { it[key] = it[key].orEmpty() + oldRequest.value }
+        }
+        withScope { scope ->
+            val migrated = open(scope).state.first().getOrThrow()
+            assertEquals(setOf(direct, paired, later, oldRequest), migrated.requested)
+            assertEquals(setOf(oldRequest), migrated.previewRequested)
+        }
+    }
+
+    @Test fun invalidBundledGateMetadataLeavesLegacyIntentAvailableForRecovery() = withFile { file ->
+        val direct = StationId("chs-mill-bay")
+        withScope { scope ->
+            PreferenceDataStoreFactory.create(scope = scope) { file }.edit {
+                it[androidx.datastore.preferences.core.stringSetPreferencesKey("requested")] = setOf(direct.value)
+            }
+        }
+        val before = file.readBytes()
+        withScope { scope ->
+            val store = DownloadIntentStore.open(file, catalog, scope) { throw org.json.JSONException("missing reference") }
+            assertTrue(store.state.first().exceptionOrNull() is IOException)
+        }
+        assertArrayEquals(before, file.readBytes())
+        withScope { scope ->
+            assertEquals(setOf(direct), DownloadIntentStore.open(file, catalog, scope).state.first().getOrThrow().previewRequested)
         }
     }
 
