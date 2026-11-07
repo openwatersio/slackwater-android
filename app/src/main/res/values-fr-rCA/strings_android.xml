@@ -315,4 +315,5 @@
     <string name="tide_download_failed">"Impossible de télécharger l’aperçu des marées"</string>
     <string name="tide_download_saved">"Aperçu des marées enregistré pour utilisation hors ligne"</string>
     <string name="tide_download_edit_failed">"Impossible d’enregistrer cette modification des téléchargements. Réessayez."</string>
+    <string name="widget_snapshot_time">"Mis à jour à %1$s"</string>
 </resources>

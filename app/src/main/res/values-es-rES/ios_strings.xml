@@ -276,4 +276,10 @@
     <string name="tour_next">"Siguiente ›"</string>
     <string name="tour_done">"Hecho"</string>
     <string name="tour_skip">"Omitir"</string>
+    <string name="widget_nearest_section">"Estación más cercana"</string>
+    <string name="widget_nearest_any">"Cualquier estación"</string>
+    <string name="widget_nearest_tide">"Estación de mareas"</string>
+    <string name="widget_nearest_current">"Estación de corrientes"</string>
+    <string name="widget_location_hint">"Abre Slackwater y permite el acceso a tu ubicación para encontrar un lugar cercano."</string>
+    <string name="widget_event_time">"%1$s · %2$s"</string>
 </resources>

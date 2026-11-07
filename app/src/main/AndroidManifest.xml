@@ -1,4 +1,4 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
  <uses-permission android:name="android.permission.INTERNET"/>
  <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
  <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
@@ -10,7 +10,11 @@
  <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
  <uses-permission android:name="android.permission.READ_CALENDAR"/>
  <uses-permission android:name="android.permission.WRITE_CALENDAR"/>
-<application android:localeConfig="@xml/locales_config" android:label="@string/app_name" android:theme="@android:style/Theme.Material.Light.NoActionBar" android:allowBackup="false" android:supportsRtl="true">
+<application android:name=".SlackwaterApplication" android:localeConfig="@xml/locales_config" android:label="@string/app_name" android:theme="@android:style/Theme.Material.Light.NoActionBar" android:allowBackup="false" android:dataExtractionRules="@xml/data_extraction_rules" android:supportsRtl="true">
+  <provider android:name="androidx.startup.InitializationProvider" android:authorities="${applicationId}.androidx-startup"
+      android:exported="false" tools:node="merge">
+   <meta-data android:name="androidx.work.WorkManagerInitializer" tools:node="remove"/>
+  </provider>
   <provider android:name=".sharing.TableFileProvider" android:authorities="${applicationId}.tables"
       android:exported="false" android:grantUriPermissions="true">
    <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/table_file_paths"/>
@@ -26,6 +30,18 @@
     <action android:name="android.app.action.SCHEDULE_EXACT_ALARM_PERMISSION_STATE_CHANGED"/>
    </intent-filter>
   </receiver>
+  <receiver android:name=".widgets.StationWidget" android:exported="false" android:label="@string/app_name">
+   <intent-filter>
+    <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
+    <action android:name="android.intent.action.TIME_SET"/>
+    <action android:name="android.intent.action.TIMEZONE_CHANGED"/>
+    <action android:name="android.intent.action.LOCALE_CHANGED"/>
+   </intent-filter>
+   <meta-data android:name="android.appwidget.provider" android:resource="@xml/station_widget"/>
+  </receiver>
+  <activity android:name=".widgets.WidgetConfigurationActivity" android:exported="true">
+   <intent-filter><action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/></intent-filter>
+  </activity>
   <activity android:name=".shortcuts.QueryActivity" android:exported="false"/>
   <activity android:name=".MainActivity" android:exported="true">
    <intent-filter>

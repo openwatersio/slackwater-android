@@ -276,4 +276,10 @@
     <string name="tour_next">"Volgende ›"</string>
     <string name="tour_done">"Gereed"</string>
     <string name="tour_skip">"Overslaan"</string>
+    <string name="widget_nearest_section">"Dichtstbijzijnde station"</string>
+    <string name="widget_nearest_any">"Elk station"</string>
+    <string name="widget_nearest_tide">"Getijstation"</string>
+    <string name="widget_nearest_current">"Stroomstation"</string>
+    <string name="widget_location_hint">"Open Slackwater en geef toegang tot je locatie om een plek in de buurt te vinden."</string>
+    <string name="widget_event_time">"%1$s · %2$s"</string>
 </resources>

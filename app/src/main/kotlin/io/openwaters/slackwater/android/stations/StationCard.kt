@@ -59,13 +59,13 @@ import java.time.ZoneId
 import kotlin.math.abs
 
 // List §6.2 colours. Colour encodes the water's state, never the station type.
-private val RisingTeal = Color(0xFF2DD4BF)
-private val FallingAmber = Color(0xFFFBBF24)
-private val FloodBlue = Color(0xFF4A9FD8)
-private val EbbAmber = Color(0xFFE8A33D)
-private val GoGreen = Color(0xFF88B868)
+internal val RisingTeal = Color(0xFF2DD4BF)
+internal val FallingAmber = Color(0xFFFBBF24)
+internal val FloodBlue = Color(0xFF4A9FD8)
+internal val EbbAmber = Color(0xFFE8A33D)
+internal val CardGoGreen = Color(0xFF88B868)
 
-private val SpeedUnit.kind get() = when (this) {
+internal val SpeedUnit.kind get() = when (this) {
     SpeedUnit.KNOTS -> SpeedUnitKind.KNOTS
     SpeedUnit.KILOMETRES_PER_HOUR -> SpeedUnitKind.KILOMETRES_PER_HOUR
     SpeedUnit.METRES_PER_SECOND -> SpeedUnitKind.METRES_PER_SECOND
@@ -118,12 +118,12 @@ private fun readingText(reading: CardReading, preferences: ReadingPreferences): 
             ReadingText(
                 value = stringResource(if (reading.approximate) R.string.card_value_unit_approximate else R.string.card_value_unit, value, printed),
                 state = if (set != null) stringResource(R.string.card_state_set, state, set) else state,
-                stateColor = if (reading.state == CardCurrentState.SLACK) GoGreen else MaterialTheme.colorScheme.onSurface,
+                stateColor = if (reading.state == CardCurrentState.SLACK) CardGoGreen else MaterialTheme.colorScheme.onSurface,
                 // The arrow points where the water goes; below the neutral speed a dot replaces it.
                 glyph = if (reading.setDegrees != null) "↑" else "•",
                 glyphColor = when {
                     reading.setDegrees == null -> MaterialTheme.colorScheme.onSurfaceVariant
-                    reading.state == CardCurrentState.SLACK -> GoGreen
+                    reading.state == CardCurrentState.SLACK -> CardGoGreen
                     reading.state == CardCurrentState.FLOODING -> FloodBlue
                     else -> EbbAmber
                 },
@@ -137,7 +137,7 @@ private fun readingText(reading: CardReading, preferences: ReadingPreferences): 
             ReadingText(
                 value = null,
                 state = state,
-                stateColor = if (reading.phase == CardCurrentState.SLACK) GoGreen else MaterialTheme.colorScheme.onSurface,
+                stateColor = if (reading.phase == CardCurrentState.SLACK) CardGoGreen else MaterialTheme.colorScheme.onSurface,
                 glyph = when (reading.phase) {
                     CardCurrentState.FLOODING -> "→"
                     CardCurrentState.EBBING -> "←"
@@ -146,7 +146,7 @@ private fun readingText(reading: CardReading, preferences: ReadingPreferences): 
                 glyphColor = when (reading.phase) {
                     CardCurrentState.FLOODING -> FloodBlue
                     CardCurrentState.EBBING -> EbbAmber
-                    CardCurrentState.SLACK -> GoGreen
+                    CardCurrentState.SLACK -> CardGoGreen
                 },
                 glyphRotation = 0f,
                 spoken = state,

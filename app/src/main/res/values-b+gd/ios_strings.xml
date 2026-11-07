@@ -276,4 +276,10 @@
     <string name="tour_next">"Air adhart ›"</string>
     <string name="tour_done">"Deiseil"</string>
     <string name="tour_skip">"Leig seachad"</string>
+    <string name="widget_nearest_section">"An stèisean as fhaisge"</string>
+    <string name="widget_nearest_any">"Stèisean sam bith"</string>
+    <string name="widget_nearest_tide">"Stèisean siùil-mhara"</string>
+    <string name="widget_nearest_current">"Stèisean srutha"</string>
+    <string name="widget_location_hint">"Fosgail Slackwater agus ceadaich cothrom air d’ ionad gus àite faisg ort a lorg."</string>
+    <string name="widget_event_time">"%1$s · %2$s"</string>
 </resources>

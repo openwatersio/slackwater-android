@@ -315,4 +315,5 @@
     <string name="tide_download_failed">"No se ha podido descargar el avance de mareas"</string>
     <string name="tide_download_saved">"Avance de mareas guardado para usar sin conexión"</string>
     <string name="tide_download_edit_failed">"No se ha podido guardar el cambio en tus descargas. Vuelve a intentarlo."</string>
+    <string name="widget_snapshot_time">"Actualizado: %1$s"</string>
 </resources>

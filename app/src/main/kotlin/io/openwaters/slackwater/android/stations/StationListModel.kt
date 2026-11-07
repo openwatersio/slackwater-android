@@ -1,5 +1,8 @@
 package io.openwaters.slackwater.android.stations
 
+import io.openwaters.slackwater.android.widgets.WidgetRefreshWorker
+import io.openwaters.slackwater.android.widgets.cacheWidgetStations
+import io.openwaters.slackwater.android.widgets.hasStationWidgets
 import android.content.Context
 import io.openwaters.slackwater.android.core.prediction.PredictionPurpose
 import io.openwaters.slackwater.android.core.prediction.PredictionResult
@@ -8,6 +11,7 @@ import io.openwaters.slackwater.android.core.station.CardReading
 import io.openwaters.slackwater.android.core.station.approximate
 import io.openwaters.slackwater.android.core.station.blockAt
 import io.openwaters.slackwater.android.core.station.Coordinate
+import io.openwaters.slackwater.android.core.station.LocationPermission
 import io.openwaters.slackwater.android.core.station.LocationSlot
 import io.openwaters.slackwater.android.core.station.RankedStation
 import io.openwaters.slackwater.android.core.station.SearchResults
@@ -162,6 +166,26 @@ class StationListModel internal constructor(
     val tour = TourCoach { launchEdit { listPreferences.markTourSeen() } }
 
     init {
+        scope.launch {
+            var lastPermission: LocationPermission? = null
+            val locationChanges = location.inputs.map { it.permission to it.fix?.coordinate }.distinctUntilChanged()
+            val choices = places.places.orRetrying(SavedPlaces(emptyList(), emptyList())).map { it.chosenIds }.distinctUntilChanged()
+            combine(locationChanges, choices) { fix, _ -> fix }.collect { (permission, coordinate) ->
+                val permissionChanged = lastPermission != permission
+                lastPermission = permission
+                if (hasStationWidgets(app)) {
+                    val changed = try {
+                        cacheWidgetStations(app, coordinate, permission)
+                    } catch (cancelled: CancellationException) {
+                        throw cancelled
+                    } catch (failure: Exception) {
+                        Log.w("Slackwater", "Could not cache nearest widget stations", failure)
+                        false
+                    }
+                    if (permissionChanged || changed) WidgetRefreshWorker.refresh(app)
+                }
+            }
+        }
         // A seen flag that is lost to a corrupt file brings the tour back once, which is the cheaper failure.
         scope.launch {
             val first = preferences.first { it != null } ?: return@launch

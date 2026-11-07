@@ -308,5 +308,6 @@
   "tide_download_restricted": "Venter på et netværk uden begrænsninger",
   "tide_download_failed": "Kunne ikke hente tidevandsoversigten",
   "tide_download_saved": "Tidevandsoversigten er gemt til offlinebrug",
-  "tide_download_edit_failed": "Ændringen af dine downloads kunne ikke gemmes. Prøv igen."
+  "tide_download_edit_failed": "Ændringen af dine downloads kunne ikke gemmes. Prøv igen.",
+  "widget_snapshot_time": "Opdateret %1$s"
 }

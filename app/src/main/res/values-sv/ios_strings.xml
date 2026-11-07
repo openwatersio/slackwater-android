@@ -276,4 +276,10 @@
     <string name="tour_next">"Nästa ›"</string>
     <string name="tour_done">"Klart"</string>
     <string name="tour_skip">"Hoppa över"</string>
+    <string name="widget_nearest_section">"Närmaste station"</string>
+    <string name="widget_nearest_any">"Valfri station"</string>
+    <string name="widget_nearest_tide">"Tidvattenstation"</string>
+    <string name="widget_nearest_current">"Strömstation"</string>
+    <string name="widget_location_hint">"Öppna Slackwater och tillåt platsåtkomst för att hitta en plats i närheten."</string>
+    <string name="widget_event_time">"%1$s · %2$s"</string>
 </resources>

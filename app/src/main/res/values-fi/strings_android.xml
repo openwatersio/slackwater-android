@@ -311,4 +311,5 @@
     <string name="tide_download_failed">"Vuorovesiennusteen esikatselua ei voitu ladata"</string>
     <string name="tide_download_saved">"Vuorovesiennusteen esikatselu tallennettu offline-käyttöön"</string>
     <string name="tide_download_edit_failed">"Latausten muutosta ei voitu tallentaa. Yritä uudelleen."</string>
+    <string name="widget_snapshot_time">"Päivitetty %1$s"</string>
 </resources>

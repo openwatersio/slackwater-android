@@ -1,0 +1,8 @@
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+    <TextView android:id="@+id/widget_event" android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:textColor="#A7DDED" android:textSize="12sp" android:maxLines="2"/>
+    <ImageView android:id="@+id/widget_curve" android:layout_width="match_parent" android:layout_height="0dp"
+        android:layout_weight="1" android:scaleType="fitCenter" android:importantForAccessibility="no"/>
+    <TextView android:id="@+id/widget_stamp" android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:textColor="#BAC9D4" android:textSize="10sp" android:maxLines="2"/>
+</merge>

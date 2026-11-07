@@ -316,5 +316,6 @@
   "tide_download_restricted": "A’ feitheamh ri lìonra gun chuingeachaidhean",
   "tide_download_failed": "Cha b’ urrainn dhuinn ro-shealladh an làin a luchdadh a-nuas",
   "tide_download_saved": "Chaidh ro-shealladh an làin a shàbhaladh airson cleachdadh far loidhne",
-  "tide_download_edit_failed": "Cha deach an t-atharrachadh air na luchdaidhean a-nuas agad a shàbhaladh. Feuch ris a-rithist."
+  "tide_download_edit_failed": "Cha deach an t-atharrachadh air na luchdaidhean a-nuas agad a shàbhaladh. Feuch ris a-rithist.",
+  "widget_snapshot_time": "Air ùrachadh %1$s"
 }

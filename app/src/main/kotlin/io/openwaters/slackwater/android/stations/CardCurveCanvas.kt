@@ -81,7 +81,7 @@ fun CardCurveCanvas(
     }
 }
 
-private fun DrawScope.drawCurve(
+internal fun DrawScope.drawCurve(
     curve: CardCurve,
     measurer: TextMeasurer,
     formatter: DateTimeFormatter,

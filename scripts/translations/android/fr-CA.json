@@ -312,5 +312,6 @@
   "tide_download_restricted": "En attente d’un réseau sans restriction",
   "tide_download_failed": "Impossible de télécharger l’aperçu des marées",
   "tide_download_saved": "Aperçu des marées enregistré pour utilisation hors ligne",
-  "tide_download_edit_failed": "Impossible d’enregistrer cette modification des téléchargements. Réessayez."
+  "tide_download_edit_failed": "Impossible d’enregistrer cette modification des téléchargements. Réessayez.",
+  "widget_snapshot_time": "Mis à jour à %1$s"
 }

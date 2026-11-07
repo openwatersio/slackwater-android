@@ -276,4 +276,10 @@
     <string name="tour_next">"Ar aghaidh ›"</string>
     <string name="tour_done">"Déanta"</string>
     <string name="tour_skip">"Scipeáil"</string>
+    <string name="widget_nearest_section">"An Stáisiún is Gaire"</string>
+    <string name="widget_nearest_any">"Aon Stáisiún"</string>
+    <string name="widget_nearest_tide">"Stáisiún Taoide"</string>
+    <string name="widget_nearest_current">"Stáisiún Srutha"</string>
+    <string name="widget_location_hint">"Oscail Slackwater agus ceadaigh rochtain ar do shuíomh chun áit in aice láimhe a aimsiú."</string>
+    <string name="widget_event_time">"%1$s · %2$s"</string>
 </resources>

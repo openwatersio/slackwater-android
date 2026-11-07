@@ -4,9 +4,9 @@
 
 **Goal:** Ship a native Android Slackwater app whose predictions, station selection, chart interactions, and planning features conform to the iOS product contracts at PR #900, with documented adaptations for Android services.
 
-**Architecture:** A pure Kotlin core owns station capabilities, prediction adapters, time and window math, chart state, and planning rules. Compose, MapLibre, Glance, and Android services consume that core through repositories with explicit coverage and entitlement state. Predictions and Canadian fits run on the device; generated catalogs and certified map fields come from pinned upstream artifacts.
+**Architecture:** A pure Kotlin core owns station capabilities, prediction adapters, time and window math, chart state, and planning rules. Compose, MapLibre, RemoteViews, and Android services consume that core through repositories with explicit coverage and entitlement state. Predictions and Canadian fits run on the device; generated catalogs and certified map fields come from pinned upstream artifacts.
 
-**Tech stack:** Kotlin, Gradle composite builds, JDK 17, Android minSdk 26, Compose/Canvas, coroutines and Flow, DataStore, MapLibre Native, Glance, WorkManager, AlarmManager, Calendar Provider, and Play Billing. Select compatible Android Gradle Plugin, Compose, and library versions in Task 1, lock them in the version catalog, and set compile/target SDK to the release requirements verified at that time.
+**Tech stack:** Kotlin, Gradle composite builds, JDK 17, Android minSdk 26, Compose/Canvas, coroutines and Flow, DataStore, MapLibre Native, RemoteViews, WorkManager, AlarmManager, Calendar Provider, and Play Billing. Select compatible Android Gradle Plugin, Compose, and library versions in Task 1, lock them in the version catalog, and set compile/target SDK to the release requirements verified at that time.
 
 **Spec:** [iOS PR #900](https://github.com/openwatersio/slackwater-ios/pull/900), pinned to `02188f2a2f5ef4166cd74c373a5885736d7ef159`. The [parity ledger](../../ios-parity.md) links every source contract, defines precedence, and records Android adaptations and unresolved upstream designs. Read both documents before implementing a task.
 
@@ -94,7 +94,7 @@ All paths beginning `core/` in the interface table are below the Kotlin core sou
 | Foundation | 1–3, start account work from 18 | A device reads a pinned catalog and produces fixture-matching bundled readings offline. |
 | Phone core | 4–6, 9, 16–17 as their dependencies land | Browsing, detail, scrubber, map pins, links, settings, localization, and accessibility work with bundled data. |
 | Canadian and offline coverage | 7–8, 10 | Preview, fitted, bounded, provisional, derived, and online states are honest through interruption and offline use. |
-| Glance and planning | 11–15 | Free widgets and purchased/free-day planning behavior pass device lifecycle tests. |
+| Widgets and planning | 11–15 | Free widgets and purchased/free-day planning behavior pass device lifecycle tests. |
 | Release | 18 | Source-linked conformance evidence, Play testing, and unresolved-design dispositions are recorded. |
 
 The critical path is Task 1 → database reader → Tasks 2–6. Canadian fitting has a separate upstream dependency; use recorded fixtures to develop its UI while #405 is open, but do not mark its production task complete. Map fields, Play setup, translations, and alert-rule logic can proceed in parallel once their interfaces are stable. Avoid estimates based on issue count; estimate each stage after its first working slice and dependency review.
@@ -248,13 +248,13 @@ Each task should fit a focused PR, or a short sequence of PRs if the listed file
 
 **Issue:** [#11](https://github.com/openwatersio/slackwater-android/issues/11). **Depends on:** 2–3, 6, and internal links from 16; CHS integration follows 7–8.
 
-**Files:** Create `app/.../widgets/StationWidget.kt`, `WidgetConfigurationActivity.kt`, `WidgetRepository.kt`, `WidgetRefreshWorker.kt`; `app/src/test/.../WidgetSnapshotTest.kt`; `app/src/androidTest/.../WidgetConfigurationTest.kt`.
+**Files:** Create `app/.../widgets/StationWidget.kt`, `WidgetConfigurationActivity.kt`, `WidgetRenderer.kt`, `WidgetRefreshWorker.kt`; `app/src/test/.../WidgetSnapshotTest.kt`; `app/src/androidTest/.../WidgetSettingsTest.kt`.
 
 **Interfaces:** Widgets load the same catalog, settings, model compatibility, and shared low-resolution chart scene locally. Configuration stores a concrete station or the source-supported location choice without bypassing location authorization.
 
 - [ ] Test free access, missing configuration, incompatible/provisional models, expired online coverage, units/threshold changes, and tap links containing the whole station ID.
 - [ ] Implement small and wide card surfaces from current-charts §15, including their different spans, reading/set, event times, derived fallback, and window-close countdown only where supported honestly.
-- [ ] Refresh after relevant data/favorite/settings changes and through WorkManager. Android periodic refresh is not an exact iOS widget timeline: record snapshot time and use absolute event times whenever a live timer cannot remain truthful. Validate widget resize and refresh behavior on real launchers. See [Glance lifecycle](https://developer.android.com/develop/ui/compose/glance/glance-app-widget).
+- [ ] Refresh after relevant data/favorite/settings changes and through WorkManager. Android periodic refresh is not an exact iOS widget timeline: record snapshot time and use absolute event times whenever a live timer cannot remain truthful. Validate widget resize and refresh behavior on real launchers. See [widget sizing](https://developer.android.com/develop/ui/views/appwidgets/layouts) and the [launcher check](../../validation/home-widgets.md).
 - [ ] Verify `rtk ./gradlew :app:testDebugUnitTest :app:connectedDebugAndroidTest`; manually verify widgets with the app process absent and network off. A stale countdown must not imply the window remains open.
 - [ ] Commit widgets with no entitlement gate on the home-screen surface.
 

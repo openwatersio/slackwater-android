@@ -319,4 +319,5 @@
     <string name="tide_download_failed">"Cha b’ urrainn dhuinn ro-shealladh an làin a luchdadh a-nuas"</string>
     <string name="tide_download_saved">"Chaidh ro-shealladh an làin a shàbhaladh airson cleachdadh far loidhne"</string>
     <string name="tide_download_edit_failed">"Cha deach an t-atharrachadh air na luchdaidhean a-nuas agad a shàbhaladh. Feuch ris a-rithist."</string>
+    <string name="widget_snapshot_time">"Air ùrachadh %1$s"</string>
 </resources>

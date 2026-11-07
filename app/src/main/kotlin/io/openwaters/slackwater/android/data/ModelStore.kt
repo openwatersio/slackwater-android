@@ -2,6 +2,7 @@ package io.openwaters.slackwater.android.data
 
 import io.openwaters.slackwater.android.calendars.CalendarStateStore
 import android.content.Context
+import io.openwaters.slackwater.android.widgets.WidgetRefreshWorker
 import android.system.ErrnoException
 import android.system.Os
 import android.system.OsConstants
@@ -274,6 +275,7 @@ class ModelStore internal constructor(
                 CalendarStateStore.get(app).invalidate(affected)
             }.also { store ->
                 shared = store
+                scope.launch { store.revision.collect { if (it > 0) WidgetRefreshWorker.refresh(app) } }
                 scope.launch {
                     flow { emit(store.reconcileCurrentTiers()) }.retryAlertReads()
                         .catch { android.util.Log.e("ModelStore", "Could not reconcile current gate caches", it) }

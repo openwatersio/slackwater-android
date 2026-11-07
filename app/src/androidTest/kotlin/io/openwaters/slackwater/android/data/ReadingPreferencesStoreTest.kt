@@ -48,6 +48,19 @@ class ReadingPreferencesStoreTest {
         }
     }
 
+    @Test fun readingEditsRequestWidgetRefreshAfterThePreferenceIsSaved() = withFile { file ->
+        withScope { scope ->
+            var requests = 0
+            val store = ReadingPreferencesStore.open(file, scope, onReadingChanged = { requests++ })
+            store.setSpeedUnit(SpeedUnit.METRES_PER_SECOND)
+            store.setSlackWindowKnots(1.2)
+            val settings = store.preferences.first().getOrThrow()
+            assertEquals(SpeedUnit.METRES_PER_SECOND, settings.speedUnit)
+            assertEquals(1.2, settings.slackWindowKnots, 0.0)
+            assertEquals(2, requests)
+        }
+    }
+
     @Test fun defaultsFollowTheRegionUntilChosen() = withFile { file ->
         withScope { scope ->
             val preferences = ReadingPreferencesStore.open(file, scope).preferences.first().getOrThrow()
