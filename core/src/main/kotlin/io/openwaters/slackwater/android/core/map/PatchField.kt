@@ -103,7 +103,7 @@ class PatchField private constructor(private val triangles: List<PatchTriangle>)
         for (triangle in triangles) {
             if (!triangle.bounds.contains(point.latitude, point.longitude) || !triangleContains(point, triangle.vertices)) continue
             val signed = speed(triangle.anchor) ?: continue
-            return CurrentVector(abs(signed) * triangle.scale, triangle.direction(signed))
+            return CurrentVector(abs(signed) * triangle.scale, triangle.direction(signed).takeUnless { signed == 0.0 })
         }
         return null
     }

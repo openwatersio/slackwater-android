@@ -35,6 +35,7 @@ class PatchFieldTest {
         assertEquals(270.0, cells.first().bearingDeg, 0.0)
         assertEquals(cells.take(1), field.cells(PinBox(48.01, -122.9, 48.02, -122.8)) { -4.0 })
         assertEquals(CurrentVector(2.0, 90.0), field.sample(cells.first().polygon.first()) { 4.0 })
+        assertEquals(CurrentVector(0.0, null), field.sample(cells.first().polygon.first()) { 0.0 })
         assertNull(field.sample(Coordinate(48.9, -122.9)) { error("outside triangle") })
         calls.clear()
         assertTrue(field.cells { calls.add(it); null }.isEmpty())

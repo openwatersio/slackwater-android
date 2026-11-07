@@ -163,7 +163,7 @@ internal fun MapScreen(list: StationListModel, engine: StationMapModel, now: Ins
                 latitude = c.latitude; longitude = c.longitude; zoom = z
             }, onSelect = ::choose, onBasemapStatus = { basemapStatus = it }, modifier = Modifier.fillMaxSize(),
             bottomMarginDp = bottom + 8, styleUrl = styleUrl, localOnly = localOnly,
-            fieldsEnabled = fieldsEnabled, fields = fields)
+            fieldsEnabled = fieldsEnabled, fields = fields, showCurrentStations = filter != StationSeries.Tide)
         Column(Modifier.align(Alignment.TopStart).safeDrawingPadding().padding(8.dp)) {
             Surface(shape = MaterialTheme.shapes.large, tonalElevation = 4.dp) {
                 Row(Modifier.padding(horizontal = 6.dp), verticalAlignment = Alignment.CenterVertically) {

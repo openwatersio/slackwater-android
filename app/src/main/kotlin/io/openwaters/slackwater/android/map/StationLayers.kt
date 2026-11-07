@@ -38,7 +38,7 @@ private fun pinColor(state: String) = when (state) {
 
 private fun size(base: Double) = interpolate(exponential(1.7), zoom(), stop(6, base * 0.4), stop(12.5, base * 1.8))
 
-internal class StationLayers(style: Style, fieldsEnabled: Boolean = true) {
+internal class StationLayers(private val style: Style, fieldsEnabled: Boolean = true) {
     val fields: CurrentFieldLayers?
     private val pins = GeoJsonSource(PINS, FeatureCollection.fromFeatures(emptyList()))
     private val location = GeoJsonSource(FIX, FeatureCollection.fromFeatures(emptyList()))
@@ -88,6 +88,10 @@ internal class StationLayers(style: Style, fieldsEnabled: Boolean = true) {
         }
         style.addLayer(CircleLayer("user-fix", FIX).withProperties(circleColor("#3085ff"),
             circleRadius(6f), circleStrokeColor(Color.WHITE), circleStrokeWidth(2f)))
+    }
+
+    fun showCurrentStations(show: Boolean) {
+        style.getLayer("station-vectors")?.setProperties(visibility(if (show) "visible" else "none"))
     }
 
     fun update(stations: List<StationMapPin>, selected: StationId?) {

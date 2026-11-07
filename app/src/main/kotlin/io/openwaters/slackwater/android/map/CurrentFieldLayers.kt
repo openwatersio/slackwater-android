@@ -37,7 +37,7 @@ internal fun rememberCurrentFieldFeatures(
     revision: Long,
     evaluate: suspend (Instant) -> CurrentFieldFeatures,
 ): CurrentFieldFeatures? {
-    val features by produceState<CurrentFieldFeatures?>(null, Math.floorDiv(at.epochSecond, 60L), revision) {
+    val features by produceState<CurrentFieldFeatures?>(null, at, revision) {
         value = try {
             withContext(Dispatchers.Default) { evaluate(at) }
         } catch (cancelled: CancellationException) {

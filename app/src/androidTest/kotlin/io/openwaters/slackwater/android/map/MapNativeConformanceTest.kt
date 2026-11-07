@@ -106,10 +106,11 @@ class MapNativeConformanceTest {
         val station = StationIdentity(id, "Dodd Narrows", "", center.latitude, center.longitude, StationKind.CanadianCurrent)
         val fields = mutableStateOf<CurrentFieldFeatures?>(CurrentMapFields(emptyList(), emptyList(), center to 0.0).features())
         val selection = AtomicReference<StationId?>()
+        val showCurrents = mutableStateOf(true)
         compose.setContent {
             NativeStationMap(listOf(StationMapPin(station, MapPinState())), null, null, center, 12.5, 0, 0,
                 { _, _, _, _, _, _ -> }, selection::set, {}, modifier = Modifier.fillMaxSize().testTag("map"),
-                localOnly = true, fields = fields.value)
+                localOnly = true, fields = fields.value, showCurrentStations = showCurrents.value)
         }
         val native = AtomicReference<MapLibreMap>()
         compose.runOnIdle {
@@ -136,6 +137,14 @@ class MapNativeConformanceTest {
         }
         compose.onNodeWithTag("map").performTouchInput { click(arrowTap) }
         compose.waitUntil(5_000) { selection.get() == id }
+        compose.runOnIdle { showCurrents.value = false }
+        compose.waitUntil(10_000) {
+            compose.runOnIdle { native.get().queryRenderedFeatures(android.graphics.PointF(arrowTap.x, arrowTap.y), "station-vectors").isEmpty() }
+        }
+        compose.runOnIdle { showCurrents.value = true }
+        compose.waitUntil(10_000) {
+            compose.runOnIdle { native.get().queryRenderedFeatures(android.graphics.PointF(arrowTap.x, arrowTap.y), "station-vectors").isNotEmpty() }
+        }
         compose.runOnIdle { fields.value = null }
         compose.waitUntil(10_000) {
             compose.runOnIdle {

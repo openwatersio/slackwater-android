@@ -92,7 +92,7 @@ class FillField private constructor(private val elements: List<Element>, private
             it.bounds.contains(point.latitude, point.longitude) && triangleContains(point, it.polygon)
         } ?: return null
         val cell = element.cell(Basis(names, time))
-        return CurrentVector(cell.speedKn, cell.bearingDeg)
+        return CurrentVector(cell.speedKn, cell.bearingDeg.takeUnless { cell.speedKn == 0.0 })
     }
 
     fun cells(time: Instant, bbox: PinBox? = null): List<FillCell> {

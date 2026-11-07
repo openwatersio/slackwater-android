@@ -15,7 +15,7 @@ import org.junit.Test
 class CurrentFieldRefreshTest {
     @get:Rule val compose = createComposeRule()
 
-    @Test fun previousFieldRemainsVisibleWhileTheNextMinuteIsEvaluated() {
+    @Test fun previousFieldRemainsVisibleWhileANewTimeIsEvaluated() {
         val time = Instant.parse("2026-11-07T16:00:00Z")
         val clock = mutableStateOf(time)
         val shape = FillCell(listOf(Coordinate(48.0, -123.0), Coordinate(48.0, -122.9), Coordinate(48.1, -123.0)), 2.0, 90.0)
@@ -35,7 +35,7 @@ class CurrentFieldRefreshTest {
             SideEffect { visible.set(frame) }
         }
         compose.waitUntil(10_000) { visible.get() === covered }
-        compose.runOnIdle { clock.value = time.plusSeconds(60) }
+        compose.runOnIdle { clock.value = time.plusSeconds(15) }
         compose.waitUntil(10_000) { nextStarted.isCompleted }
         assertSame(covered, visible.get())
         release.complete(Unit)
