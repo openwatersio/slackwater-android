@@ -2,7 +2,11 @@ package io.openwaters.slackwater.android.stations
 
 import android.content.Context
 import io.openwaters.slackwater.android.core.prediction.PredictionPurpose
+import io.openwaters.slackwater.android.core.prediction.PredictionResult
+import io.openwaters.slackwater.android.core.station.CardCurve
 import io.openwaters.slackwater.android.core.station.CardReading
+import io.openwaters.slackwater.android.core.station.approximate
+import io.openwaters.slackwater.android.core.station.blockAt
 import io.openwaters.slackwater.android.core.station.Coordinate
 import io.openwaters.slackwater.android.core.station.LocationSlot
 import io.openwaters.slackwater.android.core.station.RankedStation
@@ -55,6 +59,9 @@ import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+
+/** What a card shows at one moment: the reading on its right and the curve behind it. */
+data class CardData(val reading: CardReading, val curve: CardCurve?, val approximate: Boolean)
 
 /** The live catalog, loaded once off the main thread. */
 class LoadedCatalog(val stations: List<StationIdentity>) {
@@ -276,14 +283,27 @@ class StationListModel internal constructor(
         else -> false
     }
 
-    /** One card's reading. A station that fails to load reads as unavailable; the card refreshes on the next tick. */
-    suspend fun reading(id: StationId, at: Instant): CardReading = withContext(Dispatchers.Default) {
+    /**
+     * One card at a moment: its reading and its curve, from one prediction load. The curve's slack windows use
+     * [thresholdKnots], the station's effective comfort current as the card last saw it. A station that fails to
+     * load reads as unavailable with no curve; the card refreshes on the next tick.
+     */
+    suspend fun card(id: StationId, at: Instant, thresholdKnots: Double): CardData = withContext(Dispatchers.Default) {
         try {
-            cardReading(predictions.load(id, cardSpan(at), PredictionPurpose.DISPLAY), at)
+            val result = predictions.load(id, cardSpan(at), PredictionPurpose.DISPLAY)
+            // The curve is built on its own, so a failure drawing it never takes the card's reading with it.
+            val curve = try {
+                CardCurve.from(result, at, thresholdKnots)
+            } catch (error: Exception) {
+                if (error is CancellationException) throw error
+                Log.w("Slackwater", "Curve unavailable for ${id.value}", error)
+                null
+            }
+            CardData(cardReading(result, at), curve, result.blockAt(at)?.approximate == true)
         } catch (error: Exception) {
             if (error is CancellationException) throw error
             Log.w("Slackwater", "Reading unavailable for ${id.value}", error)
-            CardReading.Unavailable
+            CardData(CardReading.Unavailable, null, false)
         }
     }
 
@@ -291,8 +311,8 @@ class StationListModel internal constructor(
     suspend fun attribution(id: StationId, at: Instant): String? = withContext(Dispatchers.Default) {
         try {
             when (val result = predictions.load(id, cardSpan(at), PredictionPurpose.DISPLAY)) {
-                is io.openwaters.slackwater.android.core.prediction.PredictionResult.Ready -> result.source
-                is io.openwaters.slackwater.android.core.prediction.PredictionResult.Disjoint -> result.blocks.firstOrNull()?.source
+                is PredictionResult.Ready -> result.source
+                is PredictionResult.Disjoint -> result.blocks.firstOrNull()?.source
                 else -> null
             }
         } catch (error: Exception) {

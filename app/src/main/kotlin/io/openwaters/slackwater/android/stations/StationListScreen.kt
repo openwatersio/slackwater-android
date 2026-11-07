@@ -25,7 +25,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExtendedFloatingActionButton
@@ -218,7 +220,7 @@ private fun LazyListScope.locationSlot(
         }
     }
     items(state.sections.heroes, key = { "hero-${it.id.value}" }) { hero ->
-        StationCard(hero.identity, hero.distanceKm, now, preferences, { model.reading(hero.id, it) }, { onOpen(hero.id) })
+        StationCard(hero.identity, hero.distanceKm, now, preferences, { at, threshold -> model.card(hero.id, at, threshold) }, { onOpen(hero.id) })
     }
 }
 
@@ -273,7 +275,7 @@ private fun LazyListScope.nearMe(
             StationCard(
                 station.identity,
                 station.distanceKm.takeIf { state.sections.showsDistances },
-                now, preferences, { model.reading(station.id, it) }, { onOpen(station.id) },
+                now, preferences, { at, threshold -> model.card(station.id, at, threshold) }, { onOpen(station.id) },
                 actions = listOf(CustomAccessibilityAction(favorite.label) { favorite.onAction(); true }),
             )
         }
@@ -340,7 +342,7 @@ private fun LazyListScope.savedSection(
                 }
                 SwipeRow(leading = leading, trailing = trailing) {
                     StationCard(
-                        station, null, now, preferences, { model.reading(id, it) }, { onOpen(id) },
+                        station, null, now, preferences, { at, threshold -> model.card(id, at, threshold) }, { onOpen(id) },
                         actions = listOfNotNull(leading, trailing).map { action ->
                             CustomAccessibilityAction(action.label) { action.onAction(); true }
                         },
@@ -399,10 +401,11 @@ private fun ReplacementChooser(
         onDismissRequest = onDismiss,
         title = { Text(stringResource(R.string.removed_choose)) },
         text = {
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            // Five cards with curves outgrow a phone's dialog.
+            Column(Modifier.verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text(stringResource(R.string.removed_choose_prompt))
                 for (choice in choices) {
-                    StationCard(choice.identity, null, now, preferences, { model.reading(choice.id, it) }, { onChoose(choice.id) })
+                    StationCard(choice.identity, null, now, preferences, { at, threshold -> model.card(choice.id, at, threshold) }, { onChoose(choice.id) })
                 }
             }
         },
