@@ -53,9 +53,11 @@ class MainActivity : ComponentActivity() {
     private var linkLoad: Job? = null
     private var badLink by mutableStateOf(false)
     // A link still resolving, and whether one has opened a station: either keeps the first-run tour off its own station.
-    private var linkPending by mutableStateOf(false)
+    internal var linkPending by mutableStateOf(false)
+        private set
     private var linkOpened by mutableStateOf(false)
     private var linkGeneration = 0
+    private var navigationEpoch = 0
 
     private fun opened(station: StationId, event: Instant?) {
         destination = DetailDestination(station, event)
@@ -69,17 +71,22 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun handleDestination(intent: Intent) {
-        linkLoad?.cancel()
-        badLink = false
         if (intent.action == Intent.ACTION_VIEW) {
             val link = intent.data
             linkPending = true
             val generation = ++linkGeneration
+            val epoch = navigationEpoch
+            val prior = linkLoad
             linkLoad = lifecycleScope.launch {
                 try {
+                    prior?.join()
+                    if (epoch != navigationEpoch) return@launch
                     val resolved = link?.let { withContext(Dispatchers.IO) { records.destination(it) } }
-                    if (resolved == null) badLink = true
-                    else {
+                    if (epoch != navigationEpoch) return@launch
+                    if (resolved == null) {
+                        if (link?.let { io.openwaters.slackwater.android.detail.internalStationId(it) } == null) badLink = true
+                    } else {
+                        badLink = false
                         setIntent(intent)
                         opened(resolved.first, resolved.second)
                     }
@@ -90,6 +97,9 @@ class MainActivity : ComponentActivity() {
             }
             return
         }
+        navigationEpoch++
+        linkLoad?.cancel()
+        badLink = false
         linkGeneration++
         linkPending = false
         setIntent(intent)

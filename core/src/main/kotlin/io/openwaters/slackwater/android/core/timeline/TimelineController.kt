@@ -25,9 +25,12 @@ data class TimelineState(
     val settled: Boolean = false,
     val onlineDayRequested: LocalDate? = null,
 ) {
-    val home: Boolean get() = Duration.between(now, selected).abs() <= Duration.ofSeconds(200)
+    val home: Boolean get() = isNearSessionNow(selected, now)
     val busy: Boolean get() = awaitingCoverage || motion != TimelineMotion.RESTING || !settled
 }
+
+fun isNearSessionNow(position: Instant, now: Instant): Boolean =
+    Duration.between(now, position).abs() <= Duration.ofSeconds(200)
 
 sealed interface TimelineAction {
     data object Tick : TimelineAction
