@@ -272,4 +272,6 @@
     <string name="notification_eclipse_begins">"Tha an dubhar a’ tòiseachadh"</string>
     <string name="notification_rise">"Ag èirigh seachad air %1$s m"</string>
     <string name="notification_fall">"A\' tuiteam fo %1$s m"</string>
+    <string name="curve_spoken">"Lùb 25 uairean: %1$s"</string>
+    <string name="curve_spoken_item">"%1$s aig %2$s"</string>
 </resources>

@@ -229,4 +229,6 @@
     <string name="close">"Dùin"</string>
     <string name="notification_high">"Muir-làn"</string>
     <string name="notification_low">"Muir-tràigh"</string>
+    <string name="curve_spoken_flood">"Lìonadh"</string>
+    <string name="curve_spoken_ebb">"Tràghadh"</string>
 </resources>

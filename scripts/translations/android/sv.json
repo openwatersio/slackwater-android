@@ -261,5 +261,7 @@
   "notification_window_opens": "Perioden med svag ström börjar",
   "notification_eclipse_begins": "Förmörkelsen börjar",
   "notification_rise": "Stigande förbi %1$s m",
-  "notification_fall": "Fallande förbi %1$s m"
+  "notification_fall": "Fallande förbi %1$s m",
+  "curve_spoken": "25-timmarskurva: %1$s",
+  "curve_spoken_item": "%1$s kl. %2$s"
 }

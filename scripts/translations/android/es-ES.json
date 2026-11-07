@@ -265,5 +265,7 @@
   "notification_window_opens": "Se abre la ventana de estoa",
   "notification_eclipse_begins": "Comienza el eclipse",
   "notification_rise": "Subiendo por encima de %1$s m",
-  "notification_fall": "Bajando por debajo de %1$s m"
+  "notification_fall": "Bajando por debajo de %1$s m",
+  "curve_spoken": "Curva de 25 horas: %1$s",
+  "curve_spoken_item": "%1$s a las %2$s"
 }

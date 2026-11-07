@@ -264,4 +264,6 @@
     <string name="notification_eclipse_begins">"Pimennys alkaa"</string>
     <string name="notification_rise">"Nousee yli %1$s m"</string>
     <string name="notification_fall">"Laskee alle %1$s m"</string>
+    <string name="curve_spoken">"25 tunnin käyrä: %1$s"</string>
+    <string name="curve_spoken_item">"%1$s klo %2$s"</string>
 </resources>

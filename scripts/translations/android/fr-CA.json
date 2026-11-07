@@ -265,5 +265,7 @@
   "notification_window_opens": "La fenêtre d’étale s’ouvre",
   "notification_eclipse_begins": "L’éclipse commence",
   "notification_rise": "Franchissement de %1$s m à la montée",
-  "notification_fall": "Franchissement de %1$s m à la descente"
+  "notification_fall": "Franchissement de %1$s m à la descente",
+  "curve_spoken": "Courbe de 25 heures : %1$s",
+  "curve_spoken_item": "%1$s à %2$s"
 }

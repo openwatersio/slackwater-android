@@ -261,5 +261,7 @@
   "notification_window_opens": "Slack window opens",
   "notification_eclipse_begins": "Eclipse begins",
   "notification_rise": "Rising past %1$s m",
-  "notification_fall": "Falling past %1$s m"
+  "notification_fall": "Falling past %1$s m",
+  "curve_spoken": "25-hour curve: %1$s",
+  "curve_spoken_item": "%1$s at %2$s"
 }

@@ -229,4 +229,6 @@
     <string name="close">"Fermer"</string>
     <string name="notification_high">"Marée haute"</string>
     <string name="notification_low">"Marée basse"</string>
+    <string name="curve_spoken_flood">"flot"</string>
+    <string name="curve_spoken_ebb">"jusant"</string>
 </resources>

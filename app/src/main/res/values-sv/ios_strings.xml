@@ -229,4 +229,6 @@
     <string name="close">"Stäng"</string>
     <string name="notification_high">"Högvatten"</string>
     <string name="notification_low">"Lågvatten"</string>
+    <string name="curve_spoken_flood">"Flod"</string>
+    <string name="curve_spoken_ebb">"Ebb"</string>
 </resources>

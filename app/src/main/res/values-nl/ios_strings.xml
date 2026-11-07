@@ -229,4 +229,6 @@
     <string name="close">"Sluiten"</string>
     <string name="notification_high">"Hoogwater"</string>
     <string name="notification_low">"Laagwater"</string>
+    <string name="curve_spoken_flood">"Vloedstroom"</string>
+    <string name="curve_spoken_ebb">"Ebstroom"</string>
 </resources>

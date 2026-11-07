@@ -229,4 +229,6 @@
     <string name="close">"閉じる"</string>
     <string name="notification_high">"満潮"</string>
     <string name="notification_low">"干潮"</string>
+    <string name="curve_spoken_flood">"上げ潮流"</string>
+    <string name="curve_spoken_ebb">"下げ潮流"</string>
 </resources>

@@ -229,4 +229,6 @@
     <string name="close">"Sulje"</string>
     <string name="notification_high">"Ylävesi"</string>
     <string name="notification_low">"Alavesi"</string>
+    <string name="curve_spoken_flood">"Nousuvirtaus"</string>
+    <string name="curve_spoken_ebb">"Laskuvirtaus"</string>
 </resources>

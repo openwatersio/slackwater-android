@@ -100,7 +100,7 @@ fun SearchOverlay(model: StationListModel, now: Instant, onOpen: (StationId) -> 
                 }
                 // Results show no distance and have no swipe actions.
                 items(current?.results?.stations.orEmpty(), key = { it.id.value }) { result ->
-                    StationCard(result.identity, null, now, preferences, { model.reading(result.id, it) }, { onOpen(result.id) })
+                    StationCard(result.identity, null, now, preferences, { at, threshold -> model.card(result.id, at, threshold) }, { onOpen(result.id) })
                 }
             }
             Column(Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {

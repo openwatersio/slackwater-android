@@ -273,5 +273,7 @@
   "notification_window_opens": "Tosaíonn tréimhse fáfaill",
   "notification_eclipse_begins": "Tosaíonn an t-urú",
   "notification_rise": "Ag ardú thar %1$s m",
-  "notification_fall": "Ag titim faoi %1$s m"
+  "notification_fall": "Ag titim faoi %1$s m",
+  "curve_spoken": "Cuar 25 uair an chloig: %1$s",
+  "curve_spoken_item": "%1$s ag %2$s"
 }

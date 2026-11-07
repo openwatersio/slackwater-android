@@ -268,4 +268,6 @@
     <string name="notification_eclipse_begins">"Comienza el eclipse"</string>
     <string name="notification_rise">"Subiendo por encima de %1$s m"</string>
     <string name="notification_fall">"Bajando por debajo de %1$s m"</string>
+    <string name="curve_spoken">"Curva de 25 horas: %1$s"</string>
+    <string name="curve_spoken_item">"%1$s a las %2$s"</string>
 </resources>

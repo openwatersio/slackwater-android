@@ -264,4 +264,6 @@
     <string name="notification_eclipse_begins">"월식이 시작됩니다"</string>
     <string name="notification_rise">"%1$s m를 넘으며 상승"</string>
     <string name="notification_fall">"%1$s m 아래로 하강"</string>
+    <string name="curve_spoken">"25시간 곡선: %1$s"</string>
+    <string name="curve_spoken_item">"%2$s의 %1$s"</string>
 </resources>

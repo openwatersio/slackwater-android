@@ -229,4 +229,6 @@
     <string name="close">"Schließen"</string>
     <string name="notification_high">"Hochwasser"</string>
     <string name="notification_low">"Niedrigwasser"</string>
+    <string name="curve_spoken_flood">"Flutstrom"</string>
+    <string name="curve_spoken_ebb">"Ebbstrom"</string>
 </resources>

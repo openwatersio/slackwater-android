@@ -261,5 +261,7 @@
   "notification_window_opens": "Het kenteringsvenster begint",
   "notification_eclipse_begins": "De verduistering begint",
   "notification_rise": "Stijgend boven %1$s m",
-  "notification_fall": "Dalend onder %1$s m"
+  "notification_fall": "Dalend onder %1$s m",
+  "curve_spoken": "25-uurscurve: %1$s",
+  "curve_spoken_item": "%1$s om %2$s"
 }

@@ -276,4 +276,6 @@
     <string name="notification_eclipse_begins">"Tosaíonn an t-urú"</string>
     <string name="notification_rise">"Ag ardú thar %1$s m"</string>
     <string name="notification_fall">"Ag titim faoi %1$s m"</string>
+    <string name="curve_spoken">"Cuar 25 uair an chloig: %1$s"</string>
+    <string name="curve_spoken_item">"%1$s ag %2$s"</string>
 </resources>

@@ -264,4 +264,6 @@
     <string name="notification_eclipse_begins">"De verduistering begint"</string>
     <string name="notification_rise">"Stijgend boven %1$s m"</string>
     <string name="notification_fall">"Dalend onder %1$s m"</string>
+    <string name="curve_spoken">"25-uurscurve: %1$s"</string>
+    <string name="curve_spoken_item">"%1$s om %2$s"</string>
 </resources>

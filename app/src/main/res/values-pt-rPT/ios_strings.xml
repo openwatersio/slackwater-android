@@ -229,4 +229,6 @@
     <string name="close">"Fechar"</string>
     <string name="notification_high">"Preia-mar"</string>
     <string name="notification_low">"Baixa-mar"</string>
+    <string name="curve_spoken_flood">"Enchente"</string>
+    <string name="curve_spoken_ebb">"Vazante"</string>
 </resources>

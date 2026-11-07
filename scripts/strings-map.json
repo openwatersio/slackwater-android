@@ -1350,6 +1350,22 @@
       "name": "notification_low",
       "key": "Low tide",
       "english": "Low tide"
+    },
+    {
+      "name": "curve_spoken_flood",
+      "key": "Flood",
+      "english": "flood",
+      "overrides": {
+        "fr-CA": "flot"
+      }
+    },
+    {
+      "name": "curve_spoken_ebb",
+      "key": "Ebb",
+      "english": "ebb",
+      "overrides": {
+        "fr-CA": "jusant"
+      }
     }
   ],
   "androidDirectory": "scripts/translations/android"

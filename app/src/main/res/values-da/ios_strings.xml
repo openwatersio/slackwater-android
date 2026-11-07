@@ -229,4 +229,6 @@
     <string name="close">"Luk"</string>
     <string name="notification_high">"Højvande"</string>
     <string name="notification_low">"Lavvande"</string>
+    <string name="curve_spoken_flood">"Flod"</string>
+    <string name="curve_spoken_ebb">"Ebbe"</string>
 </resources>

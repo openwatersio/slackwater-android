@@ -229,4 +229,6 @@
     <string name="close">"Dún"</string>
     <string name="notification_high">"Lán mara"</string>
     <string name="notification_low">"Lag trá"</string>
+    <string name="curve_spoken_flood">"Tuile"</string>
+    <string name="curve_spoken_ebb">"Aife"</string>
 </resources>

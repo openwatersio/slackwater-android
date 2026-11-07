@@ -261,5 +261,7 @@
   "notification_window_opens": "潮止まり時間帯が始まります",
   "notification_eclipse_begins": "月食が始まります",
   "notification_rise": "%1$s mを超えて上昇",
-  "notification_fall": "%1$s mを下回って下降"
+  "notification_fall": "%1$s mを下回って下降",
+  "curve_spoken": "25時間の曲線：%1$s",
+  "curve_spoken_item": "%2$sの%1$s"
 }

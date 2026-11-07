@@ -264,4 +264,6 @@
     <string name="notification_eclipse_begins">"Förmörkelsen börjar"</string>
     <string name="notification_rise">"Stigande förbi %1$s m"</string>
     <string name="notification_fall">"Fallande förbi %1$s m"</string>
+    <string name="curve_spoken">"25-timmarskurva: %1$s"</string>
+    <string name="curve_spoken_item">"%1$s kl. %2$s"</string>
 </resources>

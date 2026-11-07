@@ -261,5 +261,7 @@
   "notification_window_opens": "정조 시간대가 시작됩니다",
   "notification_eclipse_begins": "월식이 시작됩니다",
   "notification_rise": "%1$s m를 넘으며 상승",
-  "notification_fall": "%1$s m 아래로 하강"
+  "notification_fall": "%1$s m 아래로 하강",
+  "curve_spoken": "25시간 곡선: %1$s",
+  "curve_spoken_item": "%2$s의 %1$s"
 }

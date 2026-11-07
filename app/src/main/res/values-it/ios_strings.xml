@@ -229,4 +229,6 @@
     <string name="close">"Chiudi"</string>
     <string name="notification_high">"Alta marea"</string>
     <string name="notification_low">"Bassa marea"</string>
+    <string name="curve_spoken_flood">"Flusso"</string>
+    <string name="curve_spoken_ebb">"Riflusso"</string>
 </resources>

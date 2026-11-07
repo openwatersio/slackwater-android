@@ -261,5 +261,7 @@
   "notification_window_opens": "Heikon virtauksen jakso alkaa",
   "notification_eclipse_begins": "Pimennys alkaa",
   "notification_rise": "Nousee yli %1$s m",
-  "notification_fall": "Laskee alle %1$s m"
+  "notification_fall": "Laskee alle %1$s m",
+  "curve_spoken": "25 tunnin käyrä: %1$s",
+  "curve_spoken_item": "%1$s klo %2$s"
 }

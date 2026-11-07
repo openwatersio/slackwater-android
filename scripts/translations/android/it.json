@@ -265,5 +265,7 @@
   "notification_window_opens": "Si apre la finestra di stanca",
   "notification_eclipse_begins": "Inizia l’eclissi",
   "notification_rise": "In salita oltre %1$s m",
-  "notification_fall": "In discesa sotto %1$s m"
+  "notification_fall": "In discesa sotto %1$s m",
+  "curve_spoken": "Curva di 25 ore: %1$s",
+  "curve_spoken_item": "%1$s alle %2$s"
 }

@@ -76,7 +76,9 @@ class DetailConformanceTest {
         compose.setContent { StationDetailScreen(StationListModel.get(context), StationId("kartverket/ANX"), now, null, {}, {}) }
         val credit = hasText("Harmonic constants from Kartverket", substring = true)
         compose.waitUntil(60_000) { compose.onAllNodes(credit).fetchSemanticsNodes().isNotEmpty() }
-        compose.onNode(credit).performScrollTo().assertIsDisplayed()
+        // Nearby cards can grow while their predictions load above the footer.
+        compose.waitUntil(10_000) { compose.onNode(credit).performScrollTo().isDisplayed() }
+        compose.onNode(credit).assertIsDisplayed()
     }
 
     @Test fun waitingPageFillsInWithoutReopeningTheStation() {

@@ -229,4 +229,6 @@
     <string name="close">"닫기"</string>
     <string name="notification_high">"만조"</string>
     <string name="notification_low">"간조"</string>
+    <string name="curve_spoken_flood">"창조"</string>
+    <string name="curve_spoken_ebb">"낙조"</string>
 </resources>

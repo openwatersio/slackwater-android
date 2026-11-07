@@ -269,5 +269,7 @@
   "notification_window_opens": "Tha tràth marbh-shruth a’ tòiseachadh",
   "notification_eclipse_begins": "Tha an dubhar a’ tòiseachadh",
   "notification_rise": "Ag èirigh seachad air %1$s m",
-  "notification_fall": "A' tuiteam fo %1$s m"
+  "notification_fall": "A' tuiteam fo %1$s m",
+  "curve_spoken": "Lùb 25 uairean: %1$s",
+  "curve_spoken_item": "%1$s aig %2$s"
 }

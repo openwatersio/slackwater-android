@@ -229,4 +229,6 @@
     <string name="close">"Close"</string>
     <string name="notification_high">"High tide"</string>
     <string name="notification_low">"Low tide"</string>
+    <string name="curve_spoken_flood">"flood"</string>
+    <string name="curve_spoken_ebb">"ebb"</string>
 </resources>

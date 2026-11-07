@@ -229,4 +229,6 @@
     <string name="close">"Lukk"</string>
     <string name="notification_high">"Høyvann"</string>
     <string name="notification_low">"Lavvann"</string>
+    <string name="curve_spoken_flood">"Inngående"</string>
+    <string name="curve_spoken_ebb">"Utgående"</string>
 </resources>

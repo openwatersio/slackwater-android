@@ -229,4 +229,6 @@
     <string name="close">"Cerrar"</string>
     <string name="notification_high">"Pleamar"</string>
     <string name="notification_low">"Bajamar"</string>
+    <string name="curve_spoken_flood">"Flujo"</string>
+    <string name="curve_spoken_ebb">"Reflujo"</string>
 </resources>
