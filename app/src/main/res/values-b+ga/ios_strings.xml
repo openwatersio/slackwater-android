@@ -245,4 +245,19 @@
     <string name="gate_peak_speed">"Ba é %1$s %2$s airmheán na difríochta idir buaicluas an fheistithe agus CHS sa ráithe ba mheasa."</string>
     <string name="gate_unknown">"Níor éirigh leis an bhfeistiú ar an ngléas sa bhailíochtú anseo. Úsáideann Slackwater réamhaisnéisí CHS."</string>
     <string name="gate_too_few">"Ní raibh dóthain imeachtaí CHS ann chun an feistiú ar an ngléas a bhailíochtú i ngach ráithe."</string>
+    <string name="tour_read_title">"An stiall a léamh"</string>
+    <string name="tour_read">"Léiríonn an lárlíne an nóiméad a thaispeántar thíos."</string>
+    <string name="tour_swipe_title">"Svaidhpeáil chun tuilleadh a fheiceáil"</string>
+    <string name="tour_swipe">"Svaidhpeáil an cuar chun bogadh tríd an am."</string>
+    <string name="tour_stars_title">"An spéir fhíor"</string>
+    <string name="tour_stars">"Sin iad na fíorréaltaí os cionn %1$s anocht."</string>
+    <string name="tour_moon_title">"An ghealach"</string>
+    <string name="tour_moon">"Agus sin í an ghealach fhíor, ina céim anocht."</string>
+    <string name="tour_moon_card_title">"Sonraí na gealaí"</string>
+    <string name="tour_moon_card">"Tapáil an ghealach chun a héirí, a luí agus a céim a fheiceáil."</string>
+    <string name="tour_star_title">"Ceanáin"</string>
+    <string name="tour_star">"Cuir réalta le stáisiún chun é a choinneáil ag barr do liosta."</string>
+    <string name="tour_next">"Ar aghaidh ›"</string>
+    <string name="tour_done">"Déanta"</string>
+    <string name="tour_skip">"Scipeáil"</string>
 </resources>

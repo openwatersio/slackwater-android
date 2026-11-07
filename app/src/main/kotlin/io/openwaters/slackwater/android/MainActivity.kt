@@ -50,6 +50,16 @@ class MainActivity : ComponentActivity() {
     private val records by lazy { DetailRecords(assets) }
     private var linkLoad: Job? = null
     private var badLink by mutableStateOf(false)
+    // A link still resolving, and whether one has opened a station: either keeps the first-run tour off its own station.
+    private var linkPending by mutableStateOf(false)
+    private var linkOpened by mutableStateOf(false)
+    private var linkGeneration = 0
+
+    private fun opened(station: StationId, event: Instant?) {
+        destination = DetailDestination(station, event)
+        linkOpened = true
+        StationListModel.get(this).tour.handOff(station)
+    }
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
@@ -61,18 +71,28 @@ class MainActivity : ComponentActivity() {
         badLink = false
         if (intent.action == Intent.ACTION_VIEW) {
             val link = intent.data
+            linkPending = true
+            val generation = ++linkGeneration
             linkLoad = lifecycleScope.launch {
-                val resolved = link?.let { withContext(Dispatchers.IO) { records.destination(it) } }
-                if (resolved == null) badLink = true
-                else {
-                    setIntent(intent)
-                    destination = DetailDestination(resolved.first, resolved.second)
+                try {
+                    val resolved = link?.let { withContext(Dispatchers.IO) { records.destination(it) } }
+                    if (resolved == null) badLink = true
+                    else {
+                        setIntent(intent)
+                        opened(resolved.first, resolved.second)
+                    }
+                } finally {
+                    // A newer link may be resolving; only the latest clears the flag.
+                    if (generation == linkGeneration) linkPending = false
                 }
             }
             return
         }
+        linkGeneration++
+        linkPending = false
         setIntent(intent)
-        destination = AlertDestination.read(intent)?.let { DetailDestination(it.station, it.event) }
+        val alert = AlertDestination.read(intent)
+        if (alert != null) opened(alert.station, alert.event) else destination = null
         if (intent.action == CalendarContract.ACTION_HANDLE_CUSTOM_EVENT) {
             setResult(if (destination == null) RESULT_CANCELED else RESULT_OK)
         }
@@ -138,7 +158,8 @@ class MainActivity : ComponentActivity() {
                     // The list stays composed under an alert's destination, so its scroll, search and page survive.
                     Box(if (destination == null) Modifier.fillMaxSize() else Modifier.fillMaxSize().clearAndSetSemantics {}) {
                         StationsHome(onCredits = { showCredits = true }, coveredByAlert = destination != null, externalMapFocus = focusMap,
-                            consumeFocus = { focusMap = null }, onSettings = { chartSettings = true }) {
+                            consumeFocus = { focusMap = null }, onSettings = { chartSettings = true },
+                            linkPending = linkPending, linkOpened = linkOpened) {
                             TextButton(onClick = { showDownloads = true }) { Text(stringResource(R.string.chart_downloads)) }
                             TextButton(onClick = { chartSettings = true }) { Text(stringResource(R.string.detail_chart_settings)) }
                             var showQueries by remember { mutableStateOf(false) }

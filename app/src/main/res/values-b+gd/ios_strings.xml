@@ -245,4 +245,19 @@
     <string name="gate_peak_speed">"B’ e %1$s %2$s meadhan an eadar-dhealachaidh eadar an luaths as àirde aig an fhreagarrachadh agus CHS sa chairteal a bu mhiosa."</string>
     <string name="gate_unknown">"Cha deach leis an fhreagarrachadh air an uidheam san dearbhadh an seo. Cleachdaidh Slackwater ro-aithrisean CHS."</string>
     <string name="gate_too_few">"Cha robh tachartasan CHS gu leòr ann gus am freagarrachadh air an uidheam a dhearbhadh anns gach cairteal."</string>
+    <string name="tour_read_title">"A’ leughadh na stiall"</string>
+    <string name="tour_read">"Tha an loidhne mheadhain a’ comharrachadh na h-ùine a chithear gu h-ìosal."</string>
+    <string name="tour_swipe_title">"Slaod airson barrachd fhaicinn"</string>
+    <string name="tour_swipe">"Slaod an lùb gus gluasad tro thìde."</string>
+    <string name="tour_stars_title">"An fhìor speur"</string>
+    <string name="tour_stars">"Sin na fìor rionnagan os cionn %1$s a-nochd."</string>
+    <string name="tour_moon_title">"A’ ghealach"</string>
+    <string name="tour_moon">"Agus sin an fhìor ghealach, aig ìre na h-oidhche seo."</string>
+    <string name="tour_moon_card_title">"Fiosrachadh na gealaich"</string>
+    <string name="tour_moon_card">"Thoir gnogag air a’ ghealaich airson a h-èirigh, a laighe agus a h-ìre fhaicinn."</string>
+    <string name="tour_star_title">"Annsachdan"</string>
+    <string name="tour_star">"Cuir rionnag ri stèisean gus a chumail aig mullach do liosta."</string>
+    <string name="tour_next">"Air adhart ›"</string>
+    <string name="tour_done">"Deiseil"</string>
+    <string name="tour_skip">"Leig seachad"</string>
 </resources>

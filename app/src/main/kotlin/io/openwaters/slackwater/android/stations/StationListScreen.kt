@@ -89,45 +89,17 @@ fun StationListScreen(
     now: Instant,
     showing: Boolean = true,
     onMap: (() -> Unit)? = null,
+    /** Raises the location prompt; a host that asks from above the list passes its own. */
+    onAsk: (() -> Unit)? = null,
     footerExtras: @Composable () -> Unit = {},
 ) {
     val context = LocalContext.current
-    val activity = context as? ComponentActivity
-    val lifecycle = LocalLifecycleOwner.current.lifecycle
-    var permissionResult by remember { mutableLongStateOf(0L) }
-    LaunchedEffect(permissionResult, lifecycle) {
-        if (permissionResult > 0) lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) { model.refreshLocation() }
-    }
     val state by model.state.collectAsState()
     val readingPreferences by model.readingPreferences.collectAsState()
-    val listPreferences by model.preferences.collectAsState()
     val catalogFailed by model.catalogFailed.collectAsState()
     var chooser by androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf<String?>(null) }
     val listState = rememberLazyListState()
-
-    // The prompt's answer, read against the rationale flag around it, says whether the system will ask again.
-    var promptStarted by remember { mutableLongStateOf(0L) }
-    var rationaleBefore by remember { mutableStateOf(false) }
-    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { grants ->
-        val granted = grants.values.any { it }
-        val rationaleAfter = activity?.let { a -> locationPermissions.any { ActivityCompat.shouldShowRequestPermissionRationale(a, it) } } ?: false
-        model.location.promptAnswered(promptRefused(granted, rationaleBefore, rationaleAfter, SystemClock.elapsedRealtime() - promptStarted))
-        permissionResult++
-    }
-    fun ask() {
-        rationaleBefore = activity?.let { a -> locationPermissions.any { ActivityCompat.shouldShowRequestPermissionRationale(a, it) } } ?: false
-        promptStarted = SystemClock.elapsedRealtime()
-        model.locationPromptShown()
-        launcher.launch(locationPermissions)
-    }
-
-    // The list asks for location once, on its first appearance on a first launch, and never again. It waits for
-    // the stored flag, so a slow read never looks like a first launch.
-    val asked = listPreferences?.locationAsked
-    // Never over a page, search or an alert's screen: it waits until the list itself is showing.
-    LaunchedEffect(state != null, asked, showing) {
-        if (showing && state != null && asked != null && model.claimLocationAsk(asked)) ask()
-    }
+    val ask = onAsk ?: rememberLocationAsk(model, showing)
 
     val current = state
     Box(Modifier.fillMaxSize()) {
@@ -144,7 +116,7 @@ fun StationListScreen(
                     }
                 }
             } else {
-                locationSlot(current, model, readingPreferences, now, onOpen, onAsk = ::ask, onSettings = {
+                locationSlot(current, model, readingPreferences, now, onOpen, onAsk = ask, onSettings = {
                     context.startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.fromParts("package", context.packageName, null)))
                 })
                 savedSection(R.string.list_favorites, current.sections.favorites, current, model, readingPreferences, now, onOpen,
@@ -428,4 +400,43 @@ private fun LazyListScope.footer(onCredits: () -> Unit, extras: @Composable () -
             Text(stringResource(R.string.list_not_for_navigation), style = MaterialTheme.typography.bodySmall)
         }
     }
+}
+
+/**
+ * The system location prompt and its answer, read against the rationale flag around it. The prompt is raised once,
+ * on a first launch, the first time [allowed] holds, and never again; it waits for the stored flag, so a slow read
+ * never looks like a first launch. The returned function raises it on demand, as "Find tides near me" does.
+ */
+@Composable
+fun rememberLocationAsk(model: StationListModel, allowed: Boolean): () -> Unit {
+    val context = LocalContext.current
+    val activity = context as? ComponentActivity
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
+    var permissionResult by remember { mutableLongStateOf(0L) }
+    LaunchedEffect(permissionResult, lifecycle) {
+        if (permissionResult > 0) lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) { model.refreshLocation() }
+    }
+    val state by model.state.collectAsState()
+    val listPreferences by model.preferences.collectAsState()
+    var promptStarted by remember { mutableLongStateOf(0L) }
+    var rationaleBefore by remember { mutableStateOf(false) }
+    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { grants ->
+        val granted = grants.values.any { it }
+        val rationaleAfter = activity?.let { a -> locationPermissions.any { ActivityCompat.shouldShowRequestPermissionRationale(a, it) } } ?: false
+        model.location.promptAnswered(promptRefused(granted, rationaleBefore, rationaleAfter, SystemClock.elapsedRealtime() - promptStarted))
+        permissionResult++
+    }
+    val ask = remember(launcher, activity) {
+        {
+            rationaleBefore = activity?.let { a -> locationPermissions.any { ActivityCompat.shouldShowRequestPermissionRationale(a, it) } } ?: false
+            promptStarted = SystemClock.elapsedRealtime()
+            model.locationPromptShown()
+            launcher.launch(locationPermissions)
+        }
+    }
+    val asked = listPreferences?.locationAsked
+    LaunchedEffect(state != null, asked, allowed) {
+        if (allowed && state != null && asked != null && model.claimLocationAsk(asked)) ask()
+    }
+    return ask
 }
