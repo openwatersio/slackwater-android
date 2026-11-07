@@ -231,4 +231,18 @@
     <string name="notification_low">"Lågvatten"</string>
     <string name="curve_spoken_flood">"Flod"</string>
     <string name="curve_spoken_ebb">"Ebb"</string>
+    <string name="gate_slow_reversal">"Strömmen här vänder långsamt, vilket gör strömkantring svårare att förutsäga."</string>
+    <string name="gate_tidal_falls">"Här finns tidvattenfall som byter riktning."</string>
+    <string name="gate_rapids">"Här finns tidvattenforsar."</string>
+    <string name="gate_no_evidence">"En anpassning på enheten har inte validerats här. Slackwater använder CHS prognoser."</string>
+    <string name="gate_near_bar">"Anpassningen på enheten är nära valideringsgränsen. Slackwater använder CHS prognoser tills den klarar den konsekvent."</string>
+    <string name="gate_reversed_axis">"Anpassningen på enheten förutsade fel strömriktning vid %1$s%% av strömtopparna under den sämsta veckan."</string>
+    <string name="gate_invented_slack">"Det årliga antalet strömkantringar från anpassningen som saknades i CHS prognoser var %1$d."</string>
+    <string name="gate_missed_slack">"Det årliga antalet CHS-strömkantringar som anpassningen missade var %1$d."</string>
+    <string name="gate_slack_worst">"Anpassningen på enheten avvek från CHS prognoser för strömkantring med upp till %1$s min under ett år."</string>
+    <string name="gate_slack_median">"Anpassningens mediantidsskillnad mot CHS för strömkantring var %1$s min under det sämsta kvartalet."</string>
+    <string name="gate_extremum_timing">"Anpassningens mediantidsskillnad mot CHS för strömtoppar var %1$s min under det sämsta kvartalet."</string>
+    <string name="gate_peak_speed">"Anpassningens medianhastighetsskillnad mot CHS för strömtoppar var %1$s %2$s under det sämsta kvartalet."</string>
+    <string name="gate_unknown">"Anpassningen på enheten klarade inte valideringen här. Slackwater använder CHS prognoser."</string>
+    <string name="gate_too_few">"Det fanns inte tillräckligt med CHS-händelser för att validera anpassningen på enheten varje kvartal."</string>
 </resources>

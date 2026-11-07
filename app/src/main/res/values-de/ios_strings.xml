@@ -231,4 +231,18 @@
     <string name="notification_low">"Niedrigwasser"</string>
     <string name="curve_spoken_flood">"Flutstrom"</string>
     <string name="curve_spoken_ebb">"Ebbstrom"</string>
+    <string name="gate_slow_reversal">"Die Strömung kehrt hier langsam um, was Stillwasser schwerer vorhersagbar macht."</string>
+    <string name="gate_tidal_falls">"Hier gibt es umkehrende Gezeitenwasserfälle."</string>
+    <string name="gate_rapids">"Hier gibt es Gezeitenstromschnellen."</string>
+    <string name="gate_no_evidence">"Eine Geräteanpassung wurde hier noch nicht validiert. Slackwater verwendet CHS-Vorhersagen."</string>
+    <string name="gate_near_bar">"Die Geräteanpassung liegt nahe an der Validierungsgrenze. Slackwater verwendet CHS-Vorhersagen, bis sie die Prüfung dauerhaft besteht."</string>
+    <string name="gate_reversed_axis">"Die Geräteanpassung sagte in ihrer schlechtesten Woche bei %1$s%% der Strömungsmaxima die falsche Fließrichtung voraus."</string>
+    <string name="gate_invented_slack">"Die jährliche Anzahl der von der Geräteanpassung vorhergesagten, bei CHS fehlenden Stillwasser betrug %1$d."</string>
+    <string name="gate_missed_slack">"Die jährliche Anzahl der von der Geräteanpassung verpassten CHS-Stillwasser betrug %1$d."</string>
+    <string name="gate_slack_worst">"Die Geräteanpassung wich über ein Jahr um bis zu %1$s Min. von den CHS-Stillwasservorhersagen ab."</string>
+    <string name="gate_slack_median">"Die mediane Zeitabweichung der Geräteanpassung von CHS beim Stillwasser betrug im schlechtesten Quartal %1$s Min."</string>
+    <string name="gate_extremum_timing">"Die mediane Zeitabweichung der Geräteanpassung von CHS bei Strömungsmaxima betrug im schlechtesten Quartal %1$s Min."</string>
+    <string name="gate_peak_speed">"Die mediane Geschwindigkeitsabweichung der Geräteanpassung von CHS bei Strömungsmaxima betrug im schlechtesten Quartal %1$s %2$s."</string>
+    <string name="gate_unknown">"Die Geräteanpassung bestand hier die Validierung nicht. Slackwater verwendet CHS-Vorhersagen."</string>
+    <string name="gate_too_few">"Es gab nicht genügend CHS-Ereignisse, um die Geräteanpassung in jedem Quartal zu validieren."</string>
 </resources>

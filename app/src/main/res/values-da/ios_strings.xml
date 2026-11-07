@@ -231,4 +231,18 @@
     <string name="notification_low">"Lavvande"</string>
     <string name="curve_spoken_flood">"Flod"</string>
     <string name="curve_spoken_ebb">"Ebbe"</string>
+    <string name="gate_slow_reversal">"Strømmen her vender langsomt, hvilket gør strømskifte sværere at forudsige."</string>
+    <string name="gate_tidal_falls">"Her er tidevandsfald, der skifter retning."</string>
+    <string name="gate_rapids">"Her er tidevandsstryg."</string>
+    <string name="gate_no_evidence">"En model på enheden er ikke valideret her. Slackwater bruger CHS’ forudsigelser."</string>
+    <string name="gate_near_bar">"Modellen på enheden er tæt på valideringskravet. Slackwater bruger CHS’ forudsigelser, indtil modellen består stabilt."</string>
+    <string name="gate_reversed_axis">"Modellen på enheden forudsagde forkert strømretning ved %1$s%% af strømtoppene i den dårligste uge."</string>
+    <string name="gate_invented_slack">"Modellens årlige antal strømskifter, som CHS ikke forudsagde, var %1$d."</string>
+    <string name="gate_missed_slack">"Modellens årlige antal oversete CHS-strømskifter var %1$d."</string>
+    <string name="gate_slack_worst">"Modellen på enheden afveg fra CHS’ strømskifter med op til %1$s min over et år."</string>
+    <string name="gate_slack_median">"Modellens medianafvigelse fra CHS for strømskiftets tidspunkt var %1$s min i det dårligste kvartal."</string>
+    <string name="gate_extremum_timing">"Modellens medianafvigelse fra CHS for tidspunktet for strømspidser var %1$s min i det dårligste kvartal."</string>
+    <string name="gate_peak_speed">"Modellens medianafvigelse fra CHS for maksimal strømhastighed var %1$s %2$s i det dårligste kvartal."</string>
+    <string name="gate_unknown">"Modellen på enheden bestod ikke valideringen her. Slackwater bruger CHS’ forudsigelser."</string>
+    <string name="gate_too_few">"Der var ikke nok CHS-hændelser til at validere modellen på enheden i hvert kvartal."</string>
 </resources>

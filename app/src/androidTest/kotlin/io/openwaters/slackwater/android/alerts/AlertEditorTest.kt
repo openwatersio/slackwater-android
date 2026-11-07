@@ -1,5 +1,6 @@
 package io.openwaters.slackwater.android.alerts
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
@@ -12,6 +13,15 @@ import androidx.compose.ui.unit.dp
 import io.openwaters.slackwater.android.core.planning.*
 import io.openwaters.slackwater.android.core.prediction.*
 import io.openwaters.slackwater.android.core.station.*
+import androidx.test.platform.app.InstrumentationRegistry
+import io.openwaters.slackwater.ChsCurrentFit
+import io.openwaters.slackwater.android.R
+import io.openwaters.slackwater.android.data.ModelStore
+import io.openwaters.slackwater.android.data.ModelKind
+import java.io.File
+import java.util.UUID
+import kotlinx.coroutines.runBlocking
+import org.json.JSONObject
 import org.junit.Assert.*
 import org.junit.Rule
 import org.junit.Test
@@ -53,6 +63,40 @@ class AlertEditorTest {
         compose.onNodeWithText("Every low tide").performClick()
         compose.onNodeWithText("Save").performClick()
         compose.runOnIdle { assertNull(requireNotNull(saved).once) }
+    }
+
+    @Test fun chartAndSavedRuleEditorsShowTheCurrentMeasuredSlackBound() {
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        val directory = File(context.cacheDir, "alert-bound-${UUID.randomUUID()}")
+        val models = ModelStore(directory)
+        val gate = station.copy(id = StationId("chs-johnstone-strait-central"), name = "Johnstone Strait", kind = StationKind.CanadianCurrent)
+        val rule = AlertRule.forEditor(gate.id, AlertTrigger.Slack, date)
+        val chart = ChartAlertSelection(gate, StationCapabilities.PROVISIONAL_CURRENT, rule.trigger, date, date)
+        val fit = JSONObject("""{"offset":1,"fitDays":60,"floodDirection":20,"ebbDirection":215,
+            "constituents":[{"name":"M2","amplitude":1,"phase":10}]}""").put("recipe", ChsCurrentFit.STAMP)
+        val warning = context.getString(R.string.detail_bound, gate.name, 35)
+        try {
+            runBlocking { models.write(gate.id, ModelKind.CURRENT, fit) }
+            compose.setContent {
+                var draft by remember { mutableStateOf<AlertEditorDraft?>(null) }
+                Column {
+                    AlertLine(chart, false, emptyList(), Instant.now()) { draft = it }
+                    AlertsScreen(listOf(AlertRow(rule, gate, "Scheduled")), onEdit = { draft = it }, onDismiss = {})
+                }
+                draft?.let {
+                    AlertEditor(it, true, onSave = {}, onDelete = {}, onPremium = {}, onDismiss = { draft = null }, models = models)
+                }
+            }
+            compose.onNodeWithText("Set an alert").performClick()
+            compose.waitUntil(5_000) { compose.onAllNodesWithText(warning).fetchSemanticsNodes().isNotEmpty() }
+            compose.onNodeWithText("Cancel").performClick()
+            compose.onNodeWithText("Scheduled").performClick()
+            compose.waitUntil(5_000) { compose.onAllNodesWithText(warning).fetchSemanticsNodes().isNotEmpty() }
+            runBlocking { models.write(gate.id, ModelKind.CURRENT, fit.put("fitDays", 210)) }
+            compose.waitUntil(5_000) { compose.onAllNodesWithText(warning).fetchSemanticsNodes().isEmpty() }
+        } finally {
+            directory.deleteRecursively()
+        }
     }
 
     @Test fun halfSecondParksTheMomentAndOnlyTheLineTapOpensTheEditor() {

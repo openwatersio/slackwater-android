@@ -7,10 +7,15 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import io.openwaters.slackwater.android.R
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import io.openwaters.slackwater.android.core.planning.*
+import io.openwaters.slackwater.android.core.prediction.*
+import io.openwaters.slackwater.android.core.station.StationKind
+import io.openwaters.slackwater.android.data.AndroidPredictionRepository
+import io.openwaters.slackwater.android.data.ModelStore
 import java.time.Instant
 import java.util.UUID
 import kotlinx.coroutines.delay
@@ -37,7 +42,8 @@ private fun <T> Choice(label: String, value: T, options: Map<T, String>, onChoos
 
 @Composable
 fun AlertEditor(initial: AlertEditorDraft, premium: Boolean, onSave: (AlertRule) -> Unit,
-                onDelete: (UUID) -> Unit, onPremium: () -> Unit, onDismiss: () -> Unit) {
+                onDelete: (UUID) -> Unit, onPremium: () -> Unit, onDismiss: () -> Unit,
+                models: ModelStore = ModelStore.get(LocalContext.current)) {
     val original = initial.rule
     var repeating by rememberSaveable(original) { mutableStateOf(original.once == null) }
     var lead by rememberSaveable(original) { mutableLongStateOf(original.leadSeconds) }
@@ -61,6 +67,18 @@ fun AlertEditor(initial: AlertEditorDraft, premium: Boolean, onSave: (AlertRule)
         text = {
             Column(Modifier.verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text("${initial.station.name} · ${trigger.label()}")
+                if (initial.station.kind == StationKind.CanadianCurrent) {
+                    val context = LocalContext.current
+                    val predictions = remember(context, models) { AndroidPredictionRepository(context, models) }
+                    val minutes by produceState<Int?>(null, predictions, initial.station.id) {
+                        models.revision.collect {
+                            val at = Instant.now()
+                            val result = predictions.load(initial.station.id, TimeSpan(at, at), PredictionPurpose.ALERT)
+                            value = (result as? PredictionResult.Ready)?.slackErrorBoundMinutes
+                        }
+                    }
+                    minutes?.let { Text(stringResource(R.string.detail_bound, initial.station.name, it)) }
+                }
                 if (crossing != null) {
                     OutlinedTextField(value = height, onValueChange = { height = it }, singleLine = true,
                         label = { Text(if (original.heightNeedsReview) stringResource(R.string.alert_review_height) else stringResource(R.string.alert_height)) })

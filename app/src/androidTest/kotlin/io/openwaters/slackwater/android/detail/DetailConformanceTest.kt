@@ -37,6 +37,35 @@ class DetailConformanceTest {
         scene("vector-slack", id.value, slack.time)
     }
 
+    @Test fun completedBoundedGateShowsItsBoundWithoutRequestingMoreData() =
+        gatePage("chs-blackney-passage", "Blackney Passage", 210, 45, provisional = false)
+
+    @Test fun provisionalGateShowsItsBoundAndRequestsMoreData() =
+        gatePage("chs-johnstone-strait-central", "Johnstone Strait - Central", 60, 35, provisional = true)
+
+    private fun gatePage(rawId: String, name: String, days: Int, minutes: Int, provisional: Boolean) {
+        val store = ModelStore.get(context)
+        val id = StationId(rawId)
+        val previous = runBlocking { store.read(id, ModelKind.CURRENT) }
+        assertTrue(previous is StoredModel.Ready || previous is StoredModel.Missing)
+        try {
+            val fit = JSONObject("""{"offset":1.387,"constituents":[{"name":"M2","amplitude":1.5,"phase":10}]}""")
+                .put("recipe", io.openwaters.slackwater.ChsCurrentFit.STAMP).put("fitDays", days)
+                .put("floodDirection", 20).put("ebbDirection", 215)
+            runBlocking { store.write(id, ModelKind.CURRENT, fit) }
+            compose.setContent { StationDetailScreen(StationListModel.get(context), id, now, null, {}, {}) }
+            val bound = context.getString(io.openwaters.slackwater.android.R.string.detail_bound, name, minutes)
+            compose.waitUntil(30_000) { compose.onAllNodesWithText(bound).fetchSemanticsNodes().isNotEmpty() }
+            val notice = compose.onNodeWithText(context.getString(io.openwaters.slackwater.android.R.string.detail_more_data))
+            if (provisional) notice.assertExists() else notice.assertDoesNotExist()
+        } finally {
+            runBlocking {
+                if (previous is StoredModel.Ready) store.write(id, ModelKind.CURRENT, previous.record)
+                else store.remove(id, ModelKind.CURRENT)
+            }
+        }
+    }
+
     @Test fun derivedGatePage() {
         val store = ModelStore.get(context)
         val id = StationId("chs-point-atkinson")

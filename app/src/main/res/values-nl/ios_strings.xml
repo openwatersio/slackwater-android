@@ -231,4 +231,18 @@
     <string name="notification_low">"Laagwater"</string>
     <string name="curve_spoken_flood">"Vloedstroom"</string>
     <string name="curve_spoken_ebb">"Ebstroom"</string>
+    <string name="gate_slow_reversal">"De stroming keert hier langzaam om, waardoor de kentering moeilijker te voorspellen is."</string>
+    <string name="gate_tidal_falls">"Hier zijn getijdenwatervallen die van richting veranderen."</string>
+    <string name="gate_rapids">"Hier zijn getijdenstroomversnellingen."</string>
+    <string name="gate_no_evidence">"Een aanpassing op het apparaat is hier nog niet gevalideerd. Slackwater gebruikt CHS-voorspellingen."</string>
+    <string name="gate_near_bar">"De aanpassing op het apparaat ligt dicht bij de validatiegrens. Slackwater gebruikt CHS-voorspellingen totdat deze consequent wordt gehaald."</string>
+    <string name="gate_reversed_axis">"De aanpassing op het apparaat voorspelde in de slechtste week bij %1$s%% van de stroommaxima de verkeerde richting."</string>
+    <string name="gate_invented_slack">"Het jaarlijkse aantal kenteringen van de aanpassing dat ontbrak in de CHS-voorspellingen was %1$d."</string>
+    <string name="gate_missed_slack">"Het jaarlijkse aantal CHS-kenteringen dat de aanpassing miste was %1$d."</string>
+    <string name="gate_slack_worst">"De aanpassing op het apparaat week over een jaar tot %1$s min af van de CHS-kenteringsvoorspellingen."</string>
+    <string name="gate_slack_median">"Het mediane tijdsverschil voor kentering tussen de aanpassing en CHS was %1$s min in het slechtste kwartaal."</string>
+    <string name="gate_extremum_timing">"Het mediane tijdsverschil voor maximale stroming tussen de aanpassing en CHS was %1$s min in het slechtste kwartaal."</string>
+    <string name="gate_peak_speed">"Het mediane snelheidsverschil bij maximale stroming tussen de aanpassing en CHS was %1$s %2$s in het slechtste kwartaal."</string>
+    <string name="gate_unknown">"De aanpassing op het apparaat doorstond hier de validatie niet. Slackwater gebruikt CHS-voorspellingen."</string>
+    <string name="gate_too_few">"Er waren onvoldoende CHS-gebeurtenissen om de aanpassing op het apparaat in elk kwartaal te valideren."</string>
 </resources>

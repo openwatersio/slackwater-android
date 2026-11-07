@@ -231,4 +231,18 @@
     <string name="notification_low">"Muir-tràigh"</string>
     <string name="curve_spoken_flood">"Lìonadh"</string>
     <string name="curve_spoken_ebb">"Tràghadh"</string>
+    <string name="gate_slow_reversal">"Bidh an sruth an seo a’ tionndadh gu slaodach, agus mar sin tha e nas duilghe uisge marbh a ro-innse."</string>
+    <string name="gate_tidal_falls">"Tha easan làn-mara an seo a dh’atharraicheas an treòrachadh."</string>
+    <string name="gate_rapids">"Tha bras-shruthan làn-mara an seo."</string>
+    <string name="gate_no_evidence">"Cha deach freagarrachadh air an uidheam a dhearbhadh an seo fhathast. Cleachdaidh Slackwater ro-aithrisean CHS."</string>
+    <string name="gate_near_bar">"Tha am freagarrachadh air an uidheam faisg air stairsneach an dearbhaidh. Cleachdaidh Slackwater ro-aithrisean CHS gus an tèid leis gu cunbhalach."</string>
+    <string name="gate_reversed_axis">"Ro-innis am freagarrachadh air an uidheam an treòrachadh ceàrr aig %1$s%% de na sruthan as àirde san t-seachdain a bu mhiosa."</string>
+    <string name="gate_invented_slack">"B’ e %1$d àireamh bhliadhnail nan amannan uisge mhairbh a ro-innis am freagarrachadh ach nach robh ann an ro-aithrisean CHS."</string>
+    <string name="gate_missed_slack">"B’ e %1$d àireamh bhliadhnail nan amannan uisge mhairbh CHS a chaill am freagarrachadh."</string>
+    <string name="gate_slack_worst">"Bha am freagarrachadh air an uidheam suas ri %1$s mion. eadar-dhealaichte bho ro-aithrisean uisge mhairbh CHS thar bliadhna."</string>
+    <string name="gate_slack_median">"B’ e %1$s mion. meadhan an eadar-dhealachaidh eadar àm uisge mhairbh an fhreagarrachaidh agus CHS sa chairteal a bu mhiosa."</string>
+    <string name="gate_extremum_timing">"B’ e %1$s mion. meadhan an eadar-dhealachaidh eadar àm an t-srutha as àirde aig an fhreagarrachadh agus CHS sa chairteal a bu mhiosa."</string>
+    <string name="gate_peak_speed">"B’ e %1$s %2$s meadhan an eadar-dhealachaidh eadar an luaths as àirde aig an fhreagarrachadh agus CHS sa chairteal a bu mhiosa."</string>
+    <string name="gate_unknown">"Cha deach leis an fhreagarrachadh air an uidheam san dearbhadh an seo. Cleachdaidh Slackwater ro-aithrisean CHS."</string>
+    <string name="gate_too_few">"Cha robh tachartasan CHS gu leòr ann gus am freagarrachadh air an uidheam a dhearbhadh anns gach cairteal."</string>
 </resources>

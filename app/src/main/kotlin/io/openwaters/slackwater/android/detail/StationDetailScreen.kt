@@ -173,7 +173,7 @@ private fun StationDetailBody(model: StationListModel, id: StationId, clock: Ins
                     Text(stringResource(R.string.detail_gap))
                     if (station != null) DetailFeedback(station, selected ?: clock, link, unavailable = true)
                 }
-                detail == null -> MissingPredictions(station, metadata, model, repository, clock, onOpen)
+                detail == null -> MissingPredictions(station, metadata, model, repository, clock, prefs, onOpen)
                 else -> DetailContent(station, detail, prefs, repository, revision, metadata, page.scheduleModifier(scroll),
                     related = { DetailRelated(station, metadata, model, onOpen, nearby = false) }) {
                     page.cancelRestore()
@@ -257,7 +257,7 @@ private fun DetailContent(station: StationIdentity, detail: LoadedDetail, prefs:
         if (state.onlineDayRequested != null) Text(stringResource(R.string.detail_no_week))
         DetailSummary(station, timeline, prefs, repository, metadata?.pairedTide?.let { StationListModel.get(LocalContext.current).catalog.collectAsState().value?.byId?.get(it)?.name },
             cap == StationCapabilities.PROVISIONAL_CURRENT || cap == StationCapabilities.BOUNDED_CURRENT)
-        metadata?.tideNote?.let { Text(stringResource(R.string.detail_context, it)) }
+        GateExplanation(metadata?.gate, prefs.speedUnit)
         related()
         Box(scheduleModifier.fillMaxWidth()) {
             DetailSchedule(station, timeline, prefs, repository, revision) { pick(state.anchor) }
@@ -268,8 +268,9 @@ private fun DetailContent(station: StationIdentity, detail: LoadedDetail, prefs:
 
 @Composable
 private fun MissingPredictions(station: StationIdentity, metadata: DetailMetadata?, model: StationListModel,
-                               repository: PredictionRepository, now: Instant, open: (StationId) -> Unit) {
-    Text(stringResource(if (metadata?.online == true) R.string.detail_no_week else R.string.detail_no_data))
+                               repository: PredictionRepository, now: Instant, prefs: ReadingPreferences, open: (StationId) -> Unit) {
+    Text(stringResource(if (metadata?.gate?.online == true) R.string.detail_no_week else R.string.detail_no_data))
+    GateExplanation(metadata?.gate, prefs.speedUnit)
     if (station.kind == StationKind.CanadianTide) {
         TideDownloadControls(station.id, model)
     } else if (station.kind == StationKind.CanadianCurrent || station.kind == StationKind.DerivedGate) {
@@ -281,7 +282,7 @@ private fun MissingPredictions(station: StationIdentity, metadata: DetailMetadat
             Text(stringResource(if (queued) R.string.detail_queued else R.string.detail_download))
         }
     }
-    if (metadata?.online == true) {
+    if (metadata?.gate?.online == true) {
         val catalog by model.catalog.collectAsState()
         val alternative by produceState<StationIdentity?>(null, station.id, catalog) {
             value = withContext(Dispatchers.Default) {

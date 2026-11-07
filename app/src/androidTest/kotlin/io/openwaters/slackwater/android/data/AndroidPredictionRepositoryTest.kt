@@ -57,13 +57,35 @@ class AndroidPredictionRepositoryTest {
                 val record = fit().put("recipe",ChsCurrentFit.STAMP).put("fitDays",days)
                     .put("floodDirection",20).put("ebbDirection",215)
                 store.write(StationId(id),ModelKind.CURRENT,record)
-                ready(id,kind)
-                assertTrue(load(id,PredictionPurpose.ALERT) is PredictionResult.Ready)
-                if (kind == StationCapabilities.PROVISIONAL_CURRENT) {
-                    assertEquals(PredictionResult.Unavailable(PredictionResult.Reason.UNSUPPORTED_PURPOSE),load(id,PredictionPurpose.QUERY))
+                val expectedBound = when (kind) {
+                    StationCapabilities.BOUNDED_CURRENT -> 45
+                    StationCapabilities.PROVISIONAL_CURRENT -> 35
+                    else -> null
                 }
-                store.write(StationId(id),ModelKind.CURRENT,record.put("recipe","obsolete"))
-                assertEquals(PredictionResult.Unavailable(PredictionResult.Reason.INVALID_MODEL),load(id))
+                for (purpose in PredictionPurpose.entries) {
+                    val result = load(id, purpose)
+                    if (purpose == PredictionPurpose.QUERY && kind == StationCapabilities.PROVISIONAL_CURRENT) {
+                        assertEquals(PredictionResult.Unavailable(PredictionResult.Reason.UNSUPPORTED_PURPOSE), result)
+                    } else {
+                        assertTrue("$id for $purpose", result is PredictionResult.Ready)
+                        result as PredictionResult.Ready
+                        assertEquals(kind, result.capabilities)
+                        assertEquals(expectedBound, result.slackErrorBoundMinutes)
+                    }
+                }
+                val incompatible = listOf(
+                    JSONObject(record.toString()).apply { remove("recipe") },
+                    JSONObject(record.toString()).apply { remove("fitDays") },
+                    JSONObject(record.toString()).put("recipe", "obsolete"),
+                    JSONObject(record.toString()).put("fitDays", 90),
+                )
+                for (candidate in incompatible) {
+                    store.write(StationId(id), ModelKind.CURRENT, candidate)
+                    for (purpose in PredictionPurpose.entries) {
+                        assertEquals("$id for $purpose", PredictionResult.Unavailable(PredictionResult.Reason.INVALID_MODEL),
+                            load(id, purpose))
+                    }
+                }
             }
             val online = "chs-arran-rapids"
             val block = JSONObject().put("times",JSONArray(listOf(start.epochSecond,start.epochSecond+900,start.epochSecond+3600)))

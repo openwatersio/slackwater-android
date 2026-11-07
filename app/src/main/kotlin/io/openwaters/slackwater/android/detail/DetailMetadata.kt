@@ -3,6 +3,8 @@ package io.openwaters.slackwater.android.detail
 import android.content.res.AssetManager
 import android.net.Uri
 import io.openwaters.slackwater.android.core.station.*
+import io.openwaters.slackwater.android.core.prediction.CurrentGateEvidence
+import io.openwaters.slackwater.android.data.BundledCurrentGates
 import io.openwaters.slackwater.android.data.BundledCurrentRecords
 import io.openwaters.slackwater.android.data.BundledTideDatabase
 import java.time.Instant
@@ -14,9 +16,9 @@ import org.json.JSONObject
 
 internal data class DetailMetadata(
     val route: String?, val pairedTide: StationId?, val reference: String?,
-    val credit: String?, val online: Boolean, val datum: String?,
+    val credit: String?, val gate: CurrentGateEvidence?, val datum: String?,
     val highLag: Int?, val lowLag: Int?, val meanFlow: Double?,
-    val publisher: String?, val flood: Double?, val tideNote: String?,
+    val publisher: String?, val flood: Double?,
 )
 
 internal class DetailRecords(private val assets: AssetManager) {
@@ -28,7 +30,7 @@ internal class DetailRecords(private val assets: AssetManager) {
         (0 until rows.length()).associate { i -> rows.getJSONObject(i).let { it.getString("id") to it } }
     }
     private val derived by lazy { gates("chs-gates") }
-    private val measured by lazy { gates("chs-current-gates") }
+    private val measured = BundledCurrentGates(assets)
     fun destination(uri: Uri): Pair<StationId, Instant?>? {
         if (uri.scheme != "https" || !uri.authority.equals("slackwater.xyz", ignoreCase = true)) return null
         val parts = uri.pathSegments
@@ -50,21 +52,20 @@ internal class DetailRecords(private val assets: AssetManager) {
         val tide = station.series == StationSeries.Tide || (station.series == null && routes.getJSONObject("tide").has(id))
         val slug = routes.getJSONObject(if (tide) "tide" else "current").optString(id).takeIf { it.isNotBlank() }
         val route = slug?.let { "https://slackwater.xyz/" + (if (tide) "tides/" else "currents/") + Uri.encode(it) }
+        val gate = if (station.kind == StationKind.CanadianCurrent) measured[station.id] else null
         val row = when (station.kind) {
             StationKind.DerivedGate -> derived[id]
-            StationKind.CanadianCurrent -> measured[id]
             StationKind.Current -> currents[id]
             else -> null
         }
         val record = if (station.kind == StationKind.Tide) tides.station(station.id) else null
         val paired = row?.optString(if (station.kind == StationKind.DerivedGate) "reference" else "tideReference")?.takeIf(String::isNotBlank)
-        return DetailMetadata(route, paired?.let(::StationId), record?.tideOffsets?.reference ?: row?.optString("reference")?.takeIf(String::isNotBlank),
-            record?.attribution ?: station.source, row?.optBoolean("online") == true, record?.chartDatum,
+        return DetailMetadata(route, gate?.tideReference ?: paired?.let(::StationId), record?.tideOffsets?.reference ?: row?.optString("reference")?.takeIf(String::isNotBlank),
+            record?.attribution ?: station.source, gate, record?.chartDatum,
             row?.takeIf { it.has("hwLagMinutes") }?.getInt("hwLagMinutes"),
             row?.takeIf { it.has("lwLagMinutes") }?.getInt("lwLagMinutes"),
             row?.takeIf { it.has("meanFlow") }?.getDouble("meanFlow"), record?.source?.name,
-            row?.takeIf { it.has("floodDirection") }?.getDouble("floodDirection"),
-            row?.optString("magnitudeNote")?.takeIf(String::isNotBlank))
+            row?.takeIf { it.has("floodDirection") }?.getDouble("floodDirection"))
     }
 }
 

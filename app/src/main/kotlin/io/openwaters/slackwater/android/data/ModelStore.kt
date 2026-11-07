@@ -15,13 +15,18 @@ import java.nio.file.Files
 import java.nio.file.StandardCopyOption
 import java.util.Locale
 import java.util.UUID
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import org.json.JSONException
@@ -66,6 +71,7 @@ sealed interface StoredModel {
  */
 class ModelStore internal constructor(
     private val directory: File,
+    private val currentTier: (StationId) -> ModelKind? = { null },
     private val invalidate: suspend (StationId, ModelKind) -> Unit = { _, _ -> },
 ) {
     private suspend fun invalidateFit(id: StationId, kind: ModelKind) {
@@ -80,7 +86,11 @@ class ModelStore internal constructor(
 
     suspend fun read(id: StationId, kind: ModelKind): StoredModel = withContext(Dispatchers.IO) { readFile(id, kind) }
 
+    private fun permitted(id: StationId, kind: ModelKind): Boolean =
+        kind !in currentKinds || (currentTier(id) ?: kind) == kind
+
     private fun readFile(id: StationId, kind: ModelKind): StoredModel {
+        if (!permitted(id, kind)) return StoredModel.Missing
         val file = fileFor(id, kind)
         val bytes = try {
             file.readBytes()
@@ -99,9 +109,7 @@ class ModelStore internal constructor(
         val bytes = encode(id, record)
         withContext(Dispatchers.IO) {
             alertInputLock.withLock {
-                prepare()
-                invalidateFit(id, kind)
-                replace(fileFor(id, kind), bytes)
+                writeLocked(id, kind, bytes)
             }
         }
     }
@@ -115,10 +123,37 @@ class ModelStore internal constructor(
             alertInputLock.withLock {
                 val next = change(readFile(id, kind)) ?: return@withLock
                 val bytes = encode(id, next)
-                prepare()
-                invalidateFit(id, kind)
-                replace(fileFor(id, kind), bytes)
+                writeLocked(id, kind, bytes)
             }
+        }
+    }
+
+    private suspend fun writeLocked(id: StationId, kind: ModelKind, bytes: ByteArray) {
+        require(permitted(id, kind)) { "Catalog does not permit $kind for ${id.value}" }
+        prepare()
+        invalidateFit(id, kind)
+        replace(fileFor(id, kind), bytes)
+        if (kind in currentKinds) {
+            for (other in currentKinds) {
+                if (!permitted(id, other)) removeObsolete(id, other)
+            }
+        }
+    }
+
+    internal suspend fun reconcileCurrentTiers() = withContext(Dispatchers.IO) {
+        alertInputLock.withLock {
+            for (kind in currentKinds) {
+                for (id in idsOnDisk(kind)) {
+                    if (!permitted(id, kind)) removeObsolete(id, kind)
+                }
+            }
+        }
+    }
+
+    private suspend fun removeObsolete(id: StationId, kind: ModelKind) {
+        if (fileFor(id, kind).exists()) {
+            invalidate(id, kind)
+            delete(id, kind)
         }
     }
 
@@ -137,24 +172,36 @@ class ModelStore internal constructor(
     suspend fun remove(id: StationId, kind: ModelKind) {
         withContext(Dispatchers.IO) {
             alertInputLock.withLock {
-                val file = fileFor(id, kind)
-                invalidateFit(id, kind)
-                if (!file.delete()) {
-                    if (file.exists()) throw IOException("Cannot remove $file")
-                    return@withLock
+                if (permitted(id, kind)) {
+                    invalidateFit(id, kind)
+                    delete(id, kind)
+                } else {
+                    removeObsolete(id, kind)
                 }
-                _revision.update { it + 1 }
-                syncDirectory()
             }
         }
     }
 
+    private fun delete(id: StationId, kind: ModelKind) {
+        val file = fileFor(id, kind)
+        if (!file.delete()) {
+            if (file.exists()) throw IOException("Cannot remove $file")
+            return
+        }
+        _revision.update { it + 1 }
+        syncDirectory()
+    }
+
     /** Stations with a file of [kind], whether or not it is readable. */
     suspend fun storedIds(kind: ModelKind): Set<StationId> = withContext(Dispatchers.IO) {
+        idsOnDisk(kind).filterTo(mutableSetOf()) { permitted(it, kind) }
+    }
+
+    private fun idsOnDisk(kind: ModelKind): Set<StationId> {
         val ending = ".${kind.suffix}.json"
         val names = directory.list() ?: if (!directory.exists()) emptyArray()
             else throw IOException("Could not list stored models")
-        names.asSequence()
+        return names.asSequence()
             .filter { it.endsWith(ending) && !it.startsWith(TEMPORARY_PREFIX) }
             .mapNotNull { decodeName(it.dropLast(ending.length))?.let(::StationId) }
             .toSet()
@@ -209,16 +256,27 @@ class ModelStore internal constructor(
         const val STATION_FIELD = "stationId"
         private const val TEMPORARY_PREFIX = ".tmp-"
 
+        private val currentKinds = listOf(ModelKind.CURRENT, ModelKind.ONLINE_WINDOW)
+        private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
         private var shared: ModelStore? = null
 
         @Synchronized
         fun get(context: Context): ModelStore {
+            shared?.let { return it }
             val app = context.applicationContext
             val dependents by lazy { derivedGatesByReference(app.assets) }
-            return shared ?: ModelStore(File(app.noBackupFilesDir, "models")) { id, kind ->
+            val gates = BundledCurrentGates(app.assets)
+            return ModelStore(File(app.noBackupFilesDir, "models"), currentTier = { id ->
+                gates[id]?.let { if (it.online) ModelKind.ONLINE_WINDOW else ModelKind.CURRENT }
+            }) { id, kind ->
                 val affected = if (kind == ModelKind.TIDE) setOf(id) + dependents[id].orEmpty() else setOf(id)
                 CalendarStateStore.get(app).invalidate(affected)
-            }.also { shared = it }
+            }.also { store ->
+                shared = store
+                scope.launch {
+                    flow { emit(store.reconcileCurrentTiers()) }.retryAlertReads().collect {}
+                }
+            }
         }
 
         internal fun decode(bytes: ByteArray, id: StationId): StoredModel {
