@@ -44,7 +44,7 @@ class OnlineGateDownloadsTest {
         saver.value = false
         repeat(2) { downloads.refreshIfStale(gate.id, day) }
         assertEquals(1, tries)
-        assertTrue(downloads.states.value.isEmpty())
+        assertTrue(downloads.weekStates.value.isEmpty())
     }
 
     @Test fun dataSaverAllowsPrefetchOnlyWhenTheWeekNeedsCoverage() = runBlocking {
@@ -80,7 +80,7 @@ class OnlineGateDownloadsTest {
             blocks = listOf(full)
         }, network, saver, { now }, retryDelayMillis = 60_000)
         val automatic = async { downloads.fetch(gate.id, day) }
-        downloads.states.first { it[gate.id] == OnlineDownloadState.WAITING_TO_RETRY }
+        downloads.weekStates.first { it[gate.id to day] == OnlineDownloadState.WAITING_TO_RETRY }
         assertTrue(withTimeout(5_000) { downloads.fetch(gate.id, day, manual = true) })
         assertFalse(automatic.await())
         assertEquals(2, tries)
@@ -90,9 +90,9 @@ class OnlineGateDownloadsTest {
         val downloads = OnlineGateDownloads({ gate }, { blocks }, { _, _, _ -> throw IwlsException.Transient("retry") },
             network, saver, { now }, retryDelayMillis = 60_000)
         val job = launch { downloads.fetch(gate.id, day) }
-        downloads.states.first { it[gate.id] == OnlineDownloadState.WAITING_TO_RETRY }
+        downloads.weekStates.first { it[gate.id to day] == OnlineDownloadState.WAITING_TO_RETRY }
         job.cancelAndJoin()
-        assertNull(downloads.states.value[gate.id])
+        assertNull(downloads.weekStates.value[gate.id to day])
     }
 
     @Test fun cancellingQuietRefreshKeepsItEligibleOnTheSameDay() = runBlocking {
@@ -113,6 +113,41 @@ class OnlineGateDownloadsTest {
         assertEquals(2, attempts)
     }
 
+    @Test fun openedGateTakesPriorityOverWaitingPrefetches() = runBlocking {
+        val second = gate.copy(id = StationId("second"))
+        val opened = gate.copy(id = StationId("opened"))
+        val stations = listOf(gate, second, opened).associateBy { it.id }
+        val firstStarted = CompletableDeferred<Unit>()
+        val release = CompletableDeferred<Unit>()
+        val openedChecked = CompletableDeferred<Unit>()
+        val order = java.util.Collections.synchronizedList(mutableListOf<StationId>())
+        val active = java.util.concurrent.atomic.AtomicInteger()
+        val downloads = OnlineGateDownloads(stations::get, { id ->
+            if (id == opened.id) openedChecked.complete(Unit)
+            if (id in order) listOf(full) else emptyList()
+        }, { station, _, _ ->
+            assertEquals(1, active.incrementAndGet())
+            try {
+                if (station.id == gate.id) {
+                    firstStarted.complete(Unit)
+                    release.await()
+                }
+                order.add(station.id)
+            } finally {
+                active.decrementAndGet()
+            }
+        }, network, saver, { now })
+        val first = launch { downloads.prefetch(listOf(gate.id)) }
+        firstStarted.await()
+        val queued = launch { downloads.prefetch(listOf(second.id, opened.id)) }
+        val tap = async { downloads.fetch(opened.id, day) }
+        withTimeout(5_000) { openedChecked.await() }
+        release.complete(Unit)
+        assertTrue(tap.await())
+        joinAll(first, queued)
+        assertEquals(listOf(gate.id, opened.id, second.id), order)
+    }
+
     @Test fun invalidGateResponseDoesNotCancelOtherPrefetches() = runBlocking {
         val other = gate.copy(id = StationId("chs-other"))
         val saved = java.util.concurrent.ConcurrentHashMap<StationId, List<TimeSpan>>()
@@ -122,7 +157,7 @@ class OnlineGateDownloadsTest {
                 saved[station.id] = listOf(full)
             }, network, saver, { now })
         downloads.prefetch(listOf(gate.id, other.id))
-        assertEquals(OnlineDownloadState.FAILED, downloads.states.value[gate.id])
+        assertEquals(OnlineDownloadState.FAILED, downloads.weekStates.value[gate.id to day])
         assertEquals(listOf(full), saved[other.id])
     }
 
@@ -130,7 +165,7 @@ class OnlineGateDownloadsTest {
         var attempts = 0
         val downloads = service { attempts++; blocks = listOf(full.copy(start = now)) }
         assertFalse(downloads.fetch(gate.id, day))
-        assertEquals(OnlineDownloadState.FAILED, downloads.states.value[gate.id])
+        assertEquals(OnlineDownloadState.FAILED, downloads.weekStates.value[gate.id to day])
         assertEquals(1, attempts)
     }
 }

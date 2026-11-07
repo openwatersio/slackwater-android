@@ -11,7 +11,6 @@ import io.openwaters.slackwater.android.stations.StationPage
 import io.openwaters.slackwater.android.stations.StationListModel
 import java.time.Instant
 import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import io.openwaters.slackwater.android.data.OnlineGateDownloads
 import kotlinx.coroutines.Job
@@ -111,14 +110,11 @@ class MainActivity : ComponentActivity() {
                 val candidates = model.state.filterNotNull().map { list ->
                     with(list.sections) { favorites + heroes.map { it.identity.id } + nearMe.map { it.identity.id } + recents }
                 }.distinctUntilChanged()
-                combine(candidates, model.places.downloads.state, downloads.online) { ids, intent, online ->
+                val wanted = combine(candidates, model.places.downloads.state, downloads.online) { ids, intent, online ->
                     val desired = intent.getOrNull()
                     if (!online || desired == null) emptySet() else (ids - desired.cancelled + desired.requested).toSet()
-                }.distinctUntilChanged().combine(downloads.restricted) { ids, _ -> ids }.collectLatest { ids ->
-                    while (ids.isNotEmpty()) {
-                        delay(downloads.prefetch(ids).toMillis().coerceAtLeast(1))
-                    }
                 }
+                downloads.prefetchWhileStarted(wanted)
             }
         }
         enableEdgeToEdge()

@@ -166,16 +166,17 @@ private fun StationDetailBody(model: StationListModel, id: StationId, clock: Ins
     val today = (timeline?.state?.now ?: clock).atZone(zone).toLocalDate()
     val requestedDay = timeline?.missingDay ?: restoredDay?.let(LocalDate::parse)
         ?: (restoredTime?.let(Instant::parse) ?: clock).atZone(zone).toLocalDate()
+    val gateId = station?.id?.takeIf { gate }
     val missing = gate && !loading && (detail == null || timeline?.missingDay != null)
     var retry by remember(id, requestedDay) { mutableIntStateOf(0) }
-    LaunchedEffect(gate, id, today, online, detail != null) {
-        if (gate && online && detail != null) downloads.refreshIfStale(id, today)
+    LaunchedEffect(gateId, today, online, detail != null) {
+        if (gateId != null && online && detail != null) downloads.refreshIfStale(gateId, today)
     }
-    LaunchedEffect(missing, requestedDay, retry, online) {
-        if (missing && online) {
-            val covered = downloads.fetch(id, requestedDay, manual = retry > 0)
+    LaunchedEffect(gateId, missing, requestedDay, retry, online) {
+        if (gateId != null && missing && online) {
+            val covered = downloads.fetch(gateId, requestedDay, manual = retry > 0)
             if (covered && timeline?.missingDay == requestedDay) timeline.dispatch(TimelineAction.PickDay(requestedDay))
-            if (requestedDay != today) downloads.refreshIfStale(id, today)
+            if (requestedDay != today) downloads.refreshIfStale(gateId, today)
         }
     }
     var picker by rememberSaveable { mutableStateOf<String?>(null) }
@@ -208,10 +209,10 @@ private fun StationDetailBody(model: StationListModel, id: StationId, clock: Ins
                     if (station != null) DetailFeedback(station, selected ?: clock, link, unavailable = true)
                 }
                 missing -> {
-                    val saved = onlineCoverage(id, revision)
+                    val saved = onlineCoverage(station.id, revision)
                     if (saved.isNotEmpty()) ScheduleWeekBar(requestedDay, requestedDay.plusDays(6), clock, zone,
                         choose = { picker = requestedDay.toString() }, change = { pickDay(requestedDay.plusWeeks(it.toLong())) })
-                    OnlineGateStatus(downloads, id, requestedDay, today, zone, revision, online,
+                    OnlineGateStatus(downloads, station.id, requestedDay, today, zone, revision, online,
                         explanation = { GateExplanation(metadata?.gate, prefs.speedUnit) }, retry = { retry++ }) {
                         val now = Instant.now()
                         if (timeline != null) timeline.dispatch(TimelineAction.Now(now))

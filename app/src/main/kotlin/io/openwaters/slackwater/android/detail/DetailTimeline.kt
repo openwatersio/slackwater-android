@@ -11,6 +11,7 @@ import io.openwaters.slackwater.android.core.station.StationIdentity
 import io.openwaters.slackwater.android.core.timeline.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.future.await
+import kotlinx.coroutines.flow.collectLatest
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -43,6 +44,9 @@ internal class DetailTimeline(
     var closed = false
         private set
     private var published: TimelineChunkData? = null
+    private data class OnlinePage(val day: LocalDate, val generation: Long, val window: TimelineWindow,
+                                  val series: PredictionSeries, val days: List<TimelineDay>)
+    private var pendingPage: OnlinePage? = null
 
     init { sync() }
 
@@ -72,6 +76,23 @@ internal class DetailTimeline(
             if (!completion.isDone) completion.whenCompleteAsync({ _, _ -> sync() }, mainExecutor)
         }
         sync()
+        publishOnlinePage()
+    }
+
+    private fun publishOnlinePage() {
+        val page = pendingPage ?: return
+        if (page.generation != state.generation || page.day != state.onlineDayRequested) {
+            pendingPage = null
+            return
+        }
+        if (state.motion == TimelineMotion.DRAG) return
+        pendingPage = null
+        controller.dispatch(TimelineAction.OnlineBlock(page.day, page.window))
+        sync()
+        if (state.coverage == page.window) {
+            series = page.series
+            days = page.days
+        }
     }
 
     fun jump(target: Instant) {
@@ -123,13 +144,8 @@ internal class DetailTimeline(
             }
             return
         }
-        // If a request arrives during a drag, defer the entire block until release.
-        if (state.motion == TimelineMotion.DRAG) return
-        dispatch(TimelineAction.OnlineBlock(day, window))
-        if (state.coverage == window) {
-            series = block.series
-            days = chrome.orEmpty()
-        }
+        pendingPage = OnlinePage(day, generation, window, block.series, chrome.orEmpty())
+        publishOnlinePage()
     }
 
     override fun close() {
@@ -231,11 +247,36 @@ internal fun DetailTimelineEffects(timeline: DetailTimeline, station: StationIde
         try { timeline.refresh() } catch (e: CancellationException) { throw e }
         catch (_: Exception) { /* A failed neighbor leaves the published strip reachable. */ }
     }
-    LaunchedEffect(timeline, state.onlineDayRequested, state.generation, state.motion == TimelineMotion.DRAG, onlineAvailable) {
-        val day = state.onlineDayRequested ?: return@LaunchedEffect
-        if (state.motion != TimelineMotion.DRAG) try {
-            timeline.online(day, state.generation, if (onlineAvailable) fetch else null)
-        } catch (e: CancellationException) { throw e }
-        catch (_: Exception) { timeline.dispatch(TimelineAction.RequestFailed(state.generation)) }
+    if (timeline.mode == TimelineMode.ONLINE) OnlineTimelineRequests(timeline, onlineAvailable, fetch)
+}
+
+@Composable
+internal fun OnlineTimelineRequests(timeline: DetailTimeline, available: Boolean, fetch: (suspend (LocalDate) -> Boolean)?) {
+    val online by rememberUpdatedState(available)
+    val transfer by rememberUpdatedState(fetch)
+    LaunchedEffect(timeline) {
+        val transfers = mutableMapOf<LocalDate, Deferred<Boolean>>()
+        // A gesture can supersede publication while the same transfer still supplies a later request.
+        val owner = this
+        snapshotFlow { Triple(timeline.state.onlineDayRequested, timeline.state.generation, online) }
+            .collectLatest { (day, generation, connected) ->
+                if (day != null) try {
+                    timeline.online(day, generation) {
+                        val active = transfers[day]
+                        if (active != null) active.await()
+                        else if (connected && transfer != null) {
+                            val task = owner.async(start = CoroutineStart.LAZY) {
+                                try { transfer?.invoke(day) == true }
+                                catch (cancelled: CancellationException) { throw cancelled }
+                                catch (_: Exception) { false }
+                                finally { transfers.remove(day) }
+                            }
+                            transfers[day] = task
+                            task.await()
+                        } else false
+                    }
+                } catch (e: CancellationException) { throw e }
+                catch (_: Exception) { timeline.dispatch(TimelineAction.RequestFailed(generation)) }
+            }
     }
 }

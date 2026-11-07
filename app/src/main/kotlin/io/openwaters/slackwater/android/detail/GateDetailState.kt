@@ -59,10 +59,10 @@ internal fun OnlineValidity(through: LocalDate?, today: LocalDate) {
 @Composable
 internal fun OnlineGateValidity(downloads: OnlineGateDownloads, id: StationId, today: LocalDate, zone: ZoneId, revision: Long) {
     val online by downloads.online.collectAsState()
-    val states by downloads.states.collectAsState()
+    val states by downloads.weekStates.collectAsState()
     val scope = rememberCoroutineScope()
     val open = LocalOpenDownloads.current
-    val state = states[id]
+    val state = states[id to today]
     Card {
         Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
             Text(stringResource(R.string.gate_offline_available), style = MaterialTheme.typography.titleMedium)
@@ -87,9 +87,9 @@ internal fun OnlineGateValidity(downloads: OnlineGateDownloads, id: StationId, t
 internal fun OnlineGateStatus(downloads: OnlineGateDownloads, id: StationId, day: LocalDate,
                              today: LocalDate, zone: ZoneId, revision: Long, online: Boolean,
                              explanation: @Composable () -> Unit = {}, retry: () -> Unit, now: () -> Unit) {
-    val states by downloads.states.collectAsState()
+    val states by downloads.weekStates.collectAsState()
     val through = savedThrough(onlineCoverage(id, revision), today, zone)
-    val state = states[id]
+    val state = states[id to day]
     val open = LocalOpenDownloads.current
     val (title, action) = when {
         state == OnlineDownloadState.FAILED -> R.string.gate_failed to R.string.gate_retry

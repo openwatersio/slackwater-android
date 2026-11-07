@@ -112,14 +112,18 @@ internal fun ChartDownloads(manager: ChartPackManager, close: () -> Unit) {
                     }
                 }
                 val onlineGates = OnlineGateDownloads.get(LocalContext.current)
-                val gateStates by onlineGates.states.collectAsState()
-                for ((id, state) in gateStates.entries.sortedBy { catalog?.byId?.get(it.key)?.name ?: it.key.value }) {
+                val gateStates by onlineGates.weekStates.collectAsState()
+                for ((week, state) in gateStates.entries.sortedBy { catalog?.byId?.get(it.key.first)?.name ?: it.key.first.value }) {
+                    val (id, day) = week
                     Text(catalog?.byId?.get(id)?.name ?: id.value)
+                    Text(day.format(java.time.format.DateTimeFormatter.ofLocalizedDate(java.time.format.FormatStyle.MEDIUM)))
                     when (state) {
                         OnlineDownloadState.DOWNLOADING -> LinearProgressIndicator()
-                        OnlineDownloadState.OFFLINE -> Text(stringResource(R.string.tide_download_network))
-                        OnlineDownloadState.WAITING_TO_RETRY -> Text(stringResource(R.string.detail_queued))
-                        OnlineDownloadState.FAILED -> Text(stringResource(R.string.chart_failed))
+                        OnlineDownloadState.OFFLINE -> Text(stringResource(R.string.gate_offline))
+                        OnlineDownloadState.WAITING_TO_RETRY, OnlineDownloadState.FAILED ->
+                            TextButton(onClick = { model.launchEdit { onlineGates.fetch(id, day, manual = true) } }) {
+                                Text(stringResource(if (state == OnlineDownloadState.FAILED) R.string.gate_retry else R.string.gate_retry_now))
+                            }
                     }
                 }
                 Text(stringResource(R.string.chart_offline))

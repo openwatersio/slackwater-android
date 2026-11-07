@@ -35,29 +35,17 @@ internal class OnlineGateDownloads(
     private val holds = ConcurrentHashMap<StationId, Mutex>()
     private val failedDay = ConcurrentHashMap<StationId, LocalDate>()
     private val refreshedDay = ConcurrentHashMap<StationId, LocalDate>()
-    private val mutableStates = MutableStateFlow<Map<StationId, OnlineDownloadState>>(emptyMap())
-    val states = mutableStates.asStateFlow()
+    private val mutableStates = MutableStateFlow<Map<Pair<StationId, LocalDate>, OnlineDownloadState>>(emptyMap())
+    val weekStates = mutableStates.asStateFlow()
 
-    private val stateDays = mutableMapOf<StationId, LocalDate>()
-
-    @Synchronized
     private fun status(id: StationId, day: LocalDate, state: OnlineDownloadState?) {
-        if (state == null) {
-            if (stateDays[id] != day) return
-            stateDays.remove(id)
-            mutableStates.update { it - id }
-        } else {
-            stateDays[id] = day
-            mutableStates.update { it + (id to state) }
-        }
+        val key = id to day
+        mutableStates.update { if (state == null) it - key else it + (key to state) }
     }
 
-    @Synchronized
     private fun reconnected() {
         failedDay.clear()
-        for ((id, state) in mutableStates.value) {
-            if (state == OnlineDownloadState.OFFLINE) stateDays[id]?.let { status(id, it, null) }
-        }
+        mutableStates.update { states -> states.filterValues { it != OnlineDownloadState.OFFLINE } }
     }
 
     private enum class Attempt { COVERED, UNAVAILABLE, RETRY }
@@ -114,20 +102,38 @@ internal class OnlineGateDownloads(
         val wake = retryWake.computeIfAbsent(id) { MutableStateFlow(0L) }
         if (manual) wake.update { it + 1 }
         val key = id to day
+        val hold = holds.computeIfAbsent(id) { Mutex() }
         while (true) {
+            val generation = wake.value
             val completion = CompletableDeferred<Boolean?>()
-            val active = pending.putIfAbsent(key, completion)
-            if (active != null) {
-                val result = active.await()
-                if (result != null && (!manual || result)) return result
-                continue
-            }
+            var active: CompletableDeferred<Boolean?>? = null
             var result: Boolean? = null
+            suspend fun firstAttempt(): Attempt? {
+                active = pending.putIfAbsent(key, completion)
+                if (active != null) return null
+                return hold.withLock { attempt(station, day, manual, refresh, last = false) }
+            }
             try {
-                result = runCycle(station, day, manual, refresh, background, wake)
+                // Background candidates claim their week only after admission. A tap can
+                // claim a week further down the queue while the current transfer finishes.
+                val first = if (background) prefetchLane.withLock { firstAttempt() } else firstAttempt()
+                if (first == null) {
+                    val joined = requireNotNull(active).await()
+                    if (joined != null && (!manual || joined)) return joined
+                    continue
+                }
+                val final = if (first != Attempt.RETRY) first else {
+                    if (withTimeoutOrNull(retryDelayMillis) { wake.first { it != generation } } != null) {
+                        result = false
+                        return false
+                    }
+                    suspend fun retry() = hold.withLock { attempt(station, day, manual, refresh, last = true) }
+                    if (background) prefetchLane.withLock { retry() } else retry()
+                }
+                result = final == Attempt.COVERED
                 return result
             } catch (cancelled: CancellationException) {
-                status(id, day, null)
+                if (pending[key] === completion) status(id, day, null)
                 throw cancelled
             } catch (_: Exception) {
                 failedDay[id] = day
@@ -135,31 +141,9 @@ internal class OnlineGateDownloads(
                 result = false
                 return false
             } finally {
-                pending.remove(key, completion)
-                completion.complete(result)
+                if (pending.remove(key, completion)) completion.complete(result)
             }
         }
-    }
-
-    private suspend fun runCycle(
-        station: StationIdentity, day: LocalDate, manual: Boolean, refresh: Boolean,
-        background: Boolean, wake: StateFlow<Long>,
-    ): Boolean {
-        val id = station.id
-        val generation = wake.value
-        val hold = holds.computeIfAbsent(id) { Mutex() }
-        repeat(2) { index ->
-            suspend fun runAttempt() = hold.withLock { attempt(station, day, manual, refresh, last = index == 1) }
-            // A background gate waits for admission before taking its station lock. A tap can
-            // acquire that lock while another gate is transferring or waiting out a backoff.
-            val outcome = if (background) prefetchLane.withLock { runAttempt() } else runAttempt()
-            when (outcome) {
-                Attempt.COVERED -> return true
-                Attempt.UNAVAILABLE -> return false
-                Attempt.RETRY -> if (withTimeoutOrNull(retryDelayMillis) { wake.first { it != generation } } != null) return false
-            }
-        }
-        return false
     }
 
     suspend fun fetch(id: StationId, day: LocalDate, manual: Boolean = false): Boolean = withContext(Dispatchers.IO) {
@@ -185,6 +169,22 @@ internal class OnlineGateDownloads(
             }
         }
         Duration.between(clock(), nextDay)
+    }
+
+    suspend fun prefetchWhileStarted(candidates: Flow<Set<StationId>>) = coroutineScope {
+        val jobs = mutableMapOf<StationId, Job>()
+        candidates.distinctUntilChanged().collect { ids ->
+            for (removed in jobs.keys.toSet() - ids) jobs.remove(removed)?.cancel()
+            for (id in ids - jobs.keys) {
+                jobs[id] = launch {
+                    while (isActive) {
+                        val limited = restricted.value
+                        val untilTomorrow = prefetch(listOf(id)).toMillis().coerceAtLeast(1)
+                        withTimeoutOrNull(untilTomorrow) { restricted.first { it != limited } }
+                    }
+                }
+            }
+        }
     }
 
     companion object {

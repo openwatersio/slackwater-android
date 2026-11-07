@@ -1,5 +1,6 @@
 package io.openwaters.slackwater.android.detail
 
+import androidx.compose.ui.test.junit4.createComposeRule
 import io.openwaters.slackwater.android.core.prediction.*
 import io.openwaters.slackwater.android.core.station.*
 import io.openwaters.slackwater.android.core.timeline.*
@@ -9,9 +10,11 @@ import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.*
+import org.junit.Rule
 import org.junit.Test
 
 class OnlineDetailTimelineTest {
+    @get:Rule val compose = createComposeRule()
     private val zone = ZoneId.of("America/Vancouver")
     private val today = LocalDate.of(2026, 11, 1)
     private val now = today.atTime(12, 0).atZone(zone).toInstant()
@@ -21,7 +24,7 @@ class OnlineDetailTimelineTest {
     private val next = today.plusWeeks(2)
     private val entered = CompletableDeferred<Unit>()
     private val finished = CompletableDeferred<Unit>()
-    private var saved = false
+    @Volatile private var saved = false
     private val repository = object : PredictionRepository {
         override suspend fun load(id: StationId, span: TimeSpan, purpose: PredictionPurpose): PredictionResult =
             if (saved || span == TimeSpan(window.start, window.end))
@@ -49,6 +52,43 @@ class OnlineDetailTimelineTest {
         assertEquals(window, timeline.state.coverage)
         assertEquals(now, timeline.state.selected)
         assertNull(timeline.missingDay)
+    }
+
+    @Test fun dragAndReleaseShareOneFetchAndPublishOnlyAfterRelease() {
+        val timeline = timeline()
+        var calls = 0
+        compose.setContent {
+            OnlineTimelineRequests(timeline, available = true) {
+                calls++
+                entered.complete(Unit)
+                finished.await()
+                saved = true
+                true
+            }
+        }
+        compose.runOnIdle { timeline.dispatch(TimelineAction.PickDay(next)) }
+        compose.waitUntil(10_000) { entered.isCompleted }
+        compose.runOnIdle { timeline.dispatch(TimelineAction.BeginDrag) }
+        compose.waitForIdle()
+        compose.runOnIdle { timeline.dispatch(TimelineAction.PickDay(next)) }
+        compose.waitForIdle()
+        finished.complete(Unit)
+        compose.waitUntil(10_000) { saved }
+        compose.runOnIdle {
+            assertEquals(1, calls)
+            assertEquals(window, timeline.state.coverage)
+            timeline.dispatch(TimelineAction.EndDrag(momentum = false))
+        }
+        compose.waitUntil(10_000) { timeline.state.coverage == TimelineWindow.fixed(next, zone) }
+        compose.runOnIdle {
+            assertEquals(1, calls)
+            assertEquals(next, timeline.state.anchor)
+            assertNull(timeline.missingDay)
+        }
+        val rebuilt = this.timeline()
+        runBlocking { rebuilt.restorePosition(timeline.state) }
+        assertEquals(timeline.state.coverage, rebuilt.state.coverage)
+        assertEquals(timeline.state.selected, rebuilt.state.selected)
     }
 
     @Test fun offlineDateShowsMissingWeekAndNowRestoresCoveredStrip() = runBlocking {
