@@ -270,4 +270,26 @@
     <string name="notification_fall">"Descendo abaixo de %1$s m"</string>
     <string name="curve_spoken">"Curva de 25 horas: %1$s"</string>
     <string name="curve_spoken_item">"%1$s às %2$s"</string>
+    <string name="map_open">"Mapa"</string>
+    <string name="map_list">"Lista"</string>
+    <string name="map_locate">"Minha localização"</string>
+    <string name="map_pick">"Escolha uma estação"</string>
+    <string name="map_pick_hint">"As marés e correntes abrem aqui."</string>
+    <string name="map_legend">"● Marés (%1$s)   ➤ Correntes (%2$s)"</string>
+    <string name="map_disclaimer">"Não usar para navegação"</string>
+    <string name="map_tide_units">"Alturas das marés"</string>
+    <string name="map_current_units">"Velocidades das correntes"</string>
+    <string name="map_slow">"O mapa base está demorando para carregar"</string>
+    <string name="map_loading">"Carregando mapa base…"</string>
+    <string name="map_local">"Exibindo marcadores locais"</string>
+    <string name="map_use_local">"Usar marcadores locais"</string>
+    <string name="map_retry">"Tentar mapa novamente"</string>
+    <string name="map_failure">"Mapa base indisponível"</string>
+    <string name="map_stations">"Estações visíveis"</string>
+    <string name="map_close">"Fechar prévia"</string>
+    <string name="map_empty">"Nenhuma estação nesta área"</string>
+    <string name="map_fix_missing">"Localização indisponível"</string>
+    <string name="map_units_legend">"Marés em %1$s. Correntes em %2$s. Não usar para navegação. Configurações do gráfico."</string>
+    <string name="map_zoom_out">"Diminuir zoom"</string>
+    <string name="map_zoom_in">"Aumentar zoom"</string>
 </resources>

@@ -266,4 +266,26 @@
     <string name="notification_fall">"Dalend onder %1$s m"</string>
     <string name="curve_spoken">"25-uurscurve: %1$s"</string>
     <string name="curve_spoken_item">"%1$s om %2$s"</string>
+    <string name="map_open">"Kaart"</string>
+    <string name="map_list">"Lijst"</string>
+    <string name="map_locate">"Mijn locatie"</string>
+    <string name="map_pick">"Kies een station"</string>
+    <string name="map_pick_hint">"Getijden en stromingen worden hier geopend."</string>
+    <string name="map_legend">"● Getijden (%1$s)   ➤ Stromingen (%2$s)"</string>
+    <string name="map_disclaimer">"Niet voor navigatie"</string>
+    <string name="map_tide_units">"Getijdenhoogten"</string>
+    <string name="map_current_units">"Stroomsnelheden"</string>
+    <string name="map_slow">"Achtergrondkaart laadt langzaam"</string>
+    <string name="map_loading">"Achtergrondkaart laden…"</string>
+    <string name="map_local">"Lokale markeringen worden getoond"</string>
+    <string name="map_use_local">"Lokale markeringen gebruiken"</string>
+    <string name="map_retry">"Kaart opnieuw proberen"</string>
+    <string name="map_failure">"Achtergrondkaart niet beschikbaar"</string>
+    <string name="map_stations">"Zichtbare stations"</string>
+    <string name="map_close">"Voorbeeld sluiten"</string>
+    <string name="map_empty">"Geen stations in dit gebied"</string>
+    <string name="map_fix_missing">"Locatie niet beschikbaar"</string>
+    <string name="map_units_legend">"Getijden in %1$s. Stromingen in %2$s. Niet voor navigatie. Grafiekinstellingen."</string>
+    <string name="map_zoom_out">"Uitzoomen"</string>
+    <string name="map_zoom_in">"Inzoomen"</string>
 </resources>

@@ -1,3 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-    <application><profileable android:shell="true" /></application>
+    <application>
+        <profileable android:shell="true" />
+        <activity android:name=".map.MapBenchmarkActivity" android:exported="true" />
+    </application>
 </manifest>

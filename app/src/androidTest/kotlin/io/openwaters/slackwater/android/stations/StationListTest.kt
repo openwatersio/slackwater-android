@@ -18,6 +18,7 @@ import io.openwaters.slackwater.android.core.station.StationId
 import io.openwaters.slackwater.android.data.SavedPlaces
 import io.openwaters.slackwater.android.data.UserStateStore
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.withTimeout
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -69,8 +70,13 @@ class StationListTest {
             compose.onNodeWithText("Aulatsivik Point").assertExists()
             compose.onNode(hasScrollAction()).performScrollToNode(hasText("Remove"))
             compose.onNodeWithText("Remove").performClick()
+            val favorites = runBlocking {
+                withTimeout(10_000) {
+                    places.places.first { withdrawn !in it.getOrThrow().favorites }.getOrThrow().favorites
+                }
+            }
+            assertEquals(listOf(fridayHarbor), favorites)
             compose.waitUntil(10_000) { compose.onAllNodesWithText("Aulatsivik Point").fetchSemanticsNodes().isEmpty() }
-            assertEquals(listOf(fridayHarbor), runBlocking { places.places.first().getOrThrow().favorites })
         }
     }
 

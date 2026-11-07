@@ -266,4 +266,26 @@
     <string name="notification_fall">"Faldende forbi %1$s m"</string>
     <string name="curve_spoken">"25-timers kurve: %1$s"</string>
     <string name="curve_spoken_item">"%1$s kl. %2$s"</string>
+    <string name="map_open">"Kort"</string>
+    <string name="map_list">"Liste"</string>
+    <string name="map_locate">"Min placering"</string>
+    <string name="map_pick">"Vælg en station"</string>
+    <string name="map_pick_hint">"Tidevand og strøm åbnes her."</string>
+    <string name="map_legend">"● Tidevand (%1$s)   ➤ Strøm (%2$s)"</string>
+    <string name="map_disclaimer">"Ikke til navigation"</string>
+    <string name="map_tide_units">"Tidevandshøjder"</string>
+    <string name="map_current_units">"Strømhastigheder"</string>
+    <string name="map_slow">"Baggrundskortet indlæses langsomt"</string>
+    <string name="map_loading">"Indlæser baggrundskort…"</string>
+    <string name="map_local">"Viser lokale markører"</string>
+    <string name="map_use_local">"Brug lokale markører"</string>
+    <string name="map_retry">"Prøv kortet igen"</string>
+    <string name="map_failure">"Baggrundskort utilgængeligt"</string>
+    <string name="map_stations">"Synlige stationer"</string>
+    <string name="map_close">"Luk forhåndsvisning"</string>
+    <string name="map_empty">"Ingen stationer i dette område"</string>
+    <string name="map_fix_missing">"Placering utilgængelig"</string>
+    <string name="map_units_legend">"Tidevand i %1$s. Strøm i %2$s. Ikke til navigation. Diagramindstillinger."</string>
+    <string name="map_zoom_out">"Zoom ud"</string>
+    <string name="map_zoom_in">"Zoom ind"</string>
 </resources>

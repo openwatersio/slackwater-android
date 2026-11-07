@@ -278,4 +278,26 @@
     <string name="notification_fall">"Ag titim faoi %1$s m"</string>
     <string name="curve_spoken">"Cuar 25 uair an chloig: %1$s"</string>
     <string name="curve_spoken_item">"%1$s ag %2$s"</string>
+    <string name="map_open">"Léarscáil"</string>
+    <string name="map_list">"Liosta"</string>
+    <string name="map_locate">"Mo shuíomh"</string>
+    <string name="map_pick">"Roghnaigh stáisiún"</string>
+    <string name="map_pick_hint">"Osclaítear taoidí agus sruthanna anseo."</string>
+    <string name="map_legend">"● Taoidí (%1$s)   ➤ Sruthanna (%2$s)"</string>
+    <string name="map_disclaimer">"Ní le haghaidh loingseoireachta"</string>
+    <string name="map_tide_units">"Airde taoide"</string>
+    <string name="map_current_units">"Luasanna srutha"</string>
+    <string name="map_slow">"Tá an bonnléarscáil mall á lódáil"</string>
+    <string name="map_loading">"Bonnléarscáil á lódáil…"</string>
+    <string name="map_local">"Pionnaí áitiúla á dtaispeáint"</string>
+    <string name="map_use_local">"Úsáid pionnaí áitiúla"</string>
+    <string name="map_retry">"Bain triail as an léarscáil arís"</string>
+    <string name="map_failure">"Bonnléarscáil gan fáil"</string>
+    <string name="map_stations">"Stáisiúin sa radharc"</string>
+    <string name="map_close">"Dún an réamhamharc"</string>
+    <string name="map_empty">"Níl aon stáisiún sa cheantar seo"</string>
+    <string name="map_fix_missing">"Suíomh gan fáil"</string>
+    <string name="map_units_legend">"Taoidí in %1$s. Sruthanna in %2$s. Ní le haghaidh loingseoireachta. Socruithe cairte."</string>
+    <string name="map_zoom_out">"Zúmáil amach"</string>
+    <string name="map_zoom_in">"Zúmáil isteach"</string>
 </resources>

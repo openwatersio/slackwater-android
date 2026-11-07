@@ -11,7 +11,23 @@ dependencies {
 }
 
 tasks.test {
+    val index = rootProject.file("app/src/main/assets/slackwater/station-index.json")
+    inputs.files(index, index.resolveSibling("currents.json"))
+    systemProperty("mapStationIndex", index.absolutePath)
     val fixtures = rootProject.file("vendor/slackwater/fixtures")
     inputs.files(fileTree(fixtures) { include("*.json") })
     systemProperty("predictionFixtures", fixtures.absolutePath)
 }
+
+tasks.register<Test>("nationalTideDirectionSweep") {
+    description = "Compare tide directions from the pinned iOS source catalog against exact lunar-month direction probes."
+    group = "verification"
+    testClassesDirs = sourceSets.test.get().output.classesDirs
+    classpath = sourceSets.test.get().runtimeClasspath
+    filter { includeTestsMatching("*NationalTideDirectionSweep") }
+    val records = rootProject.file("vendor/slackwater-ios/Slackwater/Resources/stations.json")
+    inputs.file(records)
+    systemProperty("mapTideRecords", records.absolutePath)
+}
+
+tasks.test { exclude("**/NationalTideDirectionSweep.class") }

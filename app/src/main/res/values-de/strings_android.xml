@@ -266,4 +266,26 @@
     <string name="notification_fall">"Fallend unter %1$s m"</string>
     <string name="curve_spoken">"25-Stunden-Kurve: %1$s"</string>
     <string name="curve_spoken_item">"%1$s um %2$s"</string>
+    <string name="map_open">"Karte"</string>
+    <string name="map_list">"Liste"</string>
+    <string name="map_locate">"Mein Standort"</string>
+    <string name="map_pick">"Station auswählen"</string>
+    <string name="map_pick_hint">"Gezeiten und Strömungen werden hier geöffnet."</string>
+    <string name="map_legend">"● Gezeiten (%1$s)   ➤ Strömungen (%2$s)"</string>
+    <string name="map_disclaimer">"Nicht zur Navigation"</string>
+    <string name="map_tide_units">"Gezeitenhöhen"</string>
+    <string name="map_current_units">"Strömungsgeschwindigkeiten"</string>
+    <string name="map_slow">"Basiskarte lädt langsam"</string>
+    <string name="map_loading">"Basiskarte wird geladen…"</string>
+    <string name="map_local">"Lokale Markierungen werden angezeigt"</string>
+    <string name="map_use_local">"Lokale Markierungen verwenden"</string>
+    <string name="map_retry">"Karte erneut laden"</string>
+    <string name="map_failure">"Basiskarte nicht verfügbar"</string>
+    <string name="map_stations">"Sichtbare Stationen"</string>
+    <string name="map_close">"Vorschau schließen"</string>
+    <string name="map_empty">"Keine Stationen in diesem Gebiet"</string>
+    <string name="map_fix_missing">"Standort nicht verfügbar"</string>
+    <string name="map_units_legend">"Gezeiten in %1$s. Strömungen in %2$s. Nicht zur Navigation. Diagrammeinstellungen."</string>
+    <string name="map_zoom_out">"Verkleinern"</string>
+    <string name="map_zoom_in">"Vergrößern"</string>
 </resources>

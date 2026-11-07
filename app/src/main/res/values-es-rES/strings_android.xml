@@ -270,4 +270,26 @@
     <string name="notification_fall">"Bajando por debajo de %1$s m"</string>
     <string name="curve_spoken">"Curva de 25 horas: %1$s"</string>
     <string name="curve_spoken_item">"%1$s a las %2$s"</string>
+    <string name="map_open">"Mapa"</string>
+    <string name="map_list">"Lista"</string>
+    <string name="map_locate">"Mi ubicación"</string>
+    <string name="map_pick">"Elige una estación"</string>
+    <string name="map_pick_hint">"Las mareas y corrientes se abren aquí."</string>
+    <string name="map_legend">"● Mareas (%1$s)   ➤ Corrientes (%2$s)"</string>
+    <string name="map_disclaimer">"No apto para navegación"</string>
+    <string name="map_tide_units">"Alturas de marea"</string>
+    <string name="map_current_units">"Velocidades de corriente"</string>
+    <string name="map_slow">"El mapa base tarda en cargar"</string>
+    <string name="map_loading">"Cargando mapa base…"</string>
+    <string name="map_local">"Mostrando marcadores locales"</string>
+    <string name="map_use_local">"Usar marcadores locales"</string>
+    <string name="map_retry">"Reintentar mapa"</string>
+    <string name="map_failure">"Mapa base no disponible"</string>
+    <string name="map_stations">"Estaciones visibles"</string>
+    <string name="map_close">"Cerrar vista previa"</string>
+    <string name="map_empty">"No hay estaciones en esta zona"</string>
+    <string name="map_fix_missing">"Ubicación no disponible"</string>
+    <string name="map_units_legend">"Mareas en %1$s. Corrientes en %2$s. No apto para navegación. Ajustes del gráfico."</string>
+    <string name="map_zoom_out">"Alejar"</string>
+    <string name="map_zoom_in">"Acercar"</string>
 </resources>

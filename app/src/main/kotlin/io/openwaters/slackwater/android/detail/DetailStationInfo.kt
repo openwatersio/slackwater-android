@@ -48,8 +48,8 @@ internal fun DetailHeader(station: StationIdentity?, id: StationId, live: Boolea
         }
     }
     Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-        val map = remember(station) { station?.let(::mapIntent)?.takeIf { it.resolveActivity(context.packageManager) != null } }
-        Text(station?.name ?: id.value, Modifier.then(if (map == null) Modifier else Modifier.clickable { context.startActivity(map) }).semantics { heading() }, style = MaterialTheme.typography.headlineMedium, textAlign = TextAlign.Center)
+        val map = io.openwaters.slackwater.android.map.LocalOpenStationMap.current
+        Text(station?.name ?: id.value, Modifier.then(if (map == null || station == null || station.kind == StationKind.Retired) Modifier else Modifier.clickable(onClickLabel = stringResource(R.string.detail_map), role = Role.Button) { map(station) }).semantics { heading() }, style = MaterialTheme.typography.headlineMedium, textAlign = TextAlign.Center)
         val location = (data?.slot as? LocationSlot.Located)?.fix?.coordinate
         val distance = if (location != null && station != null) stringResource(R.string.list_distance_nm,
             formatNauticalMiles(distanceKm(station.coordinate, location), LocalConfiguration.current.locales[0])) else null

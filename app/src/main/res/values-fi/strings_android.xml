@@ -266,4 +266,26 @@
     <string name="notification_fall">"Laskee alle %1$s m"</string>
     <string name="curve_spoken">"25 tunnin käyrä: %1$s"</string>
     <string name="curve_spoken_item">"%1$s klo %2$s"</string>
+    <string name="map_open">"Kartta"</string>
+    <string name="map_list">"Luettelo"</string>
+    <string name="map_locate">"Oma sijainti"</string>
+    <string name="map_pick">"Valitse asema"</string>
+    <string name="map_pick_hint">"Vuorovedet ja virtaukset avautuvat tähän."</string>
+    <string name="map_legend">"● Vuorovedet (%1$s)   ➤ Virtaukset (%2$s)"</string>
+    <string name="map_disclaimer">"Ei navigointiin"</string>
+    <string name="map_tide_units">"Vuorovesikorkeudet"</string>
+    <string name="map_current_units">"Virtausnopeudet"</string>
+    <string name="map_slow">"Taustakartta latautuu hitaasti"</string>
+    <string name="map_loading">"Ladataan taustakarttaa…"</string>
+    <string name="map_local">"Näytetään paikalliset merkit"</string>
+    <string name="map_use_local">"Käytä paikallisia merkkejä"</string>
+    <string name="map_retry">"Yritä karttaa uudelleen"</string>
+    <string name="map_failure">"Taustakartta ei ole käytettävissä"</string>
+    <string name="map_stations">"Näkyvät asemat"</string>
+    <string name="map_close">"Sulje esikatselu"</string>
+    <string name="map_empty">"Ei asemia tällä alueella"</string>
+    <string name="map_fix_missing">"Sijainti ei ole käytettävissä"</string>
+    <string name="map_units_legend">"Vuorovedet: %1$s. Virtaukset: %2$s. Ei navigointiin. Kaavioasetukset."</string>
+    <string name="map_zoom_out">"Loitonna"</string>
+    <string name="map_zoom_in">"Lähennä"</string>
 </resources>

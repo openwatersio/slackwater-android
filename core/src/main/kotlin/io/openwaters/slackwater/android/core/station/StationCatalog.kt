@@ -25,6 +25,10 @@ class StationIdentityIndex(
 
     val identities = byId.values.filter { priority(it) == 0 }.sortedWith(compareBy({ it.name }, { it.id.value }))
     private val successors = successors.toMap()
+    val mapIdentities by lazy {
+        byId.values.filter { priority(it) == 0 || (it.kind == StationKind.Restricted && it.id !in successors) }
+            .sortedWith(compareBy({ it.name }, { it.id.value }))
+    }
 
     fun resolve(savedId: StationId): StationResolution {
         var id = savedId

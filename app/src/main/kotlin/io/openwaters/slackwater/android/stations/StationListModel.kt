@@ -42,6 +42,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import io.openwaters.slackwater.android.core.station.FIX_MAXIMUM_AGE_MILLIS
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.async
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -103,14 +105,16 @@ private fun <T> Flow<Result<T>>.orRetrying(fallback: T): Flow<T> = flow {
     }
 }
 
-class StationListModel private constructor(context: Context) {
+class StationListModel internal constructor(
+    context: Context,
+    val listPreferences: ListPreferencesStore = ListPreferencesStore.get(context),
+    val location: LocationRepository = LocationRepository.get(context),
+    private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Default),
+) {
     private val app = context.applicationContext
-    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     private val catalogSource = BundledStationCatalog(app.assets)
     private val predictions = AndroidPredictionRepository(app)
     val places = UserStateStore.get(app)
-    val listPreferences = ListPreferencesStore.get(app)
-    val location = LocationRepository.get(app)
     private val reading = ReadingPreferencesStore.get(app)
 
     private val _catalog = MutableStateFlow<LoadedCatalog?>(null)
@@ -218,7 +222,8 @@ class StationListModel private constructor(context: Context) {
         slotTick.value++
     }
 
-    private val refreshing = java.util.concurrent.atomic.AtomicBoolean(false)
+    private var refreshRequest: Deferred<Unit>? = null
+    private var refreshWaiters = 0
 
     // Held in memory as well as stored, so a write that fails can never make the list ask a second time.
     private val askedThisProcess = java.util.concurrent.atomic.AtomicBoolean(false)
@@ -237,14 +242,33 @@ class StationListModel private constructor(context: Context) {
         return askedThisProcess.compareAndSet(false, true)
     }
 
-    /** Asks for a fix unless a request is already running, so ticks never pile up requests. */
+    fun locationPromptShown() {
+        askedThisProcess.set(true)
+        launchEdit { listPreferences.markLocationAsked() }
+        location.promptShown()
+    }
+
+    /** A foreground caller may join a running request. The last caller to leave releases the provider. */
     suspend fun refreshLocation() {
-        if (!refreshing.compareAndSet(false, true)) return
+        val request = synchronized(this) {
+            refreshWaiters++
+            refreshRequest?.takeUnless { it.isCompleted } ?: scope.async {
+                try {
+                    location.refresh()
+                } finally {
+                    tick()
+                }
+            }.also { refreshRequest = it }
+        }
         try {
-            location.refresh()
+            request.await()
         } finally {
-            refreshing.set(false)
-            tick()
+            synchronized(this) {
+                if (--refreshWaiters == 0) {
+                    refreshRequest?.cancel()
+                    refreshRequest = null
+                }
+            }
         }
     }
 

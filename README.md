@@ -1,12 +1,12 @@
 # Slackwater for Android
 
-Native Android app for offline tide and current predictions. It opens on the station list: your location, favorites, nearby stations and recents, each with a live reading, plus search across the bundled catalog, all without network permission. The app asks for coarse and fine location once for the list, with location hardware optional. The full station detail and forecast screens are tracked separately.
+Native Android app for offline tide and current predictions. It opens on the station list: your location, favorites, nearby stations and recents, each with a live reading, plus search across the bundled catalog, using local prediction data. The map uses Internet access to load the OpenFreeMap Fiord basemap and tiles. Tile requests tell OpenFreeMap which area is on screen, including the area around your location when the map is centered there. MapLibre caches viewed tiles on the device. If the basemap fails to load or takes more than two seconds on first open, local station pins remain available. Tap Retry map to allow up to 30 seconds for a slow connection, or return to local pins while it loads. The app asks for coarse and fine location once for the list, with location hardware optional. Tap a map pin for its station preview, then tap the preview to open the tide or current chart. Tap the station name on the chart to return to its position on the map.
 
 ## Build
 
 Install JDK 17 so Gradle can discover it for both Android Studio sync and command-line builds. If Gradle cannot find your installation, set `org.gradle.java.installations.paths=/absolute/path/to/jdk-17` in `~/.gradle/gradle.properties`, using the JDK home that contains `bin/java`.
 
-Use Node 24.2 or later, Python 3, Git, and Android SDK platform 37. Set `ANDROID_HOME` or add `sdk.dir` to an ignored `local.properties` file. Gradle needs Node on its PATH; for Android Studio launched outside a shell, set `nodeExecutable=/absolute/path/to/node` in your user Gradle properties (`~/.gradle/gradle.properties`), or pass `-PnodeExecutable=/absolute/path/to/node` on the command line.
+Use Node 24.2 or later, Python 3, Git, and Android SDK platform 37. Gradle invokes `python3` to index the pinned current catalog, and accepts `-PpythonExecutable=/absolute/path/to/python3` when Python is outside the build process’s PATH. Set `ANDROID_HOME` or add `sdk.dir` to an ignored `local.properties` file. Gradle needs Node on its PATH; for Android Studio launched outside a shell, set `nodeExecutable=/absolute/path/to/node` in your user Gradle properties (`~/.gradle/gradle.properties`), or pass `-PnodeExecutable=/absolute/path/to/node` on the command line.
 
 ```sh
 node scripts/sync-upstream.mjs
@@ -18,7 +18,7 @@ python3 scripts/check-apk.py app/build/outputs/apk/debug/app-debug.apk
 ./gradlew :app:connectedDebugAndroidTest
 ```
 
-The device check requires an attached emulator/device. CI runs it on API 26 and API 37.0. Test fixtures exercise NOAA tide events and Almanac solar positions on both JVM and Android; the launch test verifies the application has no Internet permission and that the list's cards read predictions from the bundled database. `SlackwaterTestRunner` records the list's one location ask before any test, so the system prompt never covers a test's activity.
+The device check requires an attached emulator/device. CI runs it on API 26 and API 37.0. Test fixtures exercise NOAA tide events and Almanac solar positions on both JVM and Android; the launch test verifies that the list’s cards read predictions from the bundled database. `SlackwaterTestRunner` records the list's one location ask before any test, so the system prompt never covers a test's activity.
 
 `upstream.lock.json` pins source repositories, product documentation, data and recipe provenance separately. `vendor/` contains ignored exact-SHA checkouts. Sync fails on changed or untracked dependency files or a different revision; inspect and preserve local work before replacing a checkout. `--check` performs no network requests and rejects changed/missing/unexpected packaged assets. Generated catalogs are committed; `stations.tcdb` stays uncompressed. Canadian files contain identity/evidence only, with no user predictions or fitted models.
 

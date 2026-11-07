@@ -2,7 +2,7 @@
 
 The shared string source is `openwatersio/slackwater-ios` merge commit `02188f2a2f5ef4166cd74c373a5885736d7ef159` (PR #900). Product documents, resources and recipe evidence use that immutable merge commit; the exporter reads the tree with `git show` rather than the checkout's moving HEAD.
 
-`scripts/strings-map.json` maps 230 shared resources; 72 explicit Canadian French migration overrides retain the wording already used by the app and its PDF tests. The Android-only translation sources contain 218 more resources per locale, including plural and array resources. English wording and existing Canadian French copy are retained; other Android-only translations are new. The generated locale configuration exposes all 16 locales in Android's app language settings.
+`scripts/strings-map.json` maps 230 shared resources; 72 explicit Canadian French migration overrides retain the wording already used by the app and its PDF tests. The Android-only translation sources contain 240 more resources per locale, including plural and array resources. English wording and existing Canadian French copy are retained; other Android-only translations are new. The generated locale configuration exposes all 16 locales in Android's app language settings.
 
 ## Automated checks
 
@@ -23,3 +23,5 @@ API 26 was not run locally; the existing CI matrix runs API 26 and 37. Native-sp
 Notification event labels, heights and station-local times use the configured language, as do calendar display names. English notification sentences retain their standalone event wording. Calendar names and notification channel names refresh during normal reconciliation/access; they do not promise an immediate system-settings refresh on a locale switch. Generated Calendar Provider event titles and notes remain in English: the pinned reconciliation contract uses title/alarm agreement to identify existing rows. Translating those persisted records requires a separate identity migration so a locale change cannot replace rows or change provider IDs.
 
 After integrating main’s station-card curves, all 22 combined detail/list/PDF/query/notification/calendar device regressions passed on API 37. The footer visibility test re-scrolls within a bounded wait because nearby cards can change height while predictions load. The integrated core/app unit tests, debug builds, lint, all 14 Node tests and exporter freshness checks also passed. The screenshot contact sheets above predate the card-curve integration.
+
+The subsequent map integration adds 22 Android-specific map strings per locale, preserving main’s English and Canadian French copy. These additions have resource/format and lint coverage; the earlier screenshot and device evidence predates this map integration.

@@ -108,24 +108,16 @@ class AndroidPredictionRepository(
             }
         }
 
-    private fun reference(record: io.openwaters.slackwater.database.Station): Station {
-        require(record.tideOffsets == null)
-        return Station(record.constituents.map { HarmonicConstituent(it.name, it.amplitude, it.phase) }
-            .also { require(it.isNotEmpty()) }, record.chartDatumShift ?: 0.0)
-    }
-
     private fun bundledTide(id: StationId, span: TimeSpan): PredictionResult {
         val record = tides.station(id) ?: bad()
         val offsets = record.tideOffsets
         if (offsets == null) {
-            val station = reference(record)
+            val station = tideReference(record)
             return PredictionResult.Ready(id, span, record.attribution, StationCapabilities.HARMONIC_TIDE,
                 EngineAdapter.tide(station, span), chartModel = ChartModel.Tide(station::heights))
         }
-        val ref = reference(tides.station(StationId(offsets.reference)) ?: bad())
-        val height = if (offsets.heightType == HeightOffsetType.RATIO) HeightOffset.Ratio(offsets.heightHigh, offsets.heightLow)
-            else HeightOffset.Fixed(offsets.heightHigh, offsets.heightLow)
-        val station = EngineAdapter.subordinateTide(ref, offsets.timeHigh, offsets.timeLow, height)
+        val ref = tideReference(tides.station(StationId(offsets.reference)) ?: bad())
+        val station = tideSubordinate(record, ref)
         return PredictionResult.Ready(id, span, record.attribution, StationCapabilities.SUBORDINATE_TIDE, EngineAdapter.tide(station, span), chartModel = ChartModel.Tide(station::heights))
     }
 
@@ -138,11 +130,7 @@ class AndroidPredictionRepository(
                 hasCrossAxis = (row.optJSONArray("minorConstituents")?.length() ?: 0) > 0 || row.optDouble("minorMeanFlow", 0.0) != 0.0,
             ), ChartModel.Current(station::speeds, station::events))
         } else {
-            val station = SubordinateCurrentStation(currents[ref]?.currentStation() ?: bad(),
-                row.getDouble("slackBeforeFloodOffset"), row.getDouble("slackBeforeEbbOffset"),
-                row.getDouble("floodTimeOffset"), row.getDouble("ebbTimeOffset"),
-                row.getDouble("floodSpeedRatio"), row.getDouble("ebbSpeedRatio"),
-                row.optional("floodDirection"), row.optional("ebbDirection"))
+            val station = row.subordinateCurrent(currents[ref]?.currentStation() ?: bad())
             Triple(StationCapabilities.SUBORDINATE_CURRENT, EngineAdapter.current(station, span), ChartModel.Current(station::speeds, station::events))
         }
         return PredictionResult.Ready(id, span, "NOAA", capability, series, chartModel = model)
@@ -154,13 +142,11 @@ class AndroidPredictionRepository(
         is StoredModel.Unavailable -> bad()
     }
 
-    private fun fittedTide(model: JSONObject) = Station(model.constants(), model.getDouble("offset"))
-
     private suspend fun canadianTide(id: StationId, span: TimeSpan, purpose: PredictionPurpose): PredictionResult {
         val stored = models.read(id, ModelKind.TIDE)
         if (stored is StoredModel.Ready) {
             val station = try {
-                fittedTide(stored.record)
+                stored.record.fittedTide()
             } catch (_: JSONException) {
                 null
             } catch (_: IllegalArgumentException) {
@@ -239,7 +225,7 @@ class AndroidPredictionRepository(
     private suspend fun derivedGate(id: StationId, span: TimeSpan): PredictionResult {
         val gate = derived[id.value] ?: bad()
         val reference = StationId(gate.getString("reference"))
-        val station = fittedTide(record(reference, ModelKind.TIDE) ?: bad(Reason.MISSING_DOWNLOAD))
+        val station = (record(reference, ModelKind.TIDE) ?: bad(Reason.MISSING_DOWNLOAD)).fittedTide()
         val high = gate.getLong("hwLagMinutes") * 60
         val low = gate.getLong("lwLagMinutes") * 60
         val slacks = station.extremes(span.start.minusSeconds(maxOf(high, low)), span.end.minusSeconds(minOf(high, low)))
@@ -252,8 +238,27 @@ class AndroidPredictionRepository(
     private fun bad(reason: Reason = Reason.INVALID_MODEL): Nothing = throw BadPrediction(reason)
 }
 
+internal fun tideReference(record: io.openwaters.slackwater.database.Station): Station {
+    require(record.tideOffsets == null)
+    return Station(record.constituents.map { HarmonicConstituent(it.name, it.amplitude, it.phase) }
+        .also { require(it.isNotEmpty()) }, record.chartDatumShift ?: 0.0)
+}
+
+internal fun tideSubordinate(record: io.openwaters.slackwater.database.Station, reference: Station): SubordinateTideStation {
+    val offsets = requireNotNull(record.tideOffsets)
+    val height = if (offsets.heightType == HeightOffsetType.RATIO) HeightOffset.Ratio(offsets.heightHigh, offsets.heightLow)
+        else HeightOffset.Fixed(offsets.heightHigh, offsets.heightLow)
+    return EngineAdapter.subordinateTide(reference, offsets.timeHigh, offsets.timeLow, height)
+}
+
+internal fun JSONObject.subordinateCurrent(reference: CurrentStation) = SubordinateCurrentStation(reference,
+    getDouble("slackBeforeFloodOffset"), getDouble("slackBeforeEbbOffset"),
+    getDouble("floodTimeOffset"), getDouble("ebbTimeOffset"),
+    getDouble("floodSpeedRatio"), getDouble("ebbSpeedRatio"),
+    optional("floodDirection"), optional("ebbDirection"))
+
 private fun JSONObject.optional(key: String): Double? = if (isNull(key)) null else getDouble(key)
-private fun JSONObject.constants(key: String = "constituents"): List<HarmonicConstituent> {
+internal fun JSONObject.constants(key: String = "constituents"): List<HarmonicConstituent> {
     val array = getJSONArray(key)
     require(key != "constituents" || array.length() > 0)
     return (0 until array.length()).map {
@@ -262,7 +267,9 @@ private fun JSONObject.constants(key: String = "constituents"): List<HarmonicCon
     }
 }
 
-private fun JSONObject.currentStation() = CurrentStation(constants(), optional("floodDirection"), optional("ebbDirection"),
+internal fun JSONObject.fittedTide() = Station(constants(), getDouble("offset"))
+
+internal fun JSONObject.currentStation() = CurrentStation(constants(), optional("floodDirection"), optional("ebbDirection"),
     getDouble("meanFlow"), if (isNull("minorConstituents")) null else constants("minorConstituents"),
     optional("minorMeanFlow") ?: 0.0, optional("azimuth"))
 

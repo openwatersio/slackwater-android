@@ -266,4 +266,26 @@
     <string name="notification_fall">"%1$s mを下回って下降"</string>
     <string name="curve_spoken">"25時間の曲線：%1$s"</string>
     <string name="curve_spoken_item">"%2$sの%1$s"</string>
+    <string name="map_open">"地図"</string>
+    <string name="map_list">"リスト"</string>
+    <string name="map_locate">"現在地"</string>
+    <string name="map_pick">"観測所を選択"</string>
+    <string name="map_pick_hint">"潮汐と潮流をここに表示します。"</string>
+    <string name="map_legend">"● 潮汐（%1$s）   ➤ 潮流（%2$s）"</string>
+    <string name="map_disclaimer">"航海には使用できません"</string>
+    <string name="map_tide_units">"潮位"</string>
+    <string name="map_current_units">"流速"</string>
+    <string name="map_slow">"背景地図の読み込みに時間がかかっています"</string>
+    <string name="map_loading">"背景地図を読み込み中…"</string>
+    <string name="map_local">"ローカルのピンを表示中"</string>
+    <string name="map_use_local">"ローカルのピンを使用"</string>
+    <string name="map_retry">"地図を再試行"</string>
+    <string name="map_failure">"背景地図を利用できません"</string>
+    <string name="map_stations">"表示範囲内の観測所"</string>
+    <string name="map_close">"プレビューを閉じる"</string>
+    <string name="map_empty">"この範囲に観測所はありません"</string>
+    <string name="map_fix_missing">"位置情報を利用できません"</string>
+    <string name="map_units_legend">"潮汐の単位：%1$s。潮流の単位：%2$s。航海には使用できません。グラフ設定。"</string>
+    <string name="map_zoom_out">"縮小"</string>
+    <string name="map_zoom_in">"拡大"</string>
 </resources>

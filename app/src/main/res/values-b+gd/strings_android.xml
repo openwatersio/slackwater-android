@@ -274,4 +274,26 @@
     <string name="notification_fall">"A\' tuiteam fo %1$s m"</string>
     <string name="curve_spoken">"Lùb 25 uairean: %1$s"</string>
     <string name="curve_spoken_item">"%1$s aig %2$s"</string>
+    <string name="map_open">"Mapa"</string>
+    <string name="map_list">"Liosta"</string>
+    <string name="map_locate">"Mo shuidheachadh"</string>
+    <string name="map_pick">"Tagh stèisean"</string>
+    <string name="map_pick_hint">"Fosglaidh làn-mara is sruthan an seo."</string>
+    <string name="map_legend">"● Làn-mara (%1$s)   ➤ Sruthan (%2$s)"</string>
+    <string name="map_disclaimer">"Chan ann airson seòladh"</string>
+    <string name="map_tide_units">"Àirdean làn-mara"</string>
+    <string name="map_current_units">"Astar nan sruthan"</string>
+    <string name="map_slow">"Tha am mapa bunaiteach slaodach ri luchdadh"</string>
+    <string name="map_loading">"A’ luchdadh a’ mhapa bhunaiteach…"</string>
+    <string name="map_local">"A’ sealltainn prìneachan ionadail"</string>
+    <string name="map_use_local">"Cleachd prìneachan ionadail"</string>
+    <string name="map_retry">"Feuch am mapa a-rithist"</string>
+    <string name="map_failure">"Chan eil am mapa bunaiteach ri fhaighinn"</string>
+    <string name="map_stations">"Stèiseanan san t-sealladh"</string>
+    <string name="map_close">"Dùin an ro-shealladh"</string>
+    <string name="map_empty">"Chan eil stèiseanan san sgìre seo"</string>
+    <string name="map_fix_missing">"Chan eil an suidheachadh ri fhaighinn"</string>
+    <string name="map_units_legend">"Làn-mara ann an %1$s. Sruthan ann an %2$s. Chan ann airson seòladh. Roghainnean a’ chlàir."</string>
+    <string name="map_zoom_out">"Sùm a-mach"</string>
+    <string name="map_zoom_in">"Sùm a-steach"</string>
 </resources>
