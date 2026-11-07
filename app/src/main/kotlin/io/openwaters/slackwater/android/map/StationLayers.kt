@@ -21,6 +21,7 @@ import kotlin.math.hypot
 import kotlin.math.roundToInt
 
 private const val PINS = "slackwater-stations"
+private const val CAPTIONS = "slackwater-station-captions"
 private const val FIX = "slackwater-location"
 private const val INK = "#152256"
 private const val NEUTRAL = "#5888a8"
@@ -40,6 +41,11 @@ private fun size(base: Double) = interpolate(exponential(1.7), zoom(), stop(6, b
 internal class StationLayers(style: Style) {
     private val pins = GeoJsonSource(PINS, FeatureCollection.fromFeatures(emptyList()))
     private val location = GeoJsonSource(FIX, FeatureCollection.fromFeatures(emptyList()))
+
+    // Glyph downloads can block an entire source tile, even its circles and local icons.
+    private val captions = if (org.json.JSONObject(style.json).optString("glyphs").isNotBlank()) {
+        GeoJsonSource(CAPTIONS, FeatureCollection.fromFeatures(emptyList()))
+    } else null
 
     init {
         style.addSource(pins)
@@ -65,12 +71,12 @@ internal class StationLayers(style: Style) {
         style.addLayer(SymbolLayer("station-gauges", PINS).withFilter(has("gauge")).withProperties(
             iconImage(get("gauge")), iconAllowOverlap(true), iconSize(size(1.0))))
         fun caption(id: String, field: String, min: Float, anchor: String, offset: Float) =
-            SymbolLayer(id, PINS).withFilter(has(field)).withProperties(
+            SymbolLayer(id, CAPTIONS).withFilter(has(field)).withProperties(
                 textField(get(field)), textFont(arrayOf("Noto Sans Regular")), textSize(12f),
                 textColor(Color.WHITE), textHaloColor(INK), textHaloWidth(1f),
                 textAnchor(anchor), textOffset(arrayOf(0f, offset))).also { it.minZoom = min }
-        // A first-launch offline style has no glyph endpoint. Requesting text can stall its whole source tile.
-        if (org.json.JSONObject(style.json).optString("glyphs").isNotBlank()) {
+        if (captions != null) {
+            style.addSource(captions)
             style.addLayer(caption("station-names", "name", 10.5f, "top", 1.1f))
             style.addLayer(caption("station-readings", "reading", 9.5f, "bottom", -1.1f))
         }
@@ -99,7 +105,9 @@ internal class StationLayers(style: Style) {
                 pin.state.reading?.let { addStringProperty("reading", it) }
             }
         }
-        pins.setGeoJson(FeatureCollection.fromFeatures(features))
+        val collection = FeatureCollection.fromFeatures(features)
+        pins.setGeoJson(collection)
+        captions?.setGeoJson(collection)
     }
 
     fun updateFix(fix: Coordinate?) {

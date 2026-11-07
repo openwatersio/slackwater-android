@@ -1,0 +1,92 @@
+{
+    "context": {
+        "build": {
+            "brand": "google",
+            "device": "emu64a",
+            "fingerprint": "google/sdk_gphone64_arm64/emu64a:17/CE2A.260420.051.A2/16418371:user/release-keys",
+            "id": "CE2A.260420.051.A2",
+            "model": "sdk_gphone64_arm64",
+            "type": "user",
+            "version": {
+                "codename": "REL",
+                "sdk": 37
+            }
+        },
+        "cpuCoreCount": 1,
+        "cpuLocked": false,
+        "cpuMaxFreqHz": 2000,
+        "memTotalBytes": 4105711616,
+        "sustainedPerformanceModeEnabled": false,
+        "artMainlineVersion": 370546200,
+        "osCodenameAbbreviated": "REL",
+        "compilationMode": "run-from-apk",
+        "payload": {}
+    },
+    "benchmarks": [
+        {
+            "name": "canadianFittedVisibleSet",
+            "params": {},
+            "className": "io.openwaters.slackwater.benchmark.MapBenchmark",
+            "totalRunTimeNs": 23083013636,
+            "metrics": {
+                "coldVisibleStationsFirstMs": {
+                    "minimum": 409.97875,
+                    "maximum": 608.681417,
+                    "median": 455.455959,
+                    "coefficientOfVariation": 0.16573387110448626,
+                    "runs": [
+                        455.455959,
+                        431.54975,
+                        459.595001,
+                        409.97875,
+                        608.681417
+                    ]
+                },
+                "warmVisibleStationsFirstMs": {
+                    "minimum": 202.621333,
+                    "maximum": 264.151292,
+                    "median": 244.135,
+                    "coefficientOfVariation": 0.10388121529808794,
+                    "runs": [
+                        264.151292,
+                        202.621333,
+                        244.135,
+                        234.04375,
+                        262.210791
+                    ]
+                }
+            },
+            "sampledMetrics": {},
+            "warmupIterations": 0,
+            "repeatIterations": 5,
+            "thermalThrottleSleepSeconds": 0,
+            "profilerOutputs": [
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 0",
+                    "filename": "MapBenchmark_canadianFittedVisibleSet_iter000_2026-11-07-00-23-52.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 1",
+                    "filename": "MapBenchmark_canadianFittedVisibleSet_iter001_2026-11-07-00-23-56.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 2",
+                    "filename": "MapBenchmark_canadianFittedVisibleSet_iter002_2026-11-07-00-24-00.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 3",
+                    "filename": "MapBenchmark_canadianFittedVisibleSet_iter003_2026-11-07-00-24-03.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 4",
+                    "filename": "MapBenchmark_canadianFittedVisibleSet_iter004_2026-11-07-00-24-07.perfetto-trace"
+                }
+            ]
+        }
+    ]
+}

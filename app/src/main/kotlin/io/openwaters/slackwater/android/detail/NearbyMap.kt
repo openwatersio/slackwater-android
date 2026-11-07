@@ -28,7 +28,7 @@ internal fun NearbyMap(station: StationIdentity, rows: List<RankedStation>, open
     } }
     val label = stringResource(R.string.detail_map)
     BoxWithConstraints(Modifier.fillMaxWidth().height(220.dp).clip(MaterialTheme.shapes.large)
-        .background(Color(0xff152d3b)).then(if (map != null) Modifier.clickable(onClickLabel = label) { map(station) } else Modifier)) {
+        .background(Color(0xff152d3b)).then(if (map != null && station.kind != StationKind.Retired) Modifier.clickable(onClickLabel = label) { map(station) } else Modifier)) {
         val width = maxWidth.value
         val height = maxHeight.value
         val halfWidth = points.maxOfOrNull { abs(it.first) }?.coerceAtLeast(0.0001) ?: 1.0

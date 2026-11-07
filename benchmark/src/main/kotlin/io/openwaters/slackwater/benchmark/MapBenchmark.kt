@@ -22,9 +22,13 @@ class MapBenchmark {
     @Test fun harbourVisibleSet() = measureCamera("harbour")
     @Test fun continentVisibleSet() = measureCamera("continent")
 
+    @Test fun canadianVisibleSet() = measureCamera("canada")
+
+    @Test fun canadianFittedVisibleSet() = measureCamera("canadaFitted")
+
     private fun measureCamera(camera: String) = benchmark.measureRepeated(
         packageName = "io.openwaters.slackwater.android.benchmark",
-        metrics = listOf(TraceSectionMetric("visibleStationStates", TraceSectionMetric.Mode.First)),
+        metrics = listOf("coldVisibleStations", "warmVisibleStations").map { TraceSectionMetric(it, TraceSectionMetric.Mode.First) },
         iterations = 5,
         compilationMode = CompilationMode.Full(),
         setupBlock = {

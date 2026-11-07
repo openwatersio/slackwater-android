@@ -23,6 +23,8 @@ import kotlin.math.abs
 // ChartPacks.swift at the parity pin uses the hosted Fiord style verbatim.
 internal const val BASEMAP_STYLE_URL = "https://tiles.openfreemap.org/styles/fiord"
 
+internal enum class BasemapStatus { Loading, Ready, Slow, Unavailable, Retrying, LocalOnly }
+
 @Composable
 internal fun NativeStationMap(
     pins: List<StationMapPin>,
@@ -34,10 +36,11 @@ internal fun NativeStationMap(
     styleRequest: Int,
     onViewport: (south: Double, west: Double, north: Double, east: Double, zoom: Double, center: Coordinate) -> Unit,
     onSelect: (StationId?) -> Unit,
-    onStyleFailure: (Boolean) -> Unit,
+    onBasemapStatus: (BasemapStatus) -> Unit,
     modifier: Modifier = Modifier,
     bottomMarginDp: Int = 8,
     styleUrl: String = BASEMAP_STYLE_URL,
+    localOnly: Boolean = false,
 ) {
     val context = LocalContext.current
     val lifecycle = LocalLifecycleOwner.current.lifecycle
@@ -49,7 +52,7 @@ internal fun NativeStationMap(
     var layers by remember(view) { mutableStateOf<StationLayers?>(null) }
     val viewport by rememberUpdatedState(onViewport)
     val select by rememberUpdatedState(onSelect)
-    val reportFailure by rememberUpdatedState(onStyleFailure)
+    val reportStatus by rememberUpdatedState(onBasemapStatus)
     val density = LocalDensity.current
     val margin = with(density) { bottomMarginDp.dp.roundToPx() }
     val hitRadius = with(density) { 18.dp.toPx() }
@@ -116,25 +119,41 @@ internal fun NativeStationMap(
                 }
             }
         }
-        DisposableEffect(ready, styleRequest, styleUrl) {
+        DisposableEffect(ready, styleRequest, styleUrl, localOnly) {
             var active = true
-            var failed = false
+            var usingLocal = false
             layers = null
-            reportFailure(false)
+            fun useLocal(status: BasemapStatus) {
+                if (!active || usingLocal) return
+                usingLocal = true
+                reportStatus(status)
+                ready.setStyle(Style.Builder().fromJson("""{"version":8,"sources":{},"layers":[{"id":"offline-ground","type":"background","paint":{"background-color":"#152256"}}]}""")) {
+                    if (active) layers = StationLayers(it)
+                }
+            }
+            val fallback = Runnable { useLocal(BasemapStatus.Slow) }
             val failure = MapView.OnDidFailLoadingMapListener {
-                if (active && !failed && layers == null) {
-                    failed = true
-                    reportFailure(true)
-                    // Keep local pins selectable even when the hosted style has never been cached.
-                    ready.setStyle(Style.Builder().fromJson("""{"version":8,"sources":{},"layers":[{"id":"offline-ground","type":"background","paint":{"background-color":"#152256"}}]}""")) {
-                        if (active) layers = StationLayers(it)
+                if (layers == null) useLocal(BasemapStatus.Unavailable)
+            }
+            view.addOnDidFailLoadingMapListener(failure)
+            if (localOnly) {
+                useLocal(BasemapStatus.LocalOnly)
+            } else {
+                val initialLoad = styleRequest == 0
+                reportStatus(if (initialLoad) BasemapStatus.Loading else BasemapStatus.Retrying)
+                // On first entry, bound the wait for pins. On retry, the user chooses how long to wait.
+                if (initialLoad) view.postDelayed(fallback, 2_000)
+                ready.setStyle(styleUrl) {
+                    if (active && !usingLocal) {
+                        view.removeCallbacks(fallback)
+                        layers = StationLayers(it)
+                        reportStatus(BasemapStatus.Ready)
                     }
                 }
             }
-            view.addOnDidFailLoadingMapListener(failure)
-            ready.setStyle(styleUrl) { if (active && !failed) layers = StationLayers(it) }
             onDispose {
                 active = false
+                view.removeCallbacks(fallback)
                 view.removeOnDidFailLoadingMapListener(failure)
             }
         }

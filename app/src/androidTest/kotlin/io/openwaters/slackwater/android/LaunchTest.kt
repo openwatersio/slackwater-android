@@ -1,6 +1,8 @@
 package io.openwaters.slackwater.android
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasContentDescription
+import androidx.compose.ui.test.hasAnyAncestor
+import androidx.compose.ui.test.isDialog
 import androidx.compose.ui.test.hasScrollAction
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createEmptyComposeRule
@@ -37,7 +39,9 @@ class LaunchTest {
         compose.onNode(hasScrollAction()).performScrollToNode(hasText("Data and licenses"))
         compose.onNodeWithText("Data and licenses").performClick()
         compose.onNodeWithText("Data credits").assertIsDisplayed()
-        compose.onNodeWithText("Norwegian stations:", substring = true).assertExists()
+        val credits = compose.onNode(hasScrollAction() and hasAnyAncestor(isDialog()))
+        credits.performScrollToNode(hasText("Norwegian stations:", substring = true))
+        compose.onNodeWithText("Norwegian stations:", substring = true).assertIsDisplayed()
         compose.onNodeWithText("Close").performClick()
         compose.onNodeWithText("Data credits").assertDoesNotExist()
     }

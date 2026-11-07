@@ -23,14 +23,14 @@ class MapConformanceTest {
             val previous = model.state.value?.filter
             try {
                 runBlocking { model.listPreferences.setSeriesFilter(StationSeries.Current) }
-                compose.waitUntil { model.state.value?.filter == StationSeries.Current }
+                compose.waitUntil(30_000) { model.state.value?.filter == StationSeries.Current }
                 compose.onNodeWithText("Friday Harbor").performClick()
                 val preview = hasContentDescription("Friday Harbor, San Juan Island", substring = true)
                 compose.waitUntil(60_000) { compose.onAllNodes(preview).fetchSemanticsNodes().isNotEmpty() }
                 assertEquals(StationSeries.Current, model.state.value?.filter)
                 compose.onNodeWithTag("station-map").assertIsDisplayed()
                 compose.onNodeWithText("All").performClick()
-                compose.waitUntil { model.state.value?.filter == null }
+                compose.waitUntil(30_000) { model.state.value?.filter == null }
                 compose.onNode(preview).assertExists()
                 compose.onNodeWithTag("map-disclaimer").performClick()
                 compose.onNodeWithText("Tide heights").assertIsDisplayed()

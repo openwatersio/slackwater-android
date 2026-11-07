@@ -10,13 +10,11 @@ import io.openwaters.slackwater.android.data.*
 import java.io.IOException
 import java.time.Instant
 import java.util.concurrent.ConcurrentHashMap
-import kotlin.math.abs
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
-import org.json.JSONArray
 import org.json.JSONException
 
 data class StationMapPin(val station: StationIdentity, val state: MapPinState, val vectorBearing: Double? = null)
@@ -31,12 +29,7 @@ class StationMapModel(context: Context, private val models: ModelStore = ModelSt
     private val referenceEvents = ReferenceCurrentEvents()
     private val ranks = ConcurrentHashMap<StationId, Double>()
 
-    // A camera reads many current rows together. Index this map session's catalog once,
-    // instead of reopening the compressed asset from the beginning for each pin.
-    private val currents by lazy {
-        val rows = assets.open("slackwater/currents.json").bufferedReader().use { JSONArray(it.readText()) }
-        (0 until rows.length()).map(rows::getJSONObject).associateBy { it.getString("id") }
-    }
+    private val currents = BundledCurrentRecords(assets)
 
     suspend fun pins(
         bounds: PinBox, zoom: Double, filter: StationSeries?, selected: StationId?, at: Instant,
@@ -82,11 +75,7 @@ class StationMapModel(context: Context, private val models: ModelStore = ModelSt
         StationKind.Tide -> tides.station(station.id)?.let { record ->
             pinRank(record.tideOffsets != null, record.constituents.sumOf { it.amplitude })
         } ?: 25.0
-        StationKind.Current -> currents[station.id.value.removePrefix("current:")]?.let { row ->
-            val constants = row.getJSONArray("constituents")
-            val signal = abs(row.getDouble("meanFlow")) + (0 until constants.length()).sumOf { constants.getJSONObject(it).getDouble("amplitude") }
-            pinRank(row.has("reference"), signal)
-        } ?: 25.0
+        StationKind.Current -> currents.rank(station.id.value.removePrefix("current:")) ?: 25.0
         StationKind.CanadianTide, StationKind.CanadianCurrent -> 5.0
         StationKind.DerivedGate -> 19.0
         else -> 25.0
@@ -112,14 +101,14 @@ class StationMapModel(context: Context, private val models: ModelStore = ModelSt
         val reference = row.optString("reference")
         if (reference.isEmpty()) {
             val station = row.currentStation()
-            return format.current(id, station.speeds(at, at, 1.0).speedAt(at),
+            return format.current(station.speeds(at, at, 1.0).speedAt(at),
                 station.floodDirectionDegrees, station.ebbDirectionDegrees, detailed)
         }
         val harmonic = currents[reference]?.currentStation() ?: return MapPinState()
         val station = row.subordinateCurrent(harmonic)
         val events = cache.events(StationId(reference), at, harmonic::events)
         val speed = subordinateCurrentSpeed(at, events, station) ?: station.speeds(at, at, 1.0).speedAt(at)
-        return format.current(id, speed, station.floodDirectionDegrees, station.ebbDirectionDegrees, detailed)
+        return format.current(speed, station.floodDirectionDegrees, station.ebbDirectionDegrees, detailed)
     }
 
     private suspend fun canadian(station: StationIdentity, at: Instant, detailed: Boolean, format: PinFormat): StationMapPin {
@@ -156,7 +145,7 @@ class StationMapModel(context: Context, private val models: ModelStore = ModelSt
                         doddMapVector(signed, series.floodBearing, series.ebbBearing, at) else null
                     return StationMapPin(station, MapPinState(), vector?.directionDegrees)
                 }
-                format.current(station.id, signed, series.floodBearing, series.ebbBearing, detailed)
+                format.current(signed, series.floodBearing, series.ebbBearing, detailed)
             }
             is PredictionSeries.Tide -> {
                 val rising = series.events.firstOrNull { it.time > at }?.let { it.kind == ExtremeKind.HIGH }
@@ -183,8 +172,8 @@ private class PinFormat(private val context: Context, private val prefs: Reading
     fun height(value: Double): String = context.getString(R.string.card_value_unit, formatHeightValue(value, imperial, locale),
         context.getString(if (imperial) R.string.unit_feet else R.string.unit_metres))
 
-    fun current(id: StationId, signed: Double?, flood: Double?, ebb: Double?, detailed: Boolean): MapPinState =
-        currentPinState(signed, flood, ebb, prefs.effectiveThresholdKn(id), detailed) { speed ->
+    fun current(signed: Double?, flood: Double?, ebb: Double?, detailed: Boolean): MapPinState =
+        currentPinState(signed, flood, ebb, detailed) { speed ->
             context.getString(R.string.card_value_unit, formatSpeedValue(speed, speedUnit, locale),
                 context.getString(prefs.speedUnit.unitLabel))
         }

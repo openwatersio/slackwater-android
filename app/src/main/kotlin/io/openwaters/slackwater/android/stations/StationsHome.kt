@@ -10,16 +10,7 @@ import androidx.compose.ui.unit.dp
 import io.openwaters.slackwater.android.R
 import io.openwaters.slackwater.android.map.*
 import io.openwaters.slackwater.android.core.station.StationIdentity
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.clearAndSetSemantics
@@ -35,10 +26,7 @@ import kotlinx.coroutines.launch
 /** Visible cards refresh this often while the app is active. */
 private const val CARD_REFRESH_MILLIS = 60_000L
 
-/**
- * The list with search and the station page over it. The list stays composed beneath them, so its scroll position
- * and filter survive, and is hidden from assistive technology while covered.
- */
+/** Compact windows swap the saved list for a map or station. Expanded windows keep the list beside it. */
 @Composable
 fun StationsHome(onCredits: () -> Unit, coveredByAlert: Boolean = false, externalMapFocus: StationIdentity? = null,
                  consumeFocus: () -> Unit = {}, onSettings: () -> Unit = {}, footerExtras: @Composable () -> Unit = {}) {
@@ -112,7 +100,9 @@ fun StationsHome(onCredits: () -> Unit, coveredByAlert: Boolean = false, externa
         }
         val listVisible = expanded || (!mapShowing && opened == null)
         val showing = listVisible && !searching && !coveredByAlert
-        LaunchedEffect(showing) { if (showing) model.refreshLocation() }
+        LaunchedEffect(showing, lifecycle) {
+            if (showing) lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) { model.refreshLocation() }
+        }
         LaunchedEffect(expanded, current, coveredByAlert) {
             val sections = current?.sections
             if (expanded && !initialChoiceMade && !coveredByAlert && !mapShowing && !searching && sections != null) {
@@ -136,7 +126,7 @@ fun StationsHome(onCredits: () -> Unit, coveredByAlert: Boolean = false, externa
             if (listVisible) Box(if (expanded) Modifier.width(320.dp).fillMaxHeight() else Modifier.fillMaxSize()) {
                 pageState.SaveableStateProvider("list") {
                     StationListScreen(model, ::open, onSearch = { initialChoiceMade = true; searching = true }, onCredits = onCredits,
-                        now = now, showing = showing, onMap = ::toggleMap, mapShowing = mapShowing && opened == null,
+                        now = now, showing = showing, onMap = if (expanded && mapShowing && opened == null) null else ::toggleMap,
                         footerExtras = footerExtras)
                 }
             }

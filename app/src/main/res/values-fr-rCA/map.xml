@@ -8,6 +8,10 @@
     <string name="map_disclaimer">Ne pas utiliser pour la navigation</string>
     <string name="map_tide_units">Hauteurs de marée</string>
     <string name="map_current_units">Vitesses de courant</string>
+    <string name="map_slow">Le fond de carte tarde à charger</string>
+    <string name="map_loading">Chargement du fond de carte…</string>
+    <string name="map_local">Repères locaux affichés</string>
+    <string name="map_use_local">Utiliser les repères locaux</string>
     <string name="map_retry">Réessayer la carte</string>
     <string name="map_failure">Fond de carte indisponible</string>
     <string name="map_stations">Stations visibles</string>
@@ -15,4 +19,6 @@
     <string name="map_empty">Aucune station dans cette zone</string>
     <string name="map_fix_missing">Position indisponible</string>
     <string name="map_units_legend">Marées en %1$s. Courants en %2$s. Ne pas utiliser pour la navigation. Réglages du graphique.</string>
+    <string name="map_zoom_out">Zoom arrière</string>
+    <string name="map_zoom_in">Zoom avant</string>
 </resources>

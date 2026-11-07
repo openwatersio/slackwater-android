@@ -35,7 +35,9 @@ import io.openwaters.slackwater.android.stations.StationCard
 import io.openwaters.slackwater.android.stations.StationListModel
 import java.time.Instant
 import kotlin.math.abs
-import kotlinx.coroutines.launch
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.repeatOnLifecycle
 
 private data class MapViewport(val bounds: PinBox, val zoom: Double, val center: Coordinate)
 
@@ -57,7 +59,7 @@ internal fun MapScreen(list: StationListModel, engine: StationMapModel, now: Ins
     val savedFilter = listState?.filter
     var bypassFilter by rememberSaveable(savedFilter) { mutableStateOf(false) }
     val filter = savedFilter.takeUnless { bypassFilter }
-    val scope = rememberCoroutineScope()
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
     val fix = (listState?.slot as? LocationSlot.Located)?.fix?.coordinate
     val anchor = listState?.sections?.anchor?.coordinate
     var latitude by rememberSaveable { mutableStateOf<Double?>(null) }
@@ -70,7 +72,8 @@ internal fun MapScreen(list: StationListModel, engine: StationMapModel, now: Ins
     var selected by rememberSaveable { mutableStateOf<String?>(null) }
     var viewport by remember { mutableStateOf<MapViewport?>(null) }
     var pinCamera by remember { mutableStateOf<PinCamera?>(null) }
-    var failed by remember { mutableStateOf(false) }
+    var basemapStatus by remember { mutableStateOf(BasemapStatus.Loading) }
+    var localOnly by remember { mutableStateOf(false) }
     var reload by remember { mutableIntStateOf(0) }
     var listing by rememberSaveable { mutableStateOf(false) }
     var locationError by remember { mutableStateOf(false) }
@@ -126,18 +129,23 @@ internal fun MapScreen(list: StationListModel, engine: StationMapModel, now: Ins
     val activity = LocalActivity.current
     var started by remember { mutableLongStateOf(0) }
     var rationale by remember { mutableStateOf(false) }
-    fun locate() {
-        scope.launch {
+    var locating by rememberSaveable { mutableStateOf(false) }
+    LaunchedEffect(locating, lifecycle) {
+        if (locating) lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
             if (list.location.slot() !is LocationSlot.Located) list.refreshLocation()
             val point = (list.location.slot() as? LocationSlot.Located)?.fix?.coordinate
-            if (point == null) locationError = true else { selected = null; move(point, 10.5) }
+            if (point == null) locationError = true else {
+                selected = null
+                move(point, 10.5)
+            }
+            locating = false
         }
     }
     val permission = rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { grant ->
         val granted = grant.values.any { it }
         val after = activity?.let { a -> permissions.any { ActivityCompat.shouldShowRequestPermissionRationale(a, it) } } ?: false
         list.location.promptAnswered(promptRefused(granted, rationale, after, SystemClock.elapsedRealtime() - started))
-        if (granted) locate() else locationError = true
+        if (granted) locating = true else locationError = true
     }
     val density = LocalDensity.current
     var bottom by remember { mutableIntStateOf(8) }
@@ -148,8 +156,8 @@ internal fun MapScreen(list: StationListModel, engine: StationMapModel, now: Ins
                 viewport = next
                 if (pinCamera?.covers(next) != true) pinCamera = PinCamera(next.bounds.padded(), z)
                 latitude = c.latitude; longitude = c.longitude; zoom = z
-            }, onSelect = ::choose, onStyleFailure = { failed = it }, modifier = Modifier.fillMaxSize(),
-            bottomMarginDp = bottom + 8, styleUrl = styleUrl)
+            }, onSelect = ::choose, onBasemapStatus = { basemapStatus = it }, modifier = Modifier.fillMaxSize(),
+            bottomMarginDp = bottom + 8, styleUrl = styleUrl, localOnly = localOnly)
         Column(Modifier.align(Alignment.TopStart).safeDrawingPadding().padding(8.dp)) {
             Surface(shape = MaterialTheme.shapes.large, tonalElevation = 4.dp) {
                 Row(Modifier.padding(horizontal = 6.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -165,11 +173,34 @@ internal fun MapScreen(list: StationListModel, engine: StationMapModel, now: Ins
                     }
                 }
             }
-            TextButton(onClick = { listing = true }) { Text(stringResource(R.string.map_stations)) }
-            if (failed) Surface(shape = MaterialTheme.shapes.medium) {
+            Surface(shape = MaterialTheme.shapes.large) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(stringResource(R.string.map_failure), Modifier.padding(start = 12.dp))
-                    TextButton(onClick = { reload++ }) { Text(stringResource(R.string.map_retry)) }
+                    TextButton(onClick = { listing = true }) { Text(stringResource(R.string.map_stations)) }
+                    for ((step, label) in listOf(-1 to R.string.map_zoom_out, 1 to R.string.map_zoom_in)) {
+                        val description = stringResource(label)
+                        IconButton(enabled = view != null, onClick = {
+                            view?.let { move(it.center, (it.zoom + step).coerceIn(0.0, 22.0)) }
+                        }, modifier = Modifier.semantics { contentDescription = description }) {
+                            Text(if (step > 0) "+" else "−")
+                        }
+                    }
+                }
+            }
+            val statusMessage = when (basemapStatus) {
+                BasemapStatus.Slow -> R.string.map_slow
+                BasemapStatus.Unavailable -> R.string.map_failure
+                BasemapStatus.Retrying -> R.string.map_loading
+                BasemapStatus.LocalOnly -> R.string.map_local
+                else -> null
+            }
+            if (statusMessage != null) Surface(shape = MaterialTheme.shapes.medium) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(stringResource(statusMessage), Modifier.padding(start = 12.dp))
+                    if (basemapStatus == BasemapStatus.Retrying) {
+                        TextButton(onClick = { localOnly = true }) { Text(stringResource(R.string.map_use_local)) }
+                    } else {
+                        TextButton(onClick = { localOnly = false; reload++ }) { Text(stringResource(R.string.map_retry)) }
+                    }
                 }
             }
         }
@@ -206,11 +237,11 @@ internal fun MapScreen(list: StationListModel, engine: StationMapModel, now: Ins
                         LocationSlot.NotDetermined -> {
                             rationale = activity?.let { a -> permissions.any { ActivityCompat.shouldShowRequestPermissionRationale(a, it) } } ?: false
                             started = SystemClock.elapsedRealtime()
-                            list.location.promptShown()
+                            list.locationPromptShown()
                             permission.launch(permissions)
                         }
                         LocationSlot.Denied -> context.startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.fromParts("package", context.packageName, null)))
-                        else -> locate()
+                        else -> locating = true
                     }
                 }) { Text(stringResource(R.string.map_locate)) }
                 if (showListButton) ExtendedFloatingActionButton(onClick = close) { Text(stringResource(R.string.map_list)) }

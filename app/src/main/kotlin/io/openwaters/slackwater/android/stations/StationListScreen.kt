@@ -41,7 +41,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -71,7 +70,6 @@ import io.openwaters.slackwater.android.core.station.promptRefused
 import io.openwaters.slackwater.android.data.ReadingPreferences
 import java.time.Instant
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 private val GoGreen = Color(0xFF88B868)
 private val AttentionAmber = Color(0xFFE8A33D)
@@ -89,17 +87,20 @@ fun StationListScreen(
     now: Instant,
     showing: Boolean = true,
     onMap: (() -> Unit)? = null,
-    mapShowing: Boolean = false,
     footerExtras: @Composable () -> Unit = {},
 ) {
     val context = LocalContext.current
     val activity = context as? ComponentActivity
-    val scope = rememberCoroutineScope()
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
+    var permissionResult by remember { mutableLongStateOf(0L) }
+    LaunchedEffect(permissionResult, lifecycle) {
+        if (permissionResult > 0) lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) { model.refreshLocation() }
+    }
     val state by model.state.collectAsState()
     val readingPreferences by model.readingPreferences.collectAsState()
     val listPreferences by model.preferences.collectAsState()
     val catalogFailed by model.catalogFailed.collectAsState()
-    var chooser by remember { mutableStateOf<RemovedStation?>(null) }
+    var chooser by androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf<String?>(null) }
     val listState = rememberLazyListState()
 
     // The prompt's answer, read against the rationale flag around it, says whether the system will ask again.
@@ -109,13 +110,12 @@ fun StationListScreen(
         val granted = grants.values.any { it }
         val rationaleAfter = activity?.let { a -> locationPermissions.any { ActivityCompat.shouldShowRequestPermissionRationale(a, it) } } ?: false
         model.location.promptAnswered(promptRefused(granted, rationaleBefore, rationaleAfter, SystemClock.elapsedRealtime() - promptStarted))
-        scope.launch { model.refreshLocation() }
+        permissionResult++
     }
     fun ask() {
         rationaleBefore = activity?.let { a -> locationPermissions.any { ActivityCompat.shouldShowRequestPermissionRationale(a, it) } } ?: false
         promptStarted = SystemClock.elapsedRealtime()
-        model.location.promptShown()
-        model.launchEdit { model.listPreferences.markLocationAsked() }
+        model.locationPromptShown()
         launcher.launch(locationPermissions)
     }
 
@@ -146,25 +146,29 @@ fun StationListScreen(
                     context.startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.fromParts("package", context.packageName, null)))
                 })
                 savedSection(R.string.list_favorites, current.sections.favorites, current, model, readingPreferences, now, onOpen,
-                    onRemoved = { chooser = it }, isFavorites = true)
+                    onRemoved = { chooser = it.id.value }, isFavorites = true)
                 nearMe(current, model, readingPreferences, now, onOpen) { series ->
                     model.launchEdit { model.listPreferences.setSeriesFilter(series) }
                 }
                 savedSection(R.string.list_recents, current.sections.recents, current, model, readingPreferences, now, onOpen,
-                    onRemoved = { chooser = it }, isFavorites = false)
+                    onRemoved = { chooser = it.id.value }, isFavorites = false)
                 footer(onCredits, footerExtras)
             }
         }
         if (onMap != null) ExtendedFloatingActionButton(
             onClick = onMap, modifier = Modifier.align(Alignment.BottomEnd).safeDrawingPadding().padding(end = 16.dp, bottom = 24.dp).heightIn(min = 56.dp)
-        ) { Text(stringResource(if (mapShowing) R.string.map_list else R.string.map_open)) }
+        ) { Text(stringResource(R.string.map_open)) }
         ExtendedFloatingActionButton(
             onClick = onSearch,
             modifier = Modifier.align(Alignment.BottomStart).safeDrawingPadding().padding(start = 16.dp, bottom = 24.dp).heightIn(min = 56.dp),
         ) { Text(stringResource(R.string.list_search)) }
     }
 
-    chooser?.let { removed ->
+    val removedStation = chooser?.let { current?.removed?.get(StationId(it)) }
+    LaunchedEffect(chooser, current != null, removedStation) {
+        if (current != null && removedStation == null) chooser = null
+    }
+    removedStation?.let { removed ->
         ReplacementChooser(removed, model, readingPreferences, now, onDismiss = { chooser = null }) { replacement ->
             chooser = null
             model.launchEdit { model.places.replaceFavorite(removed.id, replacement) }

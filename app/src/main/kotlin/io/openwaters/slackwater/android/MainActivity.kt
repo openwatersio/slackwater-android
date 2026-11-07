@@ -20,8 +20,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -90,13 +90,17 @@ class MainActivity : ComponentActivity() {
                         confirmButton = { TextButton(onClick = { badLink = false }) { Text(stringResource(R.string.close)) } })
                 }
                 if (showCredits) {
-                    val notices = remember { resources.openRawResource(R.raw.third_party_notices).bufferedReader().use { it.readText() } }
+                    val notices = remember {
+                        resources.openRawResource(R.raw.third_party_notices).bufferedReader().use {
+                            it.readText().trim().split(Regex("\\n{2,}"))
+                        }
+                    }
                     AlertDialog(
                         onDismissRequest = { showCredits = false },
                         title = { Text(stringResource(R.string.data_credits)) },
                         text = {
-                            Column(Modifier.heightIn(max = 400.dp).verticalScroll(rememberScrollState())) {
-                                Text(notices)
+                            LazyColumn(Modifier.heightIn(max = 400.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                                items(notices) { paragraph -> Text(paragraph) }
                             }
                         },
                         confirmButton = {

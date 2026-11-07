@@ -16,6 +16,20 @@ test('every bundled publisher has an accessible data credit', async () => {
     assert.ok(notices.includes('CC BY-NC 4.0'));
 });
 
+test('credits include notices for the pinned MapLibre distribution', async () => {
+    const versions = await readFile(new URL('gradle/libs.versions.toml', root), 'utf8');
+    const [, sdk] = versions.match(/org\.maplibre\.gl:android-sdk-opengl", version = "([^"]+)"/);
+    const notices = await readFile(new URL('app/src/main/res/raw/third_party_notices.txt', root), 'utf8');
+    for (const credit of [
+        `maplibre-native/blob/android-v${sdk}/platform/android/LICENSE.md`,
+        'GeoJSON and Turf', 'MapLibre Android Gestures', 'OkHttp 4.12.0 public suffix list',
+        'kdbush.hpp', 'FreeType Project', 'PMTiles C++', 'jni.hpp', 'unordered_dense',
+        'MapLibre Tile decoder', 'HarfBuzz', 'ICU 58 and later',
+    ]) {
+        assert.ok(notices.includes(credit), `Missing MapLibre notice: ${credit}`);
+    }
+});
+
 test('Canadian assets contain only reviewed identity and recipe fields', async () => {
     const fields = {
         'chs-stations.json': 'aliases id latitude longitude name region timezone',

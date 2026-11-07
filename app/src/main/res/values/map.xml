@@ -8,6 +8,10 @@
     <string name="map_disclaimer">Not for navigation</string>
     <string name="map_tide_units">Tide heights</string>
     <string name="map_current_units">Current speeds</string>
+    <string name="map_slow">Basemap is slow to load</string>
+    <string name="map_loading">Loading basemap…</string>
+    <string name="map_local">Showing local pins</string>
+    <string name="map_use_local">Use local pins</string>
     <string name="map_retry">Retry map</string>
     <string name="map_failure">Basemap unavailable</string>
     <string name="map_stations">Stations in view</string>
@@ -15,4 +19,6 @@
     <string name="map_empty">No stations in this area</string>
     <string name="map_fix_missing">Location unavailable</string>
     <string name="map_units_legend">Tides in %1$s. Currents in %2$s. Not for navigation. Chart settings.</string>
+    <string name="map_zoom_out">Zoom out</string>
+    <string name="map_zoom_in">Zoom in</string>
 </resources>

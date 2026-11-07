@@ -63,9 +63,8 @@ private fun rampColor(speed: Double): String {
     return String.format(Locale.ROOT, "#%02x%02x%02x", channel(16), channel(8), channel(0))
 }
 
-// The comfort threshold controls the window. Only the zero instant is green.
-@Suppress("UNUSED_PARAMETER")
-fun currentPinState(signed: Double?, floodBearing: Double?, ebbBearing: Double?, thresholdKnots: Double,
+// Exactly zero uses the slack color. Moving water uses speed and its signed axis.
+fun currentPinState(signed: Double?, floodBearing: Double?, ebbBearing: Double?,
                     detailed: Boolean, formatSpeed: (Double) -> String): MapPinState {
     if (signed == null || !signed.isFinite()) return MapPinState()
     return MapPinState(if (signed == 0.0) "#88b868" else rampColor(abs(signed)),

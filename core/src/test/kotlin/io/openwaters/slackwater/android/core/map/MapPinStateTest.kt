@@ -61,7 +61,7 @@ class MapPinStateTest {
     }
 
     @Test fun majorAxisColorAndDoddVectorKeepTheirDistinctSlackBehavior() {
-        fun pin(speed: Double?) = currentPinState(speed, 355.0, 155.0, 2.0, true) { "$it kn" }
+        fun pin(speed: Double?) = currentPinState(speed, 355.0, 155.0, true) { "$it kn" }
         assertEquals(MapPinState(), pin(null))
         assertEquals(MapPinState("#88b868", "0.0 kn", 355.0), pin(0.0))
         assertEquals("#f8d997", pin(0.01).state)
@@ -90,6 +90,35 @@ class MapPinStateTest {
         }
         assertEquals(2, loads)
         assertNull(subordinateCurrentSpeed(now, emptyList(), station))
+    }
+
+    @Test fun shippedSubordinatesMatchTheEngineAcrossAFullCycleAndBucketBoundaries() {
+        val file = File(System.getProperty("mapStationIndex")).resolveSibling("currents.json")
+        val rows = file.reader().use { JsonParser.parseReader(it).asJsonArray }
+            .associate { it.asJsonObject["id"].asString to it.asJsonObject }
+        // Mixed Atlantic and Pacific references, including the largest shipped time correction.
+        for (id in listOf("noaa/ACT5176", "noaa/PCT5756", "noaa/ACT7311", "noaa/ACT3196", "noaa/ACT3366", "noaa/PCT5861")) {
+            val row = rows.getValue(id)
+            val referenceId = row["reference"].asString
+            val source = rows.getValue(referenceId)
+            val constants = source["constituents"].asJsonArray.map {
+                val c = it.asJsonObject
+                HarmonicConstituent(c["name"].asString, c["amplitude"].asDouble, c["phase"].asDouble)
+            }
+            val reference = CurrentStation(constants, offsetKnots = source["meanFlow"].asDouble)
+            val station = SubordinateCurrentStation(reference, row["slackBeforeFloodOffset"].asDouble,
+                row["slackBeforeEbbOffset"].asDouble, row["floodTimeOffset"].asDouble, row["ebbTimeOffset"].asDouble,
+                row["floodSpeedRatio"].asDouble, row["ebbSpeedRatio"].asDouble)
+            val cache = ReferenceCurrentEvents()
+            for (hours in 0 until 24 step 3) {
+                for (seconds in listOf(-1, 0, 1)) {
+                    val time = Instant.ofEpochSecond(now.epochSecond / 1800 * 1800 + hours * 3600 + seconds)
+                    val events = cache.events(StationId(referenceId), time, reference::events)
+                    val engine = station.speeds(time, time, 1.0).single().speedKnots
+                    assertEquals("$id at $time", engine, subordinateCurrentSpeed(time, events, station)!!, 0.002)
+                }
+            }
+        }
     }
 
     @Test fun realStationDensityStaysBoundedAndHarbourRetainsDetail() {

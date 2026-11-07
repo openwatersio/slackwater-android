@@ -27,19 +27,32 @@
             "name": "harbourVisibleSet",
             "params": {},
             "className": "io.openwaters.slackwater.benchmark.MapBenchmark",
-            "totalRunTimeNs": 21395500385,
+            "totalRunTimeNs": 42532478021,
             "metrics": {
-                "visibleStationStatesFirstMs": {
-                    "minimum": 140.267791,
-                    "maximum": 181.578375,
-                    "median": 178.51875,
-                    "coefficientOfVariation": 0.13291018224808818,
+                "coldVisibleStationsFirstMs": {
+                    "minimum": 714.959375,
+                    "maximum": 1128.3245,
+                    "median": 969.581667,
+                    "coefficientOfVariation": 0.161589187009928,
                     "runs": [
-                        140.267791,
-                        180.774083,
-                        140.653416,
-                        181.578375,
-                        178.51875
+                        920.996001,
+                        1031.569708,
+                        714.959375,
+                        969.581667,
+                        1128.3245
+                    ]
+                },
+                "warmVisibleStationsFirstMs": {
+                    "minimum": 87.609208,
+                    "maximum": 280.38375,
+                    "median": 154.767,
+                    "coefficientOfVariation": 0.46219041695622193,
+                    "runs": [
+                        87.609208,
+                        110.32025,
+                        179.907584,
+                        154.767,
+                        280.38375
                     ]
                 }
             },
@@ -51,27 +64,27 @@
                 {
                     "type": "PerfettoTrace",
                     "label": "Trace Iteration 0",
-                    "filename": "MapBenchmark_harbourVisibleSet_iter000_2026-11-06-22-24-54.perfetto-trace"
+                    "filename": "MapBenchmark_harbourVisibleSet_iter000_2026-11-07-00-11-58.perfetto-trace"
                 },
                 {
                     "type": "PerfettoTrace",
                     "label": "Trace Iteration 1",
-                    "filename": "MapBenchmark_harbourVisibleSet_iter001_2026-11-06-22-24-57.perfetto-trace"
+                    "filename": "MapBenchmark_harbourVisibleSet_iter001_2026-11-07-00-12-05.perfetto-trace"
                 },
                 {
                     "type": "PerfettoTrace",
                     "label": "Trace Iteration 2",
-                    "filename": "MapBenchmark_harbourVisibleSet_iter002_2026-11-06-22-25-01.perfetto-trace"
+                    "filename": "MapBenchmark_harbourVisibleSet_iter002_2026-11-07-00-12-10.perfetto-trace"
                 },
                 {
                     "type": "PerfettoTrace",
                     "label": "Trace Iteration 3",
-                    "filename": "MapBenchmark_harbourVisibleSet_iter003_2026-11-06-22-25-05.perfetto-trace"
+                    "filename": "MapBenchmark_harbourVisibleSet_iter003_2026-11-07-00-12-17.perfetto-trace"
                 },
                 {
                     "type": "PerfettoTrace",
                     "label": "Trace Iteration 4",
-                    "filename": "MapBenchmark_harbourVisibleSet_iter004_2026-11-06-22-25-08.perfetto-trace"
+                    "filename": "MapBenchmark_harbourVisibleSet_iter004_2026-11-07-00-12-26.perfetto-trace"
                 }
             ]
         },
@@ -79,19 +92,32 @@
             "name": "continentVisibleSet",
             "params": {},
             "className": "io.openwaters.slackwater.benchmark.MapBenchmark",
-            "totalRunTimeNs": 18834258217,
+            "totalRunTimeNs": 57407805527,
             "metrics": {
-                "visibleStationStatesFirstMs": {
-                    "minimum": 110.11425,
-                    "maximum": 279.822292,
-                    "median": 156.425417,
-                    "coefficientOfVariation": 0.3812934769623372,
+                "coldVisibleStationsFirstMs": {
+                    "minimum": 1274.745876,
+                    "maximum": 1710.347126,
+                    "median": 1548.141417,
+                    "coefficientOfVariation": 0.1159910496664796,
                     "runs": [
-                        110.11425,
-                        157.089459,
-                        143.636667,
-                        156.425417,
-                        279.822292
+                        1274.745876,
+                        1548.141417,
+                        1602.446292,
+                        1382.010042,
+                        1710.347126
+                    ]
+                },
+                "warmVisibleStationsFirstMs": {
+                    "minimum": 177.941375,
+                    "maximum": 378.878167,
+                    "median": 276.394959,
+                    "coefficientOfVariation": 0.2725806086303296,
+                    "runs": [
+                        177.941375,
+                        236.866375,
+                        378.878167,
+                        301.365417,
+                        276.394959
                     ]
                 }
             },
@@ -103,27 +129,92 @@
                 {
                     "type": "PerfettoTrace",
                     "label": "Trace Iteration 0",
-                    "filename": "MapBenchmark_continentVisibleSet_iter000_2026-11-06-22-25-15.perfetto-trace"
+                    "filename": "MapBenchmark_continentVisibleSet_iter000_2026-11-07-00-12-46.perfetto-trace"
                 },
                 {
                     "type": "PerfettoTrace",
                     "label": "Trace Iteration 1",
-                    "filename": "MapBenchmark_continentVisibleSet_iter001_2026-11-06-22-25-18.perfetto-trace"
+                    "filename": "MapBenchmark_continentVisibleSet_iter001_2026-11-07-00-12-57.perfetto-trace"
                 },
                 {
                     "type": "PerfettoTrace",
                     "label": "Trace Iteration 2",
-                    "filename": "MapBenchmark_continentVisibleSet_iter002_2026-11-06-22-25-21.perfetto-trace"
+                    "filename": "MapBenchmark_continentVisibleSet_iter002_2026-11-07-00-13-07.perfetto-trace"
                 },
                 {
                     "type": "PerfettoTrace",
                     "label": "Trace Iteration 3",
-                    "filename": "MapBenchmark_continentVisibleSet_iter003_2026-11-06-22-25-24.perfetto-trace"
+                    "filename": "MapBenchmark_continentVisibleSet_iter003_2026-11-07-00-13-16.perfetto-trace"
                 },
                 {
                     "type": "PerfettoTrace",
                     "label": "Trace Iteration 4",
-                    "filename": "MapBenchmark_continentVisibleSet_iter004_2026-11-06-22-25-28.perfetto-trace"
+                    "filename": "MapBenchmark_continentVisibleSet_iter004_2026-11-07-00-13-26.perfetto-trace"
+                }
+            ]
+        },
+        {
+            "name": "canadianVisibleSet",
+            "params": {},
+            "className": "io.openwaters.slackwater.benchmark.MapBenchmark",
+            "totalRunTimeNs": 62720861447,
+            "metrics": {
+                "coldVisibleStationsFirstMs": {
+                    "minimum": 952.100751,
+                    "maximum": 1499.561959,
+                    "median": 1174.225708,
+                    "coefficientOfVariation": 0.166491802253488,
+                    "runs": [
+                        1499.561959,
+                        1230.013792,
+                        952.100751,
+                        1123.267001,
+                        1174.225708
+                    ]
+                },
+                "warmVisibleStationsFirstMs": {
+                    "minimum": 131.511917,
+                    "maximum": 809.738292,
+                    "median": 200.275875,
+                    "coefficientOfVariation": 0.9009720434793336,
+                    "runs": [
+                        809.738292,
+                        232.4055,
+                        131.511917,
+                        184.42675,
+                        200.275875
+                    ]
+                }
+            },
+            "sampledMetrics": {},
+            "warmupIterations": 0,
+            "repeatIterations": 5,
+            "thermalThrottleSleepSeconds": 0,
+            "profilerOutputs": [
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 0",
+                    "filename": "MapBenchmark_canadianVisibleSet_iter000_2026-11-07-00-14-02.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 1",
+                    "filename": "MapBenchmark_canadianVisibleSet_iter001_2026-11-07-00-14-10.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 2",
+                    "filename": "MapBenchmark_canadianVisibleSet_iter002_2026-11-07-00-14-17.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 3",
+                    "filename": "MapBenchmark_canadianVisibleSet_iter003_2026-11-07-00-14-22.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 4",
+                    "filename": "MapBenchmark_canadianVisibleSet_iter004_2026-11-07-00-14-29.perfetto-trace"
                 }
             ]
         }

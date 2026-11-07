@@ -12,7 +12,7 @@ dependencies {
 
 tasks.test {
     val index = rootProject.file("app/src/main/assets/slackwater/station-index.json")
-    inputs.file(index)
+    inputs.files(index, index.resolveSibling("currents.json"))
     systemProperty("mapStationIndex", index.absolutePath)
     val fixtures = rootProject.file("vendor/slackwater/fixtures")
     inputs.files(fileTree(fixtures) { include("*.json") })
@@ -20,7 +20,7 @@ tasks.test {
 }
 
 tasks.register<Test>("nationalTideDirectionSweep") {
-    description = "Compare every bundled tide station against the pinned iOS lunar-month direction probes."
+    description = "Compare tide directions from the pinned iOS source catalog against exact lunar-month direction probes."
     group = "verification"
     testClassesDirs = sourceSets.test.get().output.classesDirs
     classpath = sourceSets.test.get().runtimeClasspath
