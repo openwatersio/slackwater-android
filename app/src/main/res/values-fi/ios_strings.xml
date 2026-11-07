@@ -231,4 +231,18 @@
     <string name="notification_low">"Alavesi"</string>
     <string name="curve_spoken_flood">"Nousuvirtaus"</string>
     <string name="curve_spoken_ebb">"Laskuvirtaus"</string>
+    <string name="gate_slow_reversal">"Virta kääntyy täällä hitaasti, mikä vaikeuttaa tyvenen ennustamista."</string>
+    <string name="gate_tidal_falls">"Täällä on suuntaa vaihtavia vuorovesiputouksia."</string>
+    <string name="gate_rapids">"Täällä on vuorovesikoskia."</string>
+    <string name="gate_no_evidence">"Laitteessa tehtyä sovitusta ei ole validoitu täällä. Slackwater käyttää CHS:n ennusteita."</string>
+    <string name="gate_near_bar">"Laitteessa tehty sovitus on lähellä validointirajaa. Slackwater käyttää CHS:n ennusteita, kunnes sovitus läpäisee sen johdonmukaisesti."</string>
+    <string name="gate_reversed_axis">"Laitteessa tehty sovitus ennusti väärän virtaussuunnan %1$s%%:ssa virran huipuista huonoimmalla viikollaan."</string>
+    <string name="gate_invented_slack">"Laitteessa tehdyn sovituksen CHS:n ennusteista puuttuvien tyventen vuosimäärä oli %1$d."</string>
+    <string name="gate_missed_slack">"Laitteessa tehdyltä sovitukselta puuttuvien CHS-tyventen vuosimäärä oli %1$d."</string>
+    <string name="gate_slack_worst">"Laitteessa tehty sovitus poikkesi CHS:n tyvenennusteista vuoden aikana enintään %1$s min."</string>
+    <string name="gate_slack_median">"Sovituksen tyvenajankohdan mediaaniero CHS:ään oli huonoimmalla neljänneksellä %1$s min."</string>
+    <string name="gate_extremum_timing">"Sovituksen virran huipun ajankohdan mediaaniero CHS:ään oli huonoimmalla neljänneksellä %1$s min."</string>
+    <string name="gate_peak_speed">"Sovituksen huippunopeuden mediaaniero CHS:ään oli huonoimmalla neljänneksellä %1$s %2$s."</string>
+    <string name="gate_unknown">"Laitteessa tehty sovitus ei läpäissyt validointia täällä. Slackwater käyttää CHS:n ennusteita."</string>
+    <string name="gate_too_few">"CHS-tapahtumia ei ollut riittävästi laitteen sovituksen validoimiseksi jokaisella vuosineljänneksellä."</string>
 </resources>

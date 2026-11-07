@@ -24,6 +24,18 @@ class DetailConformanceTest {
     private val context get() = InstrumentationRegistry.getInstrumentation().targetContext
     private val now = Instant.parse("2026-11-06T18:00:00Z")
 
+    @Test fun onlineGateExplanationUsesLocalContextAndPrioritizesNearBarEvidence() {
+        val gates = BundledCurrentGates(context.assets)
+        val arran = requireNotNull(gates[StationId("chs-arran-rapids")])
+        val beazley = requireNotNull(gates[StationId("chs-beazley-passage")])
+        val worst = context.getString(io.openwaters.slackwater.android.R.string.gate_slack_worst,
+            "%.1f".format(context.resources.configuration.locales[0], arran.onlineMiss!!.value))
+        assertEquals(context.getString(io.openwaters.slackwater.android.R.string.gate_rapids) + " " + worst,
+            arran.onlineExplanation(context, SpeedUnit.KNOTS))
+        assertTrue(beazley.onlineExplanation(context, SpeedUnit.KNOTS).endsWith(
+            context.getString(io.openwaters.slackwater.android.R.string.gate_near_bar)))
+    }
+
     @Test fun tidePage() = scene("tide", "noaa/9449880")
     @Test fun measuredCurrentPage() = scene("current", "current:noaa/PCT3896")
     @Test fun longStationName() = scene("long-label", "ticon/sunnyvale_east_channel_below_caribbean_drive-sun-usa-cm")
@@ -37,6 +49,35 @@ class DetailConformanceTest {
         scene("vector-slack", id.value, slack.time)
     }
 
+    @Test fun completedBoundedGateShowsItsBoundWithoutRequestingMoreData() =
+        gatePage("chs-blackney-passage", "Blackney Passage", 210, 45, provisional = false)
+
+    @Test fun provisionalGateShowsItsBoundAndRequestsMoreData() =
+        gatePage("chs-johnstone-strait-central", "Johnstone Strait - Central", 60, 35, provisional = true)
+
+    private fun gatePage(rawId: String, name: String, days: Int, minutes: Int, provisional: Boolean) {
+        val store = ModelStore.get(context)
+        val id = StationId(rawId)
+        val previous = runBlocking { store.read(id, ModelKind.CURRENT) }
+        assertTrue(previous is StoredModel.Ready || previous is StoredModel.Missing)
+        try {
+            val fit = JSONObject("""{"offset":1.387,"constituents":[{"name":"M2","amplitude":1.5,"phase":10}]}""")
+                .put("recipe", io.openwaters.slackwater.ChsCurrentFit.STAMP).put("fitDays", days)
+                .put("floodDirection", 20).put("ebbDirection", 215)
+            runBlocking { store.write(id, ModelKind.CURRENT, fit) }
+            compose.setContent { StationDetailScreen(StationListModel.get(context), id, now, null, {}, {}) }
+            val bound = context.getString(io.openwaters.slackwater.android.R.string.detail_bound, name, minutes)
+            compose.waitUntil(30_000) { compose.onAllNodesWithText(bound).fetchSemanticsNodes().isNotEmpty() }
+            val notice = compose.onNodeWithText(context.getString(io.openwaters.slackwater.android.R.string.detail_more_data))
+            if (provisional) notice.assertExists() else notice.assertDoesNotExist()
+        } finally {
+            runBlocking {
+                if (previous is StoredModel.Ready) store.write(id, ModelKind.CURRENT, previous.record)
+                else store.remove(id, ModelKind.CURRENT)
+            }
+        }
+    }
+
     @Test fun derivedGatePage() {
         val store = ModelStore.get(context)
         val id = StationId("chs-point-atkinson")
@@ -45,6 +86,7 @@ class DetailConformanceTest {
         try {
             runBlocking { store.write(id, ModelKind.TIDE, JSONObject("""{"offset":1.387,"constituents":[{"name":"M2","amplitude":1.5,"phase":10}]}""")) }
             scene("derived", "chs-malibu-rapids")
+            compose.onNodeWithText(context.getString(io.openwaters.slackwater.android.R.string.detail_context, "9 kn flood & ebb")).assertExists()
         } finally {
             runBlocking {
                 if (previous is StoredModel.Ready) store.write(id, ModelKind.TIDE, previous.record)

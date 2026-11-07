@@ -1366,6 +1366,62 @@
       "overrides": {
         "fr-CA": "jusant"
       }
+    },
+    {
+      "name": "gate_slow_reversal",
+      "key": "The current here is slow to reverse, which makes slack harder to predict."
+    },
+    {
+      "name": "gate_tidal_falls",
+      "key": "This place has reversing tidal falls."
+    },
+    {
+      "name": "gate_rapids",
+      "key": "This place has tidal rapids."
+    },
+    {
+      "name": "gate_no_evidence",
+      "key": "An on-device fit has not been validated here. Slackwater uses CHS predictions."
+    },
+    {
+      "name": "gate_near_bar",
+      "key": "The on-device fit is close to the validation bar. Slackwater uses CHS predictions until it passes consistently."
+    },
+    {
+      "name": "gate_reversed_axis",
+      "key": "The on-device fit predicted the wrong flow direction for %@%% of peak flows in its worst week."
+    },
+    {
+      "name": "gate_invented_slack",
+      "key": "The on-device fit’s yearly count of slacks absent from CHS predictions was %lld."
+    },
+    {
+      "name": "gate_missed_slack",
+      "key": "The on-device fit’s yearly count of missed CHS slacks was %lld."
+    },
+    {
+      "name": "gate_slack_worst",
+      "key": "The on-device fit differed from CHS's slack predictions by up to %@ min over a year."
+    },
+    {
+      "name": "gate_slack_median",
+      "key": "The on-device fit's median slack timing difference from CHS was %@ min in its worst quarter."
+    },
+    {
+      "name": "gate_extremum_timing",
+      "key": "The on-device fit's median peak-flow timing difference from CHS was %@ min in its worst quarter."
+    },
+    {
+      "name": "gate_peak_speed",
+      "key": "The on-device fit's median peak-speed difference from CHS was %@ %@ in its worst quarter."
+    },
+    {
+      "name": "gate_unknown",
+      "key": "The on-device fit did not pass validation here. Slackwater uses CHS predictions."
+    },
+    {
+      "name": "gate_too_few",
+      "key": "There were not enough CHS events to validate the on-device fit in every quarter."
     }
   ],
   "androidDirectory": "scripts/translations/android"

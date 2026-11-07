@@ -66,6 +66,60 @@ class ModelStoreTest {
         assertTrue(store.revision.value > before)
     }
 
+    @Test fun tierChangesInvalidateBeforePurgingOnlyTheOppositeCache() = withStore { legacy, directory ->
+        val online = StationId("chs-online")
+        val offline = StationId("chs-offline")
+        val invalidated = mutableListOf<Pair<StationId, ModelKind>>()
+        val tiers = mapOf(online to ModelKind.ONLINE_WINDOW, offline to ModelKind.CURRENT)
+        for (id in tiers.keys) {
+            legacy.write(id, ModelKind.ONLINE_WINDOW, model(1.0))
+            legacy.write(id, ModelKind.CURRENT, model(2.0))
+        }
+        var fail = true
+        val store = ModelStore(directory, currentTier = tiers::get) { id, kind ->
+            assertTrue(legacy.read(id, kind) is StoredModel.Ready)
+            if (fail) throw IOException("invalidation unavailable")
+            invalidated += id to kind
+        }
+        assertThrows(IOException::class.java) { runBlocking { store.reconcileCurrentTiers() } }
+        assertTrue(legacy.read(online, ModelKind.CURRENT) is StoredModel.Ready)
+        assertTrue(legacy.read(offline, ModelKind.ONLINE_WINDOW) is StoredModel.Ready)
+        assertEquals(StoredModel.Missing, store.read(online, ModelKind.CURRENT))
+        assertEquals(setOf(offline), store.storedIds(ModelKind.CURRENT))
+
+        fail = false
+        store.reconcileCurrentTiers()
+        store.reconcileCurrentTiers()
+        assertEquals(listOf(online to ModelKind.CURRENT, offline to ModelKind.ONLINE_WINDOW), invalidated)
+        assertEquals(StoredModel.Missing, legacy.read(online, ModelKind.CURRENT))
+        assertEquals(StoredModel.Missing, legacy.read(offline, ModelKind.ONLINE_WINDOW))
+        assertTrue(legacy.read(online, ModelKind.ONLINE_WINDOW) is StoredModel.Ready)
+        assertTrue(legacy.read(offline, ModelKind.CURRENT) is StoredModel.Ready)
+        assertThrows(IllegalArgumentException::class.java) {
+            runBlocking { store.update(offline, ModelKind.ONLINE_WINDOW) { model(3.0) } }
+        }
+        assertEquals(2L, store.revision.value)
+    }
+
+    @Test fun tierReplacementCommitsNewCacheBeforeRemovingObsoleteData() = withStore { legacy, directory ->
+        legacy.write(millBay, ModelKind.CURRENT, model(1.0))
+        val store = ModelStore(directory, currentTier = { ModelKind.ONLINE_WINDOW }) { id, kind ->
+            assertEquals(ModelKind.CURRENT, kind)
+            assertTrue(legacy.read(id, kind) is StoredModel.Ready)
+            assertTrue(legacy.read(id, ModelKind.ONLINE_WINDOW) is StoredModel.Ready)
+        }
+        store.beforeCommit = { throw IOException("interrupted before rename") }
+        assertThrows(IOException::class.java) {
+            runBlocking { store.write(millBay, ModelKind.ONLINE_WINDOW, model(2.0)) }
+        }
+        assertTrue(legacy.read(millBay, ModelKind.CURRENT) is StoredModel.Ready)
+        assertEquals(StoredModel.Missing, legacy.read(millBay, ModelKind.ONLINE_WINDOW))
+        store.beforeCommit = {}
+        store.update(millBay, ModelKind.ONLINE_WINDOW) { model(2.0) }
+        assertEquals(StoredModel.Missing, legacy.read(millBay, ModelKind.CURRENT))
+        assertTrue(legacy.read(millBay, ModelKind.ONLINE_WINDOW) is StoredModel.Ready)
+    }
+
     @Test fun unknownFieldsSurviveARewrite() = withStore { store, directory ->
         File(directory.apply { mkdirs() }, "chs-mill-bay.tide.json").writeText(
             """{"schemaVersion":1,"stationId":"chs-mill-bay","offset":1.5,"fromANewerBuild":{"kept":[1,2]}}""",

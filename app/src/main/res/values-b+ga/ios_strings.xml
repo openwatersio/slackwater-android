@@ -231,4 +231,18 @@
     <string name="notification_low">"Lag trá"</string>
     <string name="curve_spoken_flood">"Tuile"</string>
     <string name="curve_spoken_ebb">"Aife"</string>
+    <string name="gate_slow_reversal">"Casann an sruth anseo go mall, rud a fhágann go bhfuil sé níos deacra uisce marbh a thuar."</string>
+    <string name="gate_tidal_falls">"Tá easanna taoide anseo a athraíonn treo."</string>
+    <string name="gate_rapids">"Tá sruthanna tapa taoide anseo."</string>
+    <string name="gate_no_evidence">"Níor bailíochtaíodh feistiú ar an ngléas anseo fós. Úsáideann Slackwater réamhaisnéisí CHS."</string>
+    <string name="gate_near_bar">"Tá an feistiú ar an ngléas gar don tairseach bailíochtaithe. Úsáideann Slackwater réamhaisnéisí CHS go dtí go n-éiríonn leis go comhsheasmhach."</string>
+    <string name="gate_reversed_axis">"Thuar an feistiú ar an ngléas treo mícheart ag %1$s%% de bhuaicsruthanna sa tseachtain ba mheasa."</string>
+    <string name="gate_invented_slack">"Ba é %1$d líon bliantúil na dtréimhsí uisce mhairbh a thuar an feistiú ach nach raibh i réamhaisnéisí CHS."</string>
+    <string name="gate_missed_slack">"Ba é %1$d líon bliantúil na dtréimhsí uisce mhairbh CHS a chaill an feistiú."</string>
+    <string name="gate_slack_worst">"Bhí an feistiú ar an ngléas suas le %1$s nóim. difriúil ó réamhaisnéisí uisce mhairbh CHS thar bhliain."</string>
+    <string name="gate_slack_median">"Ba é %1$s nóim. airmheán na difríochta idir am uisce mhairbh an fheistithe agus CHS sa ráithe ba mheasa."</string>
+    <string name="gate_extremum_timing">"Ba é %1$s nóim. airmheán na difríochta idir am buaicsrutha an fheistithe agus CHS sa ráithe ba mheasa."</string>
+    <string name="gate_peak_speed">"Ba é %1$s %2$s airmheán na difríochta idir buaicluas an fheistithe agus CHS sa ráithe ba mheasa."</string>
+    <string name="gate_unknown">"Níor éirigh leis an bhfeistiú ar an ngléas sa bhailíochtú anseo. Úsáideann Slackwater réamhaisnéisí CHS."</string>
+    <string name="gate_too_few">"Ní raibh dóthain imeachtaí CHS ann chun an feistiú ar an ngléas a bhailíochtú i ngach ráithe."</string>
 </resources>

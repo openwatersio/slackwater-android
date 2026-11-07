@@ -231,4 +231,18 @@
     <string name="notification_low">"Low tide"</string>
     <string name="curve_spoken_flood">"flood"</string>
     <string name="curve_spoken_ebb">"ebb"</string>
+    <string name="gate_slow_reversal">"The current here is slow to reverse, which makes slack harder to predict."</string>
+    <string name="gate_tidal_falls">"This place has reversing tidal falls."</string>
+    <string name="gate_rapids">"This place has tidal rapids."</string>
+    <string name="gate_no_evidence">"An on-device fit has not been validated here. Slackwater uses CHS predictions."</string>
+    <string name="gate_near_bar">"The on-device fit is close to the validation bar. Slackwater uses CHS predictions until it passes consistently."</string>
+    <string name="gate_reversed_axis">"The on-device fit predicted the wrong flow direction for %1$s%% of peak flows in its worst week."</string>
+    <string name="gate_invented_slack">"The on-device fit’s yearly count of slacks absent from CHS predictions was %1$d."</string>
+    <string name="gate_missed_slack">"The on-device fit’s yearly count of missed CHS slacks was %1$d."</string>
+    <string name="gate_slack_worst">"The on-device fit differed from CHS\'s slack predictions by up to %1$s min over a year."</string>
+    <string name="gate_slack_median">"The on-device fit\'s median slack timing difference from CHS was %1$s min in its worst quarter."</string>
+    <string name="gate_extremum_timing">"The on-device fit\'s median peak-flow timing difference from CHS was %1$s min in its worst quarter."</string>
+    <string name="gate_peak_speed">"The on-device fit\'s median peak-speed difference from CHS was %1$s %2$s in its worst quarter."</string>
+    <string name="gate_unknown">"The on-device fit did not pass validation here. Slackwater uses CHS predictions."</string>
+    <string name="gate_too_few">"There were not enough CHS events to validate the on-device fit in every quarter."</string>
 </resources>

@@ -231,4 +231,18 @@
     <string name="notification_low">"Baixa-mar"</string>
     <string name="curve_spoken_flood">"Enchente"</string>
     <string name="curve_spoken_ebb">"Vazante"</string>
+    <string name="gate_slow_reversal">"A corrente aqui demora a inverter, o que dificulta prever a estofa."</string>
+    <string name="gate_tidal_falls">"Aqui há quedas de maré que invertem o sentido."</string>
+    <string name="gate_rapids">"Aqui há rápidos de maré."</string>
+    <string name="gate_no_evidence">"Ainda não foi validado um ajuste no dispositivo aqui. O Slackwater utiliza previsões do CHS."</string>
+    <string name="gate_near_bar">"O ajuste no dispositivo está próximo do limite de validação. O Slackwater utiliza previsões do CHS até que o ultrapasse de forma consistente."</string>
+    <string name="gate_reversed_axis">"O ajuste no dispositivo previu a direção errada em %1$s%% dos picos de corrente na pior semana."</string>
+    <string name="gate_invented_slack">"A contagem anual de estofas do ajuste ausentes das previsões do CHS foi %1$d."</string>
+    <string name="gate_missed_slack">"A contagem anual de estofas do CHS não previstas pelo ajuste foi %1$d."</string>
+    <string name="gate_slack_worst">"O ajuste no dispositivo diferiu das previsões de estofa do CHS em até %1$s min ao longo de um ano."</string>
+    <string name="gate_slack_median">"A diferença mediana do horário da estofa entre o ajuste e o CHS foi %1$s min no pior trimestre."</string>
+    <string name="gate_extremum_timing">"A diferença mediana do horário de pico da corrente entre o ajuste e o CHS foi %1$s min no pior trimestre."</string>
+    <string name="gate_peak_speed">"A diferença mediana da velocidade máxima entre o ajuste e o CHS foi %1$s %2$s no pior trimestre."</string>
+    <string name="gate_unknown">"O ajuste no dispositivo não passou na validação aqui. O Slackwater utiliza previsões do CHS."</string>
+    <string name="gate_too_few">"Não houve eventos suficientes do CHS para validar o ajuste no dispositivo em todos os trimestres."</string>
 </resources>

@@ -231,4 +231,18 @@
     <string name="notification_low">"干潮"</string>
     <string name="curve_spoken_flood">"上げ潮流"</string>
     <string name="curve_spoken_ebb">"下げ潮流"</string>
+    <string name="gate_slow_reversal">"ここでは流れがゆっくり反転するため、憩流の予測が難しくなります。"</string>
+    <string name="gate_tidal_falls">"ここには流れが反転する潮汐の滝があります。"</string>
+    <string name="gate_rapids">"ここには潮汐による急流があります。"</string>
+    <string name="gate_no_evidence">"ここでは端末上の近似モデルはまだ検証されていません。SlackwaterはCHSの予測を使用します。"</string>
+    <string name="gate_near_bar">"端末上の近似モデルは検証基準に近づいています。安定して基準を満たすまで、SlackwaterはCHSの予測を使用します。"</string>
+    <string name="gate_reversed_axis">"端末上の近似モデルは、最も悪い週の最大流速時の%1$s%%で流れの向きを誤って予測しました。"</string>
+    <string name="gate_invented_slack">"端末上の近似モデルが予測し、CHSの予測にはなかった憩流の年間回数は%1$d回でした。"</string>
+    <string name="gate_missed_slack">"端末上の近似モデルが見逃したCHSの憩流の年間回数は%1$d回でした。"</string>
+    <string name="gate_slack_worst">"端末上の近似モデルは、1年間でCHSの憩流予測と最大%1$s分異なりました。"</string>
+    <string name="gate_slack_median">"最も悪い四半期における端末上の近似モデルとCHSの憩流時刻の差の中央値は%1$s分でした。"</string>
+    <string name="gate_extremum_timing">"最も悪い四半期における端末上の近似モデルとCHSの最大流速時刻の差の中央値は%1$s分でした。"</string>
+    <string name="gate_peak_speed">"最も悪い四半期における端末上の近似モデルとCHSの最大流速の差の中央値は%1$s %2$sでした。"</string>
+    <string name="gate_unknown">"ここでは端末上の近似モデルは検証基準を満たしませんでした。SlackwaterはCHSの予測を使用します。"</string>
+    <string name="gate_too_few">"すべての四半期で端末上の近似モデルを検証するには、CHSのイベントが不足していました。"</string>
 </resources>

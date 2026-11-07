@@ -1,6 +1,7 @@
 package io.openwaters.slackwater.android.map
 
 import androidx.test.platform.app.InstrumentationRegistry
+import io.openwaters.slackwater.ChsCurrentFit
 import io.openwaters.slackwater.android.core.map.PinBox
 import io.openwaters.slackwater.android.core.station.StationId
 import io.openwaters.slackwater.android.core.station.StationSeries
@@ -23,6 +24,31 @@ class StationMapModelTest {
         assertEquals("TICON-4", gauge.station.source)
         assertEquals("unknown", gauge.state.state)
         assertNull(gauge.state.reading)
+    }
+
+    @Test fun currentPinStopsShowingItsReadingWhenTheStoredFitLosesItsRecipe() = runBlocking {
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        val directory = File(context.cacheDir, "map-fit-${UUID.randomUUID()}")
+        val store = ModelStore(directory)
+        val map = StationMapModel(context, store)
+        val id = StationId("chs-johnstone-strait-central")
+        val bounds = PinBox(50.471, -126.137, 50.472, -126.136)
+        val at = Instant.parse("2026-07-15T00:00:00Z")
+        suspend fun pin() = map.pins(bounds, 12.0, StationSeries.Current, null, at).single { it.station.id == id }
+        val record = JSONObject("""{"offset":2,"fitDays":60,"floodDirection":20,"ebbDirection":215,
+            "constituents":[{"name":"M2","amplitude":1,"phase":10}]}""").put("recipe", ChsCurrentFit.STAMP)
+        try {
+            store.write(id, ModelKind.CURRENT, record)
+            assertNotNull(pin().state.reading)
+            record.remove("recipe")
+            store.write(id, ModelKind.CURRENT, record)
+            val unavailable = pin().state
+            assertEquals("unknown", unavailable.state)
+            assertNull(unavailable.reading)
+        } finally {
+            directory.deleteRecursively()
+        }
+        Unit
     }
 
     @Test fun doddKeepsItsIdentityWhileOnlyACoveredNonzeroVectorGetsAnArrow() = runBlocking {

@@ -29,7 +29,7 @@ class AndroidPredictionRepository(
         }
 
     private val currents = BundledCurrentRecords(assets)
-    private val gates by lazy { rows("chs-current-gates") }
+    private val gates = BundledCurrentGates(assets)
     private val derived by lazy { rows("chs-gates") }
 
     /** Identifies only this station's inputs. Bounded previews and online cache blocks are never calendar sources. */
@@ -46,7 +46,7 @@ class AndroidPredictionRepository(
                 catalogRecord = gate.toString()
             }
             StationKind.CanadianCurrent -> {
-                val gate = gates[id.value] ?: return "missing-current:${id.value}"
+                val gate = gates.catalogRecord(id) ?: return "missing-current:${id.value}"
                 reference = id
                 kind = ModelKind.CURRENT
                 catalogRecord = "${ChsCurrentFit.STAMP}:$gate"
@@ -167,8 +167,8 @@ class AndroidPredictionRepository(
     }
 
     private suspend fun canadianCurrent(id: StationId, span: TimeSpan, purpose: PredictionPurpose): PredictionResult {
-        val gate = gates[id.value] ?: bad()
-        if (gate.optBoolean("online")) {
+        val gate = gates[id] ?: bad()
+        if (gate.online) {
             if (!StationCapabilities.ONLINE_CURRENT.supports(purpose)) bad(Reason.UNSUPPORTED_PURPOSE)
             val window = record(id, ModelKind.ONLINE_WINDOW) ?: bad(Reason.MISSING_DOWNLOAD)
             val blocks = window.optJSONArray("blocks") ?: JSONArray().put(window)
@@ -200,25 +200,11 @@ class AndroidPredictionRepository(
             return if (sorted.size == 1) sorted.single() else PredictionResult.Disjoint(sorted)
         }
         val model = record(id, ModelKind.CURRENT) ?: bad(Reason.MISSING_DOWNLOAD)
-        val required = gate.getDouble("fitDays")
-        val days = model.getDouble("fitDays")
-        require(required in ChsCurrentFit.days.map { it.toDouble() })
-        require(gate.getString("recipe") == ChsCurrentFit.STAMP && model.getString("recipe") == ChsCurrentFit.STAMP)
-        val capability = when {
-            days == required && !gate.isNull("slackBoundMinutes") -> StationCapabilities.BOUNDED_CURRENT
-            days == required -> StationCapabilities.FINAL_CURRENT
-            required > days && days == 60.0 && !gate.isNull("provisionalSlackMinutes") -> StationCapabilities.PROVISIONAL_CURRENT
-            else -> bad()
-        }
-        if (!capability.supports(purpose)) bad(Reason.UNSUPPORTED_PURPOSE)
+        val fit = gate.compatibleFit(model) ?: bad()
+        if (!fit.capability.supports(purpose)) bad(Reason.UNSUPPORTED_PURPOSE)
         val station = CurrentStation(model.constants(), model.getDouble("floodDirection"),
             model.getDouble("ebbDirection"), model.getDouble("offset"))
-        val errorBound = when (capability) {
-            StationCapabilities.BOUNDED_CURRENT -> gate.getInt("slackBoundMinutes")
-            StationCapabilities.PROVISIONAL_CURRENT -> gate.getInt("provisionalSlackMinutes")
-            else -> null
-        }
-        return PredictionResult.Ready(id, span, "CHS", capability, EngineAdapter.current(station, span), errorBound,
+        return PredictionResult.Ready(id, span, "CHS", fit.capability, EngineAdapter.current(station, span), fit.slackBoundMinutes,
             chartModel = ChartModel.Current(station::speeds, station::events))
     }
 

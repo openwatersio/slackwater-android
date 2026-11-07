@@ -231,4 +231,18 @@
     <string name="notification_low">"Lavvann"</string>
     <string name="curve_spoken_flood">"Inngående"</string>
     <string name="curve_spoken_ebb">"Utgående"</string>
+    <string name="gate_slow_reversal">"Strømmen her snur langsomt, noe som gjør strømskifte vanskeligere å forutsi."</string>
+    <string name="gate_tidal_falls">"Her finnes tidevannsfall som skifter retning."</string>
+    <string name="gate_rapids">"Her finnes tidevannsstryk."</string>
+    <string name="gate_no_evidence">"En tilpasning på enheten er ikke validert her. Slackwater bruker CHS-prognoser."</string>
+    <string name="gate_near_bar">"Tilpasningen på enheten er nær valideringsgrensen. Slackwater bruker CHS-prognoser til den består jevnt."</string>
+    <string name="gate_reversed_axis">"Tilpasningen på enheten forutsa feil strømretning ved %1$s%% av strømtoppene i den dårligste uken."</string>
+    <string name="gate_invented_slack">"Det årlige antallet strømskifter fra tilpasningen som manglet i CHS-prognosene, var %1$d."</string>
+    <string name="gate_missed_slack">"Det årlige antallet CHS-strømskifter som tilpasningen overså, var %1$d."</string>
+    <string name="gate_slack_worst">"Tilpasningen på enheten avvek fra CHS-prognosene for strømskifte med opptil %1$s min over et år."</string>
+    <string name="gate_slack_median">"Tilpasningens medianavvik fra CHS for tidspunktet for strømskifte var %1$s min i det dårligste kvartalet."</string>
+    <string name="gate_extremum_timing">"Tilpasningens medianavvik fra CHS for tidspunktet for maksimal strøm var %1$s min i det dårligste kvartalet."</string>
+    <string name="gate_peak_speed">"Tilpasningens medianavvik fra CHS for maksimal strømhastighet var %1$s %2$s i det dårligste kvartalet."</string>
+    <string name="gate_unknown">"Tilpasningen på enheten bestod ikke valideringen her. Slackwater bruker CHS-prognoser."</string>
+    <string name="gate_too_few">"Det var ikke nok CHS-hendelser til å validere tilpasningen på enheten i hvert kvartal."</string>
 </resources>

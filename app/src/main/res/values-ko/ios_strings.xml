@@ -231,4 +231,18 @@
     <string name="notification_low">"간조"</string>
     <string name="curve_spoken_flood">"창조"</string>
     <string name="curve_spoken_ebb">"낙조"</string>
+    <string name="gate_slow_reversal">"이곳은 해류 방향이 천천히 바뀌어 정조 예측이 더 어렵습니다."</string>
+    <string name="gate_tidal_falls">"이곳에는 방향이 바뀌는 조석 폭포가 있습니다."</string>
+    <string name="gate_rapids">"이곳에는 조석 급류가 있습니다."</string>
+    <string name="gate_no_evidence">"이곳에서는 기기 내 적합 모델이 검증되지 않았습니다. Slackwater는 CHS 예측을 사용합니다."</string>
+    <string name="gate_near_bar">"기기 내 적합 모델이 검증 기준에 근접했습니다. 안정적으로 통과할 때까지 Slackwater는 CHS 예측을 사용합니다."</string>
+    <string name="gate_reversed_axis">"기기 내 적합 모델은 가장 나쁜 주에 최대 유속의 %1$s%%에서 흐름 방향을 잘못 예측했습니다."</string>
+    <string name="gate_invented_slack">"기기 내 적합 모델이 예측했으나 CHS 예측에는 없는 정조의 연간 횟수는 %1$d회였습니다."</string>
+    <string name="gate_missed_slack">"기기 내 적합 모델이 놓친 CHS 정조의 연간 횟수는 %1$d회였습니다."</string>
+    <string name="gate_slack_worst">"기기 내 적합 모델은 1년 동안 CHS 정조 예측과 최대 %1$s분 차이가 났습니다."</string>
+    <string name="gate_slack_median">"가장 나쁜 분기에 기기 내 적합 모델과 CHS의 정조 시각 차이 중앙값은 %1$s분이었습니다."</string>
+    <string name="gate_extremum_timing">"가장 나쁜 분기에 기기 내 적합 모델과 CHS의 최대 유속 시각 차이 중앙값은 %1$s분이었습니다."</string>
+    <string name="gate_peak_speed">"가장 나쁜 분기에 기기 내 적합 모델과 CHS의 최대 유속 차이 중앙값은 %1$s %2$s였습니다."</string>
+    <string name="gate_unknown">"이곳에서는 기기 내 적합 모델이 검증을 통과하지 못했습니다. Slackwater는 CHS 예측을 사용합니다."</string>
+    <string name="gate_too_few">"모든 분기에 기기 내 적합 모델을 검증하기에는 CHS 이벤트가 부족했습니다."</string>
 </resources>

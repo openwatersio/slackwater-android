@@ -231,4 +231,18 @@
     <string name="notification_low">"Marée basse"</string>
     <string name="curve_spoken_flood">"flot"</string>
     <string name="curve_spoken_ebb">"jusant"</string>
+    <string name="gate_slow_reversal">"Le courant s’inverse lentement ici, ce qui rend l’étale plus difficile à prévoir."</string>
+    <string name="gate_tidal_falls">"Il y a ici des chutes de marée réversibles."</string>
+    <string name="gate_rapids">"Il y a ici des rapides de marée."</string>
+    <string name="gate_no_evidence">"Aucun ajustement sur l’appareil n’a été validé ici. Slackwater utilise les prévisions du SHC."</string>
+    <string name="gate_near_bar">"L’ajustement sur l’appareil approche du seuil de validation. Slackwater utilise les prévisions du SHC jusqu’à ce qu’il réussisse de façon constante."</string>
+    <string name="gate_reversed_axis">"L’ajustement sur l’appareil a prédit la mauvaise direction pour %1$s%% des maximums de courant pendant sa pire semaine."</string>
+    <string name="gate_invented_slack">"Le nombre annuel d’étales prédites par l’ajustement sur l’appareil mais absentes des prévisions du SHC était de %1$d."</string>
+    <string name="gate_missed_slack">"Le nombre annuel d’étales du SHC manquées par l’ajustement sur l’appareil était de %1$d."</string>
+    <string name="gate_slack_worst">"L’ajustement sur l’appareil a différé des prévisions d’étale du SHC de jusqu’à %1$s min sur un an."</string>
+    <string name="gate_slack_median">"L’écart médian de l’heure d’étale entre l’ajustement et le SHC était de %1$s min au pire trimestre."</string>
+    <string name="gate_extremum_timing">"L’écart médian de l’heure du courant maximal entre l’ajustement et le SHC était de %1$s min au pire trimestre."</string>
+    <string name="gate_peak_speed">"L’écart médian de vitesse maximale entre l’ajustement et le SHC était de %1$s %2$s au pire trimestre."</string>
+    <string name="gate_unknown">"L’ajustement sur l’appareil n’a pas réussi la validation ici. Slackwater utilise les prévisions du SHC."</string>
+    <string name="gate_too_few">"Il n’y avait pas assez d’événements du SHC pour valider l’ajustement sur l’appareil chaque trimestre."</string>
 </resources>

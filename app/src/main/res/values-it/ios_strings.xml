@@ -231,4 +231,18 @@
     <string name="notification_low">"Bassa marea"</string>
     <string name="curve_spoken_flood">"Flusso"</string>
     <string name="curve_spoken_ebb">"Riflusso"</string>
+    <string name="gate_slow_reversal">"Qui la corrente si inverte lentamente, rendendo più difficile prevedere la stanca."</string>
+    <string name="gate_tidal_falls">"Qui si trovano cascate di marea che invertono direzione."</string>
+    <string name="gate_rapids">"Qui si trovano rapide di marea."</string>
+    <string name="gate_no_evidence">"Qui non è stato validato un adattamento sul dispositivo. Slackwater usa le previsioni del CHS."</string>
+    <string name="gate_near_bar">"L’adattamento sul dispositivo è vicino alla soglia di validazione. Slackwater usa le previsioni del CHS finché non la supera con costanza."</string>
+    <string name="gate_reversed_axis">"L’adattamento sul dispositivo ha previsto la direzione errata nel %1$s%% dei massimi di corrente nella settimana peggiore."</string>
+    <string name="gate_invented_slack">"Il conteggio annuale delle stanche dell’adattamento assenti dalle previsioni del CHS era %1$d."</string>
+    <string name="gate_missed_slack">"Il conteggio annuale delle stanche del CHS mancate dall’adattamento era %1$d."</string>
+    <string name="gate_slack_worst">"L’adattamento sul dispositivo ha differito dalle previsioni di stanca del CHS fino a %1$s min nell’arco di un anno."</string>
+    <string name="gate_slack_median">"La differenza mediana dell’orario di stanca tra l’adattamento e il CHS era %1$s min nel trimestre peggiore."</string>
+    <string name="gate_extremum_timing">"La differenza mediana dell’orario di massima corrente tra l’adattamento e il CHS era %1$s min nel trimestre peggiore."</string>
+    <string name="gate_peak_speed">"La differenza mediana della velocità massima tra l’adattamento e il CHS era %1$s %2$s nel trimestre peggiore."</string>
+    <string name="gate_unknown">"L’adattamento sul dispositivo non ha superato la validazione qui. Slackwater usa le previsioni del CHS."</string>
+    <string name="gate_too_few">"Gli eventi del CHS non erano sufficienti per validare l’adattamento sul dispositivo in ogni trimestre."</string>
 </resources>

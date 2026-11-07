@@ -50,6 +50,15 @@ test('Canadian assets contain only reviewed identity and recipe fields', async (
     }
 });
 
+test('bundled current gates have the evidence fields required by Android', async () => {
+    const gates = JSON.parse(await readFile(new URL('app/src/main/assets/slackwater/chs-current-gates.json', root)));
+    for (const gate of gates) {
+        assert.equal(typeof gate.id, 'string');
+        assert.ok(Number.isFinite(gate.fitDays), gate.id);
+        if (gate.onlineMiss) assert.equal(typeof gate.onlineMiss.clause, 'string', gate.id);
+    }
+});
+
 test('live station IDs are unique and disjoint from restricted identities', async () => {
     const read = async name => JSON.parse(await readFile(new URL(
         `app/src/main/assets/slackwater/${name}.json`, root)));
