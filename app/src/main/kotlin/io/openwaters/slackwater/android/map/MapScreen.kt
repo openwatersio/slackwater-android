@@ -214,7 +214,7 @@ internal fun MapScreen(list: StationListModel, engine: StationMapModel, now: Ins
                             if (station.kind == StationKind.Restricted) TextButton(onClick = { open(station.id) }) {
                                 Column { Text(station.name); Text(stringResource(R.string.detail_unavailable)) }
                             } else key(station.id, revision) {
-                                StationCard(station, null, now, prefs, { list.reading(station.id, it) }, { open(station.id) })
+                                StationCard(station, null, now, prefs, { at, threshold -> list.card(station.id, at, threshold) }, { open(station.id) })
                             }
                         }
                         TextButton(onClick = { selected = null }) { Text(stringResource(R.string.map_close)) }
