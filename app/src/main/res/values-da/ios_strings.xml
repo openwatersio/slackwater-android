@@ -245,4 +245,19 @@
     <string name="gate_peak_speed">"Modellens medianafvigelse fra CHS for maksimal strømhastighed var %1$s %2$s i det dårligste kvartal."</string>
     <string name="gate_unknown">"Modellen på enheden bestod ikke valideringen her. Slackwater bruger CHS’ forudsigelser."</string>
     <string name="gate_too_few">"Der var ikke nok CHS-hændelser til at validere modellen på enheden i hvert kvartal."</string>
+    <string name="tour_read_title">"Sådan læser du tidslinjen"</string>
+    <string name="tour_read">"Midterlinjen markerer det tidspunkt, der vises nedenfor."</string>
+    <string name="tour_swipe_title">"Stryg for at se mere"</string>
+    <string name="tour_swipe">"Stryg på kurven for at bevæge dig gennem tiden."</string>
+    <string name="tour_stars_title">"Den virkelige himmel"</string>
+    <string name="tour_stars">"Det er de faktiske stjerner over %1$s i nat."</string>
+    <string name="tour_moon_title">"Månen"</string>
+    <string name="tour_moon">"Og det er den virkelige måne med nattens månefase."</string>
+    <string name="tour_moon_card_title">"Månedetaljer"</string>
+    <string name="tour_moon_card">"Tryk på månen for at se opgang, nedgang og fase."</string>
+    <string name="tour_star_title">"Favoritter"</string>
+    <string name="tour_star">"Giv en station en stjerne for at holde den øverst på din liste."</string>
+    <string name="tour_next">"Næste ›"</string>
+    <string name="tour_done">"OK"</string>
+    <string name="tour_skip">"Spring over"</string>
 </resources>

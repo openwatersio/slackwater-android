@@ -1422,6 +1422,81 @@
     {
       "name": "gate_too_few",
       "key": "There were not enough CHS events to validate the on-device fit in every quarter."
+    },
+    {
+      "name": "tour_read_title",
+      "key": "Reading the strip",
+      "english": "Reading the strip"
+    },
+    {
+      "name": "tour_read",
+      "key": "The center line marks the moment shown below.",
+      "english": "The center line marks the moment shown below."
+    },
+    {
+      "name": "tour_swipe_title",
+      "key": "Swipe to see more",
+      "english": "Swipe to see more"
+    },
+    {
+      "name": "tour_swipe",
+      "key": "Swipe the curve to move through time.",
+      "english": "Swipe the curve to move through time."
+    },
+    {
+      "name": "tour_stars_title",
+      "key": "The real sky",
+      "english": "The real sky"
+    },
+    {
+      "name": "tour_stars",
+      "key": "Those are the actual stars over %@ tonight.",
+      "english": "Those are the actual stars over %1$s tonight."
+    },
+    {
+      "name": "tour_moon_title",
+      "key": "The moon",
+      "english": "The moon"
+    },
+    {
+      "name": "tour_moon",
+      "key": "And that is the real moon, at tonight's phase.",
+      "english": "And that is the real moon, at tonight's phase."
+    },
+    {
+      "name": "tour_moon_card_title",
+      "key": "Moon details",
+      "english": "Moon details"
+    },
+    {
+      "name": "tour_moon_card",
+      "key": "Tap the moon for its rise, set and phase.",
+      "english": "Tap the moon for its rise, set and phase."
+    },
+    {
+      "name": "tour_star_title",
+      "key": "Favourites",
+      "english": "Favorites"
+    },
+    {
+      "name": "tour_star",
+      "key": "Star a station to keep it at the top of your list.",
+      "english": "Star a station to keep it at the top of your list."
+    },
+    {
+      "name": "tour_next",
+      "key": "Next ›",
+      "english": "Next ›"
+    },
+    {
+      "name": "tour_done",
+      "key": "Done",
+      "english": "Done"
+    },
+    {
+      "name": "tour_skip",
+      "key": "Skip",
+      "english": "Skip"
     }
   ],
   "androidDirectory": "scripts/translations/android"

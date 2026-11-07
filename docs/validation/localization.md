@@ -2,7 +2,7 @@
 
 The shared string source is `openwatersio/slackwater-ios` merge commit `02188f2a2f5ef4166cd74c373a5885736d7ef159` (PR #900). Product documents, resources and recipe evidence use that immutable merge commit; the exporter reads the tree with `git show` rather than the checkout's moving HEAD.
 
-`scripts/strings-map.json` maps 230 shared resources; 72 explicit Canadian French migration overrides retain the wording already used by the app and its PDF tests. The Android-only translation sources contain 240 more resources per locale, including plural and array resources. English wording and existing Canadian French copy are retained; other Android-only translations are new. The generated locale configuration exposes all 16 locales in Android's app language settings.
+`scripts/strings-map.json` maps 259 shared resources; 72 explicit Canadian French migration overrides retain the wording already used by the app and its PDF tests. The Android-only translation sources contain 240 more resources per locale, including plural and array resources. English wording and existing Canadian French copy are retained; other Android-only translations are new. The generated locale configuration exposes all 16 locales in Android's app language settings.
 
 ## Automated checks
 

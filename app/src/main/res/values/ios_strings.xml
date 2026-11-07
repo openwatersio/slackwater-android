@@ -245,4 +245,19 @@
     <string name="gate_peak_speed">"The on-device fit\'s median peak-speed difference from CHS was %1$s %2$s in its worst quarter."</string>
     <string name="gate_unknown">"The on-device fit did not pass validation here. Slackwater uses CHS predictions."</string>
     <string name="gate_too_few">"There were not enough CHS events to validate the on-device fit in every quarter."</string>
+    <string name="tour_read_title">"Reading the strip"</string>
+    <string name="tour_read">"The center line marks the moment shown below."</string>
+    <string name="tour_swipe_title">"Swipe to see more"</string>
+    <string name="tour_swipe">"Swipe the curve to move through time."</string>
+    <string name="tour_stars_title">"The real sky"</string>
+    <string name="tour_stars">"Those are the actual stars over %1$s tonight."</string>
+    <string name="tour_moon_title">"The moon"</string>
+    <string name="tour_moon">"And that is the real moon, at tonight\'s phase."</string>
+    <string name="tour_moon_card_title">"Moon details"</string>
+    <string name="tour_moon_card">"Tap the moon for its rise, set and phase."</string>
+    <string name="tour_star_title">"Favorites"</string>
+    <string name="tour_star">"Star a station to keep it at the top of your list."</string>
+    <string name="tour_next">"Next ›"</string>
+    <string name="tour_done">"Done"</string>
+    <string name="tour_skip">"Skip"</string>
 </resources>

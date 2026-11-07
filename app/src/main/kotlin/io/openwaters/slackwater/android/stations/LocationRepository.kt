@@ -64,6 +64,13 @@ class LocationRepository internal constructor(
         return locationSlot(_inputs.value, elapsedRealtimeMillis())
     }
 
+    /** The platform's newest usable cached fix, read only under a grant; it never asks for a new one. */
+    fun cachedFix(): LocationFix? {
+        if (source.permission() == LocationPermission.NOT_GRANTED) return null
+        val now = elapsedRealtimeMillis()
+        return source.lastKnown().filter { it.isUsable(now) }.maxByOrNull { it.elapsedRealtimeMillis }
+    }
+
     fun promptShown() = _inputs.update { it.copy(promptShowing = true) }
 
     /**
