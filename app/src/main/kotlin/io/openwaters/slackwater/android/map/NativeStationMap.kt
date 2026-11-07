@@ -42,6 +42,9 @@ internal fun NativeStationMap(
     styleUrl: String = BASEMAP_STYLE_URL,
     localOnly: Boolean = false,
     retryTimeoutMillis: Long = 30_000L,
+    fieldsEnabled: Boolean = true,
+    fields: CurrentFieldFeatures? = null,
+    showCurrentStations: Boolean = true,
 ) {
     val context = LocalContext.current
     val lifecycle = LocalLifecycleOwner.current.lifecycle
@@ -84,7 +87,7 @@ internal fun NativeStationMap(
 
     val ready = map
     if (ready != null) {
-        DisposableEffect(ready) {
+        DisposableEffect(ready, fieldsEnabled, showCurrentStations) {
             val idle = MapLibreMap.OnCameraIdleListener {
                 val projection = ready.projection
                 val bounds = projection.visibleRegion.latLngBounds
@@ -96,10 +99,12 @@ internal fun NativeStationMap(
                         camera.zoom, Coordinate(target.latitude, wrap(target.longitude)))
                 }
             }
+            val hitLayers = if (fieldsEnabled && showCurrentStations) stationHitLayers
+                else stationHitLayers.filterNot { it == "station-vectors" }.toTypedArray()
             val tap = MapLibreMap.OnMapClickListener { at ->
                 val xy = ready.projection.toScreenLocation(at)
                 val hit = ready.queryRenderedFeatures(RectF(xy.x - hitRadius, xy.y - hitRadius,
-                    xy.x + hitRadius, xy.y + hitRadius), *stationHitLayers)
+                    xy.x + hitRadius, xy.y + hitRadius), *hitLayers)
                     .mapNotNull { feature ->
                         val point = feature.geometry() as? org.maplibre.geojson.Point ?: return@mapNotNull null
                         val screen = ready.projection.toScreenLocation(LatLng(point.latitude(), point.longitude()))
@@ -120,7 +125,7 @@ internal fun NativeStationMap(
                 }
             }
         }
-        DisposableEffect(ready, styleRequest, styleUrl, localOnly) {
+        DisposableEffect(ready, styleRequest, styleUrl, localOnly, fieldsEnabled) {
             var active = true
             var usingLocal = false
             layers = null
@@ -129,7 +134,7 @@ internal fun NativeStationMap(
                 usingLocal = true
                 reportStatus(status)
                 ready.setStyle(Style.Builder().fromJson("""{"version":8,"sources":{},"layers":[{"id":"offline-ground","type":"background","paint":{"background-color":"#152256"}}]}""")) {
-                    if (active) layers = StationLayers(it)
+                    if (active) layers = StationLayers(it, fieldsEnabled)
                 }
             }
             val fallback = Runnable { useLocal(BasemapStatus.Slow) }
@@ -147,7 +152,7 @@ internal fun NativeStationMap(
                 ready.setStyle(styleUrl) {
                     if (active && !usingLocal) {
                         view.removeCallbacks(fallback)
-                        layers = StationLayers(it)
+                        layers = StationLayers(it, fieldsEnabled)
                         reportStatus(BasemapStatus.Ready)
                     }
                 }
@@ -168,6 +173,8 @@ internal fun NativeStationMap(
         }
     }
     LaunchedEffect(layers, pins, selectedId) { layers?.update(pins, selectedId) }
+    LaunchedEffect(layers, showCurrentStations) { layers?.showCurrentStations(showCurrentStations) }
+    LaunchedEffect(layers, fields) { layers?.fields?.update(fields) }
     LaunchedEffect(layers, fix) { layers?.updateFix(fix) }
     AndroidView(factory = { view }, modifier = modifier)
 }

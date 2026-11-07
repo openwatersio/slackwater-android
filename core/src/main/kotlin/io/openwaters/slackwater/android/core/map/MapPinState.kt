@@ -4,7 +4,6 @@ import io.openwaters.slackwater.*
 import io.openwaters.slackwater.android.core.station.StationId
 import java.time.Duration
 import java.time.Instant
-import java.util.Locale
 import kotlin.math.*
 
 data class MapPinState(val state: String = "unknown", val reading: String? = null,
@@ -50,7 +49,7 @@ fun tidePinReadout(rising: Boolean, height: Double?, turns: List<TideExtreme>, n
 private val rampAnchors = listOf(3.0, 8.0, 12.0)
 private val rampColors = listOf(0xF5C96B, 0xE8763C, 0xC93A32)
 
-private fun rampColor(speed: Double): String {
+fun currentSpeedColor(speed: Double, lift: Double = 0.0): String {
     val v = speed.coerceIn(rampAnchors.first(), rampAnchors.last())
     val hi = if (v <= rampAnchors[1]) 1 else 2
     val f = (v - rampAnchors[hi - 1]) / (rampAnchors[hi] - rampAnchors[hi - 1])
@@ -58,16 +57,17 @@ private fun rampColor(speed: Double): String {
         val a = (rampColors[hi - 1] shr shift) and 255
         val b = (rampColors[hi] shr shift) and 255
         val c = a + f * (b - a)
-        return (c + (255 - c) * 0.3).roundToInt()
+        return (c + (255 - c) * lift).roundToInt()
     }
-    return String.format(Locale.ROOT, "#%02x%02x%02x", channel(16), channel(8), channel(0))
+    val rgb = (channel(16) shl 16) or (channel(8) shl 8) or channel(0)
+    return "#" + rgb.toString(16).padStart(6, '0')
 }
 
 // Exactly zero uses the slack color. Moving water uses speed and its signed axis.
 fun currentPinState(signed: Double?, floodBearing: Double?, ebbBearing: Double?,
                     detailed: Boolean, formatSpeed: (Double) -> String): MapPinState {
     if (signed == null || !signed.isFinite()) return MapPinState()
-    return MapPinState(if (signed == 0.0) "#88b868" else rampColor(abs(signed)),
+    return MapPinState(if (signed == 0.0) "#88b868" else currentSpeedColor(abs(signed), lift = 0.3),
         if (detailed) formatSpeed(abs(signed)) else null, if (signed >= 0) floodBearing else ebbBearing)
 }
 

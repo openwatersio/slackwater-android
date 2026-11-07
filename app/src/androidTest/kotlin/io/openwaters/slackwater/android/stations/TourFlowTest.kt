@@ -3,7 +3,7 @@ package io.openwaters.slackwater.android.stations
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.junit4.createEmptyComposeRule
+import androidx.compose.ui.test.junit4.v2.createEmptyComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithContentDescription

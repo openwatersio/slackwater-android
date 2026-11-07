@@ -12,9 +12,15 @@ import org.maplibre.android.maps.MapView
 import org.maplibre.android.maps.MapLibreMap
 import androidx.compose.ui.test.swipeLeft
 import androidx.compose.ui.test.click
-import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performTouchInput
+import io.openwaters.slackwater.CurrentPoint
+import io.openwaters.slackwater.android.core.prediction.*
+import io.openwaters.slackwater.android.data.CurrentMapFieldSource
+import java.time.Instant
+import kotlinx.coroutines.runBlocking
+import io.openwaters.slackwater.android.core.map.FillCell
 import io.openwaters.slackwater.android.core.map.MapPinState
 import io.openwaters.slackwater.android.core.station.Coordinate
 import io.openwaters.slackwater.android.core.station.StationId
@@ -57,6 +63,127 @@ class MapNativeConformanceTest {
         }
         compose.onNodeWithTag("map").performTouchInput { click(center) }
         compose.waitUntil(5_000) { selection.get() == expected }
+    }
+
+    @Test fun currentLayersShowOnlyCertifiedWaterAndClearWhenPredictionsDisappear() {
+        val center = Coordinate(48.50, -123.0)
+        val cell = FillCell(listOf(Coordinate(48.48, -123.03), Coordinate(48.48, -122.97),
+            Coordinate(48.54, -123.0)), 8.0, 170.0)
+        val fields = mutableStateOf<CurrentFieldFeatures?>(
+            CurrentMapFields(listOf(cell.copy(speedKn = 0.0)), listOf(cell)).features())
+        compose.setContent {
+            NativeStationMap(emptyList(), null, null, center, 12.0, 0, 0, { _, _, _, _, _, _ -> },
+                {}, {}, modifier = Modifier.fillMaxSize(), localOnly = true, fields = fields.value)
+        }
+        val native = AtomicReference<MapLibreMap>()
+        compose.runOnIdle {
+            (compose.activity.window.decorView as ViewGroup).descendants.filterIsInstance<MapView>().single()
+                .getMapAsync(native::set)
+        }
+        fun rendered(lat: Double, lon: Double): List<Double> {
+            val map = native.get() ?: return emptyList()
+            val point = map.projection.toScreenLocation(org.maplibre.android.geometry.LatLng(lat, lon))
+            return map.queryRenderedFeatures(point, "current-fill", "current-fill-patches")
+                .map { it.getNumberProperty("kn").toDouble() }
+        }
+        compose.waitUntil(20_000) {
+            compose.runOnIdle { rendered(center.latitude, center.longitude).toSet() == setOf(0.0, 8.0) }
+        }
+        compose.runOnIdle {
+            val layerIds = native.get().style!!.layers.map { it.id }
+            assertTrue(layerIds.indexOf("current-fill-patches") > layerIds.indexOf("current-fill"))
+            assertTrue(rendered(48.52, -122.98).isEmpty())
+            fields.value = null
+        }
+        compose.waitUntil(10_000) {
+            compose.runOnIdle { rendered(center.latitude, center.longitude).isEmpty() }
+        }
+    }
+
+    @Test fun doddDirectionIsVisibleAndSelectableBesideTheStationDot() {
+        val id = StationId("chs-dodd-narrows")
+        val center = Coordinate(49.135, -123.817)
+        val station = StationIdentity(id, "Dodd Narrows", "", center.latitude, center.longitude, StationKind.CanadianCurrent)
+        val fields = mutableStateOf<CurrentFieldFeatures?>(CurrentMapFields(emptyList(), emptyList(), center to 0.0).features())
+        val selection = AtomicReference<StationId?>()
+        val showCurrents = mutableStateOf(true)
+        compose.setContent {
+            NativeStationMap(listOf(StationMapPin(station, MapPinState())), null, null, center, 12.5, 0, 0,
+                { _, _, _, _, _, _ -> }, selection::set, {}, modifier = Modifier.fillMaxSize().testTag("map"),
+                localOnly = true, fields = fields.value, showCurrentStations = showCurrents.value)
+        }
+        val native = AtomicReference<MapLibreMap>()
+        compose.runOnIdle {
+            (compose.activity.window.decorView as ViewGroup).descendants.filterIsInstance<MapView>().single()
+                .getMapAsync(native::set)
+        }
+        var arrowTap = androidx.compose.ui.geometry.Offset.Zero
+        compose.waitUntil(20_000) {
+            compose.runOnIdle {
+                val map = native.get() ?: return@runOnIdle false
+                val origin = map.projection.toScreenLocation(org.maplibre.android.geometry.LatLng(center.latitude, center.longitude))
+                if (map.queryRenderedFeatures(origin, "station-dots").isEmpty()) return@runOnIdle false
+                val radius = (60 * compose.activity.resources.displayMetrics.density).toInt()
+                for (dy in radius downTo 1) {
+                    val point = android.graphics.PointF(origin.x, origin.y - dy)
+                    if (map.queryRenderedFeatures(point, "station-vectors").any { it.getStringProperty("id") == id.value } &&
+                        map.queryRenderedFeatures(point, "station-dots").isEmpty()) {
+                        arrowTap = androidx.compose.ui.geometry.Offset(point.x, point.y)
+                        return@runOnIdle true
+                    }
+                }
+                false
+            }
+        }
+        compose.onNodeWithTag("map").performTouchInput { click(arrowTap) }
+        compose.waitUntil(5_000) { selection.get() == id }
+        compose.runOnIdle { showCurrents.value = false }
+        compose.waitUntil(10_000) {
+            compose.runOnIdle { native.get().queryRenderedFeatures(android.graphics.PointF(arrowTap.x, arrowTap.y), "station-vectors").isEmpty() }
+        }
+        compose.runOnIdle { showCurrents.value = true }
+        compose.waitUntil(10_000) {
+            compose.runOnIdle { native.get().queryRenderedFeatures(android.graphics.PointF(arrowTap.x, arrowTap.y), "station-vectors").isNotEmpty() }
+        }
+        compose.runOnIdle { fields.value = null }
+        compose.waitUntil(10_000) {
+            compose.runOnIdle {
+                native.get().queryRenderedFeatures(android.graphics.PointF(arrowTap.x, arrowTap.y), "station-vectors").isEmpty()
+            }
+        }
+    }
+
+    @Test fun shippedSeymourPatchDisappearsWhenTheSelectedMinuteIsOutsideCoverage() {
+        val time = Instant.parse("2026-11-07T16:00:00Z")
+        val repository = object : PredictionRepository {
+            override suspend fun load(id: StationId, span: TimeSpan, purpose: PredictionPurpose): PredictionResult =
+                if (id.value == "chs-seymour-narrows") BoundedPredictions.current(id, span,
+                    listOf(CurrentPoint(time, 3.0), CurrentPoint(time.plusSeconds(1800), -1.0)), 30.0, 210.0)
+                else PredictionResult.Unavailable(PredictionResult.Reason.MISSING_DOWNLOAD)
+        }
+        val source = CurrentMapFieldSource(compose.activity) { id, at -> repository.load(id, TimeSpan(at, at), PredictionPurpose.DISPLAY) }
+        val covered = runBlocking { source.evaluate(time) }
+        val cell = covered.patches.first()
+        val center = Coordinate(cell.polygon.map { it.latitude }.average(), cell.polygon.map { it.longitude }.average())
+        val fields = mutableStateOf(covered.features())
+        compose.setContent {
+            NativeStationMap(emptyList(), null, null, center, 14.0, 0, 0, { _, _, _, _, _, _ -> },
+                {}, {}, modifier = Modifier.fillMaxSize(), localOnly = true, fields = fields.value)
+        }
+        val native = AtomicReference<MapLibreMap>()
+        compose.runOnIdle {
+            (compose.activity.window.decorView as ViewGroup).descendants.filterIsInstance<MapView>().single()
+                .getMapAsync(native::set)
+        }
+        fun speed(): Double? {
+            val map = native.get() ?: return null
+            val point = map.projection.toScreenLocation(org.maplibre.android.geometry.LatLng(center.latitude, center.longitude))
+            return map.queryRenderedFeatures(point, "current-fill-patches").firstOrNull()?.getNumberProperty("kn")?.toDouble()
+        }
+        compose.waitUntil(45_000) { compose.runOnIdle { speed()?.let { kotlin.math.abs(it - cell.speedKn) < 1e-5 } == true } }
+        val gap = runBlocking { source.evaluate(time.plusSeconds(900)).features() }
+        compose.runOnIdle { fields.value = gap }
+        compose.waitUntil(45_000) { compose.runOnIdle { speed() == null } }
     }
 
     @Test fun localPinsSurviveStalledStyleAndGlyphRequestsAcrossReloadFilterAndCameraChanges() {

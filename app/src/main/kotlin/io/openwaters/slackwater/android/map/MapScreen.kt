@@ -56,6 +56,11 @@ internal fun MapScreen(list: StationListModel, engine: StationMapModel, now: Ins
     val listState by list.state.collectAsState()
     val prefs by list.readingPreferences.collectAsState()
     val revision by engine.revision.collectAsState()
+    val debuggable = context.applicationInfo.flags and android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE != 0
+    val fieldsEnabled = !debuggable || LocalActivity.current?.intent?.getBooleanExtra("currentFillOff", false) != true
+    val fields = key(engine, fieldsEnabled) {
+        if (fieldsEnabled) rememberCurrentFieldFeatures(now, revision) { time -> engine.currentFields(time).features() } else null
+    }
     val savedFilter = listState?.filter
     var bypassFilter by rememberSaveable(savedFilter) { mutableStateOf(false) }
     val filter = savedFilter.takeUnless { bypassFilter }
@@ -157,7 +162,8 @@ internal fun MapScreen(list: StationListModel, engine: StationMapModel, now: Ins
                 if (pinCamera?.covers(next) != true) pinCamera = PinCamera(next.bounds.padded(), z)
                 latitude = c.latitude; longitude = c.longitude; zoom = z
             }, onSelect = ::choose, onBasemapStatus = { basemapStatus = it }, modifier = Modifier.fillMaxSize(),
-            bottomMarginDp = bottom + 8, styleUrl = styleUrl, localOnly = localOnly)
+            bottomMarginDp = bottom + 8, styleUrl = styleUrl, localOnly = localOnly,
+            fieldsEnabled = fieldsEnabled, fields = fields, showCurrentStations = filter != StationSeries.Tide)
         Column(Modifier.align(Alignment.TopStart).safeDrawingPadding().padding(8.dp)) {
             Surface(shape = MaterialTheme.shapes.large, tonalElevation = 4.dp) {
                 Row(Modifier.padding(horizontal = 6.dp), verticalAlignment = Alignment.CenterVertically) {

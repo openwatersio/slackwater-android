@@ -238,8 +238,8 @@ Each task should fit a focused PR, or a short sequence of PRs if the listed file
 
 **Interfaces:** Binary readers use the pinned `pack.py` specifications and JSON sidecar hashes. Chart packs use the same style as the rendered map. Fill evaluates its own bundled u/v harmonics and mean offsets without waiting for CHS downloads. Patch availability depends on its station anchor's model or online coverage.
 
-- [ ] Add binary golden tests for header/version/bounds/checksums, mean-flow offsets, one anchor evaluation per patch per frame, missing anchors, and retained/rejected geometry. Use committed certification, never a hardcoded expectation that every named pass has patch cells.
-- [ ] Render speed context with the source ramp, no green field color, no claim of slack timing, no flow beyond online samples, and no interpolation across certification boundaries. Keep unsupported water absent.
+- [x] Add binary golden tests for header/version/bounds/checksums, mean-flow offsets, one anchor evaluation per patch per frame, missing anchors, and retained/rejected geometry. Use committed certification, never a hardcoded expectation that every named pass has patch cells.
+- [x] Render speed context with the source ramp, no green field color, no claim of slack timing, no flow beyond online samples, and no interpolation across certification boundaries. Keep unsupported water absent.
 - [ ] Port `ChartGrid` and tier ownership: world z0–4, surrounding grid z5–8, station discs z9–12, with no overlapping tier downloads. Validate MapLibre's actual offline style/resource behavior, including glyphs/sprites; implement progress, cancellation, quota/storage failure, and removal in Downloads.
 - [ ] Verify `rtk ./gradlew :core:test :app:connectedDebugAndroidTest`; after download, relaunch in airplane mode and pan/zoom across tier boundaries. Delete packs and prove app/model data remains intact.
 - [ ] Commit field rendering and offline packs as separate PRs if their review boundaries remain independent.

@@ -2,6 +2,10 @@ DATA CREDITS
 
 Map tiles by OpenFreeMap (openfreemap.org), © OpenMapTiles, data © OpenStreetMap contributors (openstreetmap.org/copyright).
 
+Salish Sea current fill: harmonics fitted to NOAA Salish Sea and Columbia River Operational Forecast System (SSCOFS) surface currents.
+
+Canadian channel bathymetry: GSC Canada West Coast Topo-Bathymetric DEM. Contains information licensed under the Open Government Licence – Canada. US channel bathymetry: NOAA National Bathymetric Source (public domain). Certified channel patch cross-sections are derived from these bathymetric sources.
+
 US stations: NOAA CO-OPS harmonic constituents (public domain).
 
 Norwegian stations: harmonic constants © Kartverket (Norwegian Mapping Authority, Hydrographic Service) under CC BY 4.0 (kartverket.no).
@@ -24,7 +28,7 @@ Prediction engine and IWLS client: Slackwater (MIT).
 
 Canadian station identities, device-downloaded tide predictions, and current-gate evidence: Canadian Hydrographic Service, Fisheries and Oceans Canada. DFO terms (clause 10). Derived gate evidence is not CHS-published prediction data and is not for navigation. This app target bundles no CHS predictions or user-fitted models.
 
-Credits follow slackwater-ios/Slackwater/AboutView.swift at 02188f2a2f5ef4166cd74c373a5885736d7ef159.
+Station and bathymetry credits follow slackwater-ios/Slackwater/AboutView.swift at 02188f2a2f5ef4166cd74c373a5885736d7ef159.
 
 SOFTWARE LICENSES
 
