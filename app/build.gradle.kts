@@ -19,7 +19,7 @@ android {
         matchingFallbacks += "release"
     }
     buildFeatures { compose = true }
-    androidResources { noCompress += "tcdb" }
+    androidResources { noCompress += listOf("tcdb", "currents.json") }
     compileOptions { sourceCompatibility = JavaVersion.VERSION_17; targetCompatibility = JavaVersion.VERSION_17 }
 }
 dependencies {
@@ -31,11 +31,14 @@ dependencies {
     implementation(libs.activity.compose)
     implementation(libs.material3)
     implementation(libs.datastore)
+    implementation(libs.maplibre)
     androidTestImplementation(testFixtures(project(":core")))
     androidTestImplementation(platform(libs.compose.bom))
     androidTestImplementation(libs.compose.test)
     // Compose still brings Espresso 3.5; API 37 needs the public InputManager lookup.
     androidTestImplementation(libs.espresso)
+    // MapLibre supplies OkHttp at runtime; the test hooks its client to delay one style response.
+    androidTestCompileOnly("com.squareup.okhttp3:okhttp:4.12.0") { isTransitive = false }
     androidTestImplementation(libs.test.runner)
     androidTestImplementation(libs.test.junit)
     debugImplementation(libs.compose.test.manifest)
@@ -63,3 +66,15 @@ tasks.register("checkStudioSources") {
     }
     doLast { logger.lifecycle("Verified ${inputs.files.files.size} dependency source archives.") }
 }
+
+val currentIndexDir = layout.buildDirectory.dir("generated/currentIndex/assets")
+val generateCurrentIndex = tasks.register<Exec>("generateCurrentIndex") {
+    val catalog = file("src/main/assets/slackwater/currents.json")
+    val generator = rootProject.file("scripts/index-currents.py")
+    val index = currentIndexDir.get().file("slackwater/current-index.tsv").asFile
+    inputs.files(catalog, generator)
+    outputs.file(index)
+    commandLine(providers.gradleProperty("pythonExecutable").getOrElse("python3"), generator, catalog, index)
+}
+android.sourceSets.getByName("main").assets.srcDir(currentIndexDir.get().asFile)
+tasks.named("preBuild").configure { dependsOn(generateCurrentIndex) }

@@ -1,0 +1,222 @@
+{
+    "context": {
+        "build": {
+            "brand": "google",
+            "device": "emu64a",
+            "fingerprint": "google/sdk_gphone64_arm64/emu64a:17/CE2A.260420.051.A2/16418371:user/release-keys",
+            "id": "CE2A.260420.051.A2",
+            "model": "sdk_gphone64_arm64",
+            "type": "user",
+            "version": {
+                "codename": "REL",
+                "sdk": 37
+            }
+        },
+        "cpuCoreCount": 1,
+        "cpuLocked": false,
+        "cpuMaxFreqHz": 2000,
+        "memTotalBytes": 4105711616,
+        "sustainedPerformanceModeEnabled": false,
+        "artMainlineVersion": 370546200,
+        "osCodenameAbbreviated": "REL",
+        "compilationMode": "run-from-apk",
+        "payload": {}
+    },
+    "benchmarks": [
+        {
+            "name": "harbourVisibleSet",
+            "params": {},
+            "className": "io.openwaters.slackwater.benchmark.MapBenchmark",
+            "totalRunTimeNs": 107386621510,
+            "metrics": {
+                "coldVisibleStationsFirstMs": {
+                    "minimum": 591.57425,
+                    "maximum": 2616.332001,
+                    "median": 989.47975,
+                    "coefficientOfVariation": 0.6103590455333825,
+                    "runs": [
+                        591.57425,
+                        989.47975,
+                        975.022126,
+                        1225.759292,
+                        2616.332001
+                    ]
+                },
+                "warmVisibleStationsFirstMs": {
+                    "minimum": 106.347958,
+                    "maximum": 446.47925,
+                    "median": 277.054625,
+                    "coefficientOfVariation": 0.5301786806458166,
+                    "runs": [
+                        359.975208,
+                        149.19625,
+                        106.347958,
+                        277.054625,
+                        446.47925
+                    ]
+                }
+            },
+            "sampledMetrics": {},
+            "warmupIterations": 0,
+            "repeatIterations": 5,
+            "thermalThrottleSleepSeconds": 0,
+            "profilerOutputs": [
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 0",
+                    "filename": "MapBenchmark_harbourVisibleSet_iter000_2026-11-07-00-17-14.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 1",
+                    "filename": "MapBenchmark_harbourVisibleSet_iter001_2026-11-07-00-17-24.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 2",
+                    "filename": "MapBenchmark_harbourVisibleSet_iter002_2026-11-07-00-17-34.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 3",
+                    "filename": "MapBenchmark_harbourVisibleSet_iter003_2026-11-07-00-17-41.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 4",
+                    "filename": "MapBenchmark_harbourVisibleSet_iter004_2026-11-07-00-17-55.perfetto-trace"
+                }
+            ]
+        },
+        {
+            "name": "continentVisibleSet",
+            "params": {},
+            "className": "io.openwaters.slackwater.benchmark.MapBenchmark",
+            "totalRunTimeNs": 41879122270,
+            "metrics": {
+                "coldVisibleStationsFirstMs": {
+                    "minimum": 947.192333,
+                    "maximum": 2085.086584,
+                    "median": 1077.103418,
+                    "coefficientOfVariation": 0.38268473014267596,
+                    "runs": [
+                        982.695001,
+                        1125.256584,
+                        947.192333,
+                        1077.103418,
+                        2085.086584
+                    ]
+                },
+                "warmVisibleStationsFirstMs": {
+                    "minimum": 71.996625,
+                    "maximum": 344.404125,
+                    "median": 159.943834,
+                    "coefficientOfVariation": 0.6519205981295749,
+                    "runs": [
+                        74.754666,
+                        256.543708,
+                        159.943834,
+                        71.996625,
+                        344.404125
+                    ]
+                }
+            },
+            "sampledMetrics": {},
+            "warmupIterations": 0,
+            "repeatIterations": 5,
+            "thermalThrottleSleepSeconds": 0,
+            "profilerOutputs": [
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 0",
+                    "filename": "MapBenchmark_continentVisibleSet_iter000_2026-11-07-00-18-14.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 1",
+                    "filename": "MapBenchmark_continentVisibleSet_iter001_2026-11-07-00-18-21.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 2",
+                    "filename": "MapBenchmark_continentVisibleSet_iter002_2026-11-07-00-18-28.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 3",
+                    "filename": "MapBenchmark_continentVisibleSet_iter003_2026-11-07-00-18-34.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 4",
+                    "filename": "MapBenchmark_continentVisibleSet_iter004_2026-11-07-00-18-40.perfetto-trace"
+                }
+            ]
+        },
+        {
+            "name": "canadianVisibleSet",
+            "params": {},
+            "className": "io.openwaters.slackwater.benchmark.MapBenchmark",
+            "totalRunTimeNs": 33987146683,
+            "metrics": {
+                "coldVisibleStationsFirstMs": {
+                    "minimum": 322.637667,
+                    "maximum": 1037.133834,
+                    "median": 532.310625,
+                    "coefficientOfVariation": 0.4578963302090689,
+                    "runs": [
+                        322.637667,
+                        1037.133834,
+                        646.717292,
+                        445.161584,
+                        532.310625
+                    ]
+                },
+                "warmVisibleStationsFirstMs": {
+                    "minimum": 136.97225,
+                    "maximum": 165.956292,
+                    "median": 145.606,
+                    "coefficientOfVariation": 0.07636064694859791,
+                    "runs": [
+                        145.606,
+                        136.97225,
+                        140.923458,
+                        151.555542,
+                        165.956292
+                    ]
+                }
+            },
+            "sampledMetrics": {},
+            "warmupIterations": 0,
+            "repeatIterations": 5,
+            "thermalThrottleSleepSeconds": 0,
+            "profilerOutputs": [
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 0",
+                    "filename": "MapBenchmark_canadianVisibleSet_iter000_2026-11-07-00-18-54.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 1",
+                    "filename": "MapBenchmark_canadianVisibleSet_iter001_2026-11-07-00-19-02.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 2",
+                    "filename": "MapBenchmark_canadianVisibleSet_iter002_2026-11-07-00-19-07.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 3",
+                    "filename": "MapBenchmark_canadianVisibleSet_iter003_2026-11-07-00-19-11.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 4",
+                    "filename": "MapBenchmark_canadianVisibleSet_iter004_2026-11-07-00-19-15.perfetto-trace"
+                }
+            ]
+        }
+    ]
+}

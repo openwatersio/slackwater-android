@@ -1,7 +1,5 @@
 package io.openwaters.slackwater.android.detail
 
-import android.content.Intent
-import android.net.Uri
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -14,7 +12,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.*
 import androidx.compose.ui.unit.dp
@@ -22,20 +19,16 @@ import io.openwaters.slackwater.android.R
 import io.openwaters.slackwater.android.core.station.*
 import kotlin.math.*
 
-internal fun mapIntent(station: StationIdentity) = Intent(Intent.ACTION_VIEW, Uri.parse(
-    "geo:${station.latitude},${station.longitude}?z=13&q=${station.latitude},${station.longitude}(" + Uri.encode(station.name) + ")"))
-
 @Composable
 internal fun NearbyMap(station: StationIdentity, rows: List<RankedStation>, open: (StationId) -> Unit) {
-    val context = LocalContext.current
-    val map = remember(station.id) { mapIntent(station).takeIf { it.resolveActivity(context.packageManager) != null } }
+    val map = io.openwaters.slackwater.android.map.LocalOpenStationMap.current
     val points = remember(station.id, rows) { rows.map {
         val longitude = (it.identity.longitude - station.longitude + 540.0) % 360.0 - 180.0
         longitude * cos(Math.toRadians(station.latitude)) to (it.identity.latitude - station.latitude)
     } }
     val label = stringResource(R.string.detail_map)
     BoxWithConstraints(Modifier.fillMaxWidth().height(220.dp).clip(MaterialTheme.shapes.large)
-        .background(Color(0xff152d3b)).then(if (map != null) Modifier.clickable(onClickLabel = label) { context.startActivity(map) } else Modifier)) {
+        .background(Color(0xff152d3b)).then(if (map != null && station.kind != StationKind.Retired) Modifier.clickable(onClickLabel = label) { map(station) } else Modifier)) {
         val width = maxWidth.value
         val height = maxHeight.value
         val halfWidth = points.maxOfOrNull { abs(it.first) }?.coerceAtLeast(0.0001) ?: 1.0

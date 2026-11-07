@@ -1,59 +1,39 @@
 package io.openwaters.slackwater.android.data
 
 import android.content.res.AssetManager
-import android.util.JsonReader
-import android.util.JsonToken
 import android.util.LruCache
-import org.json.JSONArray
+import io.openwaters.slackwater.android.core.map.pinRank
+import java.io.FileInputStream
+import java.nio.channels.FileChannel
 import org.json.JSONObject
 
-/** The current catalog is a JSON array. Index IDs once and decode only a requested row and its reference. */
 internal class BundledCurrentRecords(private val assets: AssetManager) {
-    private fun open() = JsonReader(assets.open("slackwater/currents.json").bufferedReader())
-    private val cache = LruCache<String, JSONObject>(16)
-    private val positions by lazy {
-        open().use { reader ->
-            reader.beginArray()
-            buildMap<String, Int> {
-                var index = 0
-                while (reader.hasNext()) {
-                    reader.beginObject()
-                    while (reader.hasNext()) {
-                        if (reader.nextName() == "id") put(reader.nextString(), index) else reader.skipValue()
-                    }
-                    reader.endObject()
-                    index++
-                }
-                reader.endArray()
+    private data class Entry(val offset: Int, val size: Int, val rank: Double)
+
+    private val cache = LruCache<String, JSONObject>(32)
+    private val index by lazy {
+        assets.open("slackwater/current-index.tsv").bufferedReader().useLines { lines ->
+            lines.associate { line ->
+                val (id, offset, size, subordinate, signal) = line.split('\t')
+                id to Entry(offset.toInt(), size.toInt(), pinRank(subordinate == "1", signal.toDouble()))
+            }
+        }
+    }
+    private val catalog by lazy {
+        assets.openFd("slackwater/currents.json").use { asset ->
+            FileInputStream(asset.fileDescriptor).channel.use { channel ->
+                channel.map(FileChannel.MapMode.READ_ONLY, asset.startOffset, asset.length)
             }
         }
     }
 
+    fun rank(id: String): Double? = index[id]?.rank
+
     operator fun get(id: String): JSONObject? {
         cache.get(id)?.let { return it }
-        val index = positions[id] ?: return null
-        return open().use { reader ->
-            reader.beginArray()
-            repeat(index) { reader.skipValue() }
-            (reader.value() as JSONObject).also { cache.put(id, it) }
-        }
-    }
-
-    private fun JsonReader.value(): Any = when (peek()) {
-        JsonToken.BEGIN_OBJECT -> JSONObject().also { obj ->
-            beginObject()
-            while (hasNext()) obj.put(nextName(), value())
-            endObject()
-        }
-        JsonToken.BEGIN_ARRAY -> JSONArray().also { array ->
-            beginArray()
-            while (hasNext()) array.put(value())
-            endArray()
-        }
-        JsonToken.STRING -> nextString()
-        JsonToken.NUMBER -> nextDouble()
-        JsonToken.BOOLEAN -> nextBoolean()
-        JsonToken.NULL -> { nextNull(); JSONObject.NULL }
-        else -> throw IllegalArgumentException("Unexpected current record token")
+        val entry = index[id] ?: return null
+        val bytes = ByteArray(entry.size)
+        catalog.duplicate().apply { position(entry.offset); get(bytes) }
+        return JSONObject(bytes.toString(Charsets.UTF_8)).also { cache.put(id, it) }
     }
 }

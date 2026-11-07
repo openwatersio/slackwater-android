@@ -20,6 +20,8 @@ class BundledStationCatalog(private val assets: AssetManager) : StationCatalog {
 
     override suspend fun identities(): List<StationIdentity> = withContext(Dispatchers.IO) { index.identities }
 
+    suspend fun mapIdentities(): List<StationIdentity> = withContext(Dispatchers.IO) { index.mapIdentities }
+
     override suspend fun resolve(id: StationId): StationResolution = withContext(Dispatchers.IO) { index.resolve(id) }
 
     private fun read(name: String): String =

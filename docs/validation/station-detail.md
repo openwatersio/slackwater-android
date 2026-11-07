@@ -34,6 +34,6 @@ The API 37 arm64 emulator rendered each production page in a 411 dp phone viewpo
 
 ## Nearby and current-chart decisions
 
-The local station inset plots the nearby stations relative to the selected station using bundled coordinates. Pin taps open those stations. The title and inset can open the installed map app. The navigable offline map and pack status are tracked in [#7](https://github.com/openwatersio/slackwater-android/issues/7) and [#14](https://github.com/openwatersio/slackwater-android/issues/14).
+The local station inset plots the nearby stations relative to the selected station using bundled coordinates. Pin taps open those stations. The title and inset open the station in Slackwater’s discovery map. Offline pack status is tracked in [#14](https://github.com/openwatersio/slackwater-android/issues/14).
 
 The current plot uses scrubber §13.2 for measured speed and §13.3 for a derived phase. An observed reversal, a clipped current window and a timing-only gate have different meanings. Follow the [parity ledger](../ios-parity.md#specified-targets-and-open-designs) and [#28](https://github.com/openwatersio/slackwater-android/issues/28) for the open threshold-axis, narrative-summary, rotary, confidence and slack-core decisions.

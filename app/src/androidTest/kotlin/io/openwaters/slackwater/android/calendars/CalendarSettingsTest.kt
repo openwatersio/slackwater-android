@@ -31,8 +31,9 @@ class CalendarSettingsTest {
         try {
             runBlocking { access.update(ReminderEntitlement.Free) }
             compose.openStation("Friday Harbor", "San Juan Island")
-            compose.waitUntil(30_000) { compose.onAllNodesWithText("Station calendars").fetchSemanticsNodes().isNotEmpty() }
-            compose.onNodeWithText("Station calendars").performScrollTo().performClick()
+            // The loaded chart moves the calendar button below the schedule.
+            compose.waitUntil(60_000) { compose.onAllNodesWithTag("detailTimeline").fetchSemanticsNodes().isNotEmpty() }
+            compose.onNodeWithText("Station calendars").performScrollTo().performSemanticsAction(androidx.compose.ui.semantics.SemanticsActions.OnClick)
             compose.waitUntil(20_000) { compose.onAllNodes(hasText("Publish calendar") and isEnabled()).fetchSemanticsNodes().isNotEmpty() }
             compose.onNodeWithText("Publish calendar").performClick()
             compose.onNodeWithText("Publishing a new station calendar requires Premium.").assertExists()

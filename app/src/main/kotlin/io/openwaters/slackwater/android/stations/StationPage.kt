@@ -9,7 +9,7 @@ import io.openwaters.slackwater.android.detail.StationDetailScreen
 import java.time.Instant
 
 @Composable
-fun StationPage(model: StationListModel, id: StationId, now: Instant, initialMoment: Instant? = null, onBack: () -> Unit) {
+fun StationPage(model: StationListModel, id: StationId, now: Instant, initialMoment: Instant? = null, recordVisit: Boolean = true, onBack: () -> Unit) {
     var path by rememberSaveable(id.value) { mutableStateOf(arrayListOf(id.value)) }
     val pages = rememberSaveableStateHolder()
     val current = path.last()
@@ -28,6 +28,6 @@ fun StationPage(model: StationListModel, id: StationId, now: Instant, initialMom
                     path.drop(existing + 1).forEach(pages::removeState)
                     path = ArrayList(path.take(existing + 1))
                 }
-            }, onBack = ::back)
+            }, onBack = ::back, recordVisit = recordVisit || path.size > 1)
     }
 }

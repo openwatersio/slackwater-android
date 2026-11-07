@@ -19,12 +19,53 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.withTimeout
+import kotlinx.coroutines.awaitCancellation
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.*
 import org.junit.Test
 
 class LocationRepositoryTest {
+    @Test fun foregroundCallersShareTheProviderUntilTheLastCallerLeaves() = runBlocking {
+        val started = CompletableDeferred<Unit>()
+        val stopped = CompletableDeferred<Unit>()
+        var requests = 0
+        val source = object : FixSource {
+            override fun permission() = LocationPermission.PRECISE
+            override fun lastKnown() = emptyList<LocationFix>()
+            override suspend fun current(): LocationFix? {
+                requests++
+                started.complete(Unit)
+                try {
+                    awaitCancellation()
+                } finally {
+                    stopped.complete(Unit)
+                }
+            }
+        }
+        val owner = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+        try {
+            val context = InstrumentationRegistry.getInstrumentation().targetContext
+            val model = StationListModel(context, location = LocationRepository(source), scope = owner)
+            val first = launch(start = CoroutineStart.UNDISPATCHED) { model.refreshLocation() }
+            withTimeout(5_000) { started.await() }
+            val second = launch(start = CoroutineStart.UNDISPATCHED) { model.refreshLocation() }
+            first.cancelAndJoin()
+            assertFalse(stopped.isCompleted)
+            second.cancelAndJoin()
+            withTimeout(5_000) { stopped.await() }
+            assertEquals(1, requests)
+        } finally {
+            owner.cancel()
+        }
+    }
+
     private val now = 50_000_000L
     private val here = Coordinate(48.42, -123.37)
 
@@ -78,7 +119,7 @@ class LocationRepositoryTest {
     @Test fun aSlowOlderAnswerNeverReplacesANewerFix() = runBlocking {
         val older = fix(ageMillis = 60_000, at = Coordinate(1.0, 1.0))
         val newer = fix(ageMillis = 1_000, at = Coordinate(2.0, 2.0))
-        val gate = kotlinx.coroutines.CompletableDeferred<Unit>()
+        val gate = CompletableDeferred<Unit>()
         var calls = 0
         val source = object : FixSource {
             override fun permission() = LocationPermission.PRECISE
@@ -147,7 +188,7 @@ class LocationRepositoryTest {
     }
 
     @Test fun aRetryShowsTheSpinnerAndACancelledRequestIsNotAFailure() = runBlocking {
-        val answer = kotlinx.coroutines.CompletableDeferred<LocationFix?>()
+        val answer = CompletableDeferred<LocationFix?>()
         var calls = 0
         val source = object : FixSource {
             override fun permission() = LocationPermission.PRECISE
@@ -165,7 +206,7 @@ class LocationRepositoryTest {
     }
 
     @Test fun aRequestFromAnEarlierGrantDoesNotFailTheNewOne() = runBlocking {
-        val answer = kotlinx.coroutines.CompletableDeferred<LocationFix?>()
+        val answer = CompletableDeferred<LocationFix?>()
         val source = FakeSource(permission = LocationPermission.APPROXIMATE)
         val slowSource = object : FixSource by source {
             override suspend fun current(): LocationFix? = answer.await()
@@ -182,7 +223,7 @@ class LocationRepositoryTest {
     }
 
     @Test fun aFinishedRequestDoesNotFailWhileAnotherIsStillAsking() = runBlocking {
-        val slowAnswer = kotlinx.coroutines.CompletableDeferred<LocationFix?>()
+        val slowAnswer = CompletableDeferred<LocationFix?>()
         var calls = 0
         val source = object : FixSource {
             override fun permission() = LocationPermission.PRECISE

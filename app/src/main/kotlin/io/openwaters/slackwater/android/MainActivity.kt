@@ -20,8 +20,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -90,13 +90,17 @@ class MainActivity : ComponentActivity() {
                         confirmButton = { TextButton(onClick = { badLink = false }) { Text(stringResource(R.string.close)) } })
                 }
                 if (showCredits) {
-                    val notices = remember { resources.openRawResource(R.raw.third_party_notices).bufferedReader().use { it.readText() } }
+                    val notices = remember {
+                        resources.openRawResource(R.raw.third_party_notices).bufferedReader().use {
+                            it.readText().trim().split(Regex("\\n{2,}"))
+                        }
+                    }
                     AlertDialog(
                         onDismissRequest = { showCredits = false },
                         title = { Text(stringResource(R.string.data_credits)) },
                         text = {
-                            Column(Modifier.heightIn(max = 400.dp).verticalScroll(rememberScrollState())) {
-                                Text(notices)
+                            LazyColumn(Modifier.heightIn(max = 400.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                                items(notices) { paragraph -> Text(paragraph) }
                             }
                         },
                         confirmButton = {
@@ -104,29 +108,15 @@ class MainActivity : ComponentActivity() {
                         },
                     )
                 }
+                var chartSettings by androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf(false) }
+                var focusMap by remember { mutableStateOf<io.openwaters.slackwater.android.core.station.StationIdentity?>(null) }
+                if (chartSettings) io.openwaters.slackwater.android.map.MapSettings { chartSettings = false }
                 Surface(Modifier.fillMaxSize()) {
                     // The list stays composed under an alert's destination, so its scroll, search and page survive.
                     Box(if (destination == null) Modifier.fillMaxSize() else Modifier.fillMaxSize().clearAndSetSemantics {}) {
-                        StationsHome(onCredits = { showCredits = true }, coveredByAlert = destination != null) {
-                            var chartSettings by remember { mutableStateOf(false) }
+                        StationsHome(onCredits = { showCredits = true }, coveredByAlert = destination != null, externalMapFocus = focusMap,
+                            consumeFocus = { focusMap = null }, onSettings = { chartSettings = true }) {
                             TextButton(onClick = { chartSettings = true }) { Text(stringResource(R.string.detail_chart_settings)) }
-                            if (chartSettings) {
-                                val store = remember { ReadingPreferencesStore.get(this@MainActivity) }
-                                val prefs by store.preferences.collectAsState(Result.success(ReadingPreferences()))
-                                val scope = rememberCoroutineScope()
-                                val enabled = prefs.getOrNull()?.showSky ?: true
-                                AlertDialog(onDismissRequest = { chartSettings = false }, title = { Text(stringResource(R.string.detail_chart_settings)) },
-                                    text = {
-                                        Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
-                                            val label = stringResource(R.string.detail_show_sky)
-                                            Text(label, Modifier.weight(1f))
-                                            Switch(enabled, onCheckedChange = { scope.launch { store.setShowSky(it) } },
-                                                modifier = Modifier.semantics { contentDescription = label })
-                                        }
-                                    }, confirmButton = {
-                                        TextButton(onClick = { chartSettings = false }) { Text(stringResource(R.string.close)) }
-                                    })
-                            }
                             var showQueries by remember { mutableStateOf(false) }
                             Box {
                                 OutlinedButton(onClick = { showQueries = true }) { Text(stringResource(R.string.prediction_shortcuts)) }
@@ -148,8 +138,13 @@ class MainActivity : ComponentActivity() {
                                 destination = null
                             }
                             androidx.activity.compose.BackHandler(onBack = back)
+                            CompositionLocalProvider(io.openwaters.slackwater.android.map.LocalOpenStationMap provides { station ->
+                                back()
+                                focusMap = station
+                            }) {
                             StationPage(remember { StationListModel.get(this@MainActivity) }, target.station,
                                 remember { Instant.now() }, target.event, onBack = back)
+                            }
                         }
                     }
                 }
