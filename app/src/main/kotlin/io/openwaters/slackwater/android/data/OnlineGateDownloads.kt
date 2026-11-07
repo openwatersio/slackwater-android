@@ -147,8 +147,11 @@ internal class OnlineGateDownloads(
             } catch (cancelled: CancellationException) {
                 if (pending[key] === completion) status(id, day, null)
                 throw cancelled
-            } catch (_: Exception) {
-                failedWeeks[id to day] = Failure.TRANSIENT
+            } catch (failure: Exception) {
+                failedWeeks[id to day] = when (failure) {
+                    is IllegalArgumentException, is org.json.JSONException -> Failure.PERMANENT
+                    else -> Failure.TRANSIENT
+                }
                 status(id, day, OnlineDownloadState.FAILED)
                 result = false
                 return false

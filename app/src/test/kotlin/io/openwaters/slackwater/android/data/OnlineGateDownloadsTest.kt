@@ -155,14 +155,19 @@ class OnlineGateDownloadsTest {
     @Test fun invalidGateResponseDoesNotCancelOtherPrefetches() = runBlocking {
         val other = gate.copy(id = StationId("chs-other"))
         val saved = java.util.concurrent.ConcurrentHashMap<StationId, List<TimeSpan>>()
+        var invalidAttempts = 0
         val downloads = OnlineGateDownloads({ if (it == gate.id) gate else other }, { saved[it].orEmpty() },
             { station, _, _ ->
+                if (station.id == gate.id) invalidAttempts++
                 require(station.id != gate.id) { "invalid projected speed" }
                 saved[station.id] = listOf(full)
             }, network, saver, { now })
         downloads.prefetch(listOf(gate.id, other.id))
         assertEquals(OnlineDownloadState.FAILED, downloads.weekStates.value[gate.id to day])
         assertEquals(listOf(full), saved[other.id])
+        downloads.reconnected()
+        assertFalse(downloads.fetch(gate.id, day))
+        assertEquals(1, invalidAttempts)
     }
 
     @Test fun reconnectAllowsTransientStorageFailureToRecover() = runBlocking {
