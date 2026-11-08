@@ -13,6 +13,7 @@ import io.openwaters.slackwater.android.core.tour.TOUR_FALLBACK_STATION
 import io.openwaters.slackwater.android.core.tour.TourStep
 import io.openwaters.slackwater.android.data.ListPreferencesStore
 import io.openwaters.slackwater.android.stations.StationListModel
+import java.io.ByteArrayOutputStream
 import java.util.regex.Pattern
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
@@ -42,9 +43,15 @@ class FirstLaunchLocationTest {
             assertEquals(PackageManager.PERMISSION_DENIED, context.checkSelfPermission(permission))
         }
 
+        device.wakeUp()
+        device.executeShellCommand("wm dismiss-keyguard")
         context.startActivity(Intent(context, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
         if (first) {
-            assertTrue("Missing Android location permission dialog", device.wait(Until.hasObject(deny), 30_000))
+            if (!device.wait(Until.hasObject(deny), 30_000)) {
+                val hierarchy = ByteArrayOutputStream()
+                device.dumpWindowHierarchy(hierarchy)
+                fail("Missing Android location permission dialog; visible UI:\n" + hierarchy.toString("UTF-8"))
+            }
             runBlocking {
                 withTimeout(60_000) {
                     StationListModel.get(context).tour.state.first { it.station == TOUR_FALLBACK_STATION && it.step == TourStep.READ }
