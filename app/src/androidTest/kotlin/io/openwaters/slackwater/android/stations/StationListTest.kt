@@ -1,11 +1,14 @@
 package io.openwaters.slackwater.android.stations
 
-import androidx.compose.ui.test.onAllNodesWithContentDescription
-import androidx.compose.ui.test.onNodeWithContentDescription
+import android.view.KeyEvent
+import androidx.compose.ui.semantics.SemanticsActions
+import androidx.compose.ui.test.isFocused
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasScrollAction
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.v2.createEmptyComposeRule
+import androidx.compose.ui.test.onAllNodesWithContentDescription
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onNodeWithText
@@ -22,6 +25,7 @@ import kotlinx.coroutines.withTimeout
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -77,6 +81,41 @@ class StationListTest {
             }
             assertEquals(listOf(fridayHarbor), favorites)
             compose.waitUntil(10_000) { compose.onAllNodesWithText("Aulatsivik Point").fetchSemanticsNodes().isEmpty() }
+        }
+    }
+
+    @Test fun keyboardCanRemoveOneRecentAndKeepTheOthers() {
+        val boston = StationId("noaa/8443970")
+        val seattle = StationId("noaa/9447130")
+        val model = StationListModel.get(context)
+        runBlocking {
+            places.recordVisit(seattle)
+            places.recordVisit(boston)
+            places.recordVisit(StationId("noaa/8575512"))
+        }
+        compose.waitUntil(60_000) { model.state.value?.sections?.recents?.containsAll(listOf(boston, seattle)) == true }
+        val before = runBlocking { places.places.first().getOrThrow() }
+        ActivityScenario.launch(MainActivity::class.java).use {
+            val instrumentation = InstrumentationRegistry.getInstrumentation()
+            val bostonCard = hasContentDescription("Boston,", substring = true)
+            compose.waitUntil(60_000) {
+                compose.onAllNodes(hasContentDescription("Friday Harbor,", substring = true)).fetchSemanticsNodes().isNotEmpty()
+            }
+            for (step in 1..60) {
+                if (compose.onAllNodes(bostonCard and isFocused()).fetchSemanticsNodes().isNotEmpty()) break
+                instrumentation.sendKeyDownUpSync(KeyEvent.KEYCODE_TAB)
+                compose.waitForIdle()
+            }
+            val focusedCard = compose.onNode(bostonCard and isFocused()).fetchSemanticsNode()
+            val remove = context.getString(io.openwaters.slackwater.android.R.string.action_remove)
+            assertTrue(focusedCard.config[SemanticsActions.CustomActions].any { it.label == remove })
+            instrumentation.sendKeyDownUpSync(KeyEvent.KEYCODE_TAB)
+            compose.onNode(hasText("$remove · Boston") and isFocused()).assertExists()
+            instrumentation.sendKeyDownUpSync(KeyEvent.KEYCODE_ENTER)
+            compose.waitUntil(10_000) { model.state.value?.sections?.recents?.contains(boston) == false }
+            val after = runBlocking { places.places.first().getOrThrow() }
+            assertEquals(before.recents - boston, after.recents)
+            assertEquals(before.favorites, after.favorites)
         }
     }
 
