@@ -46,10 +46,6 @@ import kotlinx.coroutines.launch
 /** A non-empty query waits this long after the last keystroke; an empty one ranks at once. */
 private const val SEARCH_DEBOUNCE_MILLIS = 120L
 
-/**
- * Ranked results with the query they answer. While a newer query is still being ranked the earlier cards stay up,
- * but the notices that describe a result ("No matches", the 60-result note) show only for the query they answer.
- */
 private data class Answer(val query: String, val results: SearchResults)
 
 /** The full-screen search (list §7). Each opening starts empty with the field focused. */
@@ -86,13 +82,13 @@ fun SearchOverlay(model: StationListModel, now: Instant, onOpen: (StationId) -> 
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
-                if (current != null && current.query == query) {
+                if (current != null) {
                     if (current.results.truncated) {
                         item(span = { GridItemSpan(maxLineSpan) }) {
                             Text(stringResource(R.string.search_truncated), style = MaterialTheme.typography.labelMedium)
                         }
                     }
-                    if (current.results.stations.isEmpty()) {
+                    if (current.query == query && current.results.stations.isEmpty()) {
                         item(span = { GridItemSpan(maxLineSpan) }) {
                             Text(stringResource(R.string.search_no_matches), style = MaterialTheme.typography.bodyLarge)
                         }

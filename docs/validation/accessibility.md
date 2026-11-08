@@ -58,13 +58,13 @@ Record the commit, build variant, device or emulator, Android API, screen size/p
 | 12. Removed favorite | `StationGroupsTest.removedFavoritesKeepTheirSlot` | A favorite that leaves the catalog shows the removed card; "Choose another station" offers five nearby stations and puts the choice in the same slot; Remove deletes it without adding it to Recents. |
 | 13. Empty query | `StationSearchTest.anEmptyQueryReturnsTheNearestSixtyAndSaysSo` | Opening search shows the 60 nearest stations immediately with the truncation notice. |
 | 14. Name before region | `StationSearchTest.nameMatchesRankBeforeRegionThenAliasThenDistance` | A query matching one station's name and another's region ranks the name match first. |
-| 15. Superseded query | Pending | Typing quickly shows only the results for the final query. |
+| 15. Superseded query | `SearchNoticeTest.noticesAndCardsChangeTogetherAfterRapidEdits` | The device test checks notices and cards during rapid edits inside the debounce. An in-flight ranking race is untested. |
 | 16. Result tap | Pending | Tapping a result closes search and opens the station. |
 | 17. Pending Canadian card | Pending | A queued Canadian station shows its place in line in place of the reading, a skeleton curve, and its full card height before data arrives. |
 | 18. Current download | Pending | A Canadian gate with an early model keeps its reading and “~” before the speed alongside the ordinary download status and progress. |
 | 19. Removed deep link | Pending | A link to a withdrawn station closes search and shows the Station unavailable section. |
 | 20. Unknown deep link | Pending | A link to an id the app has never known leaves the list as it was. |
-| 21. No search match | `StationSearchTest.noMatchesIsEmpty` | A completed search with no match shows "No matches" and keeps the series filter visible. |
+| 21. No search match | `StationSearchTest.noMatchesIsEmpty` | A completed search with no match shows "No matches" and keeps the series filter visible. The notice hides while a different query is ranked. |
 | 22. Approximate fix | Pending | My Location says "Approximate location" instead of precise coordinates when iOS supplies reduced accuracy. |
 | 23. Slack threshold | Partial | Settings exposes the example duration to accessibility services at 120 dp width. Tests cover Off and changing the threshold. Checking a mounted list or map card is still pending. |
 | 24. Heading navigation | Pending | With a fix, a favorite, and a recent, the headings rotor steps through My Location, Favorites, Near Me, and Recents, and stops on nothing inside a card. |
