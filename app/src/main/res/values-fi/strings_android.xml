@@ -94,7 +94,6 @@
     <string name="detail_derived_source">"Slackwater arvioi virrankäännön paikassa %1$s paikan %2$s ylä- ja alaveden perusteella. CHS ei julkaise virtausennusteita tälle salmelle."</string>
     <string name="detail_map">"Näytä kartalla"</string>
     <string name="detail_invalid_link">"Tätä asemalinkkiä ei voitu avata."</string>
-    <string name="detail_chart_settings">"Kaavion asetukset"</string>
     <string name="panel_reference">"Arvioitu vertailuaseman vuorovedestä"</string>
     <string name="panel_daylight">"%1$d h %2$d min päivänvaloa"</string>
     <string name="panel_lit">"%1$d%% valaistu"</string>
@@ -285,7 +284,7 @@
     <string name="map_close">"Sulje esikatselu"</string>
     <string name="map_empty">"Ei asemia tällä alueella"</string>
     <string name="map_fix_missing">"Sijainti ei ole käytettävissä"</string>
-    <string name="map_units_legend">"Vuorovedet: %1$s. Virtaukset: %2$s. Ei navigointiin. Kaavioasetukset."</string>
+    <string name="map_units_legend">"Vuorovedet: %1$s. Virtaukset: %2$s. Ei navigointiin. Asetukset."</string>
     <string name="map_zoom_out">"Loitonna"</string>
     <string name="map_zoom_in">"Lähennä"</string>
     <string name="chart_downloads">"Lataukset"</string>
@@ -312,4 +311,10 @@
     <string name="tide_download_saved">"Vuorovesiennusteen esikatselu tallennettu offline-käyttöön"</string>
     <string name="tide_download_edit_failed">"Latausten muutosta ei voitu tallentaa. Yritä uudelleen."</string>
     <string name="widget_snapshot_time">"Päivitetty %1$s"</string>
+    <string name="settings_station_comfort">"Tämän aseman virtaraja"</string>
+    <string name="settings_use_global">"Käytä yleistä virtarajaa"</string>
+    <string name="settings_decrease">"Pienennä virtarajaa"</string>
+    <string name="settings_increase">"Suurenna virtarajaa"</string>
+    <string name="about_chs_predictions">"Joissakin Kanadan vuorovesien esikatseluissa ja virta-asemilla näytetään Kanadan hydrografiselta laitokselta ladattuja virallisia ennusteita."</string>
+    <string name="settings_save_error">"Asetusta ei voitu tallentaa. Yritä uudelleen."</string>
 </resources>

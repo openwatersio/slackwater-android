@@ -92,7 +92,6 @@
   "detail_derived_source": "Slackwater anslår strømskifte ved %1$s ut fra høy- og lavvann ved %2$s. CHS publiserer ikke strømprognoser for dette sundet.",
   "detail_map": "Vis på kart",
   "detail_invalid_link": "Denne stasjonslenken kunne ikke åpnes.",
-  "detail_chart_settings": "Grafinnstillinger",
   "panel_reference": "Anslått fra referansetidevann",
   "panel_daylight": "%1$d h %2$d min dagslys",
   "panel_lit": "%1$d%% belyst",
@@ -283,7 +282,7 @@
   "map_close": "Lukk forhåndsvisning",
   "map_empty": "Ingen stasjoner i dette området",
   "map_fix_missing": "Posisjon utilgjengelig",
-  "map_units_legend": "Tidevann i %1$s. Strøm i %2$s. Ikke til navigasjon. Diagraminnstillinger.",
+  "map_units_legend": "Tidevann i %1$s. Strøm i %2$s. Ikke til navigasjon. Innstillinger.",
   "map_zoom_out": "Zoom ut",
   "map_zoom_in": "Zoom inn",
   "chart_downloads": "Nedlastinger",
@@ -309,5 +308,11 @@
   "tide_download_failed": "Kunne ikke laste ned tidevannsoversikten",
   "tide_download_saved": "Tidevannsoversikten er lagret for bruk uten nett",
   "tide_download_edit_failed": "Kunne ikke lagre endringen i nedlastingene. Prøv igjen.",
-  "widget_snapshot_time": "Oppdatert %1$s"
+  "widget_snapshot_time": "Oppdatert %1$s",
+  "settings_station_comfort": "Strømgrense ved denne stasjonen",
+  "settings_use_global": "Bruk felles strømgrense",
+  "settings_decrease": "Senk strømgrensen",
+  "settings_increase": "Øk strømgrensen",
+  "about_chs_predictions": "Noen kanadiske tidevannsvisninger og strømstasjoner viser offisielle prognoser lastet ned fra Canadian Hydrographic Service.",
+  "settings_save_error": "Kunne ikke lagre innstillingen. Prøv igjen."
 }

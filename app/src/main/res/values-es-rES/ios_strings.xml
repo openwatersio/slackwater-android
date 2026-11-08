@@ -282,4 +282,25 @@
     <string name="widget_nearest_current">"Estación de corrientes"</string>
     <string name="widget_location_hint">"Abre Slackwater y permite el acceso a tu ubicación para encontrar un lugar cercano."</string>
     <string name="widget_event_time">"%1$s · %2$s"</string>
+    <string name="about_title">"Acerca de"</string>
+    <string name="settings_help">"Ayuda"</string>
+    <string name="about_summary">"Licencias, agradecimientos y privacidad"</string>
+    <string name="about_predictions">"Acerca de estas predicciones"</string>
+    <string name="about_predictions_text">"Slackwater calcula predicciones armónicas de mareas y corrientes en este dispositivo. No son observaciones; las condiciones reales varían con el tiempo, el caudal de los ríos y los efectos locales."</string>
+    <string name="about_navigation">"No usar para la navegación."</string>
+    <string name="about_attribution">"Datos y atribución"</string>
+    <string name="about_privacy">"Política de privacidad"</string>
+    <string name="about_license">"Licencia"</string>
+    <string name="about_license_text">"Slackwater es de código abierto: esta app usa GPL-3.0 y el motor de predicción usa MIT."</string>
+    <string name="about_source">"Código fuente en GitHub"</string>
+    <string name="about_version">"Versión"</string>
+    <string name="settings_title">"Ajustes"</string>
+    <string name="settings_set_format">"Formato de la dirección de la corriente"</string>
+    <string name="settings_compass">"Brújula"</string>
+    <string name="settings_degrees">"Grados °V"</string>
+    <string name="settings_comfort_current">"Corriente cómoda"</string>
+    <string name="settings_comfort_help">"Establece la corriente más rápida que Slackwater considera una ventana de estoa utilizable (0,1–10 kn). Desactivado muestra solo la estoa."</string>
+    <string name="settings_premium">"Premium"</string>
+    <string name="settings_example">"Ejemplo"</string>
+    <string name="settings_example_window">"Ejemplo de ventana de estoa"</string>
 </resources>

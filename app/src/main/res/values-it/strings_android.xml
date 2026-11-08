@@ -98,7 +98,6 @@
     <string name="detail_derived_source">"Slackwater stima la stanca a %1$s dall\'alta e dalla bassa marea a %2$s. CHS non pubblica previsioni delle correnti per questo passaggio."</string>
     <string name="detail_map">"Mostra sulla mappa"</string>
     <string name="detail_invalid_link">"Impossibile aprire questo link alla stazione."</string>
-    <string name="detail_chart_settings">"Impostazioni del grafico"</string>
     <string name="panel_reference">"Stimato dalle maree di riferimento"</string>
     <string name="panel_daylight">"%1$d h %2$d min di luce diurna"</string>
     <string name="panel_lit">"%1$d%% illuminata"</string>
@@ -289,7 +288,7 @@
     <string name="map_close">"Chiudi anteprima"</string>
     <string name="map_empty">"Nessuna stazione in questa zona"</string>
     <string name="map_fix_missing">"Posizione non disponibile"</string>
-    <string name="map_units_legend">"Maree in %1$s. Correnti in %2$s. Non usare per la navigazione. Impostazioni del grafico."</string>
+    <string name="map_units_legend">"Maree in %1$s. Correnti in %2$s. Non usare per la navigazione. Impostazioni."</string>
     <string name="map_zoom_out">"Riduci zoom"</string>
     <string name="map_zoom_in">"Aumenta zoom"</string>
     <string name="chart_downloads">"Download"</string>
@@ -316,4 +315,10 @@
     <string name="tide_download_saved">"Anteprima delle maree salvata per l’uso offline"</string>
     <string name="tide_download_edit_failed">"Impossibile salvare la modifica ai download. Riprova."</string>
     <string name="widget_snapshot_time">"Aggiornato: %1$s"</string>
+    <string name="settings_station_comfort">"Limite di corrente in questa stazione"</string>
+    <string name="settings_use_global">"Usa il limite di corrente generale"</string>
+    <string name="settings_decrease">"Riduci il limite di corrente"</string>
+    <string name="settings_increase">"Aumenta il limite di corrente"</string>
+    <string name="about_chs_predictions">"Alcune anteprime delle maree e stazioni di corrente canadesi mostrano previsioni ufficiali scaricate dal Servizio idrografico canadese."</string>
+    <string name="settings_save_error">"Impossibile salvare questa impostazione. Riprova."</string>
 </resources>

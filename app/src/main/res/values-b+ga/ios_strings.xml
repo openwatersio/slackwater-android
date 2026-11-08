@@ -282,4 +282,25 @@
     <string name="widget_nearest_current">"Stáisiún Srutha"</string>
     <string name="widget_location_hint">"Oscail Slackwater agus ceadaigh rochtain ar do shuíomh chun áit in aice láimhe a aimsiú."</string>
     <string name="widget_event_time">"%1$s · %2$s"</string>
+    <string name="about_title">"Eolas"</string>
+    <string name="settings_help">"Cabhair"</string>
+    <string name="about_summary">"Ceadúnú, admhálacha agus príobháideachas"</string>
+    <string name="about_predictions">"Maidir leis na tuartha seo"</string>
+    <string name="about_predictions_text">"Ríomhann Slackwater tuartha armónacha taoide agus srutha ar an ngléas seo. Ní breathnuithe iad; bíonn na dálaí iarbhír éagsúil de réir na haimsire, sreabhadh na n-aibhneacha agus iarmhairtí áitiúla."</string>
+    <string name="about_navigation">"Ní le haghaidh loingseoireachta."</string>
+    <string name="about_attribution">"Sonraí &amp; sannadh"</string>
+    <string name="about_privacy">"Polasaí Príobháideachais"</string>
+    <string name="about_license">"Ceadúnas"</string>
+    <string name="about_license_text">"Is foinse oscailte é Slackwater: an aip seo faoi GPL-3.0, an t-inneall tuartha faoi MIT."</string>
+    <string name="about_source">"Foinse ar GitHub"</string>
+    <string name="about_version">"Leagan"</string>
+    <string name="settings_title">"Socruithe"</string>
+    <string name="settings_set_format">"Formáid treo srutha"</string>
+    <string name="settings_compass">"Compás"</string>
+    <string name="settings_degrees">"Céimeanna °T"</string>
+    <string name="settings_comfort_current">"Sruth compordach"</string>
+    <string name="settings_comfort_help">"Socraíonn sé seo an sruth is tapa a mheasann Slackwater a bheith inúsáidte mar thréimhse fáfaill (0.1–10 kn). Ní thaispeánann As ach an fáfall."</string>
+    <string name="settings_premium">"Premium"</string>
+    <string name="settings_example">"Sampla"</string>
+    <string name="settings_example_window">"Tréimhse fáfaill shamplach"</string>
 </resources>

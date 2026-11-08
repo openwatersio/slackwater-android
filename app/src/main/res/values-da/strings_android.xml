@@ -94,7 +94,6 @@
     <string name="detail_derived_source">"Slackwater anslår strømskifte ved %1$s ud fra høj- og lavvande ved %2$s. CHS udgiver ikke strømforudsigelser for dette stræde."</string>
     <string name="detail_map">"Vis på kort"</string>
     <string name="detail_invalid_link">"Dette stationslink kunne ikke åbnes."</string>
-    <string name="detail_chart_settings">"Grafindstillinger"</string>
     <string name="panel_reference">"Anslået ud fra referencetidevand"</string>
     <string name="panel_daylight">"%1$d h %2$d min dagslys"</string>
     <string name="panel_lit">"%1$d%% belyst"</string>
@@ -285,7 +284,7 @@
     <string name="map_close">"Luk forhåndsvisning"</string>
     <string name="map_empty">"Ingen stationer i dette område"</string>
     <string name="map_fix_missing">"Placering utilgængelig"</string>
-    <string name="map_units_legend">"Tidevand i %1$s. Strøm i %2$s. Ikke til navigation. Diagramindstillinger."</string>
+    <string name="map_units_legend">"Tidevand i %1$s. Strøm i %2$s. Ikke til navigation. Indstillinger."</string>
     <string name="map_zoom_out">"Zoom ud"</string>
     <string name="map_zoom_in">"Zoom ind"</string>
     <string name="chart_downloads">"Downloads"</string>
@@ -312,4 +311,10 @@
     <string name="tide_download_saved">"Tidevandsoversigten er gemt til offlinebrug"</string>
     <string name="tide_download_edit_failed">"Ændringen af dine downloads kunne ikke gemmes. Prøv igen."</string>
     <string name="widget_snapshot_time">"Opdateret %1$s"</string>
+    <string name="settings_station_comfort">"Strømgrænse ved denne station"</string>
+    <string name="settings_use_global">"Brug den fælles strømgrænse"</string>
+    <string name="settings_decrease">"Sænk strømgrænsen"</string>
+    <string name="settings_increase">"Hæv strømgrænsen"</string>
+    <string name="about_chs_predictions">"Nogle canadiske tidevandsvisninger og strømstationer viser officielle prognoser hentet fra Canadian Hydrographic Service."</string>
+    <string name="settings_save_error">"Indstillingen kunne ikke gemmes. Prøv igen."</string>
 </resources>

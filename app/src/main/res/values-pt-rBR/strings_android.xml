@@ -98,7 +98,6 @@
     <string name="detail_derived_source">"O Slackwater estima o estofo em %1$s com base na preamar e na baixa-mar em %2$s. O CHS não publica previsões de corrente para esta passagem."</string>
     <string name="detail_map">"Ver no mapa"</string>
     <string name="detail_invalid_link">"Não foi possível abrir este link de estação."</string>
-    <string name="detail_chart_settings">"Configurações do gráfico"</string>
     <string name="panel_reference">"Estimado pelas marés de referência"</string>
     <string name="panel_daylight">"%1$d h %2$d min de luz do dia"</string>
     <string name="panel_lit">"%1$d%% iluminada"</string>
@@ -289,7 +288,7 @@
     <string name="map_close">"Fechar prévia"</string>
     <string name="map_empty">"Nenhuma estação nesta área"</string>
     <string name="map_fix_missing">"Localização indisponível"</string>
-    <string name="map_units_legend">"Marés em %1$s. Correntes em %2$s. Não usar para navegação. Configurações do gráfico."</string>
+    <string name="map_units_legend">"Marés em %1$s. Correntes em %2$s. Não usar para navegação. Ajustes."</string>
     <string name="map_zoom_out">"Diminuir zoom"</string>
     <string name="map_zoom_in">"Aumentar zoom"</string>
     <string name="chart_downloads">"Downloads"</string>
@@ -316,4 +315,10 @@
     <string name="tide_download_saved">"Prévia das marés salva para uso offline"</string>
     <string name="tide_download_edit_failed">"Não foi possível salvar a alteração nos seus downloads. Tente novamente."</string>
     <string name="widget_snapshot_time">"Atualizado em %1$s"</string>
+    <string name="settings_station_comfort">"Limite de corrente nesta estação"</string>
+    <string name="settings_use_global">"Usar o limite geral de corrente"</string>
+    <string name="settings_decrease">"Diminuir o limite de corrente"</string>
+    <string name="settings_increase">"Aumentar o limite de corrente"</string>
+    <string name="about_chs_predictions">"Algumas prévias de marés e estações de correntes no Canadá mostram previsões oficiais baixadas do Serviço Hidrográfico Canadense."</string>
+    <string name="settings_save_error">"Não foi possível salvar esta configuração. Tente novamente."</string>
 </resources>

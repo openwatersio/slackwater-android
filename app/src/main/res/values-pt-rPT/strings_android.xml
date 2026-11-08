@@ -98,7 +98,6 @@
     <string name="detail_derived_source">"O Slackwater estima o estofo em %1$s com base na preia-mar e na baixa-mar em %2$s. O CHS não publica previsões de corrente para esta passagem."</string>
     <string name="detail_map">"Ver no mapa"</string>
     <string name="detail_invalid_link">"Não foi possível abrir esta ligação de estação."</string>
-    <string name="detail_chart_settings">"Definições do gráfico"</string>
     <string name="panel_reference">"Estimado a partir das marés de referência"</string>
     <string name="panel_daylight">"%1$d h %2$d min de luz do dia"</string>
     <string name="panel_lit">"%1$d%% iluminada"</string>
@@ -289,7 +288,7 @@
     <string name="map_close">"Fechar pré-visualização"</string>
     <string name="map_empty">"Nenhuma estação nesta área"</string>
     <string name="map_fix_missing">"Localização indisponível"</string>
-    <string name="map_units_legend">"Marés em %1$s. Correntes em %2$s. Não usar para navegação. Definições do gráfico."</string>
+    <string name="map_units_legend">"Marés em %1$s. Correntes em %2$s. Não usar para navegação. Definições."</string>
     <string name="map_zoom_out">"Reduzir zoom"</string>
     <string name="map_zoom_in">"Ampliar"</string>
     <string name="chart_downloads">"Transferências"</string>
@@ -316,4 +315,10 @@
     <string name="tide_download_saved">"Pré-visualização das marés guardada para utilização offline"</string>
     <string name="tide_download_edit_failed">"Não foi possível guardar a alteração às transferências. Tente novamente."</string>
     <string name="widget_snapshot_time">"Atualizado em %1$s"</string>
+    <string name="settings_station_comfort">"Limite de corrente nesta estação"</string>
+    <string name="settings_use_global">"Usar o limite geral de corrente"</string>
+    <string name="settings_decrease">"Diminuir o limite de corrente"</string>
+    <string name="settings_increase">"Aumentar o limite de corrente"</string>
+    <string name="about_chs_predictions">"Algumas pré-visualizações de marés e estações de correntes no Canadá mostram previsões oficiais descarregadas do Serviço Hidrográfico Canadiano."</string>
+    <string name="settings_save_error">"Não foi possível guardar esta definição. Tente novamente."</string>
 </resources>

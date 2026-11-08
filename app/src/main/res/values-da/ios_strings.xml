@@ -282,4 +282,25 @@
     <string name="widget_nearest_current">"Strømstation"</string>
     <string name="widget_location_hint">"Åbn Slackwater, og tillad adgang til din placering for at finde et sted i nærheden."</string>
     <string name="widget_event_time">"%1$s · %2$s"</string>
+    <string name="about_title">"Om"</string>
+    <string name="settings_help">"Hjælp"</string>
+    <string name="about_summary">"Licenser, anerkendelser og privatliv"</string>
+    <string name="about_predictions">"Om disse prognoser"</string>
+    <string name="about_predictions_text">"Slackwater beregner harmoniske tidevands- og strømprognoser på denne enhed. De er ikke observationer; faktiske forhold varierer med vejr, vandføring i floder og lokale forhold."</string>
+    <string name="about_navigation">"Ikke til navigation."</string>
+    <string name="about_attribution">"Data og kilder"</string>
+    <string name="about_privacy">"Anonymitetspolitik"</string>
+    <string name="about_license">"Licens"</string>
+    <string name="about_license_text">"Slackwater er open source: denne app under GPL-3.0, prognosemotoren under MIT."</string>
+    <string name="about_source">"Kildekode på GitHub"</string>
+    <string name="about_version">"Version"</string>
+    <string name="settings_title">"Indstillinger"</string>
+    <string name="settings_set_format">"Format for strømretning"</string>
+    <string name="settings_compass">"Kompas"</string>
+    <string name="settings_degrees">"Grader °T"</string>
+    <string name="settings_comfort_current">"Behagelig strømhastighed"</string>
+    <string name="settings_comfort_help">"Indstiller den højeste strømhastighed, Slackwater regner som en brugbar strømstille periode (0,1–10 kn). Fra viser kun strømstille."</string>
+    <string name="settings_premium">"Premium"</string>
+    <string name="settings_example">"Eksempel"</string>
+    <string name="settings_example_window">"Eksempel på strømstille periode"</string>
 </resources>

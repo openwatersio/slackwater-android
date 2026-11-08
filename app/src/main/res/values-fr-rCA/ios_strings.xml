@@ -282,4 +282,25 @@
     <string name="widget_nearest_current">"Station de courant"</string>
     <string name="widget_location_hint">"Ouvrez Slackwater et autorisez l’accès à votre position pour trouver un endroit à proximité."</string>
     <string name="widget_event_time">"%1$s · %2$s"</string>
+    <string name="about_title">"À propos"</string>
+    <string name="settings_help">"Aide"</string>
+    <string name="about_summary">"Licences, remerciements et confidentialité"</string>
+    <string name="about_predictions">"À propos de ces prédictions"</string>
+    <string name="about_predictions_text">"Slackwater calcule les prévisions harmoniques des marées et courants sur cet appareil. Il ne s’agit pas d’observations; les conditions réelles varient selon la météo, le débit des cours d’eau et les effets locaux."</string>
+    <string name="about_navigation">"Non destiné à la navigation."</string>
+    <string name="about_attribution">"Données et attributions"</string>
+    <string name="about_privacy">"Politique de confidentialité"</string>
+    <string name="about_license">"Licence"</string>
+    <string name="about_license_text">"Slackwater est à code source ouvert : cette app est sous GPL-3.0 et le moteur de prévision, sous MIT."</string>
+    <string name="about_source">"Code source sur GitHub"</string>
+    <string name="about_version">"Version"</string>
+    <string name="settings_title">"Réglages"</string>
+    <string name="settings_set_format">"Format de la direction du courant"</string>
+    <string name="settings_compass">"Compas"</string>
+    <string name="settings_degrees">"Degrés °V"</string>
+    <string name="settings_comfort_current">"Courant confortable"</string>
+    <string name="settings_comfort_help">"Définit la vitesse de courant maximale que Slackwater considère comme une fenêtre d’étale utilisable (0,1 à 10 kn). Désactivé n’affiche que l’étale."</string>
+    <string name="settings_premium">"Premium"</string>
+    <string name="settings_example">"Exemple"</string>
+    <string name="settings_example_window">"Exemple de fenêtre d’étale"</string>
 </resources>

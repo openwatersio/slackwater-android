@@ -282,4 +282,25 @@
     <string name="widget_nearest_current">"Strömungsstation"</string>
     <string name="widget_location_hint">"Öffne Slackwater und erlaube den Standortzugriff, um einen Ort in der Nähe zu finden."</string>
     <string name="widget_event_time">"%1$s · %2$s"</string>
+    <string name="about_title">"Über"</string>
+    <string name="settings_help">"Hilfe"</string>
+    <string name="about_summary">"Lizenzen, Danksagungen und Datenschutz"</string>
+    <string name="about_predictions">"Über diese Vorhersagen"</string>
+    <string name="about_predictions_text">"Slackwater berechnet harmonische Gezeiten- und Strömungsvorhersagen auf diesem Gerät. Sie sind keine Messungen; die tatsächlichen Bedingungen hängen von Wetter, Flussabfluss und örtlichen Einflüssen ab."</string>
+    <string name="about_navigation">"Nicht zur Navigation geeignet."</string>
+    <string name="about_attribution">"Daten und Quellen"</string>
+    <string name="about_privacy">"Datenschutzerklärung"</string>
+    <string name="about_license">"Lizenz"</string>
+    <string name="about_license_text">"Slackwater ist Open Source: diese App unter GPL-3.0, die Vorhersage-Engine unter MIT."</string>
+    <string name="about_source">"Quellcode auf GitHub"</string>
+    <string name="about_version">"Version"</string>
+    <string name="settings_title">"Einstellungen"</string>
+    <string name="settings_set_format">"Format der Strömungsrichtung"</string>
+    <string name="settings_compass">"Kompass"</string>
+    <string name="settings_degrees">"Grad °rw"</string>
+    <string name="settings_comfort_current">"Angenehme Strömung"</string>
+    <string name="settings_comfort_help">"Legt die höchste Strömungsgeschwindigkeit fest, die Slackwater als nutzbares Stauwasserfenster behandelt (0.1–10 kn). Aus zeigt nur Stauwasser."</string>
+    <string name="settings_premium">"Premium"</string>
+    <string name="settings_example">"Beispiel"</string>
+    <string name="settings_example_window">"Beispiel für ein Stauwasserfenster"</string>
 </resources>

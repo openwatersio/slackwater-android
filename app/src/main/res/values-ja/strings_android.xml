@@ -94,7 +94,6 @@
     <string name="detail_derived_source">"Slackwaterは%2$sの満潮・干潮から%1$sの転流を推定します。CHSはこの水道の潮流予測を公表していません。"</string>
     <string name="detail_map">"地図で表示"</string>
     <string name="detail_invalid_link">"この観測地点のリンクを開けませんでした。"</string>
-    <string name="detail_chart_settings">"グラフ設定"</string>
     <string name="panel_reference">"基準地点の潮汐から推定"</string>
     <string name="panel_daylight">"日照時間%1$d時間%2$d分"</string>
     <string name="panel_lit">"照らされている割合%1$d%%"</string>
@@ -285,7 +284,7 @@
     <string name="map_close">"プレビューを閉じる"</string>
     <string name="map_empty">"この範囲に観測所はありません"</string>
     <string name="map_fix_missing">"位置情報を利用できません"</string>
-    <string name="map_units_legend">"潮汐の単位：%1$s。潮流の単位：%2$s。航海には使用できません。グラフ設定。"</string>
+    <string name="map_units_legend">"潮汐の単位：%1$s。潮流の単位：%2$s。航海には使用できません。設定。"</string>
     <string name="map_zoom_out">"縮小"</string>
     <string name="map_zoom_in">"拡大"</string>
     <string name="chart_downloads">"ダウンロード"</string>
@@ -312,4 +311,10 @@
     <string name="tide_download_saved">"潮汐プレビューをオフライン用に保存しました"</string>
     <string name="tide_download_edit_failed">"ダウンロードの変更を保存できませんでした。もう一度お試しください。"</string>
     <string name="widget_snapshot_time">"%1$s 時点"</string>
+    <string name="settings_station_comfort">"この観測点の流速上限"</string>
+    <string name="settings_use_global">"共通の流速上限を使う"</string>
+    <string name="settings_decrease">"流速上限を下げる"</string>
+    <string name="settings_increase">"流速上限を上げる"</string>
+    <string name="about_chs_predictions">"カナダの一部の潮汐プレビューや潮流観測点では、カナダ水路局からダウンロードした公式予測を表示します。"</string>
+    <string name="settings_save_error">"設定を保存できませんでした。もう一度お試しください。"</string>
 </resources>

@@ -102,7 +102,6 @@
     <string name="detail_derived_source">"Tha Slackwater a\' tuairmseachadh uisge marbh aig %1$s bho làn mara is tràigh aig %2$s. Chan eil CHS a\' foillseachadh ro-innse srutha airson a\' chaolais seo."</string>
     <string name="detail_map">"Seall air a\' mhapa"</string>
     <string name="detail_invalid_link">"Cha b\' urrainn dhuinn ceangal an stèisein seo fhosgladh."</string>
-    <string name="detail_chart_settings">"Roghainnean na cairte"</string>
     <string name="panel_reference">"Air a thuairmseachadh bho làn is tràigh iomraidh"</string>
     <string name="panel_daylight">"%1$d h %2$d min de sholas an latha"</string>
     <string name="panel_lit">"%1$d%% air a shoillseachadh"</string>
@@ -293,7 +292,7 @@
     <string name="map_close">"Dùin an ro-shealladh"</string>
     <string name="map_empty">"Chan eil stèiseanan san sgìre seo"</string>
     <string name="map_fix_missing">"Chan eil an suidheachadh ri fhaighinn"</string>
-    <string name="map_units_legend">"Làn-mara ann an %1$s. Sruthan ann an %2$s. Chan ann airson seòladh. Roghainnean a’ chlàir."</string>
+    <string name="map_units_legend">"Làn-mara ann an %1$s. Sruthan ann an %2$s. Chan ann airson seòladh. Roghainnean."</string>
     <string name="map_zoom_out">"Sùm a-mach"</string>
     <string name="map_zoom_in">"Sùm a-steach"</string>
     <string name="chart_downloads">"Luchdaidhean a-nuas"</string>
@@ -320,4 +319,10 @@
     <string name="tide_download_saved">"Chaidh ro-shealladh an làin a shàbhaladh airson cleachdadh far loidhne"</string>
     <string name="tide_download_edit_failed">"Cha deach an t-atharrachadh air na luchdaidhean a-nuas agad a shàbhaladh. Feuch ris a-rithist."</string>
     <string name="widget_snapshot_time">"Air ùrachadh %1$s"</string>
+    <string name="settings_station_comfort">"Crìoch an t-srutha aig an stèisean seo"</string>
+    <string name="settings_use_global">"Cleachd crìoch choitcheann an t-srutha"</string>
+    <string name="settings_decrease">"Lùghdaich crìoch an t-srutha"</string>
+    <string name="settings_increase">"Àrdaich crìoch an t-srutha"</string>
+    <string name="about_chs_predictions">"Tha cuid de ro-sheallaidhean làin is stèiseanan srutha ann an Canada a’ sealltainn ro-aithrisean oifigeil a chaidh a luchdadh a-nuas bho Sheirbheis Hydro-grafaigeach Chanada."</string>
+    <string name="settings_save_error">"Cha b’ urrainn dhuinn an roghainn seo a shàbhaladh. Feuch ris a-rithist."</string>
 </resources>

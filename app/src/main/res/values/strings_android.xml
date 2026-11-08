@@ -94,7 +94,6 @@
     <string name="detail_derived_source">"Slackwater estimates slack at %1$s from high and low water at %2$s. CHS does not publish current predictions for this pass."</string>
     <string name="detail_map">"View on map"</string>
     <string name="detail_invalid_link">"This station link could not be opened."</string>
-    <string name="detail_chart_settings">"Chart settings"</string>
     <string name="panel_reference">"Estimated from reference tides"</string>
     <string name="panel_daylight">"%1$d h %2$d min daylight"</string>
     <string name="panel_lit">"%1$d%% lit"</string>
@@ -285,7 +284,7 @@
     <string name="map_close">"Close preview"</string>
     <string name="map_empty">"No stations in this area"</string>
     <string name="map_fix_missing">"Location unavailable"</string>
-    <string name="map_units_legend">"Tides in %1$s. Currents in %2$s. Not for navigation. Chart settings."</string>
+    <string name="map_units_legend">"Tides in %1$s. Currents in %2$s. Not for navigation. Settings."</string>
     <string name="map_zoom_out">"Zoom out"</string>
     <string name="map_zoom_in">"Zoom in"</string>
     <string name="chart_downloads">"Downloads"</string>
@@ -312,4 +311,10 @@
     <string name="tide_download_saved">"Tide preview saved for offline use"</string>
     <string name="tide_download_edit_failed">"Couldn’t save this change to your downloads. Try again."</string>
     <string name="widget_snapshot_time">"As of %1$s"</string>
+    <string name="settings_station_comfort">"Comfort current at this station"</string>
+    <string name="settings_use_global">"Use global comfort current"</string>
+    <string name="settings_decrease">"Decrease comfort current"</string>
+    <string name="settings_increase">"Increase comfort current"</string>
+    <string name="about_chs_predictions">"Some Canadian tide previews and current stations show official predictions downloaded from the Canadian Hydrographic Service."</string>
+    <string name="settings_save_error">"Couldn’t save this setting. Try again."</string>
 </resources>

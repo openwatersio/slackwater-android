@@ -94,7 +94,6 @@
     <string name="detail_derived_source">"Slackwater schat de kentering bij %1$s op basis van hoog- en laagwater bij %2$s. CHS publiceert geen stroomvoorspellingen voor deze doorgang."</string>
     <string name="detail_map">"Op kaart bekijken"</string>
     <string name="detail_invalid_link">"Deze stationslink kon niet worden geopend."</string>
-    <string name="detail_chart_settings">"Grafiekinstellingen"</string>
     <string name="panel_reference">"Geschat uit referentiegetijden"</string>
     <string name="panel_daylight">"%1$d h %2$d min daglicht"</string>
     <string name="panel_lit">"%1$d%% verlicht"</string>
@@ -285,7 +284,7 @@
     <string name="map_close">"Voorbeeld sluiten"</string>
     <string name="map_empty">"Geen stations in dit gebied"</string>
     <string name="map_fix_missing">"Locatie niet beschikbaar"</string>
-    <string name="map_units_legend">"Getijden in %1$s. Stromingen in %2$s. Niet voor navigatie. Grafiekinstellingen."</string>
+    <string name="map_units_legend">"Getijden in %1$s. Stromingen in %2$s. Niet voor navigatie. Instellingen."</string>
     <string name="map_zoom_out">"Uitzoomen"</string>
     <string name="map_zoom_in">"Inzoomen"</string>
     <string name="chart_downloads">"Downloads"</string>
@@ -312,4 +311,10 @@
     <string name="tide_download_saved">"Getijdenoverzicht opgeslagen voor offlinegebruik"</string>
     <string name="tide_download_edit_failed">"De wijziging in je downloads kon niet worden opgeslagen. Probeer het opnieuw."</string>
     <string name="widget_snapshot_time">"Bijgewerkt: %1$s"</string>
+    <string name="settings_station_comfort">"Stroomlimiet voor dit station"</string>
+    <string name="settings_use_global">"Algemene stroomlimiet gebruiken"</string>
+    <string name="settings_decrease">"Stroomlimiet verlagen"</string>
+    <string name="settings_increase">"Stroomlimiet verhogen"</string>
+    <string name="about_chs_predictions">"Sommige Canadese getijdenvoorbeelden en stroomstations tonen officiële voorspellingen die zijn gedownload van de Canadese hydrografische dienst."</string>
+    <string name="settings_save_error">"Deze instelling kon niet worden opgeslagen. Probeer het opnieuw."</string>
 </resources>

@@ -98,7 +98,6 @@
     <string name="detail_derived_source">"Slackwater estima la estoa en %1$s a partir de la pleamar y la bajamar en %2$s. CHS no publica predicciones de corrientes para este paso."</string>
     <string name="detail_map">"Ver en el mapa"</string>
     <string name="detail_invalid_link">"No se ha podido abrir este enlace de estación."</string>
-    <string name="detail_chart_settings">"Ajustes del gráfico"</string>
     <string name="panel_reference">"Estimado a partir de las mareas de referencia"</string>
     <string name="panel_daylight">"%1$d h %2$d min de luz diurna"</string>
     <string name="panel_lit">"%1$d%% iluminada"</string>
@@ -289,7 +288,7 @@
     <string name="map_close">"Cerrar vista previa"</string>
     <string name="map_empty">"No hay estaciones en esta zona"</string>
     <string name="map_fix_missing">"Ubicación no disponible"</string>
-    <string name="map_units_legend">"Mareas en %1$s. Corrientes en %2$s. No apto para navegación. Ajustes del gráfico."</string>
+    <string name="map_units_legend">"Mareas en %1$s. Corrientes en %2$s. No apto para navegación. Ajustes."</string>
     <string name="map_zoom_out">"Alejar"</string>
     <string name="map_zoom_in">"Acercar"</string>
     <string name="chart_downloads">"Descargas"</string>
@@ -316,4 +315,10 @@
     <string name="tide_download_saved">"Avance de mareas guardado para usar sin conexión"</string>
     <string name="tide_download_edit_failed">"No se ha podido guardar el cambio en tus descargas. Vuelve a intentarlo."</string>
     <string name="widget_snapshot_time">"Actualizado: %1$s"</string>
+    <string name="settings_station_comfort">"Límite de corriente en esta estación"</string>
+    <string name="settings_use_global">"Usar el límite de corriente general"</string>
+    <string name="settings_decrease">"Reducir el límite de corriente"</string>
+    <string name="settings_increase">"Aumentar el límite de corriente"</string>
+    <string name="about_chs_predictions">"Algunas vistas previas de mareas y estaciones de corrientes de Canadá muestran predicciones oficiales descargadas del Servicio Hidrográfico Canadiense."</string>
+    <string name="settings_save_error">"No se pudo guardar el ajuste. Inténtalo de nuevo."</string>
 </resources>

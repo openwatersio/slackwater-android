@@ -104,7 +104,6 @@
   "detail_derived_source": "Measann Slackwater uisce marbh ag %1$s ó lán mara agus lag trá ag %2$s. Ní fhoilsíonn CHS tuar srutha don chaolas seo.",
   "detail_map": "Féach ar an léarscáil",
   "detail_invalid_link": "Níorbh fhéidir an nasc stáisiúin seo a oscailt.",
-  "detail_chart_settings": "Socruithe cairte",
   "panel_reference": "Measta ó thaoidí tagartha",
   "panel_daylight": "%1$d h %2$d min de sholas an lae",
   "panel_lit": "%1$d%% soilsithe",
@@ -295,7 +294,7 @@
   "map_close": "Dún an réamhamharc",
   "map_empty": "Níl aon stáisiún sa cheantar seo",
   "map_fix_missing": "Suíomh gan fáil",
-  "map_units_legend": "Taoidí in %1$s. Sruthanna in %2$s. Ní le haghaidh loingseoireachta. Socruithe cairte.",
+  "map_units_legend": "Taoidí in %1$s. Sruthanna in %2$s. Ní le haghaidh loingseoireachta. Socruithe.",
   "map_zoom_out": "Zúmáil amach",
   "map_zoom_in": "Zúmáil isteach",
   "chart_downloads": "Íoslódálacha",
@@ -321,5 +320,11 @@
   "tide_download_failed": "Níorbh fhéidir an réamhamharc taoide a íoslódáil",
   "tide_download_saved": "Sábháladh an réamhamharc taoide lena úsáid as líne",
   "tide_download_edit_failed": "Níorbh fhéidir an t-athrú ar d’íoslódálacha a shábháil. Bain triail eile as.",
-  "widget_snapshot_time": "Nuashonraithe %1$s"
+  "widget_snapshot_time": "Nuashonraithe %1$s",
+  "settings_station_comfort": "Teorainn srutha ag an stáisiún seo",
+  "settings_use_global": "Úsáid an teorainn ghinearálta srutha",
+  "settings_decrease": "Laghdaigh an teorainn srutha",
+  "settings_increase": "Méadaigh an teorainn srutha",
+  "about_chs_predictions": "Taispeántar réamhaisnéisí oifigiúla a íoslódáladh ó Sheirbhís Hidreagrafach Cheanada i roinnt réamhamharcanna taoide agus ag roinnt stáisiún srutha i gCeanada.",
+  "settings_save_error": "Níorbh fhéidir an socrú seo a shábháil. Bain triail eile as."
 }

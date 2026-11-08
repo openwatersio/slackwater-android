@@ -282,4 +282,25 @@
     <string name="widget_nearest_current">"Virtausasema"</string>
     <string name="widget_location_hint">"Avaa Slackwater ja salli sijainnin käyttö, jotta lähistöllä oleva paikka löytyy."</string>
     <string name="widget_event_time">"%1$s · %2$s"</string>
+    <string name="about_title">"Tietoja"</string>
+    <string name="settings_help">"Ohje"</string>
+    <string name="about_summary">"Lisenssit, kiitokset ja tietosuoja"</string>
+    <string name="about_predictions">"Tietoja ennusteista"</string>
+    <string name="about_predictions_text">"Slackwater laskee harmoniset vuorovesi- ja virtausennusteet tällä laitteella. Ne eivät ole havaintoja; todelliset olosuhteet vaihtelevat sään, jokien virtaaman ja paikallisten vaikutusten mukaan."</string>
+    <string name="about_navigation">"Ei navigointiin."</string>
+    <string name="about_attribution">"Tiedot ja lähteet"</string>
+    <string name="about_privacy">"Tietosuojakäytäntö"</string>
+    <string name="about_license">"Lisenssi"</string>
+    <string name="about_license_text">"Slackwater on avointa lähdekoodia: sovellus GPL-3.0-lisenssillä, ennustemoottori MIT-lisenssillä."</string>
+    <string name="about_source">"Lähdekoodi GitHubissa"</string>
+    <string name="about_version">"Versio"</string>
+    <string name="settings_title">"Asetukset"</string>
+    <string name="settings_set_format">"Virtauksen suunnan muoto"</string>
+    <string name="settings_compass">"Kompassi"</string>
+    <string name="settings_degrees">"Asteet °T"</string>
+    <string name="settings_comfort_current">"Sopiva virtausnopeus"</string>
+    <string name="settings_comfort_help">"Asettaa suurimman virtausnopeuden, jonka Slackwater hyväksyy heikon virtauksen jaksoksi (0.1–10 kn). Pois näyttää vain lähes tyynen."</string>
+    <string name="settings_premium">"Premium"</string>
+    <string name="settings_example">"Esimerkki"</string>
+    <string name="settings_example_window">"Esimerkki heikon virtauksen jaksosta"</string>
 </resources>

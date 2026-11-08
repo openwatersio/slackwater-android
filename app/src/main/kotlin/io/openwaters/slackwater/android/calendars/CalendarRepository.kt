@@ -34,8 +34,10 @@ class CalendarRepository private constructor(private val app: Context) {
 
     init {
         scope.launch {
-            combine(access.changes.retryAlertReads(), preferences.preferences.map { it.getOrThrow() }.retryAlertReads(), models.revision,
-                state.state.map { it.invalidations }.distinctUntilChanged().retryAlertReads()) { _, _, _, _ -> Unit }
+            val thresholds = preferences.preferences.settledThresholds().retryAlertReads()
+            val heights = preferences.preferences.map { it.getOrThrow().savedHeightUnits }.distinctUntilChanged().retryAlertReads()
+            combine(access.changes.retryAlertReads(), thresholds, heights, models.revision,
+                state.state.map { it.invalidations }.distinctUntilChanged().retryAlertReads()) { _, _, _, _, _ -> Unit }
                 .collect { foreground() }
         }
         scope.launch {

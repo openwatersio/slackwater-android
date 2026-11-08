@@ -92,7 +92,6 @@
   "detail_derived_source": "Slackwater uppskattar strömkantring vid %1$s från hög- och lågvatten vid %2$s. CHS publicerar inga strömprognoser för det här sundet.",
   "detail_map": "Visa på karta",
   "detail_invalid_link": "Den här stationslänken kunde inte öppnas.",
-  "detail_chart_settings": "Diagraminställningar",
   "panel_reference": "Uppskattat från referenstidvatten",
   "panel_daylight": "%1$d h %2$d min dagsljus",
   "panel_lit": "%1$d%% belyst",
@@ -283,7 +282,7 @@
   "map_close": "Stäng förhandsvisning",
   "map_empty": "Inga stationer i detta område",
   "map_fix_missing": "Plats saknas",
-  "map_units_legend": "Tidvatten i %1$s. Strömmar i %2$s. Inte för navigering. Diagraminställningar.",
+  "map_units_legend": "Tidvatten i %1$s. Strömmar i %2$s. Inte för navigering. Inställningar.",
   "map_zoom_out": "Zooma ut",
   "map_zoom_in": "Zooma in",
   "chart_downloads": "Hämtningar",
@@ -309,5 +308,11 @@
   "tide_download_failed": "Det gick inte att ladda ned tidvattenöversikten",
   "tide_download_saved": "Tidvattenöversikten har sparats för användning offline",
   "tide_download_edit_failed": "Det gick inte att spara ändringen av hämtningarna. Försök igen.",
-  "widget_snapshot_time": "Uppdaterad %1$s"
+  "widget_snapshot_time": "Uppdaterad %1$s",
+  "settings_station_comfort": "Strömgräns vid den här stationen",
+  "settings_use_global": "Använd den gemensamma strömgränsen",
+  "settings_decrease": "Sänk strömgränsen",
+  "settings_increase": "Höj strömgränsen",
+  "about_chs_predictions": "Vissa kanadensiska tidvattenvyer och strömstationer visar officiella prognoser som hämtats från Canadian Hydrographic Service.",
+  "settings_save_error": "Det gick inte att spara inställningen. Försök igen."
 }

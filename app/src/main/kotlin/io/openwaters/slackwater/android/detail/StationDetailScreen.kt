@@ -235,6 +235,9 @@ private fun StationDetailBody(model: StationListModel, id: StationId, clock: Ins
             }
             if (station != null) {
                 if (live) {
+                    if (station.series == StationSeries.Current && station.kind != StationKind.DerivedGate) {
+                        io.openwaters.slackwater.android.map.ComfortCurrentControl(prefs, station.id)
+                    }
                     if (!missing && (station.kind != StationKind.CanadianCurrent || metadata != null) && (!gate || detail != null)) {
                         StationCalendarButton(station.id)
                         Text(stringResource(R.string.detail_notice), style = MaterialTheme.typography.bodySmall)

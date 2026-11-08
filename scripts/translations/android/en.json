@@ -92,7 +92,6 @@
   "detail_derived_source": "Slackwater estimates slack at %1$s from high and low water at %2$s. CHS does not publish current predictions for this pass.",
   "detail_map": "View on map",
   "detail_invalid_link": "This station link could not be opened.",
-  "detail_chart_settings": "Chart settings",
   "panel_reference": "Estimated from reference tides",
   "panel_daylight": "%1$d h %2$d min daylight",
   "panel_lit": "%1$d%% lit",
@@ -283,7 +282,7 @@
   "map_close": "Close preview",
   "map_empty": "No stations in this area",
   "map_fix_missing": "Location unavailable",
-  "map_units_legend": "Tides in %1$s. Currents in %2$s. Not for navigation. Chart settings.",
+  "map_units_legend": "Tides in %1$s. Currents in %2$s. Not for navigation. Settings.",
   "map_zoom_out": "Zoom out",
   "map_zoom_in": "Zoom in",
   "chart_downloads": "Downloads",
@@ -309,5 +308,11 @@
   "tide_download_failed": "Couldn’t download the tide preview",
   "tide_download_saved": "Tide preview saved for offline use",
   "tide_download_edit_failed": "Couldn’t save this change to your downloads. Try again.",
-  "widget_snapshot_time": "As of %1$s"
+  "widget_snapshot_time": "As of %1$s",
+  "settings_station_comfort": "Comfort current at this station",
+  "settings_use_global": "Use global comfort current",
+  "settings_decrease": "Decrease comfort current",
+  "settings_increase": "Increase comfort current",
+  "about_chs_predictions": "Some Canadian tide previews and current stations show official predictions downloaded from the Canadian Hydrographic Service.",
+  "settings_save_error": "Couldn’t save this setting. Try again."
 }

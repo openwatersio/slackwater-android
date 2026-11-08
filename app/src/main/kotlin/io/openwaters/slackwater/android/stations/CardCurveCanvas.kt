@@ -72,12 +72,13 @@ fun CardCurveCanvas(
     valueText: (CurveExtreme) -> String?,
     ink: Color,
     modifier: Modifier = Modifier,
+    showAnnotations: Boolean = true,
 ) {
     val measurer = rememberTextMeasurer()
     val locale = LocalConfiguration.current.locales[0]
     val formatter = remember(locale, zone) { cardTimeFormatter(locale, zone) }
     Canvas(modifier.fillMaxSize()) {
-        drawCurve(curve, measurer, formatter, approximate, valueText, ink)
+        drawCurve(curve, measurer, formatter, approximate, valueText, ink, showAnnotations)
     }
 }
 
@@ -88,13 +89,14 @@ internal fun DrawScope.drawCurve(
     approximate: Boolean,
     valueText: (CurveExtreme) -> String?,
     ink: Color,
+    showAnnotations: Boolean = true,
 ) {
-    if (curve.samples.size < 2) return
+    if (curve.samples.size < 2 || size.width <= 0f) return
     val dp = density
     val spanMillis = Duration.between(curve.start, curve.end).toMillis().toFloat()
     val widthPx = size.width
     val dpPerHour = widthPx / dp / (spanMillis / 3_600_000f)
-    val plotHeight = (size.height - TIME_LABEL_SPACE_DP * dp).coerceAtLeast(0f)
+    val plotHeight = if (showAnnotations) (size.height - TIME_LABEL_SPACE_DP * dp).coerceAtLeast(0f) else size.height
     val lo = curve.domain.start
     val hi = curve.domain.endInclusive
     fun x(t: Instant) = Duration.between(curve.start, t).toMillis() / spanMillis * widthPx
@@ -141,6 +143,8 @@ internal fun DrawScope.drawCurve(
             for (run in strokes) drawPath(pathOver(run.start, run.end), GoGreen.copy(alpha = alpha), style = Stroke(RUN_WIDTH_DP * dp, cap = StrokeCap.Round))
         }
     }
+
+    if (!showAnnotations) return
 
     // Axis times, thinned so they clear both edges and each other; a current's are green.
     val timeStyle = TextStyle(fontSize = TIME_FONT_SP.sp, fontWeight = FontWeight.Medium)

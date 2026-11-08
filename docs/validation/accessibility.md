@@ -66,7 +66,7 @@ Record the commit, build variant, device or emulator, Android API, screen size/p
 | 20. Unknown deep link | Pending | A link to an id the app has never known leaves the list as it was. |
 | 21. No search match | `StationSearchTest.noMatchesIsEmpty` | A completed search with no match shows "No matches" and keeps the series filter visible. |
 | 22. Approximate fix | Pending | My Location says "Approximate location" instead of precise coordinates when iOS supplies reduced accuracy. |
-| 23. Slack threshold | Pending | Changing comfort current changes the example window in Settings and refreshes measured-current cards already mounted in the list or map preview. |
+| 23. Slack threshold | Partial | Settings exposes the example duration to accessibility services at 120 dp width. Tests cover Off and changing the threshold. Checking a mounted list or map card is still pending. |
 | 24. Heading navigation | Pending | With a fix, a favorite, and a recent, the headings rotor steps through My Location, Favorites, Near Me, and Recents, and stops on nothing inside a card. |
 | 25. Resume and live readings | Pending | Leave the app overnight, then reopen it with the list and a selected detail visible. Mounted cards refresh immediately, keep updating every 60 seconds while active, and preserve the selection and scroll position. A map preview keeps its eager first frame until the next tick. After midnight, online current cards select the current day’s cached window without a network request. |
 

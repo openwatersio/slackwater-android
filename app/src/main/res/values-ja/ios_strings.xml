@@ -282,4 +282,25 @@
     <string name="widget_nearest_current">"潮流観測所"</string>
     <string name="widget_location_hint">"Slackwaterを開いて位置情報へのアクセスを許可すると、近くの場所を探せます。"</string>
     <string name="widget_event_time">"%1$s · %2$s"</string>
+    <string name="about_title">"このアプリについて"</string>
+    <string name="settings_help">"ヘルプ"</string>
+    <string name="about_summary">"ライセンス、謝辞、プライバシー"</string>
+    <string name="about_predictions">"この予測について"</string>
+    <string name="about_predictions_text">"Slackwaterはこのデバイスで、調和解析による潮汐と潮流の予測を計算します。観測値ではありません。実際の状況は、天候、河川の流量、地域の条件によって変わります。"</string>
+    <string name="about_navigation">"航海には使用できません。"</string>
+    <string name="about_attribution">"データと出典"</string>
+    <string name="about_privacy">"プライバシーポリシー"</string>
+    <string name="about_license">"ライセンス"</string>
+    <string name="about_license_text">"Slackwaterはオープンソースです。アプリはGPL-3.0、予測エンジンはMITライセンスで公開しています。"</string>
+    <string name="about_source">"GitHubのソースコード"</string>
+    <string name="about_version">"バージョン"</string>
+    <string name="settings_title">"設定"</string>
+    <string name="settings_set_format">"流向の表示形式"</string>
+    <string name="settings_compass">"方位"</string>
+    <string name="settings_degrees">"度 °T"</string>
+    <string name="settings_comfort_current">"利用しやすい流速"</string>
+    <string name="settings_comfort_help">"Slackwaterが利用しやすい潮止まり時間帯とみなす流速の上限を設定します（0.1–10 kn）。オフにすると潮止まりだけを表示します。"</string>
+    <string name="settings_premium">"Premium"</string>
+    <string name="settings_example">"例"</string>
+    <string name="settings_example_window">"潮止まり時間帯の例"</string>
 </resources>

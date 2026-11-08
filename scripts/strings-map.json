@@ -1591,6 +1591,111 @@
       "name": "widget_event_time",
       "key": "%@ · %@",
       "english": "%@ · %@"
+    },
+    {
+      "name": "about_title",
+      "key": "About",
+      "english": "About"
+    },
+    {
+      "name": "settings_help",
+      "key": "Help",
+      "english": "Help"
+    },
+    {
+      "name": "about_summary",
+      "key": "Licensing, acknowledgements, and privacy",
+      "english": "Licensing, acknowledgements, and privacy"
+    },
+    {
+      "name": "about_predictions",
+      "key": "About these predictions",
+      "english": "About these predictions"
+    },
+    {
+      "name": "about_predictions_text",
+      "key": "Slackwater computes harmonic tide and current predictions on this device. They are not observations; actual conditions vary with weather, river flow, and local effects.",
+      "english": "Slackwater computes harmonic tide and current predictions on this device. They are not observations; actual conditions vary with weather, river flow, and local effects."
+    },
+    {
+      "name": "about_navigation",
+      "key": "Not for navigation.",
+      "english": "Not for navigation."
+    },
+    {
+      "name": "about_attribution",
+      "key": "Data & attribution",
+      "english": "Data & attribution"
+    },
+    {
+      "name": "about_privacy",
+      "key": "Privacy Policy",
+      "english": "Privacy Policy"
+    },
+    {
+      "name": "about_license",
+      "key": "License",
+      "english": "License"
+    },
+    {
+      "name": "about_license_text",
+      "key": "Slackwater is open source: this app under GPL-3.0, the prediction engine under MIT.",
+      "english": "Slackwater is open source: this app under GPL-3.0, the prediction engine under MIT."
+    },
+    {
+      "name": "about_source",
+      "key": "Source on GitHub",
+      "english": "Source on GitHub"
+    },
+    {
+      "name": "about_version",
+      "key": "Version",
+      "english": "Version"
+    },
+    {
+      "name": "settings_title",
+      "key": "Settings",
+      "english": "Settings"
+    },
+    {
+      "name": "settings_set_format",
+      "key": "Current direction format",
+      "english": "Current direction format"
+    },
+    {
+      "name": "settings_compass",
+      "key": "Compass",
+      "english": "Compass"
+    },
+    {
+      "name": "settings_degrees",
+      "key": "Degrees °T",
+      "english": "Degrees °T"
+    },
+    {
+      "name": "settings_comfort_current",
+      "key": "Comfort current",
+      "english": "Comfort current"
+    },
+    {
+      "name": "settings_comfort_help",
+      "key": "Sets the fastest current Slackwater treats as a usable slack window (0.1–10 kn). Off shows only slack.",
+      "english": "Sets the fastest current Slackwater treats as a usable slack window (0.1–10 kn). Off shows only slack."
+    },
+    {
+      "name": "settings_premium",
+      "key": "Premium",
+      "english": "Premium"
+    },
+    {
+      "name": "settings_example",
+      "key": "Example",
+      "english": "Example"
+    },
+    {
+      "name": "settings_example_window",
+      "key": "Example slack window",
+      "english": "Example slack window"
     }
   ],
   "androidDirectory": "scripts/translations/android"

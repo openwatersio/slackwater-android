@@ -282,4 +282,25 @@
     <string name="widget_nearest_current">"Stèisean srutha"</string>
     <string name="widget_location_hint">"Fosgail Slackwater agus ceadaich cothrom air d’ ionad gus àite faisg ort a lorg."</string>
     <string name="widget_event_time">"%1$s · %2$s"</string>
+    <string name="about_title">"Mu dhèidhinn"</string>
+    <string name="settings_help">"Cuideachadh"</string>
+    <string name="about_summary">"Ceadachas, buidheachas is prìobhaideachd"</string>
+    <string name="about_predictions">"Mu na ro-innsean seo"</string>
+    <string name="about_predictions_text">"Obraichidh Slackwater a-mach ro-innsean seirmeach airson seòlan-mara is sruthan air an uidheam seo. Chan e tomhasan a th\' annta; bidh an fhìor staid an crochadh air an t-sìde, sruthadh nan aibhnichean is buaidhean ionadail."</string>
+    <string name="about_navigation">"Chan ann airson seòladh."</string>
+    <string name="about_attribution">"Dàta is tùsan"</string>
+    <string name="about_privacy">"Poileasaidh prìobhaideachd"</string>
+    <string name="about_license">"Ceadachas"</string>
+    <string name="about_license_text">"Tha Slackwater na bhathar-bog le còd fosgailte: an aplacaid seo fo GPL-3.0, an t-einnsean ro-innse fo MIT."</string>
+    <string name="about_source">"Còd tùsail air GitHub"</string>
+    <string name="about_version">"Tionndadh"</string>
+    <string name="settings_title">"Roghainnean"</string>
+    <string name="settings_set_format">"Cruth comhair an t-srutha"</string>
+    <string name="settings_compass">"Combaist"</string>
+    <string name="settings_degrees">"Ceuman °T"</string>
+    <string name="settings_comfort_current">"Sruth socair"</string>
+    <string name="settings_comfort_help">"Suidhichidh seo an sruth as luaithe a bhios Slackwater a\' meas mar thràth marbh-shruth a ghabhas cleachdadh (0.1–10 kn). Cha sheall Dheth ach am marbh-shruth."</string>
+    <string name="settings_premium">"Premium"</string>
+    <string name="settings_example">"Eisimpleir"</string>
+    <string name="settings_example_window">"Tràth marbh-shruth mar eisimpleir"</string>
 </resources>
