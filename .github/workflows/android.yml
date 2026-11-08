@@ -87,6 +87,9 @@ jobs:
             ./gradlew :app:installDebug :app:installDebugAndroidTest
             mkdir -p app/build/reports
             bash -o pipefail -c './scripts/test-location-prompt.sh 2>&1 | tee app/build/reports/location-prompt.log' || touch "$RUNNER_TEMP/location-prompt.failed"
+            # API 26's connected-test installer requires both packages to be absent.
+            adb uninstall io.openwaters.slackwater.android.test
+            adb uninstall io.openwaters.slackwater.android
             ./gradlew :app:connectedDebugAndroidTest
             if [ "${{ matrix.api }}" = "37.0" ]; then cp -R app/build/reports/androidTests app/build/reports/androidTests-enabled && cp -R app/build/outputs/androidTest-results app/build/outputs/androidTest-results-enabled && ./gradlew -PpremiumEnabled=false :app:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=io.openwaters.slackwater.android.premium.PremiumLinkTest,io.openwaters.slackwater.android.map.FreeDayControlTest,io.openwaters.slackwater.android.calendars.CalendarSettingsTest,io.openwaters.slackwater.android.sharing.StationScheduleTest; fi
       - name: Name the failed device tests
