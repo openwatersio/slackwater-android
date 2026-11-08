@@ -1,5 +1,7 @@
 package io.openwaters.slackwater.android.map
 
+import io.openwaters.slackwater.android.StationDialogContent
+import io.openwaters.slackwater.android.rememberStationDialog
 import android.Manifest
 import android.content.Intent
 import android.net.Uri
@@ -80,7 +82,7 @@ internal fun MapScreen(list: StationListModel, engine: StationMapModel, now: Ins
     var basemapStatus by remember { mutableStateOf(BasemapStatus.Loading) }
     var localOnly by remember { mutableStateOf(false) }
     var reload by remember { mutableIntStateOf(0) }
-    var listing by rememberSaveable { mutableStateOf(false) }
+    var listing by rememberStationDialog(false)
     var locationError by remember { mutableStateOf(false) }
 
     fun move(to: Coordinate, targetZoom: Double) {
@@ -254,15 +256,17 @@ internal fun MapScreen(list: StationListModel, engine: StationMapModel, now: Ins
             }
         }
     }
-    if (listing) AlertDialog(onDismissRequest = { listing = false }, title = { Text(stringResource(R.string.map_stations)) }, text = {
-        val rows = remember(visiblePins, view) { visiblePins.filter { view?.bounds?.contains(it.station.latitude, it.station.longitude) == true }
-            .sortedBy { distanceKm(it.station.coordinate, requireNotNull(view).center) } }
-        if (rows.isEmpty()) Text(stringResource(R.string.map_empty)) else LazyColumn {
-            items(rows, key = { it.station.id.value }) { pin ->
-                TextButton(onClick = { choose(pin.station.id); listing = false }) { Text(pin.station.name + " · " + pin.station.region) }
+    if (listing) StationDialogContent {
+        AlertDialog(onDismissRequest = { listing = false }, title = { Text(stringResource(R.string.map_stations)) }, text = {
+            val rows = remember(visiblePins, view) { visiblePins.filter { view?.bounds?.contains(it.station.latitude, it.station.longitude) == true }
+                .sortedBy { distanceKm(it.station.coordinate, requireNotNull(view).center) } }
+            if (rows.isEmpty()) Text(stringResource(R.string.map_empty)) else LazyColumn {
+                items(rows, key = { it.station.id.value }) { pin ->
+                    TextButton(onClick = { choose(pin.station.id); listing = false }) { Text(pin.station.name + " · " + pin.station.region) }
+                }
             }
-        }
-    }, confirmButton = { TextButton(onClick = { listing = false }) { Text(stringResource(R.string.close)) } })
+        }, confirmButton = { TextButton(onClick = { listing = false }) { Text(stringResource(R.string.close)) } })
+    }
     if (locationError) AlertDialog(onDismissRequest = { locationError = false }, text = { Text(stringResource(R.string.map_fix_missing)) },
         confirmButton = { TextButton(onClick = { locationError = false }) { Text(stringResource(R.string.close)) } })
 }

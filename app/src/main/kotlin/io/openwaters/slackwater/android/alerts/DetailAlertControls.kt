@@ -1,5 +1,6 @@
 package io.openwaters.slackwater.android.alerts
 
+import io.openwaters.slackwater.android.LocalDialogSession
 import androidx.compose.ui.window.Dialog
 import io.openwaters.slackwater.android.BuildConfig
 import io.openwaters.slackwater.android.map.PremiumSheet
@@ -31,10 +32,11 @@ internal fun DetailAlertControls(
     val rules by remember { rulesStore.rules.retryAlertReads() }.collectAsState(emptyList())
     val entitlement by remember { ReminderAccessStore.get(context).changes.retryAlertReads() }.collectAsState(ReminderEntitlement.Free)
     val premium = entitlement.activeAt(entitlementClock(entitlement))
-    var editor by remember { mutableStateOf<AlertEditorDraft?>(null) }
-    var showRules by remember { mutableStateOf(false) }
-    var message by remember { mutableStateOf<String?>(null) }
-    var premiumOpen by remember { mutableStateOf(false) }
+    val dialogSession = LocalDialogSession.current
+    var editor by remember(dialogSession) { mutableStateOf<AlertEditorDraft?>(null) }
+    var showRules by remember(dialogSession) { mutableStateOf(false) }
+    var message by remember(dialogSession) { mutableStateOf<String?>(null) }
+    var premiumOpen by remember(dialogSession) { mutableStateOf(false) }
     fun requestPremium() {
         if (BuildConfig.PREMIUM_ENABLED) premiumOpen = true
         else message = context.getString(R.string.reminder_save_premium)

@@ -1,5 +1,7 @@
 package io.openwaters.slackwater.android.detail
 
+import io.openwaters.slackwater.android.StationDialogContent
+import io.openwaters.slackwater.android.rememberStationDialog
 import android.animation.ValueAnimator
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -179,7 +181,7 @@ private fun StationDetailBody(model: StationListModel, id: StationId, clock: Ins
             if (requestedDay != today) downloads.refreshIfStale(gateId, today)
         }
     }
-    var picker by rememberSaveable { mutableStateOf<String?>(null) }
+    var picker by rememberStationDialog<String?>(null)
     fun pickDay(day: LocalDate) {
         if (timeline != null) timeline.dispatch(TimelineAction.PickDay(day))
         else {
@@ -254,7 +256,7 @@ private fun StationDetailBody(model: StationListModel, id: StationId, clock: Ins
         DetailTour(model.tour, tour, id, station?.name.orEmpty(), timeline, anchors, scroll, prefs.showSky, page::cancelRestore)
     } } }
     picker?.let { day ->
-        DetailDatePicker(LocalDate.parse(day), ::pickDay, { picker = null })
+        StationDialogContent { DetailDatePicker(LocalDate.parse(day), ::pickDay, { picker = null }) }
     }
 }
 

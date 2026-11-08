@@ -1,5 +1,7 @@
 package io.openwaters.slackwater.android.stations
 
+import io.openwaters.slackwater.android.StationDialogContent
+import io.openwaters.slackwater.android.rememberStationDialog
 import android.Manifest
 import android.content.Intent
 import android.net.Uri
@@ -97,7 +99,7 @@ fun StationListScreen(
     val state by model.state.collectAsState()
     val readingPreferences by model.readingPreferences.collectAsState()
     val catalogFailed by model.catalogFailed.collectAsState()
-    var chooser by androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf<String?>(null) }
+    var chooser by rememberStationDialog<String?>(null)
     val listState = rememberLazyListState()
     val ask = onAsk ?: rememberLocationAsk(model, showing)
 
@@ -143,10 +145,12 @@ fun StationListScreen(
         if (current != null && removedStation == null) chooser = null
     }
     removedStation?.let { removed ->
-        ReplacementChooser(removed, model, readingPreferences, now, onDismiss = { chooser = null }) { replacement ->
-            chooser = null
-            model.launchEdit { model.places.replaceFavorite(removed.id, replacement) }
-            onOpen(replacement)
+        StationDialogContent {
+            ReplacementChooser(removed, model, readingPreferences, now, onDismiss = { chooser = null }) { replacement ->
+                chooser = null
+                model.launchEdit { model.places.replaceFavorite(removed.id, replacement) }
+                onOpen(replacement)
+            }
         }
     }
 }

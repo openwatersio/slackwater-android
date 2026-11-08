@@ -1,5 +1,7 @@
 package io.openwaters.slackwater.android.detail
 
+import io.openwaters.slackwater.android.StationDialogContent
+import io.openwaters.slackwater.android.rememberStationDialog
 import io.openwaters.slackwater.android.sharing.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.selection.selectable
@@ -73,8 +75,8 @@ internal fun SchedulePanel(
         offset == 0) return
     var expanded by rememberSaveable(station.id.value, start.toEpochDay()) { mutableStateOf<Long?>(start.toEpochDay()) }
     val scope = rememberCoroutineScope()
-    var sheet by rememberSaveable(station.id.value) { mutableStateOf(false) }
-    var support by rememberSaveable { mutableStateOf(false) }
+    var sheet by rememberStationDialog(false, station.id.value)
+    var support by rememberStationDialog(false)
     val format = remember(data, preferences, locale) {
         PrintTableFormat(context, data, preferences, locale)
     }
@@ -147,15 +149,17 @@ internal fun SchedulePanel(
             }
         }, modifier = Modifier.testTag("printable-tables-row")) { Text(stringResource(R.string.schedule_table_action)) }
     }
-    if (support && BuildConfig.PREMIUM_ENABLED) PremiumSheet { support = false }
+    if (support && BuildConfig.PREMIUM_ENABLED) StationDialogContent { PremiumSheet { support = false } }
     else if (support) AlertDialog(onDismissRequest = { support = false },
         title = { Text(stringResource(R.string.schedule_support_title)) },
         text = { Text(stringResource(R.string.schedule_premium_message)) },
         confirmButton = { TextButton(onClick = { support = false }) { Text(stringResource(R.string.close)) } })
-    if (sheet) key(anchor, modelRevision, preferences) {
-        PrintableTableSheet(station.name, load = { period ->
-            source.load(station, period, anchor, Instant.now())
-        }, onDismiss = { sheet = false })
+    if (sheet) StationDialogContent {
+        key(anchor, modelRevision, preferences) {
+            PrintableTableSheet(station.name, load = { period ->
+                source.load(station, period, anchor, Instant.now())
+            }, onDismiss = { sheet = false })
+        }
     }
 }
 
