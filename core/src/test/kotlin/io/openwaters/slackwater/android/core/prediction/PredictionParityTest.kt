@@ -157,6 +157,12 @@ class PredictionParityTest {
         }
     }
 
+    @Test fun stationWithoutConstituentsReturnsOnlyItsDatum() {
+        val time = Instant.parse("1950-01-01T12:00:00Z")
+        val station = Station(emptyList(), 1.387)
+        assertEquals(1.387, station.heights(time, time, 1.0).single().heightMetres, 1e-9)
+    }
+
     @Test fun datumShiftAddsMetresToEveryHeight() {
         val fixture = fixture("prediction-victoria")
         val base = EngineAdapter.tide(Station(fixture.constants()), fixture.span())
