@@ -1,0 +1,52 @@
+{
+  "baseCommit": "e990a1da4b2ee2fe71028b9aa5d5c7e325d7dc82",
+  "targetApkSha256": "709fb3098917b33b1f528678d840aaf0cef57af90d86c357b46664cfb8f925f4",
+  "device": "API 37 arm64 phone AVD",
+  "osBuild": "CE2A.260420.051.A2",
+  "airplaneMode": false,
+  "iterationsPerJourney": 5,
+  "journeys": {
+    "warmStationList": {
+      "metric": "launchToStationRowFirstMs",
+      "minimumMs": 1194.2,
+      "medianMs": 1411.7,
+      "maximumMs": 1436.5
+    },
+    "firstStationSearch": {
+      "metric": "queryToStationRowFirstMs",
+      "minimumMs": 651.3,
+      "medianMs": 682.3,
+      "maximumMs": 1240.4
+    },
+    "repeatNamedPrediction": {
+      "metric": "submitToTideAnswerFirstMs",
+      "minimumMs": 95.9,
+      "medianMs": 99.2,
+      "maximumMs": 129.4
+    },
+    "repeatStationSearch": {
+      "metric": "queryToStationRowFirstMs",
+      "minimumMs": 178.3,
+      "medianMs": 204.5,
+      "maximumMs": 815.4
+    },
+    "coldStationList": {
+      "metric": "launchToStationRowFirstMs",
+      "minimumMs": 1564.3,
+      "medianMs": 1604.5,
+      "maximumMs": 1841.3
+    },
+    "firstNamedPrediction": {
+      "metric": "submitToTideAnswerFirstMs",
+      "minimumMs": 635.6,
+      "medianMs": 640.3,
+      "maximumMs": 648.0
+    },
+    "focusStationSearch": {
+      "metric": "tapToFocusedSearchFirstMs",
+      "minimumMs": 1193.3,
+      "medianMs": 1241.5,
+      "maximumMs": 1339.4
+    }
+  }
+}

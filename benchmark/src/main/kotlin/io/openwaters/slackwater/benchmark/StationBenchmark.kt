@@ -1,5 +1,8 @@
 package io.openwaters.slackwater.benchmark
 
+import android.content.Intent
+import android.net.Uri
+import android.os.SystemClock
 import android.os.Trace
 import androidx.benchmark.macro.CompilationMode
 import androidx.benchmark.macro.ExperimentalMetricApi
@@ -12,6 +15,7 @@ import androidx.benchmark.macro.junit4.MacrobenchmarkRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.BySelector
+import androidx.test.uiautomator.UiObject2
 import androidx.test.uiautomator.Until
 import org.junit.Rule
 import org.junit.Test
@@ -22,22 +26,68 @@ import org.junit.runner.RunWith
 class StationBenchmark {
     @get:Rule val benchmark = MacrobenchmarkRule()
 
-    @Test fun coldStationShell() = shell(StartupMode.COLD)
-    @Test fun warmStationShell() = shell(StartupMode.WARM)
+    @Test fun coldStationList() = list(StartupMode.COLD)
+    @Test fun warmStationList() = list(StartupMode.WARM)
+    @Test fun focusStationSearch() = search(SearchJourney.FOCUS)
+    @Test fun firstStationSearch() = search(SearchJourney.FIRST)
+    @Test fun repeatStationSearch() = search(SearchJourney.REPEAT)
     @Test fun firstNamedPrediction() = query(repeat = false)
     @Test fun repeatNamedPrediction() = query(repeat = true)
 
-    private fun shell(mode: StartupMode) = benchmark.measureRepeated(
+    private fun list(mode: StartupMode) = benchmark.measureRepeated(
         packageName = APP,
-        metrics = listOf(StartupTimingMetric(), FrameTimingMetric(), duration("launchToStationName")),
+        metrics = listOf(StartupTimingMetric(), FrameTimingMetric(), duration("launchToStationRow")),
         iterations = 5,
         compilationMode = CompilationMode.Full(),
         startupMode = mode,
         setupBlock = { pressHome() },
     ) {
-        measured("launchToStationName") {
+        measured("launchToStationRow") {
             startActivityAndWait()
-            await(By.text("Friday Harbor"))
+            awaitPreparedList()
+        }
+    }
+
+    private enum class SearchJourney { FOCUS, FIRST, REPEAT }
+
+    private fun search(journey: SearchJourney) {
+        val section = if (journey == SearchJourney.FOCUS) "tapToFocusedSearch" else "queryToStationRow"
+        benchmark.measureRepeated(
+            packageName = APP,
+            metrics = listOf(FrameTimingMetric(), duration(section)),
+            iterations = 5,
+            compilationMode = CompilationMode.Full(),
+            setupBlock = {
+                killProcess()
+                startActivityAndWait()
+                awaitPreparedList()
+                if (journey != SearchJourney.FOCUS) {
+                    await(By.text("Search")).click()
+                    val input = await(searchField)
+                    if (journey == SearchJourney.REPEAT) {
+                        val previous = By.descStartsWith("Seattle,").clickable(true)
+                        check(!device.hasObject(previous))
+                        input.text = "Seattle"
+                        await(previous)
+                    }
+                }
+            },
+        ) {
+            if (journey == SearchJourney.FOCUS) {
+                val button = await(By.text("Search"))
+                measured(section) {
+                    button.click()
+                    await(searchField)
+                }
+            } else {
+                val input = await(searchField)
+                val result = By.descStartsWith("Port Townsend,").clickable(true)
+                check(!device.hasObject(result))
+                measured(section) {
+                    input.text = "Port Townsend"
+                    await(result)
+                }
+            }
         }
     }
 
@@ -48,10 +98,8 @@ class StationBenchmark {
         compilationMode = CompilationMode.Full(),
         setupBlock = {
             killProcess()
-            startActivityAndWait()
-            await(By.text("Friday Harbor"))
-            await(By.text("Prediction shortcuts")).click()
-            await(By.text("Next low tide")).click()
+            startActivityAndWait(Intent(Intent.ACTION_VIEW, Uri.parse("slackwater-query://prediction/LOW"))
+                .setClassName(APP, "io.openwaters.slackwater.android.benchmark.LowTideShortcut"))
             if (repeat) {
                 enterPlace("Port Townsend")
                 await(By.text("Show prediction")).click()
@@ -68,14 +116,24 @@ class StationBenchmark {
         }
     }
 
+    private fun MacrobenchmarkScope.awaitPreparedList() {
+        await(listRow, "Deny location, skip the Friday Harbor tour, return to the list and select All.")
+    }
+
     private fun MacrobenchmarkScope.enterPlace(name: String) {
         val fields = device.wait(Until.findObjects(By.clazz("android.widget.EditText")), TIMEOUT)
         check(!fields.isNullOrEmpty()) { "Place field unavailable" }
         fields.first().text = name
     }
 
-    private fun MacrobenchmarkScope.await(selector: BySelector) =
-        checkNotNull(device.wait(Until.findObject(selector), TIMEOUT)) { "Timed out waiting for $selector" }
+    private fun MacrobenchmarkScope.await(selector: BySelector, hint: String = ""): UiObject2 {
+        val deadline = SystemClock.uptimeMillis() + TIMEOUT
+        do {
+            device.findObject(selector)?.let { return it }
+            SystemClock.sleep(25)
+        } while (SystemClock.uptimeMillis() < deadline)
+        error("Timed out waiting for $selector. $hint")
+    }
 
     private fun duration(section: String) =
         TraceSectionMetric(section, mode = TraceSectionMetric.Mode.First, targetPackageOnly = false)
@@ -86,6 +144,8 @@ class StationBenchmark {
     }
 
     private companion object {
+        val listRow = By.descStartsWith("Friday Harbor,").clickable(true)
+        val searchField = By.clazz("android.widget.EditText").focused(true)
         const val APP = "io.openwaters.slackwater.android.benchmark"
         const val TIMEOUT = 15_000L
     }
