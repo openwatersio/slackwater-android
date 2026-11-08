@@ -2,20 +2,15 @@ package io.openwaters.slackwater.benchmark
 
 import android.content.Intent
 import android.net.Uri
-import android.os.SystemClock
-import android.os.Trace
 import androidx.benchmark.macro.CompilationMode
 import androidx.benchmark.macro.ExperimentalMetricApi
 import androidx.benchmark.macro.FrameTimingMetric
 import androidx.benchmark.macro.MacrobenchmarkScope
 import androidx.benchmark.macro.StartupMode
 import androidx.benchmark.macro.StartupTimingMetric
-import androidx.benchmark.macro.TraceSectionMetric
 import androidx.benchmark.macro.junit4.MacrobenchmarkRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.uiautomator.By
-import androidx.test.uiautomator.BySelector
-import androidx.test.uiautomator.UiObject2
 import androidx.test.uiautomator.Until
 import org.junit.Rule
 import org.junit.Test
@@ -106,7 +101,7 @@ class StationBenchmark {
                 await(By.textStartsWith("In about "))
             }
             enterPlace("Friday Harbor")
-            check(device.wait(Until.gone(By.textStartsWith("In about ")), TIMEOUT))
+            check(device.wait(Until.gone(By.textStartsWith("In about ")), BENCHMARK_TIMEOUT_MS))
         },
     ) {
         val submit = await(By.text("Show prediction"))
@@ -121,32 +116,14 @@ class StationBenchmark {
     }
 
     private fun MacrobenchmarkScope.enterPlace(name: String) {
-        val fields = device.wait(Until.findObjects(By.clazz("android.widget.EditText")), TIMEOUT)
+        val fields = device.wait(Until.findObjects(By.clazz("android.widget.EditText")), BENCHMARK_TIMEOUT_MS)
         check(!fields.isNullOrEmpty()) { "Place field unavailable" }
         fields.first().text = name
-    }
-
-    private fun MacrobenchmarkScope.await(selector: BySelector, hint: String = ""): UiObject2 {
-        val deadline = SystemClock.uptimeMillis() + TIMEOUT
-        do {
-            device.findObject(selector)?.let { return it }
-            SystemClock.sleep(25)
-        } while (SystemClock.uptimeMillis() < deadline)
-        error("Timed out waiting for $selector. $hint")
-    }
-
-    private fun duration(section: String) =
-        TraceSectionMetric(section, mode = TraceSectionMetric.Mode.First, targetPackageOnly = false)
-
-    private inline fun measured(section: String, block: () -> Unit) {
-        Trace.beginSection(section)
-        try { block() } finally { Trace.endSection() }
     }
 
     private companion object {
         val listRow = By.descStartsWith("Friday Harbor,").clickable(true)
         val searchField = By.clazz("android.widget.EditText").focused(true)
         const val APP = "io.openwaters.slackwater.android.benchmark"
-        const val TIMEOUT = 15_000L
     }
 }
