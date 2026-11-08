@@ -36,9 +36,9 @@ Gradle checks the source pins and packaged inputs during configuration, includin
 
 Dependency checksums are in `gradle/verification-metadata.xml`; the wrapper has a distribution checksum. CI resolves published source variants for the debug app and tests. After updating Gradle or a dependency, sync the project in Android Studio to check the additional archives requested by the IDE. Verify any new sources, samples and Javadoc archives against the publisher before adding their SHA-256 pins. A wrapper update also needs the matching Gradle source ZIP checksum. Keep Studio’s generated .idea directory local. Upstream fixture provenance is recorded in the shared test fixture; data credits and third-party notices are available from the launch screen.
 
-## Development plan
+## Remaining work
 
-The [implementation plan](docs/superpowers/plans/2026-11-05-android-development.md) and [parity ledger](docs/ios-parity.md) define the remaining work against iOS main at the merge commit of PR #900 (`02188f2a2f5ef4166cd74c373a5885736d7ef159`). Work is tracked in [repository issues](https://github.com/openwatersio/slackwater-android/issues).
+The [parity ledger](docs/ios-parity.md) defines the remaining work against iOS main at the merge commit of PR #900 (`02188f2a2f5ef4166cd74c373a5885736d7ef159`). Work is tracked in [repository issues](https://github.com/openwatersio/slackwater-android/issues) and the [Slackwater Android project](https://github.com/orgs/openwatersio/projects/5).
 
 ## Translations
 
