@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-/** The first-run tour's coach marks, in order (list §11). The sky steps drop on their own, so never step by ordinal. */
+/** The first-run tour's coach marks, in order (list §11). Sky targets and the Moon tile each determine whether their mark is shown. */
 enum class TourStep { READ, STARS, MOON, MOON_CARD, STAR }
 
 /**
@@ -73,9 +73,9 @@ class TourCoach(private val onSeen: () -> Unit) {
         else TourState(armed = true, reservedFor = to)
     }
 
-    fun advance() {
+    fun advance(moonCardAvailable: Boolean) {
         val step = _state.value.step ?: return
-        val next = next(after = step)
+        val next = next(after = step, moonCardAvailable = moonCardAvailable)
         if (next == null) finish() else _state.update { it.copy(step = next) }
     }
 
@@ -86,11 +86,16 @@ class TourCoach(private val onSeen: () -> Unit) {
         onSeen()
     }
 
-    private fun next(after: TourStep): TourStep? {
+    private fun next(after: TourStep, moonCardAvailable: Boolean): TourStep? {
         val state = _state.value
-        return TourStep.entries.filter {
-            !(it == TourStep.STARS && !state.starsAvailable) && !(it == TourStep.MOON && !state.moonAvailable)
-        }.firstOrNull { it.ordinal > after.ordinal }
+        return TourStep.entries.drop(after.ordinal + 1).firstOrNull {
+            when (it) {
+                TourStep.STARS -> state.starsAvailable
+                TourStep.MOON -> state.moonAvailable
+                TourStep.MOON_CARD -> moonCardAvailable
+                else -> true
+            }
+        }
     }
 }
 

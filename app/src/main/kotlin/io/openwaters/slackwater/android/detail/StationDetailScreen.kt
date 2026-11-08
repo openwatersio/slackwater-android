@@ -1,5 +1,6 @@
 package io.openwaters.slackwater.android.detail
 
+import io.openwaters.almanac.MoonIllumination
 import io.openwaters.slackwater.android.StationDialogContent
 import io.openwaters.slackwater.android.rememberStationDialog
 import android.animation.ValueAnimator
@@ -100,6 +101,7 @@ private fun StationDetailBody(model: StationListModel, id: StationId, clock: Ins
     }
     LaunchedEffect(expired) {
         if (expired != null) {
+            loading = true
             reloadAt = expired.state.now
             restoredTime = null
             restoredDay = null
@@ -194,6 +196,7 @@ private fun StationDetailBody(model: StationListModel, id: StationId, clock: Ins
     val scroll = rememberScrollState()
     val page = rememberDetailPageScroll(scroll)
     val tour by model.tour.state.collectAsState()
+    val moon = if (live && !missing && timeline != null) rememberDetailMoon(timeline.state.selected) else null
     val anchors = remember(id) { TourAnchors() }
     Surface(Modifier.fillMaxSize()) { CompositionLocalProvider(LocalTourAnchors provides anchors) { Box(Modifier.fillMaxSize()) {
         Column(Modifier.fillMaxSize().safeDrawingPadding().then(page.viewportModifier)
@@ -229,7 +232,7 @@ private fun StationDetailBody(model: StationListModel, id: StationId, clock: Ins
                     OnlineAlternative(station, model, repository, clock, revision, onOpen)
                 }
                 detail == null -> MissingPredictions(station, metadata, model)
-                else -> DetailContent(station, detail, prefs, repository, downloads, revision, metadata, page.scheduleModifier(scroll),
+                else -> DetailContent(station, detail, prefs, repository, downloads, revision, metadata, moon, page.scheduleModifier(scroll),
                     related = { DetailRelated(station, metadata, model, onOpen, nearby = false) }) {
                     page.cancelRestore()
                     picker = it.toString()
@@ -253,7 +256,8 @@ private fun StationDetailBody(model: StationListModel, id: StationId, clock: Ins
                 DetailRelated(station, metadata, model, onOpen, nearby = true)
             }
         }
-        DetailTour(model.tour, tour, id, station?.name.orEmpty(), timeline, anchors, scroll, prefs.showSky, page::cancelRestore)
+        DetailTour(model.tour, tour, id, station?.name.orEmpty(), timeline, anchors, scroll, prefs.showSky,
+            moonCardAvailable = if (timeline == null && (loading || expired != null)) null else moon != null, beforeScroll = page::cancelRestore)
     } } }
     picker?.let { day ->
         StationDialogContent { DetailDatePicker(LocalDate.parse(day), ::pickDay, { picker = null }) }
@@ -262,7 +266,7 @@ private fun StationDetailBody(model: StationListModel, id: StationId, clock: Ins
 
 @Composable
 private fun DetailContent(station: StationIdentity, detail: LoadedDetail, prefs: ReadingPreferences,
-                          repository: PredictionRepository, downloads: OnlineGateDownloads, revision: Long, metadata: DetailMetadata?, scheduleModifier: Modifier, related: @Composable () -> Unit, pick: (LocalDate) -> Unit) {
+                          repository: PredictionRepository, downloads: OnlineGateDownloads, revision: Long, metadata: DetailMetadata?, moon: MoonIllumination?, scheduleModifier: Modifier, related: @Composable () -> Unit, pick: (LocalDate) -> Unit) {
     val timeline = detail.timeline
     val state = timeline.state
     val series = timeline.series
@@ -331,7 +335,7 @@ private fun DetailContent(station: StationIdentity, detail: LoadedDetail, prefs:
                 }) { timeline.dispatch(TimelineAction.Now(Instant.now())) }
             }
         }
-        DetailSummary(station, timeline, prefs, repository, metadata?.pairedTide?.let { StationListModel.get(LocalContext.current).catalog.collectAsState().value?.byId?.get(it)?.name },
+        DetailSummary(station, timeline, prefs, repository, moon, metadata?.pairedTide?.let { StationListModel.get(LocalContext.current).catalog.collectAsState().value?.byId?.get(it)?.name },
             cap == StationCapabilities.PROVISIONAL_CURRENT || cap == StationCapabilities.BOUNDED_CURRENT)
         metadata?.magnitudeNote?.let { Text(stringResource(R.string.detail_context, it)) }
         related()

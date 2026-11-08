@@ -37,7 +37,7 @@ class SummaryConformanceTest {
             sunrise = now.minusSeconds(7200), sunset = now.plusSeconds(21600))))
         compose.setContent {
             Column(Modifier.verticalScroll(rememberScrollState())) {
-                DetailSummary(station, timeline, prefs, repository, "Point Atkinson", provisional)
+                DetailSummary(station, timeline, prefs, repository, rememberDetailMoon(timeline.state.selected), "Point Atkinson", provisional)
             }
         }
     }
