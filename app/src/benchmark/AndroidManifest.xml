@@ -1,6 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application>
         <profileable android:shell="true" />
+        <activity-alias android:name=".benchmark.LowTideShortcut"
+            android:targetActivity=".shortcuts.QueryActivity" android:exported="true"
+            android:permission="android.permission.DUMP" />
         <activity android:name=".map.MapBenchmarkActivity" android:exported="true" />
     </application>
 </manifest>
