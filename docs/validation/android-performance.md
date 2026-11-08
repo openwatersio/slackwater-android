@@ -24,7 +24,7 @@ adb devices -l
 export ANDROID_SERIAL=SERIAL
 ./gradlew :app:assembleBenchmark :benchmark:assembleBenchmark
 adb -s "$ANDROID_SERIAL" install -r app/build/outputs/apk/benchmark/app-benchmark.apk
-adb -s "$ANDROID_SERIAL" install -r benchmark/build/outputs/apk/benchmark/benchmark-benchmark.apk
+adb -s "$ANDROID_SERIAL" install -r -t benchmark/build/outputs/apk/benchmark/benchmark-benchmark.apk
 adb -s "$ANDROID_SERIAL" shell pm clear io.openwaters.slackwater.android.benchmark
 # Launch and prepare the returning-user state described above.
 adb -s "$ANDROID_SERIAL" shell am instrument -w \
@@ -53,7 +53,7 @@ The API 37 arm64 phone emulator ran all seven station benchmarks with full ART c
 | firstNamedPrediction | 635.6 | 640.3 | 648.0 |
 | repeatNamedPrediction | 95.9 | 99.2 | 129.4 |
 
-The emulator ran build CE2A.260420.051.A2 with airplane mode off. The run records the base commit, APK hash and measured ranges. [Benchmark results](evidence/station-benchmarks-api37.json)
+The emulator ran build CE2A.260420.051.A2 with airplane mode off. The target was built on `e990a1da4b2ee2fe71028b9aa5d5c7e325d7dc82`. Its APK SHA-256 was `709fb3098917b33b1f528678d840aaf0cef57af90d86c357b46664cfb8f925f4`. The raw results include the five samples, startup metrics and frame timings. [Benchmark results](evidence/station-benchmarks-api37.json)
 
 ## Open measurements for issue #27
 
