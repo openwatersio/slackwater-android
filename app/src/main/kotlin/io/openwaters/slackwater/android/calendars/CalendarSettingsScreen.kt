@@ -1,5 +1,7 @@
 package io.openwaters.slackwater.android.calendars
 
+import io.openwaters.slackwater.android.StationDialogContent
+import io.openwaters.slackwater.android.rememberStationDialog
 import android.Manifest
 import android.content.Context
 import android.content.Intent
@@ -40,10 +42,10 @@ private data class Removal(val row: CalendarRow, val count: Int)
 
 @Composable
 internal fun StationCalendarButton(current: StationId) {
-    var open by rememberSaveable { mutableStateOf(false) }
+    var open by rememberStationDialog(false)
     TextButton(onClick = { open = true }) { Text(stringResource(R.string.station_calendars_title)) }
     if (open) Dialog(onDismissRequest = { open = false }) {
-        Surface(shape = MaterialTheme.shapes.large) { CalendarSettingsScreen(current) { open = false } }
+        StationDialogContent { Surface(shape = MaterialTheme.shapes.large) { CalendarSettingsScreen(current) { open = false } } }
     }
 }
 

@@ -1,5 +1,6 @@
 package io.openwaters.slackwater.android.alerts
 
+import io.openwaters.slackwater.android.StationDialogContent
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -43,7 +44,7 @@ private fun <T> Choice(label: String, value: T, options: Map<T, String>, onChoos
 @Composable
 fun AlertEditor(initial: AlertEditorDraft, premium: Boolean, onSave: (AlertRule) -> Unit,
                 onDelete: (UUID) -> Unit, onPremium: () -> Unit, onDismiss: () -> Unit,
-                models: ModelStore = ModelStore.get(LocalContext.current)) {
+                models: ModelStore = ModelStore.get(LocalContext.current)) = StationDialogContent {
     val original = initial.rule
     var repeating by rememberSaveable(original) { mutableStateOf(original.once == null) }
     var lead by rememberSaveable(original) { mutableLongStateOf(original.leadSeconds) }

@@ -1,5 +1,8 @@
 package io.openwaters.slackwater.android.detail
 
+import io.openwaters.slackwater.android.LocalDialogSession
+import io.openwaters.slackwater.android.StationDialogContent
+import io.openwaters.slackwater.android.rememberStationDialog
 import io.openwaters.slackwater.android.core.tour.TourStep
 import android.content.ActivityNotFoundException
 import android.content.ClipData
@@ -104,16 +107,18 @@ internal fun DetailRelated(station: StationIdentity, meta: DetailMetadata?, mode
                 formatNauticalMiles(opposite.distanceKm, LocalConfiguration.current.locales[0])) else name)
         }
         val others = remember(station, ranked) { ranked.filter { station.place != null && it.identity.place == station.place } }
-        var chooser by rememberSaveable(station.id.value) { mutableStateOf(false) }
+        var chooser by rememberStationDialog(false, station.id.value)
         if (others.isNotEmpty()) TextButton(onClick = { chooser = true }) { Text(stringResource(R.string.detail_namesakes, others.size)) }
-        if (chooser) AlertDialog(onDismissRequest = { chooser = false }, title = { Text(station.name) }, text = {
-            androidx.compose.foundation.lazy.LazyColumn { items(others.size) { index ->
-                val item = others[index].identity
-                TextButton(onClick = { model.launchEdit { model.places.chooseStation(item.id) }; chooser = false; open(item.id) }) {
-                    Text(item.region.ifBlank { item.id.value } + " · " + item.id.value)
-                }
-            } }
-        }, confirmButton = { TextButton(onClick = { chooser = false }) { Text(stringResource(R.string.close)) } })
+        if (chooser) StationDialogContent {
+            AlertDialog(onDismissRequest = { chooser = false }, title = { Text(station.name) }, text = {
+                androidx.compose.foundation.lazy.LazyColumn { items(others.size) { index ->
+                    val item = others[index].identity
+                    TextButton(onClick = { model.launchEdit { model.places.chooseStation(item.id) }; chooser = false; open(item.id) }) {
+                        Text(item.region.ifBlank { item.id.value } + " · " + item.id.value)
+                    }
+                } }
+            }, confirmButton = { TextButton(onClick = { chooser = false }) { Text(stringResource(R.string.close)) } })
+        }
     }
 }
 
@@ -155,7 +160,7 @@ internal fun StationDetails(station: StationIdentity, meta: DetailMetadata?, rea
 
 @Composable
 internal fun DetailFeedback(station: StationIdentity, moment: Instant, link: String?, unavailable: Boolean = false) {
-    var menu by remember { mutableStateOf(false) }
+    var menu by remember(LocalDialogSession.current) { mutableStateOf(false) }
     var copied by remember { mutableStateOf(false) }
     val context = LocalContext.current
     fun report(title: String) {

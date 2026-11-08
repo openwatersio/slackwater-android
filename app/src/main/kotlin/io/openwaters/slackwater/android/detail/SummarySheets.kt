@@ -1,5 +1,7 @@
 package io.openwaters.slackwater.android.detail
 
+import io.openwaters.slackwater.android.StationDialogContent
+import io.openwaters.slackwater.android.rememberStationDialog
 import io.openwaters.slackwater.android.core.tour.TourStep
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
@@ -136,7 +138,7 @@ internal fun DetailSummary(
         marked -> stringResource(if (higher == 0) R.string.panel_hardest else R.string.panel_strong, direction.lowercase(locale), clock.format(mark.time))
         else -> stringResource(R.string.panel_at, direction, clock.format(mark.time))
     }
-    var sheet by rememberSaveable(station.id.value) { mutableStateOf<Sheet?>(null) }
+    var sheet by rememberStationDialog<Sheet?>(null, station.id.value)
     val moon = remember(selected.epochSecond / 60) {
         try { moonIllumination(selected) } catch (_: AlmanacOutOfRangeException) { null }
     }
@@ -220,74 +222,77 @@ internal fun DetailSummary(
     }
     val open = sheet ?: return
     fun jump(time: Instant) { sheet = null; timeline.jump(time) }
-    ModalBottomSheet(onDismissRequest = { sheet = null }) {
-        Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).padding(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(when (open) { Sheet.WATER -> waterTitle; Sheet.MOON -> stringResource(R.string.panel_moon); Sheet.SUN -> stringResource(R.string.panel_sun) },
-                    Modifier.weight(1f), style = MaterialTheme.typography.headlineSmall)
-                TextButton(onClick = { sheet = null }) { Text(stringResource(android.R.string.ok)) }
-            }
-            if (open == Sheet.WATER && mark != null) {
-                Text(quantity(mark.value), style = MaterialTheme.typography.headlineMedium)
-                Text(if (tide) stringResource(R.string.panel_swing_explain, stringResource(if (mark.rising) R.string.panel_low_high else R.string.panel_high_low))
-                    else stringResource(R.string.panel_max_explain, station.name))
-                Text(stringResource(R.string.panel_rank_title), style = MaterialTheme.typography.titleLarge)
-                Text(if (tide) stringResource(R.string.panel_biggest_day) else stringResource(R.string.panel_max_day, direction.lowercase(locale)))
-                val days = (-15L until 15L).map { day.plusDays(it) }
-                PeakBars(days, dayPeaks, day, locale, ::quantity, ::jump)
-                LunarWeekmarks(days, dayPeaks, zone, locale)
-                val bigger = comparison.firstOrNull { it.time > mark.time && it.value > mark.value + 0.0001 }
-                val rankingText = if (higher == 0) {
-                    if (tide) stringResource(R.string.panel_biggest_swing) else stringResource(R.string.panel_hardest_max, direction.lowercase(locale))
-                } else stringResource(if (tide) R.string.panel_swing_rank else R.string.panel_max_rank, higher, comparison.size)
-                Text(rankingText,
-                    if (bigger == null) Modifier else Modifier.clickable { jump(bigger.time) })
-                if (series is PredictionSeries.Current) {
-                    val threshold = preferences.effectiveThresholdKn(station.id)
-                    val slack = remember(series, mark, threshold) { summarySlack(series, mark.time, threshold) }
-                    if (slack != null) Text(stringResource(R.string.panel_slack_compared, slack.first, slack.second))
+    StationDialogContent {
+        ModalBottomSheet(onDismissRequest = { sheet = null }) {
+            Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).padding(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(when (open) { Sheet.WATER -> waterTitle; Sheet.MOON -> stringResource(R.string.panel_moon); Sheet.SUN -> stringResource(R.string.panel_sun) },
+                        Modifier.weight(1f), style = MaterialTheme.typography.headlineSmall)
+                    TextButton(onClick = { sheet = null }) { Text(stringResource(android.R.string.ok)) }
                 }
-                stationFacts?.second?.let { bounds ->
-                    Text(stringResource(R.string.panel_ends), style = MaterialTheme.typography.titleLarge)
-                    val levels = buildList {
-                        add(stringResource(R.string.panel_hat_label) to bounds.hat)
-                        add(stringResource(R.string.panel_lat_label) to bounds.lat)
-                        comparison.mapNotNull { it.level }.maxOrNull()?.let { add(stringResource(R.string.panel_high_label) to it) }
-                        comparison.mapNotNull { it.level }.minOrNull()?.let { add(stringResource(R.string.panel_low_label) to it) }
-                        mark.level?.let { add(stringResource(R.string.panel_turn_label) to it) }
+                if (open == Sheet.WATER && mark != null) {
+                    Text(quantity(mark.value), style = MaterialTheme.typography.headlineMedium)
+                    Text(if (tide) stringResource(R.string.panel_swing_explain, stringResource(if (mark.rising) R.string.panel_low_high else R.string.panel_high_low))
+                        else stringResource(R.string.panel_max_explain, station.name))
+                    Text(stringResource(R.string.panel_rank_title), style = MaterialTheme.typography.titleLarge)
+                    Text(if (tide) stringResource(R.string.panel_biggest_day) else stringResource(R.string.panel_max_day, direction.lowercase(locale)))
+                    val days = (-15L until 15L).map { day.plusDays(it) }
+                    PeakBars(days, dayPeaks, day, locale, ::quantity, ::jump)
+                    LunarWeekmarks(days, dayPeaks, zone, locale)
+                    val bigger = comparison.firstOrNull { it.time > mark.time && it.value > mark.value + 0.0001 }
+                    val rankingText = if (higher == 0) {
+                        if (tide) stringResource(R.string.panel_biggest_swing) else stringResource(R.string.panel_hardest_max, direction.lowercase(locale))
+                    } else stringResource(if (tide) R.string.panel_swing_rank else R.string.panel_max_rank, higher, comparison.size)
+                    Text(rankingText,
+                        if (bigger == null) Modifier else Modifier.clickable { jump(bigger.time) })
+                    if (series is PredictionSeries.Current) {
+                        val threshold = preferences.effectiveThresholdKn(station.id)
+                        val slack = remember(series, mark, threshold) { summarySlack(series, mark.time, threshold) }
+                        if (slack != null) Text(stringResource(R.string.panel_slack_compared, slack.first, slack.second))
                     }
-                    LevelFigure(levels, ::quantity)
-                }
-                SummaryYear(station.id, repository, day, zone, tide, mark.rising, locale, ::quantity)
-                season?.let { ratio ->
-                    Text(when {
-                        ratio.isInfinite() -> stringResource(R.string.panel_season_large)
-                        ratio.roundToInt() == 1 -> stringResource(R.string.panel_season_equal)
-                        else -> stringResource(R.string.panel_ratio, if (ratio >= 10) (ratio / 10).roundToInt() * 10.0 else ratio)
-                    })
-                    Text(stringResource(if (ratio >= 3) R.string.panel_season_river else R.string.panel_season_tide, station.name))
-                }
-            } else if (open != Sheet.WATER) {
-                Text(if (open == Sheet.MOON) moonName else sunValue, style = MaterialTheme.typography.headlineMedium)
-                if (open == Sheet.MOON && moon != null) MoonDisc(selected, observer, moon, eclipse)
-                Text(if (open == Sheet.MOON) listOf(lit, moonCaption).distinct().joinToString(" · ") else sunCaption)
-                if (open == Sheet.MOON && phase != null) {
-                    Text(stringArrayResource(R.array.panel_phase_explanation)[phase])
-                    when (phase) {
-                        0, 4 -> Text(stringResource(R.string.panel_spring_explain))
-                        2, 6 -> Text(stringResource(R.string.panel_neap_explain))
+                    stationFacts?.second?.let { bounds ->
+                        Text(stringResource(R.string.panel_ends), style = MaterialTheme.typography.titleLarge)
+                        val levels = buildList {
+                            add(stringResource(R.string.panel_hat_label) to bounds.hat)
+                            add(stringResource(R.string.panel_lat_label) to bounds.lat)
+                            comparison.mapNotNull { it.level }.maxOrNull()?.let { add(stringResource(R.string.panel_high_label) to it) }
+                            comparison.mapNotNull { it.level }.minOrNull()?.let { add(stringResource(R.string.panel_low_label) to it) }
+                            mark.level?.let { add(stringResource(R.string.panel_turn_label) to it) }
+                        }
+                        LevelFigure(levels, ::quantity)
                     }
-                    apsis?.let { Text(stringResource(if (it.kind == MoonApsisKind.PERIGEE) R.string.panel_perigee_explain else R.string.panel_apogee_explain)) }
-                }
-                if (open == Sheet.SUN) {
-                    listOfNotNull(solar.lastOrNull { it.first < selected }, next).forEach { (time, label) ->
-                        TextButton(onClick = { jump(time) }) { Text(stringResource(label) + " · " + stamp.format(time)) }
+                    SummaryYear(station.id, repository, day, zone, tide, mark.rising, locale, ::quantity)
+                    season?.let { ratio ->
+                        Text(when {
+                            ratio.isInfinite() -> stringResource(R.string.panel_season_large)
+                            ratio.roundToInt() == 1 -> stringResource(R.string.panel_season_equal)
+                            else -> stringResource(R.string.panel_ratio, if (ratio >= 10) (ratio / 10).roundToInt() * 10.0 else ratio)
+                        })
+                        Text(stringResource(if (ratio >= 3) R.string.panel_season_river else R.string.panel_season_tide, station.name))
                     }
+                } else if (open != Sheet.WATER) {
+                    Text(if (open == Sheet.MOON) moonName else sunValue, style = MaterialTheme.typography.headlineMedium)
+                    if (open == Sheet.MOON && moon != null) MoonDisc(selected, observer, moon, eclipse)
+                    Text(if (open == Sheet.MOON) listOf(lit, moonCaption).distinct().joinToString(" · ") else sunCaption)
+                    if (open == Sheet.MOON && phase != null) {
+                        Text(stringArrayResource(R.array.panel_phase_explanation)[phase])
+                        when (phase) {
+                            0, 4 -> Text(stringResource(R.string.panel_spring_explain))
+                            2, 6 -> Text(stringResource(R.string.panel_neap_explain))
+                        }
+                        apsis?.let { Text(stringResource(if (it.kind == MoonApsisKind.PERIGEE) R.string.panel_perigee_explain else R.string.panel_apogee_explain)) }
+                    }
+                    if (open == Sheet.SUN) {
+                        listOfNotNull(solar.lastOrNull { it.first < selected }, next).forEach { (time, label) ->
+                            TextButton(onClick = { jump(time) }) { Text(stringResource(label) + " · " + stamp.format(time)) }
+                        }
+                    }
+                    SummarySkyFacts(open == Sheet.MOON, selected, station, zone, stamp, ::jump)
                 }
-                SummarySkyFacts(open == Sheet.MOON, selected, station, zone, stamp, ::jump)
             }
         }
     }
+
 }
 
 internal fun phaseIndex(phase: Double): Int {
