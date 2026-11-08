@@ -1,6 +1,7 @@
 package io.openwaters.slackwater.android.calendars
 
 import android.content.Context
+import android.content.res.Configuration
 import android.util.Log
 import io.openwaters.slackwater.android.R
 import io.openwaters.slackwater.android.alerts.ReminderAccessStore
@@ -142,11 +143,13 @@ class CalendarRepository private constructor(private val app: Context) {
         val source = predictions.calendarSource(station)
         val result = stationCalendarPrediction(station, now, predictions)
         val settings = preferences.preferences.first().getOrThrow()
+        val displayContext = app.createConfigurationContext(Configuration(app.resources.configuration))
         val events = stationCalendarEvents(station, now, settings.effectiveThresholdKn(id),
             settings.heightUnits() == HeightUnits.IMPERIAL, result)
+            ?.let(displayContext::localizeCalendarEvents)
         val rejected = result is PredictionResult.Unavailable && result.reason != PredictionResult.Reason.OUTSIDE_COVERAGE
         if (models.revision.value != revision) throw java.io.IOException("Calendar input changed during calculation")
-        return Publication(revision, source, localizedStationCalendarTitle(app, station), events, rejected)
+        return Publication(revision, source, localizedStationCalendarTitle(displayContext, station), events, rejected)
     }
 
     private suspend fun process(id: StationId, firstPlan: Publication? = null): Boolean {

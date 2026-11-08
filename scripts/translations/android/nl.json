@@ -315,5 +315,8 @@
   "settings_increase": "Stroomlimiet verhogen",
   "about_chs_predictions": "Sommige Canadese getijdenvoorbeelden en stroomstations tonen officiële voorspellingen die zijn gedownload van de Canadese hydrografische dienst.",
   "settings_save_error": "Deze instelling kon niet worden opgeslagen. Probeer het opnieuw.",
-  "premium_day_unavailable": "De opgeslagen datum van je gratis dag kan niet worden gelezen."
+  "premium_day_unavailable": "De opgeslagen datum van je gratis dag kan niet worden gelezen.",
+  "calendar_window_range": "%1$s–%2$s, onder %3$s",
+  "calendar_window_start": "%1$s, onder %2$s",
+  "calendar_no_window": "%1$s, geen periode onder %2$s"
 }

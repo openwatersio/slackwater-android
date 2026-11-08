@@ -318,4 +318,7 @@
     <string name="about_chs_predictions">"Vissa kanadensiska tidvattenvyer och strömstationer visar officiella prognoser som hämtats från Canadian Hydrographic Service."</string>
     <string name="settings_save_error">"Det gick inte att spara inställningen. Försök igen."</string>
     <string name="premium_day_unavailable">"Det sparade datumet för din kostnadsfria dag kan inte läsas."</string>
+    <string name="calendar_window_range">"%1$s–%2$s, under %3$s"</string>
+    <string name="calendar_window_start">"%1$s, under %2$s"</string>
+    <string name="calendar_no_window">"%1$s, ingen period under %2$s"</string>
 </resources>

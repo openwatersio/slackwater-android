@@ -315,5 +315,8 @@
   "settings_increase": "Increase comfort current",
   "about_chs_predictions": "Some Canadian tide previews and current stations show official predictions downloaded from the Canadian Hydrographic Service.",
   "settings_save_error": "Couldn’t save this setting. Try again.",
-  "premium_day_unavailable": "Your saved free-day date is unreadable."
+  "premium_day_unavailable": "Your saved free-day date is unreadable.",
+  "calendar_window_range": "%1$s–%2$s, under %3$s",
+  "calendar_window_start": "%1$s, under %2$s",
+  "calendar_no_window": "%1$s, no window under %2$s"
 }

@@ -330,4 +330,7 @@
     <string name="about_chs_predictions">"Taispeántar réamhaisnéisí oifigiúla a íoslódáladh ó Sheirbhís Hidreagrafach Cheanada i roinnt réamhamharcanna taoide agus ag roinnt stáisiún srutha i gCeanada."</string>
     <string name="settings_save_error">"Níorbh fhéidir an socrú seo a shábháil. Bain triail eile as."</string>
     <string name="premium_day_unavailable">"Ní féidir dáta sábháilte do lae saor in aisce a léamh."</string>
+    <string name="calendar_window_range">"%1$s–%2$s, faoi bhun %3$s"</string>
+    <string name="calendar_window_start">"%1$s, faoi bhun %2$s"</string>
+    <string name="calendar_no_window">"%1$s, gan tréimhse faoi bhun %2$s"</string>
 </resources>

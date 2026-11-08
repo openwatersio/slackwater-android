@@ -318,4 +318,7 @@
     <string name="about_chs_predictions">"Noen kanadiske tidevannsvisninger og strømstasjoner viser offisielle prognoser lastet ned fra Canadian Hydrographic Service."</string>
     <string name="settings_save_error">"Kunne ikke lagre innstillingen. Prøv igjen."</string>
     <string name="premium_day_unavailable">"Den lagrede datoen for gratisdagen kan ikke leses."</string>
+    <string name="calendar_window_range">"%1$s–%2$s, under %3$s"</string>
+    <string name="calendar_window_start">"%1$s, under %2$s"</string>
+    <string name="calendar_no_window">"%1$s, ingen periode under %2$s"</string>
 </resources>

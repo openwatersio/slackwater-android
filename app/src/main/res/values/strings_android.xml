@@ -318,4 +318,7 @@
     <string name="about_chs_predictions">"Some Canadian tide previews and current stations show official predictions downloaded from the Canadian Hydrographic Service."</string>
     <string name="settings_save_error">"Couldn’t save this setting. Try again."</string>
     <string name="premium_day_unavailable">"Your saved free-day date is unreadable."</string>
+    <string name="calendar_window_range">"%1$s–%2$s, under %3$s"</string>
+    <string name="calendar_window_start">"%1$s, under %2$s"</string>
+    <string name="calendar_no_window">"%1$s, no window under %2$s"</string>
 </resources>

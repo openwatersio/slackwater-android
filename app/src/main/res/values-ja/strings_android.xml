@@ -318,4 +318,7 @@
     <string name="about_chs_predictions">"カナダの一部の潮汐プレビューや潮流観測点では、カナダ水路局からダウンロードした公式予測を表示します。"</string>
     <string name="settings_save_error">"設定を保存できませんでした。もう一度お試しください。"</string>
     <string name="premium_day_unavailable">"保存されている無料体験日の日時を読み取れません。"</string>
+    <string name="calendar_window_range">"%1$s～%2$s、%3$s未満"</string>
+    <string name="calendar_window_start">"%1$s、%2$s未満"</string>
+    <string name="calendar_no_window">"%1$s、%2$s未満の時間帯なし"</string>
 </resources>

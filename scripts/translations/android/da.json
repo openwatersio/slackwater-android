@@ -315,5 +315,8 @@
   "settings_increase": "Hæv strømgrænsen",
   "about_chs_predictions": "Nogle canadiske tidevandsvisninger og strømstationer viser officielle prognoser hentet fra Canadian Hydrographic Service.",
   "settings_save_error": "Indstillingen kunne ikke gemmes. Prøv igen.",
-  "premium_day_unavailable": "Den gemte dato for din gratis dag kan ikke læses."
+  "premium_day_unavailable": "Den gemte dato for din gratis dag kan ikke læses.",
+  "calendar_window_range": "%1$s–%2$s, under %3$s",
+  "calendar_window_start": "%1$s, under %2$s",
+  "calendar_no_window": "%1$s, intet tidsrum under %2$s"
 }

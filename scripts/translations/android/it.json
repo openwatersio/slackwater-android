@@ -319,5 +319,8 @@
   "settings_increase": "Aumenta il limite di corrente",
   "about_chs_predictions": "Alcune anteprime delle maree e stazioni di corrente canadesi mostrano previsioni ufficiali scaricate dal Servizio idrografico canadese.",
   "settings_save_error": "Impossibile salvare questa impostazione. Riprova.",
-  "premium_day_unavailable": "Impossibile leggere la data salvata del giorno gratuito."
+  "premium_day_unavailable": "Impossibile leggere la data salvata del giorno gratuito.",
+  "calendar_window_range": "%1$s–%2$s, al di sotto di %3$s",
+  "calendar_window_start": "%1$s, al di sotto di %2$s",
+  "calendar_no_window": "%1$s, nessun intervallo al di sotto di %2$s"
 }
