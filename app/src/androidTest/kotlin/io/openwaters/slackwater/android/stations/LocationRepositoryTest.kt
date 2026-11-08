@@ -67,7 +67,9 @@ class LocationRepositoryTest {
     }
 
     private val now = 50_000_000L
-    private val here = Coordinate(48.42, -123.37)
+    // Open ocean, far from every station, so the fix these tests leave behind changes no list a later test reads.
+    // CI puts the emulator here too (`adb emu geo fix` in android.yml), since API 26 leaks its own GPS fix.
+    private val here = Coordinate(30.0, -140.0)
 
     private class FakeSource(
         var permission: LocationPermission = LocationPermission.PRECISE,
