@@ -81,11 +81,19 @@ class TourFlowTest {
     }
 
     @Test fun aFirstRunOpensTheTourStation() {
-        val expected = tourStationName()
+        // The cached fix an earlier test left can age out while the list loads, so the station may be chosen from
+        // the fix as it was at launch or as it is by the time the page shows.
+        val atLaunch = tourStationName()
         ActivityScenario.launch(MainActivity::class.java).use {
-            // A wide window shows the name in the list beside the page, so any match will do.
-            compose.waitUntil(60_000) { compose.onAllNodesWithText(expected).fetchSemanticsNodes().isNotEmpty() }
-            compose.onAllNodesWithText(expected)[0].assertIsDisplayed()
+            var shown: String? = null
+            compose.waitUntil(60_000) {
+                // A wide window shows the name in the list beside the page, so any match will do.
+                shown = setOf(atLaunch, tourStationName()).firstOrNull { name ->
+                    compose.onAllNodesWithText(name).fetchSemanticsNodes().isNotEmpty()
+                }
+                shown != null
+            }
+            compose.onAllNodesWithText(shown!!)[0].assertIsDisplayed()
         }
     }
 

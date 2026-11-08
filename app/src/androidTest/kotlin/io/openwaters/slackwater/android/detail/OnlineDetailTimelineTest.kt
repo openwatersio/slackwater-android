@@ -1,6 +1,6 @@
 package io.openwaters.slackwater.android.detail
 
-import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.junit4.v2.createComposeRule
 import io.openwaters.slackwater.android.core.prediction.*
 import io.openwaters.slackwater.android.core.station.*
 import io.openwaters.slackwater.android.core.timeline.*
