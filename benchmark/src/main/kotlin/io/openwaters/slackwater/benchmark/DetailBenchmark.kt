@@ -24,6 +24,27 @@ class DetailBenchmark {
     @Test fun coldCurrentDetail() = detail(Detail.CURRENT, StartupMode.COLD)
     @Test fun warmCurrentDetail() = detail(Detail.CURRENT, StartupMode.WARM)
 
+    @Test fun coldUnavailableDetail() = unavailableDetail(StartupMode.COLD)
+    @Test fun warmUnavailableDetail() = unavailableDetail(StartupMode.WARM)
+
+    private fun unavailableDetail(mode: StartupMode) = benchmark.measureRepeated(
+        packageName = "io.openwaters.slackwater.android.benchmark",
+        metrics = listOf(StartupTimingMetric(), FrameTimingMetric(), duration("launchToUnavailableDetail")),
+        iterations = 5,
+        compilationMode = CompilationMode.Full(),
+        startupMode = mode,
+        setupBlock = { pressHome() },
+    ) {
+        val link = Uri.parse("slackwater://station/ticon%2Faigio-aig-grc-cmems")
+        measured("launchToUnavailableDetail") {
+            startActivityAndWait(Intent(Intent.ACTION_VIEW, link).setPackage(packageName)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK))
+            await(By.text("Aigio"))
+            await(By.text("Predictions unavailable"))
+            await(By.text("Share station details"))
+        }
+    }
+
     private enum class Detail(val path: String, val stationName: String, val timeline: String, val unit: String, val event: String) {
         TIDE("tides/friday-harbor", "Friday Harbor", "Tide timeline", "feet", "HIGH"),
         CURRENT("currents/flat-point", "Flat Point", "Current timeline", "knots", "SLACK"),
