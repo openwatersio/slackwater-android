@@ -57,16 +57,16 @@ The emulator ran build CE2A.260420.051.A2 with airplane mode off. The target was
 
 ## Bundled station detail
 
-`DetailBenchmark` opens Friday Harbor and Flat Point through dated public links. Both links select November 6, 2025 at 08:00 Pacific, outside the current opening window, so the schedule starts on the linked day. Each station runs five times with a cold process and five times with a warm process. Use a compact portrait phone in US English with heights in feet and speeds in knots.
+The tide and current cases in `DetailBenchmark` open Friday Harbor and Flat Point through dated public links. Both links select November 6, 2025 at 08:00 Pacific, outside the current opening window, so the schedule starts on the linked day. Each station runs five times with a cold process and five times with a warm process. Use a compact portrait phone in US English with heights in feet and speeds in knots.
 
 - `launchToDetailReading` starts before the link opens. It ends when the station title, the tide or current timeline, and a spoken reading with the expected unit and date are visible.
-- `revealScheduleEvent` starts at that boundary and includes swipe and accessibility-idle time as the page scrolls until a high tide or slack event row is visible in the schedule. This measures a scripted navigation journey. Gesture and idle time dominate the duration, so it is unsuitable for a schedule-rendering regression budget. Each iteration opens a fresh activity task. The warm run retains the target process.
+- `revealScheduleEvent` starts at that boundary and includes swipe and accessibility-idle time as the page scrolls until a high tide or slack event row is visible in the schedule. This measures a scripted navigation journey. Gesture and idle time dominate the duration, so it is unsuitable for a schedule-rendering regression budget. If five downward swipes miss the event, the harness searches back toward the top to recover a schedule that loaded above the viewport. Each iteration opens a fresh activity task. The warm run retains the target process.
 
 Use the same optimized APKs and device setup as the physical run above. Run `io.openwaters.slackwater.benchmark.DetailBenchmark` in the instrumentation command. The links record station visits. Run the list benchmarks first or restore their Friday Harbor setup before repeating them.
 
 ### API 37 emulator run
 
-On November 7, 2026 (Pacific), all four journeys completed five iterations on the API 37 arm64 phone emulator (build CE2A.260420.051.A2). The target APK was built from base `c2db9426fa988e180bd4bca23c78dc0277bba494` and had SHA-256 `751d6ed7d457030a2debe8537bc693b511776e7531edc2ae2141944738893fd4`. The raw results include frame timings and time to initial display. [Device measurements](evidence/detail-benchmarks-api37.json)
+On November 7, 2026 (Pacific), all four journeys completed five iterations on the API 37 arm64 phone emulator (build CE2A.260420.051.A2). The target APK was built from base `c2db9426fa988e180bd4bca23c78dc0277bba494` and had SHA-256 `751d6ed7d457030a2debe8537bc693b511776e7531edc2ae2141944738893fd4`. This historical run used only the downward search. Its raw results include frame timings and time to initial display. [Device measurements](evidence/detail-benchmarks-api37.json)
 
 | Journey | Launch to dated reading, median (ms) | Reveal schedule event, median (ms) |
 | --- | ---: | ---: |
@@ -74,6 +74,23 @@ On November 7, 2026 (Pacific), all four journeys completed five iterations on th
 | warmCurrentDetail | 1,974.7 | 3,207.2 |
 | coldTideDetail | 2,297.3 | 3,173.6 |
 | warmTideDetail | 1,946.0 | 3,201.4 |
+
+## Detail for unavailable predictions
+
+Aigio, West Greece, has a catalog record and no public website slug. The two unavailable-detail tests in `DetailBenchmark` open its full-ID link, `slackwater://station/ticon%2Faigio-aig-grc-cmems`, in a fresh activity task. The warm run retains the target process. The launch trace ends when the station name, “Predictions unavailable” message and “Share station details” action are visible. Nearby predictions can continue loading after this boundary.
+
+To run just these cases, use the physical-device instrumentation command above with this class filter:
+
+```text
+io.openwaters.slackwater.benchmark.DetailBenchmark#coldUnavailableDetail,io.openwaters.slackwater.benchmark.DetailBenchmark#warmUnavailableDetail
+```
+
+On November 7, 2026 (Pacific), both journeys passed five iterations apiece on the API 37 arm64 emulator (build CE2A.260420.051.A2, 1080 × 2400, 420 dpi, font scale 1.0, US English, airplane mode off). The test requests full compilation; the raw report labels the device compilation context `run-from-apk`. Time to initial display measures the first frame. The help-action trace also includes loading the station and UI Automator observing the three labels. The target APK was built from `5e2a8b46dc353d04ce68fdc487b65565a90b4f63`. Its SHA-256 was `53a6303e5fc694374f8b506f8ff17e8c3c7798a407284d5ad2d7cb9d63f1ef4c`, and the instrumentation APK SHA-256 was `15eb51b1f43711a808525d7db4c5aa2cbe8220117c5e09e497666d349437c64b`. [Raw benchmark results](evidence/unavailable-detail-api37.json)
+
+| Journey | Median time to initial display (ms) | Median launch to help action (ms) |
+| --- | ---: | ---: |
+| coldUnavailableDetail | 673.0 | 2,284.5 |
+| warmUnavailableDetail | 174.1 | 1,830.9 |
 
 ## Multi-day chart scrubbing
 
@@ -92,7 +109,7 @@ In iteration 3, the target layer’s largest deadline miss was 128.47 ms, 18.925
 | Required journey | Evidence needed |
 | --- | --- |
 | Cold and warm first usable station list | The launch harness is implemented. Collect physical-device cold and warm baselines. |
-| Complete station detail by capability | The bundled tide and measured current have cold and warm harnesses. Other capabilities and physical-device baselines remain open. |
+| Complete station detail by capability | The bundled tide, measured current and unavailable station pages have cold and warm harnesses. Other capabilities and physical-device baselines remain open. |
 | Interactive map with and without offline packs | Measure first responsive station selection with recorded network and pack state. |
 | Focused station search, first and repeat queries | The focus, first-query and repeat-query harnesses are implemented. Collect physical-device baselines. |
 | Memory and frames during long chart scrubs | The bundled tide benchmark produces traces; the scrub-only frame and memory comparison uses Perfetto post-processing. Physical-device traces and regression budgets remain open. |
