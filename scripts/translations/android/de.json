@@ -314,5 +314,6 @@
   "settings_decrease": "Strömungsgrenze senken",
   "settings_increase": "Strömungsgrenze erhöhen",
   "about_chs_predictions": "Einige kanadische Gezeitenvorschauen und Strömungsstationen zeigen offizielle Vorhersagen des Canadian Hydrographic Service, die auf das Gerät geladen wurden.",
-  "settings_save_error": "Die Einstellung konnte nicht gespeichert werden. Versuche es erneut."
+  "settings_save_error": "Die Einstellung konnte nicht gespeichert werden. Versuche es erneut.",
+  "premium_day_unavailable": "Das gespeicherte Datum deines kostenlosen Tages ist nicht lesbar."
 }

@@ -8,13 +8,13 @@ import java.util.UUID
 sealed interface ReminderEntitlement {
     data object Free : ReminderEntitlement
     data object Purchased : ReminderEntitlement
-    data class FreeDay(val ends: Instant) : ReminderEntitlement
+    data class FreeDay(val ends: Instant, val started: Instant? = null) : ReminderEntitlement
 }
 
 fun ReminderEntitlement.allows(fire: Instant): Boolean = when (this) {
     ReminderEntitlement.Free -> false
     ReminderEntitlement.Purchased -> true
-    is ReminderEntitlement.FreeDay -> fire < ends
+    is ReminderEntitlement.FreeDay -> fire < ends && (started == null || fire >= started)
 }
 
 // App policy chosen for parity and reliability testing.

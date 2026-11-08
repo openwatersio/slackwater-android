@@ -303,4 +303,10 @@
     <string name="settings_premium">"Premium"</string>
     <string name="settings_example">"Eksempel"</string>
     <string name="settings_example_window">"Eksempel på strømstille periode"</string>
+    <string name="premium_title">"Slackwater Premium"</string>
+    <string name="premium_try_free_day">"Prøv alt gratis i dag"</string>
+    <string name="premium_free_day_until">"Gratis dag indtil %1$s"</string>
+    <string name="premium_next_free_day">"Din næste gratis dag er %1$s"</string>
+    <string name="premium_purchased">"Du har Premium — tak."</string>
+    <string name="premium_support">"Slackwater er uafhængig og open source. Premium er det, der holder den i gang."</string>
 </resources>

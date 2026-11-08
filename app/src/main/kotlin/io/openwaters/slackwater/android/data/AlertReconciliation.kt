@@ -81,8 +81,6 @@ class AlertReconciliation private constructor(context: Context) {
 
     fun foreground() = passes.request()
 
-    suspend fun entitlementChanged(access: ReminderEntitlement) = entitlement.update(access)
-
     suspend fun save(rule: AlertRule, confirmHeight: Boolean = false): Boolean {
         if (!entitlement.current().activeAt(clock.instant())) return false
         val crossing = rule.trigger as? AlertTrigger.TideCrossing

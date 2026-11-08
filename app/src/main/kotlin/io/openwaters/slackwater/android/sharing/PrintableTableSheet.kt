@@ -19,6 +19,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import io.openwaters.slackwater.android.BuildConfig
+import io.openwaters.slackwater.android.map.PremiumSheet
 import io.openwaters.slackwater.android.R
 import io.openwaters.slackwater.android.alerts.ReminderAccessStore
 import io.openwaters.slackwater.android.core.planning.*
@@ -28,10 +30,9 @@ import io.openwaters.slackwater.android.data.alertInputLock
 import kotlinx.coroutines.sync.withLock
 import io.openwaters.slackwater.android.data.ReadingPreferencesStore
 import io.openwaters.slackwater.android.data.retryAlertReads
-import java.time.Duration
+import io.openwaters.slackwater.android.premium.entitlementClock
 import java.time.Instant
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -40,15 +41,10 @@ fun PrintableTableSheet(stationName: String, load: suspend (PrintSpan) -> Printa
     val context = LocalContext.current
     val locale = LocalConfiguration.current.locales[0]
     val access = remember(context) { ReminderAccessStore.get(context) }
-    val premium by produceState<Boolean?>(null, access) {
-        access.changes.retryAlertReads().collectLatest { entitlement ->
-            value = entitlement.allows(Instant.now())
-            if (entitlement is ReminderEntitlement.FreeDay && value == true) {
-                delay(Duration.between(Instant.now(), entitlement.ends).toMillis().coerceAtLeast(0) + 1)
-                value = false
-            }
-        }
-    }
+    val entitlement by remember(access) { access.changes.retryAlertReads() }.collectAsState(null)
+    val now = entitlementClock(entitlement)
+    val premium = entitlement?.allows(now)
+    var premiumOpen by remember { mutableStateOf(false) }
     var span by remember { mutableStateOf(PrintSpan.WEEK) }
     val loader by rememberUpdatedState(load)
     var attempt by remember { mutableIntStateOf(0) }
@@ -95,7 +91,7 @@ fun PrintableTableSheet(stationName: String, load: suspend (PrintSpan) -> Printa
             try {
                 alertInputLock.withLock {
                     if (!access.current().allows(Instant.now())) {
-                        message = R.string.table_sheet_locked
+                        if (BuildConfig.PREMIUM_ENABLED) premiumOpen = true else message = R.string.table_sheet_locked
                         return@withLock
                     }
                     if (!pdf.file.isFile) throw java.io.IOException("Preview file unavailable")
@@ -131,6 +127,9 @@ fun PrintableTableSheet(stationName: String, load: suspend (PrintSpan) -> Printa
             }
             if (premium == false) {
                 Text(stringResource(R.string.table_sheet_locked))
+                if (BuildConfig.PREMIUM_ENABLED) TextButton(onClick = { premiumOpen = true }) {
+                    Text(stringResource(R.string.settings_premium))
+                }
             } else if (premium == true) {
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     for (period in PrintSpan.entries) {
@@ -164,6 +163,7 @@ fun PrintableTableSheet(stationName: String, load: suspend (PrintSpan) -> Printa
             }
         }
     }
+    if (premiumOpen) PremiumSheet { premiumOpen = false }
 }
 
 @Composable

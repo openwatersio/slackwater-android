@@ -64,6 +64,7 @@ class CalendarRepository private constructor(private val app: Context) {
             val prepared = publication(stationId, Instant.now())
             if (prepared.events == null || prepared.source == null) return@withLock false
             val allowed = alertInputLock.withLock checkAccess@{
+                access.finishPendingCalendarPurchase()
                 val entitlement = access.current()
                 if (!entitlement.allows(Instant.now()) || prepared.modelRevision != models.revision.value) return@checkAccess false
                 state.edit { snapshot ->
@@ -111,12 +112,15 @@ class CalendarRepository private constructor(private val app: Context) {
 
     suspend fun reconcile(): Boolean = withContext(Dispatchers.IO) {
         lock.withLock {
-            val entitlement = access.current()
-            if (entitlement == ReminderEntitlement.Purchased) state.convertPurchased()
-            if (entitlement is ReminderEntitlement.FreeDay) {
-                state.edit { snapshot -> snapshot.copy(subscriptions = snapshot.subscriptions.map { sub ->
-                    if (sub.origin == CalendarOrigin.FREE_DAY && sub.trialEnd != entitlement.ends) sub.copy(trialEnd = entitlement.ends) else sub
-                }) }
+            alertInputLock.withLock {
+                access.finishPendingCalendarPurchase()
+                val entitlement = access.current()
+                if (entitlement == ReminderEntitlement.Purchased) state.convertPurchased()
+                if (entitlement is ReminderEntitlement.FreeDay) {
+                    state.edit { snapshot -> snapshot.copy(subscriptions = snapshot.subscriptions.map { sub ->
+                        if (sub.origin == CalendarOrigin.FREE_DAY && sub.trialEnd != entitlement.ends) sub.copy(trialEnd = entitlement.ends) else sub
+                    }) }
+                }
             }
             updateJobs()
             var success = true

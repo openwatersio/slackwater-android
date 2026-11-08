@@ -314,5 +314,6 @@
   "settings_decrease": "Pienennä virtarajaa",
   "settings_increase": "Suurenna virtarajaa",
   "about_chs_predictions": "Joissakin Kanadan vuorovesien esikatseluissa ja virta-asemilla näytetään Kanadan hydrografiselta laitokselta ladattuja virallisia ennusteita.",
-  "settings_save_error": "Asetusta ei voitu tallentaa. Yritä uudelleen."
+  "settings_save_error": "Asetusta ei voitu tallentaa. Yritä uudelleen.",
+  "premium_day_unavailable": "Maksuttoman päivän tallennettua päivämäärää ei voi lukea."
 }

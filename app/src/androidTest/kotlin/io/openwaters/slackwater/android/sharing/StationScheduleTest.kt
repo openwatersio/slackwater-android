@@ -1,5 +1,6 @@
 package io.openwaters.slackwater.android.sharing
 
+import io.openwaters.slackwater.android.BuildConfig
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import io.openwaters.slackwater.android.MainActivity
@@ -28,7 +29,7 @@ class StationScheduleTest {
             compose.onNodeWithText("Next week").performScrollTo().performClick()
             compose.waitUntil(30_000) { compose.onAllNodesWithTag("printable-tables-row").fetchSemanticsNodes().isNotEmpty() }
             compose.onNodeWithTag("printable-tables-row").performScrollTo().performClick()
-            compose.onNodeWithText("Support Slackwater").assertIsDisplayed()
+            compose.onNodeWithText(if (BuildConfig.PREMIUM_ENABLED) "Slackwater Premium" else "Support Slackwater").assertIsDisplayed()
             compose.onNodeWithText("Close").performClick()
             compose.onNodeWithTag("printable-tables-row").assertExists()
         } finally {

@@ -8,7 +8,14 @@ android {
         targetSdk = 37
         versionCode = 1
         versionName = "0.1.0"
+        buildConfigField("boolean", "PREMIUM_ENABLED", "false")
+        manifestPlaceholders["premiumEnabled"] = false
         testInstrumentationRunner = "io.openwaters.slackwater.android.SlackwaterTestRunner"
+    }
+    buildTypes.getByName("debug") {
+        val enabled = providers.gradleProperty("premiumEnabled").map { it.toBooleanStrict() }.orElse(true)
+        buildConfigField("boolean", "PREMIUM_ENABLED", enabled.get().toString())
+        manifestPlaceholders["premiumEnabled"] = enabled.get()
     }
     buildTypes.create("benchmark") {
         initWith(buildTypes.getByName("release"))
@@ -18,7 +25,7 @@ android {
         proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"))
         matchingFallbacks += "release"
     }
-    buildFeatures { compose = true }
+    buildFeatures { compose = true; buildConfig = true }
     androidResources { noCompress += listOf("tcdb", "currents.json") }
     compileOptions { sourceCompatibility = JavaVersion.VERSION_17; targetCompatibility = JavaVersion.VERSION_17 }
 }

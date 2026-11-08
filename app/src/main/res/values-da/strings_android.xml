@@ -317,4 +317,5 @@
     <string name="settings_increase">"Hæv strømgrænsen"</string>
     <string name="about_chs_predictions">"Nogle canadiske tidevandsvisninger og strømstationer viser officielle prognoser hentet fra Canadian Hydrographic Service."</string>
     <string name="settings_save_error">"Indstillingen kunne ikke gemmes. Prøv igen."</string>
+    <string name="premium_day_unavailable">"Den gemte dato for din gratis dag kan ikke læses."</string>
 </resources>

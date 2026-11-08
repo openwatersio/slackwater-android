@@ -303,4 +303,10 @@
     <string name="settings_premium">"Premium"</string>
     <string name="settings_example">"Sampla"</string>
     <string name="settings_example_window">"Tréimhse fáfaill shamplach"</string>
+    <string name="premium_title">"Slackwater Premium"</string>
+    <string name="premium_try_free_day">"Bain triail as gach rud saor in aisce inniu"</string>
+    <string name="premium_free_day_until">"Lá saor in aisce go dtí %1$s"</string>
+    <string name="premium_next_free_day">"Is é %1$s do chéad lá saor in aisce eile"</string>
+    <string name="premium_purchased">"Tá Premium agat — go raibh maith agat."</string>
+    <string name="premium_support">"Tá Slackwater neamhspleách agus foinse oscailte. Is é Premium a choinníonn ag imeacht é."</string>
 </resources>

@@ -268,7 +268,7 @@ private fun DetailContent(station: StationIdentity, detail: LoadedDetail, prefs:
     val threshold = prefs.effectiveThresholdKn(station.id)
     val supportsAlerts = cap.supports(PredictionPurpose.ALERT)
     val units = prefs.heightUnits()
-    DetailAlertControls(state.now) { rules, edit, showRules ->
+    DetailAlertControls { rules, edit, showRules ->
         val base = remember(series, cap, state.now, threshold) {
             val next = when (series) {
                 is PredictionSeries.Tide -> series.events.firstOrNull { it.time >= state.now }?.let { AlertTrigger.TideExtreme(it.kind == ExtremeKind.HIGH) to it.time }

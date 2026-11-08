@@ -314,5 +314,6 @@
   "settings_decrease": "유속 한계 낮추기",
   "settings_increase": "유속 한계 높이기",
   "about_chs_predictions": "일부 캐나다 조석 미리보기와 조류 관측소에는 캐나다 수로국에서 내려받은 공식 예측이 표시됩니다.",
-  "settings_save_error": "설정을 저장하지 못했습니다. 다시 시도하세요."
+  "settings_save_error": "설정을 저장하지 못했습니다. 다시 시도하세요.",
+  "premium_day_unavailable": "저장된 무료 이용일의 날짜를 읽을 수 없습니다."
 }

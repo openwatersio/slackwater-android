@@ -321,4 +321,5 @@
     <string name="settings_increase">"Aumenta il limite di corrente"</string>
     <string name="about_chs_predictions">"Alcune anteprime delle maree e stazioni di corrente canadesi mostrano previsioni ufficiali scaricate dal Servizio idrografico canadese."</string>
     <string name="settings_save_error">"Impossibile salvare questa impostazione. Riprova."</string>
+    <string name="premium_day_unavailable">"Impossibile leggere la data salvata del giorno gratuito."</string>
 </resources>

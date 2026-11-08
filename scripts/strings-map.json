@@ -1696,6 +1696,36 @@
       "name": "settings_example_window",
       "key": "Example slack window",
       "english": "Example slack window"
+    },
+    {
+      "name": "premium_title",
+      "key": "Slackwater Premium",
+      "english": "Slackwater Premium"
+    },
+    {
+      "name": "premium_try_free_day",
+      "key": "Try everything free today",
+      "english": "Try everything free today"
+    },
+    {
+      "name": "premium_free_day_until",
+      "key": "Free day until %@",
+      "english": "Free day until %@"
+    },
+    {
+      "name": "premium_next_free_day",
+      "key": "Your next free day is %@",
+      "english": "Your next free day is %@"
+    },
+    {
+      "name": "premium_purchased",
+      "key": "You have Premium — thank you.",
+      "english": "You have Premium — thank you."
+    },
+    {
+      "name": "premium_support",
+      "key": "Slackwater is independent and open source. Premium is how it keeps going.",
+      "english": "Slackwater is independent and open source. Premium is how it keeps going."
     }
   ],
   "androidDirectory": "scripts/translations/android"

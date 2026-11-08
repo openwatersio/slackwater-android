@@ -72,6 +72,14 @@ class CalendarLifecycleTest {
             assertEquals(active.calendarId, paused.calendarId)
             assertEquals(0, repo.eventCount(id))
 
+            val renewedEnd = Instant.now().plusSeconds(86_400)
+            access.update(ReminderEntitlement.FreeDay(renewedEnd))
+            assertTrue(repo.reconcile())
+            val renewed = repo.subscriptions.first().single { it.stationId == id }
+            assertEquals(active.calendarId, renewed.calendarId)
+            assertEquals(renewedEnd, renewed.trialEnd)
+            assertTrue(repo.eventCount(id) > 0)
+
             access.update(ReminderEntitlement.Purchased)
             access.update(ReminderEntitlement.Free)
             assertTrue(repo.reconcile())

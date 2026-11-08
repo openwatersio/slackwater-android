@@ -20,6 +20,8 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import io.openwaters.slackwater.android.BuildConfig
+import io.openwaters.slackwater.android.map.PremiumSheet
 import io.openwaters.slackwater.android.R
 import io.openwaters.slackwater.android.alerts.*
 import io.openwaters.slackwater.android.core.planning.*
@@ -27,7 +29,7 @@ import io.openwaters.slackwater.android.core.station.*
 import io.openwaters.slackwater.android.data.*
 import java.time.Instant
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.delay
+import io.openwaters.slackwater.android.premium.entitlementClock
 import kotlinx.coroutines.launch
 
 private val permissions = arrayOf(Manifest.permission.READ_CALENDAR, Manifest.permission.WRITE_CALENDAR)
@@ -56,8 +58,7 @@ private fun CalendarSettingsScreen(current: StationId, close: () -> Unit) {
     val access by remember { ReminderAccessStore.get(context).changes.retryAlertReads() }.collectAsState(ReminderEntitlement.Free)
     val revision by remember { ModelStore.get(context).revision }.collectAsState()
     val scope = rememberCoroutineScope()
-    var now by remember { mutableStateOf(Instant.now()) }
-    LaunchedEffect(Unit) { while (true) { now = Instant.now(); delay(60_000) } }
+    val now = entitlementClock(access, subscriptions.mapNotNull { it.trialEnd })
     val ids = (listOf(current) + favorites?.getOrNull()?.favorites.orEmpty() + subscriptions.map { it.stationId }).distinct()
     val rows by produceState(emptyList<CalendarRow>(), ids) {
         value = ids.map { id ->
@@ -72,6 +73,7 @@ private fun CalendarSettingsScreen(current: StationId, close: () -> Unit) {
     }
     var busy by remember { mutableStateOf(false) }
     var message by remember { mutableIntStateOf(0) }
+    var premiumOpen by rememberSaveable { mutableStateOf(false) }
     var removal by remember { mutableStateOf<Removal?>(null) }
     var requested by rememberSaveable { mutableStateOf<String?>(null) }
     var permissionDenied by rememberSaveable { mutableStateOf(false) }
@@ -139,7 +141,9 @@ private fun CalendarSettingsScreen(current: StationId, close: () -> Unit) {
                 if (status != 0) Text(stringResource(status))
                 TextButton(enabled = !busy && sub?.pendingDeletion != true && (sub != null || available == true), onClick = {
                     when {
-                        sub == null && !access.activeAt(Instant.now()) -> message = R.string.station_calendar_premium
+                        sub == null && !access.activeAt(Instant.now()) -> {
+                            if (BuildConfig.PREMIUM_ENABLED) premiumOpen = true else message = R.string.station_calendar_premium
+                        }
                         !context.hasCalendarAccess() -> { requested = row.id.value; request.launch(permissions) }
                         else -> select(row)
                     }
@@ -148,6 +152,7 @@ private fun CalendarSettingsScreen(current: StationId, close: () -> Unit) {
         }
         TextButton(onClick = close) { Text(stringResource(R.string.close)) }
     }
+    if (premiumOpen) PremiumSheet { premiumOpen = false }
     removal?.let { prompt ->
         AlertDialog(onDismissRequest = { removal = null },
             title = { Text(stringResource(R.string.station_calendar_remove_title, prompt.row.title)) },

@@ -317,4 +317,5 @@
     <string name="settings_increase">"Stroomlimiet verhogen"</string>
     <string name="about_chs_predictions">"Sommige Canadese getijdenvoorbeelden en stroomstations tonen officiële voorspellingen die zijn gedownload van de Canadese hydrografische dienst."</string>
     <string name="settings_save_error">"Deze instelling kon niet worden opgeslagen. Probeer het opnieuw."</string>
+    <string name="premium_day_unavailable">"De opgeslagen datum van je gratis dag kan niet worden gelezen."</string>
 </resources>
