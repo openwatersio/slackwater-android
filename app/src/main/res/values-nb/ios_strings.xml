@@ -282,4 +282,25 @@
     <string name="widget_nearest_current">"Strømstasjon"</string>
     <string name="widget_location_hint">"Åpne Slackwater og tillat posisjonstilgang for å finne et sted i nærheten."</string>
     <string name="widget_event_time">"%1$s · %2$s"</string>
+    <string name="about_title">"Om"</string>
+    <string name="settings_help">"Hjelp"</string>
+    <string name="about_summary">"Lisenser, anerkjennelser og personvern"</string>
+    <string name="about_predictions">"Om disse prognosene"</string>
+    <string name="about_predictions_text">"Slackwater beregner harmoniske tidevanns- og strømprognoser på denne enheten. De er ikke observasjoner; faktiske forhold varierer med vær, elveføring og lokale effekter."</string>
+    <string name="about_navigation">"Skal ikke brukes til navigasjon."</string>
+    <string name="about_attribution">"Data og kildehenvisninger"</string>
+    <string name="about_privacy">"Personvernerklæring"</string>
+    <string name="about_license">"Lisens"</string>
+    <string name="about_license_text">"Slackwater har åpen kildekode: appen under GPL-3.0, prognosemotoren under MIT."</string>
+    <string name="about_source">"Kildekode på GitHub"</string>
+    <string name="about_version">"Versjon"</string>
+    <string name="settings_title">"Innstillinger"</string>
+    <string name="settings_set_format">"Format for strømretning"</string>
+    <string name="settings_compass">"Kompass"</string>
+    <string name="settings_degrees">"Grader °T"</string>
+    <string name="settings_comfort_current">"Komfortabel strøm"</string>
+    <string name="settings_comfort_help">"Angir den høyeste strømhastigheten Slackwater regner som et brukbart strømstillevindu (0.1–10 kn). Av viser bare strømstille."</string>
+    <string name="settings_premium">"Premium"</string>
+    <string name="settings_example">"Eksempel"</string>
+    <string name="settings_example_window">"Eksempel på strømstillevindu"</string>
 </resources>

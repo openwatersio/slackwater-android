@@ -96,7 +96,6 @@
   "detail_derived_source": "Slackwater estime l’étale à %1$s à partir des marées hautes et basses à %2$s. Le SHC ne publie pas de prévisions de courant pour ce passage.",
   "detail_map": "Voir sur la carte",
   "detail_invalid_link": "Impossible d’ouvrir le lien vers cette station.",
-  "detail_chart_settings": "Réglages du graphique",
   "panel_reference": "Estimé à partir des marées de référence",
   "panel_daylight": "%1$d h %2$d min de jour",
   "panel_lit": "%1$d %% éclairée",
@@ -287,7 +286,7 @@
   "map_close": "Fermer l’aperçu",
   "map_empty": "Aucune station dans cette zone",
   "map_fix_missing": "Position indisponible",
-  "map_units_legend": "Marées en %1$s. Courants en %2$s. Ne pas utiliser pour la navigation. Réglages du graphique.",
+  "map_units_legend": "Marées en %1$s. Courants en %2$s. Ne pas utiliser pour la navigation. Réglages.",
   "map_zoom_out": "Zoom arrière",
   "map_zoom_in": "Zoom avant",
   "chart_downloads": "Téléchargements",
@@ -313,5 +312,11 @@
   "tide_download_failed": "Impossible de télécharger l’aperçu des marées",
   "tide_download_saved": "Aperçu des marées enregistré pour utilisation hors ligne",
   "tide_download_edit_failed": "Impossible d’enregistrer cette modification des téléchargements. Réessayez.",
-  "widget_snapshot_time": "Mis à jour à %1$s"
+  "widget_snapshot_time": "Mis à jour à %1$s",
+  "settings_station_comfort": "Seuil de courant à cette station",
+  "settings_use_global": "Utiliser le seuil de courant général",
+  "settings_decrease": "Diminuer le seuil de courant",
+  "settings_increase": "Augmenter le seuil de courant",
+  "about_chs_predictions": "Certains aperçus des marées et certaines stations de courant au Canada affichent des prévisions officielles téléchargées du Service hydrographique du Canada.",
+  "settings_save_error": "Impossible d’enregistrer ce réglage. Réessayez."
 }

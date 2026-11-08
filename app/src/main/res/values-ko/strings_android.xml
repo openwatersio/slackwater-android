@@ -94,7 +94,6 @@
     <string name="detail_derived_source">"Slackwater는 %2$s의 만조와 간조를 바탕으로 %1$s의 정조를 추정합니다. CHS는 이 수로의 조류 예측을 발표하지 않습니다."</string>
     <string name="detail_map">"지도에서 보기"</string>
     <string name="detail_invalid_link">"이 관측소 링크를 열지 못했습니다."</string>
-    <string name="detail_chart_settings">"차트 설정"</string>
     <string name="panel_reference">"기준 조석에서 추정"</string>
     <string name="panel_daylight">"낮 길이 %1$d시간 %2$d분"</string>
     <string name="panel_lit">"밝은 면 %1$d%%"</string>
@@ -285,7 +284,7 @@
     <string name="map_close">"미리보기 닫기"</string>
     <string name="map_empty">"이 지역에 관측소 없음"</string>
     <string name="map_fix_missing">"위치를 사용할 수 없음"</string>
-    <string name="map_units_legend">"조석 단위: %1$s. 조류 단위: %2$s. 항해용으로 사용 금지. 차트 설정."</string>
+    <string name="map_units_legend">"조석 단위: %1$s. 조류 단위: %2$s. 항해용으로 사용 금지. 설정."</string>
     <string name="map_zoom_out">"축소"</string>
     <string name="map_zoom_in">"확대"</string>
     <string name="chart_downloads">"다운로드"</string>
@@ -312,4 +311,10 @@
     <string name="tide_download_saved">"오프라인 사용을 위해 조석 미리보기를 저장했습니다"</string>
     <string name="tide_download_edit_failed">"다운로드 변경 사항을 저장할 수 없습니다. 다시 시도하세요."</string>
     <string name="widget_snapshot_time">"%1$s 기준"</string>
+    <string name="settings_station_comfort">"이 관측소의 유속 한계"</string>
+    <string name="settings_use_global">"공통 유속 한계 사용"</string>
+    <string name="settings_decrease">"유속 한계 낮추기"</string>
+    <string name="settings_increase">"유속 한계 높이기"</string>
+    <string name="about_chs_predictions">"일부 캐나다 조석 미리보기와 조류 관측소에는 캐나다 수로국에서 내려받은 공식 예측이 표시됩니다."</string>
+    <string name="settings_save_error">"설정을 저장하지 못했습니다. 다시 시도하세요."</string>
 </resources>

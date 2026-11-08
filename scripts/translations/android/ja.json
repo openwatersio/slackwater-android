@@ -92,7 +92,6 @@
   "detail_derived_source": "Slackwaterは%2$sの満潮・干潮から%1$sの転流を推定します。CHSはこの水道の潮流予測を公表していません。",
   "detail_map": "地図で表示",
   "detail_invalid_link": "この観測地点のリンクを開けませんでした。",
-  "detail_chart_settings": "グラフ設定",
   "panel_reference": "基準地点の潮汐から推定",
   "panel_daylight": "日照時間%1$d時間%2$d分",
   "panel_lit": "照らされている割合%1$d%%",
@@ -283,7 +282,7 @@
   "map_close": "プレビューを閉じる",
   "map_empty": "この範囲に観測所はありません",
   "map_fix_missing": "位置情報を利用できません",
-  "map_units_legend": "潮汐の単位：%1$s。潮流の単位：%2$s。航海には使用できません。グラフ設定。",
+  "map_units_legend": "潮汐の単位：%1$s。潮流の単位：%2$s。航海には使用できません。設定。",
   "map_zoom_out": "縮小",
   "map_zoom_in": "拡大",
   "chart_downloads": "ダウンロード",
@@ -309,5 +308,11 @@
   "tide_download_failed": "潮汐プレビューをダウンロードできませんでした",
   "tide_download_saved": "潮汐プレビューをオフライン用に保存しました",
   "tide_download_edit_failed": "ダウンロードの変更を保存できませんでした。もう一度お試しください。",
-  "widget_snapshot_time": "%1$s 時点"
+  "widget_snapshot_time": "%1$s 時点",
+  "settings_station_comfort": "この観測点の流速上限",
+  "settings_use_global": "共通の流速上限を使う",
+  "settings_decrease": "流速上限を下げる",
+  "settings_increase": "流速上限を上げる",
+  "about_chs_predictions": "カナダの一部の潮汐プレビューや潮流観測点では、カナダ水路局からダウンロードした公式予測を表示します。",
+  "settings_save_error": "設定を保存できませんでした。もう一度お試しください。"
 }

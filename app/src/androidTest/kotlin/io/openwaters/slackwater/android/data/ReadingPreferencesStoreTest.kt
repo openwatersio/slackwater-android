@@ -12,6 +12,10 @@ import java.util.Locale
 import java.util.UUID
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.take
+import kotlinx.coroutines.flow.toList
+import io.openwaters.slackwater.android.core.settings.ReadingSettings
 import org.junit.Assert.*
 import org.junit.Test
 
@@ -48,16 +52,66 @@ class ReadingPreferencesStoreTest {
         }
     }
 
+    @Test fun repeatedStationStepsTrackGlobalChangesAndSurviveGlobalOff() = withFile { file ->
+        withScope { scope ->
+            val store = ReadingPreferencesStore.open(file, scope)
+            val station = io.openwaters.slackwater.android.core.station.StationId("current:test")
+            coroutineScope { repeat(3) { launch { store.stepComfortCurrent(true, station) } } }
+            assertEquals(0.8, store.preferences.first().getOrThrow().effectiveThresholdKn(station), 0.0)
+            assertEquals(0.3, store.preferences.first().getOrThrow().stationDeltasKn.getValue(station), 0.0)
+            store.stepComfortCurrent(true)
+            assertEquals(0.9, store.preferences.first().getOrThrow().effectiveThresholdKn(station), 0.0)
+            store.setSlackWindowKnots(0.0)
+            store.stepComfortCurrent(false, station)
+            assertEquals(0.0, store.preferences.first().getOrThrow().effectiveThresholdKn(station), 0.0)
+            store.setSlackWindowKnots(1.0)
+            assertEquals(1.3, store.preferences.first().getOrThrow().effectiveThresholdKn(station), 0.0)
+            repeat(3) { store.stepComfortCurrent(false, station) }
+            assertFalse(station in store.preferences.first().getOrThrow().stationDeltasKn)
+        }
+    }
+
+    @Test fun planningReceivesInitialAndSettledThresholdOnly() = runBlocking {
+        val readings = MutableStateFlow(Result.success(ReadingPreferences()))
+        val observed = mutableListOf<ReadingSettings>()
+        val collector = launch { readings.settledThresholds().take(2).toList(observed) }
+        withTimeout(5_000) { while (observed.isEmpty()) yield() }
+        readings.value = Result.success(ReadingPreferences(slackWindowKnots = 0.6))
+        delay(50)
+        readings.value = Result.success(ReadingPreferences(slackWindowKnots = 0.7))
+        withTimeout(5_000) { collector.join() }
+        assertEquals(listOf(0.5, 0.7), observed.map { it.globalKnots })
+    }
+
+    @Test fun skyCanAlwaysReturnToItsDefaultAfterPremiumLapses() = withFile { file ->
+        withScope { scope ->
+            val store = ReadingPreferencesStore.open(file, scope)
+            assertFalse(store.changeSkyVisibility(false) { false })
+            assertTrue(store.preferences.first().getOrThrow().showSky)
+            try {
+                store.changeSkyVisibility(false) { throw IOException("entitlement unavailable") }
+                fail("Expected storage failure")
+            } catch (_: IOException) {
+                assertTrue(store.preferences.first().getOrThrow().showSky)
+            }
+            assertTrue(store.changeSkyVisibility(false) { true })
+            assertFalse(store.preferences.first().getOrThrow().showSky)
+            assertTrue(store.changeSkyVisibility(true) { error("Restoring sky needs no entitlement") })
+            assertTrue(store.preferences.first().getOrThrow().showSky)
+        }
+    }
+
     @Test fun readingEditsRequestWidgetRefreshAfterThePreferenceIsSaved() = withFile { file ->
         withScope { scope ->
-            var requests = 0
-            val store = ReadingPreferencesStore.open(file, scope, onReadingChanged = { requests++ })
+            val refreshDelays = mutableListOf<Long>()
+            val store = ReadingPreferencesStore.open(file, scope, onReadingChanged = { refreshDelays.add(it) })
             store.setSpeedUnit(SpeedUnit.METRES_PER_SECOND)
             store.setSlackWindowKnots(1.2)
             val settings = store.preferences.first().getOrThrow()
             assertEquals(SpeedUnit.METRES_PER_SECOND, settings.speedUnit)
             assertEquals(1.2, settings.slackWindowKnots, 0.0)
-            assertEquals(2, requests)
+            store.stepComfortCurrent(true)
+            assertEquals(listOf(0L, 0L, 400L), refreshDelays)
         }
     }
 

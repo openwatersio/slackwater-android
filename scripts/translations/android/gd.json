@@ -100,7 +100,6 @@
   "detail_derived_source": "Tha Slackwater a' tuairmseachadh uisge marbh aig %1$s bho làn mara is tràigh aig %2$s. Chan eil CHS a' foillseachadh ro-innse srutha airson a' chaolais seo.",
   "detail_map": "Seall air a' mhapa",
   "detail_invalid_link": "Cha b' urrainn dhuinn ceangal an stèisein seo fhosgladh.",
-  "detail_chart_settings": "Roghainnean na cairte",
   "panel_reference": "Air a thuairmseachadh bho làn is tràigh iomraidh",
   "panel_daylight": "%1$d h %2$d min de sholas an latha",
   "panel_lit": "%1$d%% air a shoillseachadh",
@@ -291,7 +290,7 @@
   "map_close": "Dùin an ro-shealladh",
   "map_empty": "Chan eil stèiseanan san sgìre seo",
   "map_fix_missing": "Chan eil an suidheachadh ri fhaighinn",
-  "map_units_legend": "Làn-mara ann an %1$s. Sruthan ann an %2$s. Chan ann airson seòladh. Roghainnean a’ chlàir.",
+  "map_units_legend": "Làn-mara ann an %1$s. Sruthan ann an %2$s. Chan ann airson seòladh. Roghainnean.",
   "map_zoom_out": "Sùm a-mach",
   "map_zoom_in": "Sùm a-steach",
   "chart_downloads": "Luchdaidhean a-nuas",
@@ -317,5 +316,11 @@
   "tide_download_failed": "Cha b’ urrainn dhuinn ro-shealladh an làin a luchdadh a-nuas",
   "tide_download_saved": "Chaidh ro-shealladh an làin a shàbhaladh airson cleachdadh far loidhne",
   "tide_download_edit_failed": "Cha deach an t-atharrachadh air na luchdaidhean a-nuas agad a shàbhaladh. Feuch ris a-rithist.",
-  "widget_snapshot_time": "Air ùrachadh %1$s"
+  "widget_snapshot_time": "Air ùrachadh %1$s",
+  "settings_station_comfort": "Crìoch an t-srutha aig an stèisean seo",
+  "settings_use_global": "Cleachd crìoch choitcheann an t-srutha",
+  "settings_decrease": "Lùghdaich crìoch an t-srutha",
+  "settings_increase": "Àrdaich crìoch an t-srutha",
+  "about_chs_predictions": "Tha cuid de ro-sheallaidhean làin is stèiseanan srutha ann an Canada a’ sealltainn ro-aithrisean oifigeil a chaidh a luchdadh a-nuas bho Sheirbheis Hydro-grafaigeach Chanada.",
+  "settings_save_error": "Cha b’ urrainn dhuinn an roghainn seo a shàbhaladh. Feuch ris a-rithist."
 }

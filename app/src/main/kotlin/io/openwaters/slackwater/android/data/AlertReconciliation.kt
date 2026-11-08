@@ -69,7 +69,11 @@ class AlertReconciliation private constructor(context: Context) {
 
     init {
         scope.launch {
-            val settings = preferences.preferences.map { it.getOrThrow() }.retryAlertReads()
+            // Alarm delivery checks the saved threshold immediately, so request a new plan on each change.
+            val settings = preferences.preferences.map {
+                val prefs = it.getOrThrow()
+                prefs.slackWindowKnots to prefs.stationDeltasKn
+            }.distinctUntilChanged().retryAlertReads()
             combine(rules.rules.retryAlertReads(), settings, models.revision, entitlement.changes.retryAlertReads()) { _, _, _, _ -> Unit }
                 .collect { passes.request() }
         }

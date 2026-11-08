@@ -282,4 +282,25 @@
     <string name="widget_nearest_current">"조류 관측소"</string>
     <string name="widget_location_hint">"가까운 장소를 찾으려면 Slackwater를 열고 위치 접근을 허용하세요."</string>
     <string name="widget_event_time">"%1$s · %2$s"</string>
+    <string name="about_title">"정보"</string>
+    <string name="settings_help">"도움말"</string>
+    <string name="about_summary">"라이선스, 감사의 글 및 개인정보 보호"</string>
+    <string name="about_predictions">"예측 정보"</string>
+    <string name="about_predictions_text">"Slackwater는 이 기기에서 조화 조석 및 조류 예측을 계산합니다. 관측값이 아니며 실제 상태는 날씨, 하천 유량, 지역적 영향에 따라 달라집니다."</string>
+    <string name="about_navigation">"항해용이 아닙니다."</string>
+    <string name="about_attribution">"데이터 및 출처"</string>
+    <string name="about_privacy">"개인정보 처리방침"</string>
+    <string name="about_license">"라이선스"</string>
+    <string name="about_license_text">"Slackwater는 오픈 소스입니다. 앱은 GPL-3.0, 예측 엔진은 MIT 라이선스입니다."</string>
+    <string name="about_source">"GitHub 소스 코드"</string>
+    <string name="about_version">"버전"</string>
+    <string name="settings_title">"설정"</string>
+    <string name="settings_set_format">"조류 방향 표시 형식"</string>
+    <string name="settings_compass">"방위"</string>
+    <string name="settings_degrees">"도 °T"</string>
+    <string name="settings_comfort_current">"편안한 조류 속도"</string>
+    <string name="settings_comfort_help">"Slackwater가 이용 가능한 정조 시간대로 취급할 최대 조류 속도를 설정합니다 (0.1–10 kn). 끔으로 설정하면 정조만 표시합니다."</string>
+    <string name="settings_premium">"Premium"</string>
+    <string name="settings_example">"예시"</string>
+    <string name="settings_example_window">"정조 시간대 예시"</string>
 </resources>

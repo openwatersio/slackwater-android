@@ -92,7 +92,6 @@
   "detail_derived_source": "Slackwater schat de kentering bij %1$s op basis van hoog- en laagwater bij %2$s. CHS publiceert geen stroomvoorspellingen voor deze doorgang.",
   "detail_map": "Op kaart bekijken",
   "detail_invalid_link": "Deze stationslink kon niet worden geopend.",
-  "detail_chart_settings": "Grafiekinstellingen",
   "panel_reference": "Geschat uit referentiegetijden",
   "panel_daylight": "%1$d h %2$d min daglicht",
   "panel_lit": "%1$d%% verlicht",
@@ -283,7 +282,7 @@
   "map_close": "Voorbeeld sluiten",
   "map_empty": "Geen stations in dit gebied",
   "map_fix_missing": "Locatie niet beschikbaar",
-  "map_units_legend": "Getijden in %1$s. Stromingen in %2$s. Niet voor navigatie. Grafiekinstellingen.",
+  "map_units_legend": "Getijden in %1$s. Stromingen in %2$s. Niet voor navigatie. Instellingen.",
   "map_zoom_out": "Uitzoomen",
   "map_zoom_in": "Inzoomen",
   "chart_downloads": "Downloads",
@@ -309,5 +308,11 @@
   "tide_download_failed": "Kan het getijdenoverzicht niet downloaden",
   "tide_download_saved": "Getijdenoverzicht opgeslagen voor offlinegebruik",
   "tide_download_edit_failed": "De wijziging in je downloads kon niet worden opgeslagen. Probeer het opnieuw.",
-  "widget_snapshot_time": "Bijgewerkt: %1$s"
+  "widget_snapshot_time": "Bijgewerkt: %1$s",
+  "settings_station_comfort": "Stroomlimiet voor dit station",
+  "settings_use_global": "Algemene stroomlimiet gebruiken",
+  "settings_decrease": "Stroomlimiet verlagen",
+  "settings_increase": "Stroomlimiet verhogen",
+  "about_chs_predictions": "Sommige Canadese getijdenvoorbeelden en stroomstations tonen officiële voorspellingen die zijn gedownload van de Canadese hydrografische dienst.",
+  "settings_save_error": "Deze instelling kon niet worden opgeslagen. Probeer het opnieuw."
 }

@@ -26,6 +26,11 @@ import kotlin.math.sign
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.debounce
+import kotlin.math.roundToInt
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -98,8 +103,22 @@ private fun Preferences.readPreferences() = ReadingPreferences(
     ),
 )
 
+private const val COMFORT_SETTLE_MS = 400L
+
+/** Persist each tap immediately. Rebuild planning outputs once the user stops stepping. */
+@OptIn(FlowPreview::class)
+internal fun Flow<Result<ReadingPreferences>>.settledThresholds(): Flow<ReadingSettings> = flow {
+    var first = true
+    emitAll(map {
+        val prefs = it.getOrThrow()
+        ReadingSettings(prefs.slackWindowKnots, prefs.stationDeltasKn)
+    }.distinctUntilChanged().debounce {
+        if (first) { first = false; 0L } else COMFORT_SETTLE_MS
+    })
+}
+
 /** How readings are shown: units, set format and the comfort current. Device-local, in the no-backup directory. */
-class ReadingPreferencesStore private constructor(private val data: DataStore<Preferences>, private val catalog: StationCatalog?, private val onReadingChanged: () -> Unit) {
+class ReadingPreferencesStore private constructor(private val data: DataStore<Preferences>, private val catalog: StationCatalog?, private val onReadingChanged: (Long) -> Unit) {
     /**
      * A failed read, such as a file the app cannot open, emits a failure and ends the flow; collect again to retry.
      * Readings can show `getOrDefault(ReadingPreferences())` meanwhile.
@@ -113,17 +132,49 @@ class ReadingPreferencesStore private constructor(private val data: DataStore<Pr
         .distinctUntilChanged()
 
     private suspend fun editReading(change: (MutablePreferences) -> Unit): Preferences =
-        data.edit { change(it) }.also { onReadingChanged() }
+        data.edit { change(it) }.also { onReadingChanged(0L) }
 
     /** Null restores inheritance from the global setting. Keys retain the complete station ID. */
     suspend fun setStationThresholdDeltaKn(id: StationId, delta: Double?) {
         require(delta == null || (delta.isFinite() && delta in -10.0..10.0))
         val canonical = catalog?.resolve(id)?.id ?: id
         val key = doublePreferencesKey(DELTA_PREFIX + canonical.value)
-        alertInputLock.withLock { editReading { if (delta == null) it.remove(key) else it[key] = delta } }
+        alertInputLock.withLock {
+            editReading { if (delta == null) it.remove(key) else it[key] = delta }
+        }
     }
 
-    suspend fun setShowSky(show: Boolean) { data.edit { it[skyKey] = show } }
+    /** Read inside the edit so repeated taps apply to the most recently committed value. */
+    suspend fun stepComfortCurrent(increase: Boolean, station: StationId? = null) {
+        val canonical = station?.let { catalog?.resolve(it)?.id ?: it }
+        alertInputLock.withLock {
+            var changed = false
+            data.edit { raw ->
+                val prefs = raw.readPreferences()
+                if (canonical != null && prefs.slackWindowOff) return@edit
+                val previous = canonical?.let(prefs::effectiveThresholdKn) ?: prefs.slackWindowKnots
+                val stepped = (previous + if (increase) 0.1 else -0.1).coerceIn(0.0, 10.0)
+                val next = ReadingPreferences.normalizedSlackWindowKnots(stepped)
+                if (next == previous) return@edit
+                changed = true
+                if (canonical == null) raw[slackWindowKey] = next else {
+                    val key = doublePreferencesKey(DELTA_PREFIX + canonical.value)
+                    if (next == prefs.slackWindowKnots) raw.remove(key) else raw[key] = ((next - prefs.slackWindowKnots) * 10).roundToInt() / 10.0
+                }
+            }
+            if (changed) onReadingChanged(COMFORT_SETTLE_MS)
+        }
+    }
+
+    /** Serialize the check and write with entitlement changes. Restoring the default needs no entitlement read. */
+    suspend fun changeSkyVisibility(show: Boolean, hasPremium: suspend () -> Boolean): Boolean =
+        alertInputLock.withLock {
+            if (!show && !hasPremium()) return@withLock false
+            setShowSky(show)
+            true
+        }
+
+    internal suspend fun setShowSky(show: Boolean) { data.edit { it[skyKey] = show } }
 
     suspend fun setHeightUnits(units: HeightUnits) = editReading { it[heightUnitsKey] = units.stored }
 
@@ -148,11 +199,11 @@ class ReadingPreferencesStore private constructor(private val data: DataStore<Pr
             return shared ?: open(
                 File(app.noBackupFilesDir, "reading_preferences.preferences_pb"),
                 CoroutineScope(SupervisorJob() + Dispatchers.IO),
-                BundledStationCatalog(app.assets), { WidgetRefreshWorker.refresh(app) },
+                BundledStationCatalog(app.assets), { WidgetRefreshWorker.refresh(app, it) },
             ).also { shared = it }
         }
 
-        internal fun open(file: File, scope: CoroutineScope, catalog: StationCatalog? = null, onReadingChanged: () -> Unit = {}) = ReadingPreferencesStore(
+        internal fun open(file: File, scope: CoroutineScope, catalog: StationCatalog? = null, onReadingChanged: (Long) -> Unit = {}) = ReadingPreferencesStore(
             PreferenceDataStoreFactory.create(
                 // Unreadable settings are cheap to choose again; replacing them keeps the settings writable.
                 corruptionHandler = ReplaceFileCorruptionHandler { emptyPreferences() },

@@ -106,7 +106,6 @@
     <string name="detail_derived_source">"Measann Slackwater uisce marbh ag %1$s ó lán mara agus lag trá ag %2$s. Ní fhoilsíonn CHS tuar srutha don chaolas seo."</string>
     <string name="detail_map">"Féach ar an léarscáil"</string>
     <string name="detail_invalid_link">"Níorbh fhéidir an nasc stáisiúin seo a oscailt."</string>
-    <string name="detail_chart_settings">"Socruithe cairte"</string>
     <string name="panel_reference">"Measta ó thaoidí tagartha"</string>
     <string name="panel_daylight">"%1$d h %2$d min de sholas an lae"</string>
     <string name="panel_lit">"%1$d%% soilsithe"</string>
@@ -297,7 +296,7 @@
     <string name="map_close">"Dún an réamhamharc"</string>
     <string name="map_empty">"Níl aon stáisiún sa cheantar seo"</string>
     <string name="map_fix_missing">"Suíomh gan fáil"</string>
-    <string name="map_units_legend">"Taoidí in %1$s. Sruthanna in %2$s. Ní le haghaidh loingseoireachta. Socruithe cairte."</string>
+    <string name="map_units_legend">"Taoidí in %1$s. Sruthanna in %2$s. Ní le haghaidh loingseoireachta. Socruithe."</string>
     <string name="map_zoom_out">"Zúmáil amach"</string>
     <string name="map_zoom_in">"Zúmáil isteach"</string>
     <string name="chart_downloads">"Íoslódálacha"</string>
@@ -324,4 +323,10 @@
     <string name="tide_download_saved">"Sábháladh an réamhamharc taoide lena úsáid as líne"</string>
     <string name="tide_download_edit_failed">"Níorbh fhéidir an t-athrú ar d’íoslódálacha a shábháil. Bain triail eile as."</string>
     <string name="widget_snapshot_time">"Nuashonraithe %1$s"</string>
+    <string name="settings_station_comfort">"Teorainn srutha ag an stáisiún seo"</string>
+    <string name="settings_use_global">"Úsáid an teorainn ghinearálta srutha"</string>
+    <string name="settings_decrease">"Laghdaigh an teorainn srutha"</string>
+    <string name="settings_increase">"Méadaigh an teorainn srutha"</string>
+    <string name="about_chs_predictions">"Taispeántar réamhaisnéisí oifigiúla a íoslódáladh ó Sheirbhís Hidreagrafach Cheanada i roinnt réamhamharcanna taoide agus ag roinnt stáisiún srutha i gCeanada."</string>
+    <string name="settings_save_error">"Níorbh fhéidir an socrú seo a shábháil. Bain triail eile as."</string>
 </resources>

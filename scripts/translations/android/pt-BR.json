@@ -96,7 +96,6 @@
   "detail_derived_source": "O Slackwater estima o estofo em %1$s com base na preamar e na baixa-mar em %2$s. O CHS não publica previsões de corrente para esta passagem.",
   "detail_map": "Ver no mapa",
   "detail_invalid_link": "Não foi possível abrir este link de estação.",
-  "detail_chart_settings": "Configurações do gráfico",
   "panel_reference": "Estimado pelas marés de referência",
   "panel_daylight": "%1$d h %2$d min de luz do dia",
   "panel_lit": "%1$d%% iluminada",
@@ -287,7 +286,7 @@
   "map_close": "Fechar prévia",
   "map_empty": "Nenhuma estação nesta área",
   "map_fix_missing": "Localização indisponível",
-  "map_units_legend": "Marés em %1$s. Correntes em %2$s. Não usar para navegação. Configurações do gráfico.",
+  "map_units_legend": "Marés em %1$s. Correntes em %2$s. Não usar para navegação. Ajustes.",
   "map_zoom_out": "Diminuir zoom",
   "map_zoom_in": "Aumentar zoom",
   "chart_downloads": "Downloads",
@@ -313,5 +312,11 @@
   "tide_download_failed": "Não foi possível baixar a prévia das marés",
   "tide_download_saved": "Prévia das marés salva para uso offline",
   "tide_download_edit_failed": "Não foi possível salvar a alteração nos seus downloads. Tente novamente.",
-  "widget_snapshot_time": "Atualizado em %1$s"
+  "widget_snapshot_time": "Atualizado em %1$s",
+  "settings_station_comfort": "Limite de corrente nesta estação",
+  "settings_use_global": "Usar o limite geral de corrente",
+  "settings_decrease": "Diminuir o limite de corrente",
+  "settings_increase": "Aumentar o limite de corrente",
+  "about_chs_predictions": "Algumas prévias de marés e estações de correntes no Canadá mostram previsões oficiais baixadas do Serviço Hidrográfico Canadense.",
+  "settings_save_error": "Não foi possível salvar esta configuração. Tente novamente."
 }

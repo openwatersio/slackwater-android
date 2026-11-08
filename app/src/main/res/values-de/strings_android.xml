@@ -94,7 +94,6 @@
     <string name="detail_derived_source">"Slackwater schätzt die Kenterzeit bei %1$s anhand von Hoch- und Niedrigwasser bei %2$s. CHS veröffentlicht keine Strömungsvorhersagen für diese Durchfahrt."</string>
     <string name="detail_map">"Auf Karte anzeigen"</string>
     <string name="detail_invalid_link">"Dieser Stationslink konnte nicht geöffnet werden."</string>
-    <string name="detail_chart_settings">"Diagrammeinstellungen"</string>
     <string name="panel_reference">"Aus Referenzgezeiten geschätzt"</string>
     <string name="panel_daylight">"%1$d h %2$d min Tageslicht"</string>
     <string name="panel_lit">"%1$d%% beleuchtet"</string>
@@ -285,7 +284,7 @@
     <string name="map_close">"Vorschau schließen"</string>
     <string name="map_empty">"Keine Stationen in diesem Gebiet"</string>
     <string name="map_fix_missing">"Standort nicht verfügbar"</string>
-    <string name="map_units_legend">"Gezeiten in %1$s. Strömungen in %2$s. Nicht zur Navigation. Diagrammeinstellungen."</string>
+    <string name="map_units_legend">"Gezeiten in %1$s. Strömungen in %2$s. Nicht zur Navigation. Einstellungen."</string>
     <string name="map_zoom_out">"Verkleinern"</string>
     <string name="map_zoom_in">"Vergrößern"</string>
     <string name="chart_downloads">"Downloads"</string>
@@ -312,4 +311,10 @@
     <string name="tide_download_saved">"Gezeitenvorschau für die Offline-Nutzung gespeichert"</string>
     <string name="tide_download_edit_failed">"Die Änderung an deinen Downloads konnte nicht gespeichert werden. Versuche es erneut."</string>
     <string name="widget_snapshot_time">"Stand: %1$s"</string>
+    <string name="settings_station_comfort">"Strömungsgrenze an dieser Station"</string>
+    <string name="settings_use_global">"Globale Strömungsgrenze verwenden"</string>
+    <string name="settings_decrease">"Strömungsgrenze senken"</string>
+    <string name="settings_increase">"Strömungsgrenze erhöhen"</string>
+    <string name="about_chs_predictions">"Einige kanadische Gezeitenvorschauen und Strömungsstationen zeigen offizielle Vorhersagen des Canadian Hydrographic Service, die auf das Gerät geladen wurden."</string>
+    <string name="settings_save_error">"Die Einstellung konnte nicht gespeichert werden. Versuche es erneut."</string>
 </resources>

@@ -92,7 +92,6 @@
   "detail_derived_source": "Slackwater schätzt die Kenterzeit bei %1$s anhand von Hoch- und Niedrigwasser bei %2$s. CHS veröffentlicht keine Strömungsvorhersagen für diese Durchfahrt.",
   "detail_map": "Auf Karte anzeigen",
   "detail_invalid_link": "Dieser Stationslink konnte nicht geöffnet werden.",
-  "detail_chart_settings": "Diagrammeinstellungen",
   "panel_reference": "Aus Referenzgezeiten geschätzt",
   "panel_daylight": "%1$d h %2$d min Tageslicht",
   "panel_lit": "%1$d%% beleuchtet",
@@ -283,7 +282,7 @@
   "map_close": "Vorschau schließen",
   "map_empty": "Keine Stationen in diesem Gebiet",
   "map_fix_missing": "Standort nicht verfügbar",
-  "map_units_legend": "Gezeiten in %1$s. Strömungen in %2$s. Nicht zur Navigation. Diagrammeinstellungen.",
+  "map_units_legend": "Gezeiten in %1$s. Strömungen in %2$s. Nicht zur Navigation. Einstellungen.",
   "map_zoom_out": "Verkleinern",
   "map_zoom_in": "Vergrößern",
   "chart_downloads": "Downloads",
@@ -309,5 +308,11 @@
   "tide_download_failed": "Gezeitenvorschau konnte nicht heruntergeladen werden",
   "tide_download_saved": "Gezeitenvorschau für die Offline-Nutzung gespeichert",
   "tide_download_edit_failed": "Die Änderung an deinen Downloads konnte nicht gespeichert werden. Versuche es erneut.",
-  "widget_snapshot_time": "Stand: %1$s"
+  "widget_snapshot_time": "Stand: %1$s",
+  "settings_station_comfort": "Strömungsgrenze an dieser Station",
+  "settings_use_global": "Globale Strömungsgrenze verwenden",
+  "settings_decrease": "Strömungsgrenze senken",
+  "settings_increase": "Strömungsgrenze erhöhen",
+  "about_chs_predictions": "Einige kanadische Gezeitenvorschauen und Strömungsstationen zeigen offizielle Vorhersagen des Canadian Hydrographic Service, die auf das Gerät geladen wurden.",
+  "settings_save_error": "Die Einstellung konnte nicht gespeichert werden. Versuche es erneut."
 }

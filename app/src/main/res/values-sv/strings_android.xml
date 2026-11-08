@@ -94,7 +94,6 @@
     <string name="detail_derived_source">"Slackwater uppskattar strömkantring vid %1$s från hög- och lågvatten vid %2$s. CHS publicerar inga strömprognoser för det här sundet."</string>
     <string name="detail_map">"Visa på karta"</string>
     <string name="detail_invalid_link">"Den här stationslänken kunde inte öppnas."</string>
-    <string name="detail_chart_settings">"Diagraminställningar"</string>
     <string name="panel_reference">"Uppskattat från referenstidvatten"</string>
     <string name="panel_daylight">"%1$d h %2$d min dagsljus"</string>
     <string name="panel_lit">"%1$d%% belyst"</string>
@@ -285,7 +284,7 @@
     <string name="map_close">"Stäng förhandsvisning"</string>
     <string name="map_empty">"Inga stationer i detta område"</string>
     <string name="map_fix_missing">"Plats saknas"</string>
-    <string name="map_units_legend">"Tidvatten i %1$s. Strömmar i %2$s. Inte för navigering. Diagraminställningar."</string>
+    <string name="map_units_legend">"Tidvatten i %1$s. Strömmar i %2$s. Inte för navigering. Inställningar."</string>
     <string name="map_zoom_out">"Zooma ut"</string>
     <string name="map_zoom_in">"Zooma in"</string>
     <string name="chart_downloads">"Hämtningar"</string>
@@ -312,4 +311,10 @@
     <string name="tide_download_saved">"Tidvattenöversikten har sparats för användning offline"</string>
     <string name="tide_download_edit_failed">"Det gick inte att spara ändringen av hämtningarna. Försök igen."</string>
     <string name="widget_snapshot_time">"Uppdaterad %1$s"</string>
+    <string name="settings_station_comfort">"Strömgräns vid den här stationen"</string>
+    <string name="settings_use_global">"Använd den gemensamma strömgränsen"</string>
+    <string name="settings_decrease">"Sänk strömgränsen"</string>
+    <string name="settings_increase">"Höj strömgränsen"</string>
+    <string name="about_chs_predictions">"Vissa kanadensiska tidvattenvyer och strömstationer visar officiella prognoser som hämtats från Canadian Hydrographic Service."</string>
+    <string name="settings_save_error">"Det gick inte att spara inställningen. Försök igen."</string>
 </resources>

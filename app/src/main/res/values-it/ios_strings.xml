@@ -282,4 +282,25 @@
     <string name="widget_nearest_current">"Stazione di corrente"</string>
     <string name="widget_location_hint">"Apri Slackwater e consenti l’accesso alla posizione per trovare un luogo vicino."</string>
     <string name="widget_event_time">"%1$s · %2$s"</string>
+    <string name="about_title">"Informazioni"</string>
+    <string name="settings_help">"Aiuto"</string>
+    <string name="about_summary">"Licenze, riconoscimenti e privacy"</string>
+    <string name="about_predictions">"Informazioni sulle previsioni"</string>
+    <string name="about_predictions_text">"Slackwater calcola previsioni armoniche di maree e correnti su questo dispositivo. Non sono osservazioni; le condizioni reali variano con il tempo, la portata dei fiumi e gli effetti locali."</string>
+    <string name="about_navigation">"Non destinato alla navigazione."</string>
+    <string name="about_attribution">"Dati e attribuzioni"</string>
+    <string name="about_privacy">"Informativa sulla privacy"</string>
+    <string name="about_license">"Licenza"</string>
+    <string name="about_license_text">"Slackwater è open source: questa app con licenza GPL-3.0, il motore di previsione con MIT."</string>
+    <string name="about_source">"Codice su GitHub"</string>
+    <string name="about_version">"Versione"</string>
+    <string name="settings_title">"Impostazioni"</string>
+    <string name="settings_set_format">"Formato della direzione della corrente"</string>
+    <string name="settings_compass">"Bussola"</string>
+    <string name="settings_degrees">"Gradi °V"</string>
+    <string name="settings_comfort_current">"Corrente tollerata"</string>
+    <string name="settings_comfort_help">"Imposta la corrente massima che Slackwater considera una finestra di stanca utilizzabile (0,1–10 kn). Disattivato mostra solo la stanca."</string>
+    <string name="settings_premium">"Premium"</string>
+    <string name="settings_example">"Esempio"</string>
+    <string name="settings_example_window">"Esempio di finestra di stanca"</string>
 </resources>

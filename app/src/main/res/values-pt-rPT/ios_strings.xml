@@ -282,4 +282,25 @@
     <string name="widget_nearest_current">"Estação de correntes"</string>
     <string name="widget_location_hint">"Abra o Slackwater e permita o acesso à localização para encontrar um local próximo."</string>
     <string name="widget_event_time">"%1$s · %2$s"</string>
+    <string name="about_title">"Sobre"</string>
+    <string name="settings_help">"Ajuda"</string>
+    <string name="about_summary">"Licenças, agradecimentos e privacidade"</string>
+    <string name="about_predictions">"Sobre estas previsões"</string>
+    <string name="about_predictions_text">"O Slackwater calcula previsões harmónicas de marés e correntes neste dispositivo. Não são observações; as condições reais variam com o tempo, o caudal dos rios e os efeitos locais."</string>
+    <string name="about_navigation">"Não usar para navegação."</string>
+    <string name="about_attribution">"Dados e atribuição"</string>
+    <string name="about_privacy">"Política de Privacidade"</string>
+    <string name="about_license">"Licença"</string>
+    <string name="about_license_text">"O Slackwater é de código aberto: esta aplicação sob GPL-3.0, o motor de previsão sob MIT."</string>
+    <string name="about_source">"Código-fonte no GitHub"</string>
+    <string name="about_version">"Versão"</string>
+    <string name="settings_title">"Definições"</string>
+    <string name="settings_set_format">"Formato da direção da corrente"</string>
+    <string name="settings_compass">"Bússola"</string>
+    <string name="settings_degrees">"Graus °V"</string>
+    <string name="settings_comfort_current">"Corrente tolerável"</string>
+    <string name="settings_comfort_help">"Define a corrente máxima que o Slackwater considera um período de estofo utilizável (0,1–10 kn). Desativado mostra apenas o estofo."</string>
+    <string name="settings_premium">"Premium"</string>
+    <string name="settings_example">"Exemplo"</string>
+    <string name="settings_example_window">"Exemplo de período de estofo"</string>
 </resources>

@@ -282,4 +282,25 @@
     <string name="widget_nearest_current">"Stroomstation"</string>
     <string name="widget_location_hint">"Open Slackwater en geef toegang tot je locatie om een plek in de buurt te vinden."</string>
     <string name="widget_event_time">"%1$s · %2$s"</string>
+    <string name="about_title">"Info"</string>
+    <string name="settings_help">"Help"</string>
+    <string name="about_summary">"Licenties, dankbetuigingen en privacy"</string>
+    <string name="about_predictions">"Over deze voorspellingen"</string>
+    <string name="about_predictions_text">"Slackwater berekent harmonische getij- en stroomvoorspellingen op dit apparaat. Het zijn geen waarnemingen; de werkelijke omstandigheden variëren door het weer, rivierafvoer en lokale invloeden."</string>
+    <string name="about_navigation">"Niet geschikt voor navigatie."</string>
+    <string name="about_attribution">"Gegevens en bronvermelding"</string>
+    <string name="about_privacy">"Privacybeleid"</string>
+    <string name="about_license">"Licentie"</string>
+    <string name="about_license_text">"Slackwater is opensource: deze app onder GPL-3.0, de voorspellingsengine onder MIT."</string>
+    <string name="about_source">"Broncode op GitHub"</string>
+    <string name="about_version">"Versie"</string>
+    <string name="settings_title">"Instellingen"</string>
+    <string name="settings_set_format">"Notatie van stroomrichting"</string>
+    <string name="settings_compass">"Kompas"</string>
+    <string name="settings_degrees">"Graden °T"</string>
+    <string name="settings_comfort_current">"Comfortabele stroming"</string>
+    <string name="settings_comfort_help">"Stelt de hoogste stroomsnelheid in die Slackwater als bruikbaar kenteringsvenster beschouwt (0.1–10 kn). Uit toont alleen de kentering."</string>
+    <string name="settings_premium">"Premium"</string>
+    <string name="settings_example">"Voorbeeld"</string>
+    <string name="settings_example_window">"Voorbeeld van een kenteringsvenster"</string>
 </resources>

@@ -18,13 +18,12 @@ import kotlinx.coroutines.launch
 import io.openwaters.slackwater.android.detail.DetailRecords
 import io.openwaters.slackwater.android.core.station.StationId
 import android.os.Bundle
+import io.openwaters.slackwater.android.map.DataCreditsDialog
 import androidx.activity.enableEdgeToEdge
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -32,7 +31,6 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import io.openwaters.slackwater.android.data.ReadingPreferences
 import io.openwaters.slackwater.android.data.ReadingPreferencesStore
 import io.openwaters.slackwater.android.data.TidePreviewDownloads
@@ -159,25 +157,7 @@ class MainActivity : ComponentActivity() {
                     AlertDialog(onDismissRequest = { badLink = false }, text = { Text(stringResource(R.string.detail_invalid_link)) },
                         confirmButton = { TextButton(onClick = { badLink = false }) { Text(stringResource(R.string.close)) } })
                 }
-                if (showCredits) {
-                    val notices = remember {
-                        resources.openRawResource(R.raw.third_party_notices).bufferedReader().use {
-                            it.readText().trim().split(Regex("\\n{2,}"))
-                        }
-                    }
-                    AlertDialog(
-                        onDismissRequest = { showCredits = false },
-                        title = { Text(stringResource(R.string.data_credits)) },
-                        text = {
-                            LazyColumn(Modifier.heightIn(max = 400.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                                items(notices) { paragraph -> Text(paragraph) }
-                            }
-                        },
-                        confirmButton = {
-                            TextButton(onClick = { showCredits = false }) { Text(stringResource(R.string.close)) }
-                        },
-                    )
-                }
+                if (showCredits) DataCreditsDialog { showCredits = false }
                 var chartSettings by androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf(false) }
                 var focusMap by remember { mutableStateOf<io.openwaters.slackwater.android.core.station.StationIdentity?>(null) }
                 if (chartSettings) io.openwaters.slackwater.android.map.MapSettings { chartSettings = false }
@@ -188,7 +168,7 @@ class MainActivity : ComponentActivity() {
                             consumeFocus = { focusMap = null }, onSettings = { chartSettings = true },
                             linkPending = linkPending, linkOpened = linkOpened) {
                             TextButton(onClick = { showDownloads = true }) { Text(stringResource(R.string.chart_downloads)) }
-                            TextButton(onClick = { chartSettings = true }) { Text(stringResource(R.string.detail_chart_settings)) }
+                            TextButton(onClick = { chartSettings = true }) { Text(stringResource(R.string.settings_title)) }
                             var showQueries by remember { mutableStateOf(false) }
                             Box {
                                 OutlinedButton(onClick = { showQueries = true }) { Text(stringResource(R.string.prediction_shortcuts)) }

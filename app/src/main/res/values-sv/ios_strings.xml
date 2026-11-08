@@ -282,4 +282,25 @@
     <string name="widget_nearest_current">"Strömstation"</string>
     <string name="widget_location_hint">"Öppna Slackwater och tillåt platsåtkomst för att hitta en plats i närheten."</string>
     <string name="widget_event_time">"%1$s · %2$s"</string>
+    <string name="about_title">"Om"</string>
+    <string name="settings_help">"Hjälp"</string>
+    <string name="about_summary">"Licenser, erkännanden och integritet"</string>
+    <string name="about_predictions">"Om dessa prognoser"</string>
+    <string name="about_predictions_text">"Slackwater beräknar harmoniska tidvatten- och strömprognoser på den här enheten. De är inte observationer; verkliga förhållanden varierar med väder, flodflöden och lokala effekter."</string>
+    <string name="about_navigation">"Inte för navigation."</string>
+    <string name="about_attribution">"Data och källor"</string>
+    <string name="about_privacy">"Integritetspolicy"</string>
+    <string name="about_license">"Licens"</string>
+    <string name="about_license_text">"Slackwater har öppen källkod: appen under GPL-3.0, prognosmotorn under MIT."</string>
+    <string name="about_source">"Källkod på GitHub"</string>
+    <string name="about_version">"Version"</string>
+    <string name="settings_title">"Inställningar"</string>
+    <string name="settings_set_format">"Format för strömriktning"</string>
+    <string name="settings_compass">"Kompass"</string>
+    <string name="settings_degrees">"Grader °T"</string>
+    <string name="settings_comfort_current">"Bekväm strömhastighet"</string>
+    <string name="settings_comfort_help">"Ställer in den högsta strömhastighet Slackwater räknar som en användbar strömstilla period (0,1–10 kn). Av visar bara strömstilla."</string>
+    <string name="settings_premium">"Premium"</string>
+    <string name="settings_example">"Exempel"</string>
+    <string name="settings_example_window">"Exempel på strömstilla period"</string>
 </resources>

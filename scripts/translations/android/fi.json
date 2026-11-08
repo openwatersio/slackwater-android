@@ -92,7 +92,6 @@
   "detail_derived_source": "Slackwater arvioi virrankäännön paikassa %1$s paikan %2$s ylä- ja alaveden perusteella. CHS ei julkaise virtausennusteita tälle salmelle.",
   "detail_map": "Näytä kartalla",
   "detail_invalid_link": "Tätä asemalinkkiä ei voitu avata.",
-  "detail_chart_settings": "Kaavion asetukset",
   "panel_reference": "Arvioitu vertailuaseman vuorovedestä",
   "panel_daylight": "%1$d h %2$d min päivänvaloa",
   "panel_lit": "%1$d%% valaistu",
@@ -283,7 +282,7 @@
   "map_close": "Sulje esikatselu",
   "map_empty": "Ei asemia tällä alueella",
   "map_fix_missing": "Sijainti ei ole käytettävissä",
-  "map_units_legend": "Vuorovedet: %1$s. Virtaukset: %2$s. Ei navigointiin. Kaavioasetukset.",
+  "map_units_legend": "Vuorovedet: %1$s. Virtaukset: %2$s. Ei navigointiin. Asetukset.",
   "map_zoom_out": "Loitonna",
   "map_zoom_in": "Lähennä",
   "chart_downloads": "Lataukset",
@@ -309,5 +308,11 @@
   "tide_download_failed": "Vuorovesiennusteen esikatselua ei voitu ladata",
   "tide_download_saved": "Vuorovesiennusteen esikatselu tallennettu offline-käyttöön",
   "tide_download_edit_failed": "Latausten muutosta ei voitu tallentaa. Yritä uudelleen.",
-  "widget_snapshot_time": "Päivitetty %1$s"
+  "widget_snapshot_time": "Päivitetty %1$s",
+  "settings_station_comfort": "Tämän aseman virtaraja",
+  "settings_use_global": "Käytä yleistä virtarajaa",
+  "settings_decrease": "Pienennä virtarajaa",
+  "settings_increase": "Suurenna virtarajaa",
+  "about_chs_predictions": "Joissakin Kanadan vuorovesien esikatseluissa ja virta-asemilla näytetään Kanadan hydrografiselta laitokselta ladattuja virallisia ennusteita.",
+  "settings_save_error": "Asetusta ei voitu tallentaa. Yritä uudelleen."
 }
