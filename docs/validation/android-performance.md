@@ -75,6 +75,18 @@ On November 7, 2026 (Pacific), all four journeys completed five iterations on th
 | coldTideDetail | 2,297.3 | 3,173.6 |
 | warmTideDetail | 1,946.0 | 3,201.4 |
 
+## Multi-day chart scrubbing
+
+Run `io.openwaters.slackwater.benchmark.ScrubBenchmark` with the instrumentation command above on a compact portrait phone in US English with tide heights in feet. Each iteration starts a new target process and opens the bundled Friday Harbor tide chart at 08:00 Pacific on November 6, 2025. After the reading appears, six horizontal swipes move forward and six move back. The benchmark checks that the selected day advances past November 6 and then moves to an earlier day.
+
+The interval includes gesture injection and two settlement checks. After each group of swipes, the full spoken reading must match across two observations 750 ms apart. This run records a Friday Harbor visit; restore the list benchmark’s starting state before running it again. The built-in frame and memory statistics summarize the iteration trace, which extends beyond the named gesture interval. The raw Macrobenchmark memory maxima cover the iteration trace. For memory within the gesture itself, restrict the target process’s Perfetto counters to the named scrub interval. Use the per-iteration Perfetto traces to relate frame stalls to memory changes during scrubbing.
+
+On November 7, 2026 (Pacific), all five iterations passed on the API 37 arm64 phone emulator. The benchmark target was built from `bb1aa20f8db9d4e36f1b5cab246cbf3fa4fdb42f` with APK SHA-256 `0cf7de9d3ee267c81bbf849d13d998b4e3cfef4bb75448290a03c4bc6766a4d2`. The instrumentation APK SHA-256 was `6a2e02c72e8913cde35e0babb0d54db09c6d693c837b5c399dffc9327b1863db`. The median scripted interval took 47.1 seconds, including input injection, observation and settling. The median of the whole-iteration anonymous RSS maxima was 147.25 MiB. The iteration-wide frame-overrun P95 was 111.8 ms. [Raw benchmark results](evidence/scrub-benchmark-api37.json)
+
+Across the five named scrub intervals the anonymous RSS maxima were 105.5, 105.5, 114.0, 147.3 and 103.7 MiB (median 105.5 MiB). To reproduce this comparison, match the target layer’s actual and expected frames by process and surface-frame token within the `scrubAcrossDays` slice. Rank them by actual end time minus expected end time and read the target process’s most recent `mem.rss.anon` sample at the start of that frame. The elapsed gesture interval is a workload description and includes UI Automator overhead. Use the frame and memory data for performance comparisons.
+
+In iteration 3, the target layer’s largest deadline miss was 128.47 ms, 18.925 seconds into the scrub. The most recent anonymous RSS sample at the start of that frame was 102 MiB. Anonymous RSS peaked at 114 MiB during the scrub and ended at 92 MiB. These values describe one emulator trace. Physical-device traces are still needed before setting a budget.
+
 ## Open measurements for issue #27
 
 | Required journey | Evidence needed |
@@ -83,6 +95,6 @@ On November 7, 2026 (Pacific), all four journeys completed five iterations on th
 | Complete station detail by capability | The bundled tide and measured current have cold and warm harnesses. Other capabilities and physical-device baselines remain open. |
 | Interactive map with and without offline packs | Measure first responsive station selection with recorded network and pack state. |
 | Focused station search, first and repeat queries | The focus, first-query and repeat-query harnesses are implemented. Collect physical-device baselines. |
-| Memory and frames during long chart scrubs | Exercise sustained gesture input on the production scrubber, capture memory over time and correlate frame stalls in the trace. |
+| Memory and frames during long chart scrubs | The bundled tide benchmark produces traces; the scrub-only frame and memory comparison uses Perfetto post-processing. Physical-device traces and regression budgets remain open. |
 
 The list and search benchmarks supply repeatable boundaries for physical measurements. The map computation benchmark has separate [camera-specific evidence](map-performance.md). Physical-device timings and regression budgets remain pending.
