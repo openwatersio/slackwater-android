@@ -171,17 +171,15 @@ class MainActivity : ComponentActivity() {
                         confirmButton = { TextButton(onClick = { badLink = false }) { Text(stringResource(R.string.close)) } })
                 }
                 if (showCredits) DataCreditsDialog { showCredits = false }
-                var chartSettings by rememberStationDialog(false)
                 var focusMap by remember { mutableStateOf<io.openwaters.slackwater.android.core.station.StationIdentity?>(null) }
-                if (chartSettings) io.openwaters.slackwater.android.map.MapSettings { chartSettings = false }
                 Surface(Modifier.fillMaxSize()) {
                     // The list stays composed under an alert's destination, so its scroll, search and page survive.
                     Box(if (destination == null) Modifier.fillMaxSize() else Modifier.fillMaxSize().clearAndSetSemantics {}) {
                         StationsHome(onCredits = { showCredits = true }, coveredByAlert = destination != null, externalMapFocus = focusMap,
-                            consumeFocus = { focusMap = null }, onSettings = { chartSettings = true },
-                            linkPending = linkPending, linkOpened = linkOpened) {
+                            consumeFocus = { focusMap = null },
+                            linkPending = linkPending, linkOpened = linkOpened) { openSettings ->
                             TextButton(onClick = { showDownloads = true }) { Text(stringResource(R.string.chart_downloads)) }
-                            TextButton(onClick = { chartSettings = true }) { Text(stringResource(R.string.settings_title)) }
+                            TextButton(onClick = openSettings) { Text(stringResource(R.string.settings_title)) }
                             var showQueries by key(dialogSession) { remember { mutableStateOf(false) } }
                             Box {
                                 OutlinedButton(onClick = { showQueries = true }) { Text(stringResource(R.string.prediction_shortcuts)) }

@@ -261,6 +261,8 @@
     <string name="gate_offline_available">"オフラインで利用可能"</string>
     <string name="gate_offline_expectation">"Slackwaterは約1か月分をこのデバイスに保存し、オンラインのときに自動で更新します。"</string>
     <string name="gate_update">"今すぐ更新"</string>
+    <string name="tour_replay_title">"観測所の見方"</string>
+    <string name="tour_replay_subtitle">"使い方をもう一度見る"</string>
     <string name="tour_read_title">"タイムラインの見方"</string>
     <string name="tour_read">"中央の線は、下に表示されている時刻を示します。"</string>
     <string name="tour_swipe_title">"スワイプしてもっと見る"</string>

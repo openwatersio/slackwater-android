@@ -261,6 +261,8 @@
     <string name="gate_offline_available">"Disponible sin conexión"</string>
     <string name="gate_offline_expectation">"Slackwater guarda aproximadamente un mes en este dispositivo y lo actualiza siempre que tienes conexión."</string>
     <string name="gate_update">"Actualizar ahora"</string>
+    <string name="tour_replay_title">"Cómo interpretar un lugar"</string>
+    <string name="tour_replay_subtitle">"Volver a mostrar la visita guiada"</string>
     <string name="tour_read_title">"Cómo leer la franja"</string>
     <string name="tour_read">"La línea central marca el momento que se muestra debajo."</string>
     <string name="tour_swipe_title">"Desliza para ver más"</string>

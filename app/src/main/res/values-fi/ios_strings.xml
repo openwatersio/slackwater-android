@@ -261,6 +261,8 @@
     <string name="gate_offline_available">"Käytettävissä ilman verkkoyhteyttä"</string>
     <string name="gate_offline_expectation">"Slackwater säilyttää noin kuukauden ennusteet tällä laitteella ja päivittää ne aina, kun olet verkossa."</string>
     <string name="gate_update">"Päivitä nyt"</string>
+    <string name="tour_replay_title">"Aseman tietojen lukeminen"</string>
+    <string name="tour_replay_subtitle">"Näytä esittely uudelleen"</string>
     <string name="tour_read_title">"Aikajanan lukeminen"</string>
     <string name="tour_read">"Keskiviiva osoittaa alla näkyvän hetken."</string>
     <string name="tour_swipe_title">"Näytä lisää pyyhkäisemällä"</string>

@@ -261,6 +261,8 @@
     <string name="gate_offline_available">"Ri fhaighinn far loidhne"</string>
     <string name="gate_offline_expectation">"Cumaidh Slackwater mu mhìos air an uidheam seo agus ath-nuadhaichidh e e uair sam bith a bhios tu air loidhne."</string>
     <string name="gate_update">"Ùraich an-dràsta"</string>
+    <string name="tour_replay_title">"Mar a leughas tu stèisean"</string>
+    <string name="tour_replay_subtitle">"Seall an turas-iùil a-rithist"</string>
     <string name="tour_read_title">"A’ leughadh na stiall"</string>
     <string name="tour_read">"Tha an loidhne mheadhain a’ comharrachadh na h-ùine a chithear gu h-ìosal."</string>
     <string name="tour_swipe_title">"Slaod airson barrachd fhaicinn"</string>

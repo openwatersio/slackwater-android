@@ -1488,6 +1488,16 @@
       "key": "Update now"
     },
     {
+      "name": "tour_replay_title",
+      "key": "How to read a station",
+      "english": "How to read a station"
+    },
+    {
+      "name": "tour_replay_subtitle",
+      "key": "Show the tour again",
+      "english": "Show the tour again"
+    },
+    {
       "name": "tour_read_title",
       "key": "Reading the strip",
       "english": "Reading the strip"

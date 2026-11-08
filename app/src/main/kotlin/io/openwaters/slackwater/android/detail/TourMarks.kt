@@ -70,6 +70,7 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import androidx.core.content.getSystemService
 import io.openwaters.slackwater.android.R
+import io.openwaters.slackwater.android.data.ReadingPreferencesStore
 import io.openwaters.slackwater.android.core.station.StationId
 import io.openwaters.slackwater.android.core.timeline.TimelineMotion
 import io.openwaters.slackwater.android.core.tour.TourCoach
@@ -151,12 +152,15 @@ internal fun DetailTour(
         }
     }
     val talkBack = rememberTouchExploration()
+    val preferences = ReadingPreferencesStore.get(LocalContext.current)
     if (timeline != null) LaunchedEffect(timeline, tour.armed, tour.reservedFor) {
         if (!tour.armed) return@LaunchedEffect
         val state = timeline.state
         val coverage = state.coverage.start..state.coverage.end
         // The sky steps point at bodies the strip draws only with Sun, moon and stars on.
-        val sky = showSky && !talkBack
+        // Replay commits the sky preference before opening this page. Read it before claiming the tour,
+        // including when the detail observer still has its previous value.
+        val sky = !talkBack && (preferences.preferences.first().getOrNull()?.showSky ?: showSky)
         coach.begin(id,
             starsAvailable = sky && tourStarsTime(timeline.days, state.now, coverage) != null,
             moonAvailable = sky && tourMoonTime(timeline.days, state.now, coverage) != null)
