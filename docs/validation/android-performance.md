@@ -1,6 +1,6 @@
 # Android performance evidence
 
-The benchmark installs a separate target app, `io.openwaters.slackwater.android.benchmark`, signed with the debug key. Its build enables R8 optimization and shell profiling, disables debugging, and uses full ART compilation. The current release build ships without R8 minification, so its timing can differ. The station benchmarks exercise the production browsing screen, focused search, and named prediction shortcuts.
+The benchmark installs a separate target app, `io.openwaters.slackwater.android.benchmark`, signed with the debug key. Its build enables R8 optimization and shell profiling, disables debugging, and the benchmark harness requests full ART compilation. The current release build ships without R8 minification, so its timing can differ. The station benchmarks exercise the production browsing screen, focused search, and named prediction shortcuts.
 
 | Benchmark | Start | End |
 | --- | --- | --- |
@@ -55,12 +55,32 @@ The API 37 arm64 phone emulator ran all seven station benchmarks with full ART c
 
 The emulator ran build CE2A.260420.051.A2 with airplane mode off. The target was built on `e990a1da4b2ee2fe71028b9aa5d5c7e325d7dc82`. Its APK SHA-256 was `709fb3098917b33b1f528678d840aaf0cef57af90d86c357b46664cfb8f925f4`. The raw results include the five samples, startup metrics and frame timings. [Benchmark results](evidence/station-benchmarks-api37.json)
 
+## Bundled station detail
+
+`DetailBenchmark` opens Friday Harbor and Flat Point through dated public links. Both links select November 6, 2025 at 08:00 Pacific, outside the current opening window, so the schedule starts on the linked day. Each station runs five times with a cold process and five times with a warm process. Use a compact portrait phone in US English with heights in feet and speeds in knots.
+
+- `launchToDetailReading` starts before the link opens. It ends when the station title, the tide or current timeline, and a spoken reading with the expected unit and date are visible.
+- `revealScheduleEvent` starts at that boundary and includes swipe and accessibility-idle time as the page scrolls until a high tide or slack event row is visible in the schedule. This measures a scripted navigation journey. Gesture and idle time dominate the duration, so it is unsuitable for a schedule-rendering regression budget. Each iteration opens a fresh activity task. The warm run retains the target process.
+
+Use the same optimized APKs and device setup as the physical run above. Run `io.openwaters.slackwater.benchmark.DetailBenchmark` in the instrumentation command. The links record station visits. Run the list benchmarks first or restore their Friday Harbor setup before repeating them.
+
+### API 37 emulator run
+
+On November 7, 2026 (Pacific), all four journeys completed five iterations on the API 37 arm64 phone emulator (build CE2A.260420.051.A2). The target APK was built from base `c2db9426fa988e180bd4bca23c78dc0277bba494` and had SHA-256 `751d6ed7d457030a2debe8537bc693b511776e7531edc2ae2141944738893fd4`. The raw results include frame timings and time to initial display. [Device measurements](evidence/detail-benchmarks-api37.json)
+
+| Journey | Launch to dated reading, median (ms) | Reveal schedule event, median (ms) |
+| --- | ---: | ---: |
+| coldCurrentDetail | 2,362.8 | 3,070.7 |
+| warmCurrentDetail | 1,974.7 | 3,207.2 |
+| coldTideDetail | 2,297.3 | 3,173.6 |
+| warmTideDetail | 1,946.0 | 3,201.4 |
+
 ## Open measurements for issue #27
 
 | Required journey | Evidence needed |
 | --- | --- |
 | Cold and warm first usable station list | The launch harness is implemented. Collect physical-device cold and warm baselines. |
-| Complete station detail by capability | Open each supported capability through the production detail screen and wait for its reading, schedule and chart. Capture cold and warm separately. |
+| Complete station detail by capability | The bundled tide and measured current have cold and warm harnesses. Other capabilities and physical-device baselines remain open. |
 | Interactive map with and without offline packs | Measure first responsive station selection with recorded network and pack state. |
 | Focused station search, first and repeat queries | The focus, first-query and repeat-query harnesses are implemented. Collect physical-device baselines. |
 | Memory and frames during long chart scrubs | Exercise sustained gesture input on the production scrubber, capture memory over time and correlate frame stalls in the trace. |
