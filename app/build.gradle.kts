@@ -47,6 +47,7 @@ dependencies {
     androidTestImplementation(libs.espresso)
     // MapLibre supplies OkHttp at runtime; the test hooks its client to delay one style response.
     androidTestCompileOnly("com.squareup.okhttp3:okhttp:4.12.0") { isTransitive = false }
+    androidTestImplementation(libs.uiautomator)
     androidTestImplementation(libs.test.runner)
     androidTestImplementation(libs.test.junit)
     debugImplementation(libs.compose.test.manifest)
