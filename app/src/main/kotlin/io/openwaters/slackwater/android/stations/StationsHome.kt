@@ -8,7 +8,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.openwaters.slackwater.android.R
+import io.openwaters.slackwater.android.rememberStationDialog
+import io.openwaters.slackwater.android.data.ReadingPreferencesStore
 import io.openwaters.slackwater.android.map.*
+import io.openwaters.slackwater.android.core.station.Coordinate
 import io.openwaters.slackwater.android.core.station.StationIdentity
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
@@ -21,6 +24,9 @@ import io.openwaters.slackwater.android.core.station.StationId
 import io.openwaters.slackwater.android.core.tour.tourStation
 import java.time.Instant
 import android.os.SystemClock
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import java.io.IOException
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -34,10 +40,14 @@ private const val CARD_REFRESH_MILLIS = 60_000L
  */
 @Composable
 fun StationsHome(onCredits: () -> Unit, coveredByAlert: Boolean = false, externalMapFocus: StationIdentity? = null,
-                 consumeFocus: () -> Unit = {}, onSettings: () -> Unit = {}, linkPending: Boolean = false,
-                 linkOpened: Boolean = false, footerExtras: @Composable () -> Unit = {}) {
+                 consumeFocus: () -> Unit = {}, linkPending: Boolean = false,
+                 linkOpened: Boolean = false,
+                 cachedTourCoordinate: (LocationRepository) -> Coordinate? = { it.cachedFix()?.coordinate },
+                 footerExtras: @Composable (openSettings: () -> Unit) -> Unit = {}) {
     val context = LocalContext.current
     val model = remember { StationListModel.get(context) }
+    var settingsOpen by rememberStationDialog(false)
+    var replayGeneration by rememberSaveable { mutableIntStateOf(0) }
     var searching by rememberSaveable { mutableStateOf(false) }
     var opened by rememberSaveable { mutableStateOf<String?>(null) }
     var mapShowing by rememberSaveable { mutableStateOf(false) }
@@ -56,11 +66,14 @@ fun StationsHome(onCredits: () -> Unit, coveredByAlert: Boolean = false, externa
     var now by remember { mutableStateOf(Instant.now()) }
     // The tick loop below starts once, so it reads the latest value through this rather than the first one.
     val covered by rememberUpdatedState(coveredByAlert)
+    val pendingLink by rememberUpdatedState(linkPending)
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     val pageState = androidx.compose.runtime.saveable.rememberSaveableStateHolder()
     fun closePage() {
         opened?.let { pageState.removeState(it) }
         opened = null
+        tourOpened = null
+        replayGeneration = 0
     }
     fun open(id: StationId) {
         if (opened != id.value) closePage()
@@ -68,6 +81,27 @@ fun StationsHome(onCredits: () -> Unit, coveredByAlert: Boolean = false, externa
         automatic = false
         searching = false
         opened = id.value
+    }
+    suspend fun stationForTour(stations: List<StationIdentity>): StationId = withContext(Dispatchers.IO) {
+        tourStation(cachedTourCoordinate(model.location), stations)
+    }
+    suspend fun replayTour(stations: List<StationIdentity>) {
+        val target = stationForTour(stations)
+        if (covered || pendingLink) return
+        if (stations.none { it.id == target }) throw IOException("Tour station is unavailable")
+        ReadingPreferencesStore.get(context).changeSkyVisibility(true) { true }
+        if (covered || pendingLink) return
+        settingsOpen = false
+        mapShowing = false
+        tourDecided = true
+        open(target)
+        replayGeneration++
+        tourOpened = target.value
+        model.tour.replay()
+    }
+    if (settingsOpen) {
+        MapSettings(replay = catalog?.stations?.takeUnless { coveredByAlert || linkPending }?.let { stations -> suspend { replayTour(stations) } },
+            close = { settingsOpen = false })
     }
     fun toggleMap() {
         val showMap = !mapShowing || opened != null
@@ -97,9 +131,8 @@ fun StationsHome(onCredits: () -> Unit, coveredByAlert: Boolean = false, externa
         if (preferences.tourSeen || linkOpened) { tourDecided = true; return@LaunchedEffect }
         val stations = catalog?.stations ?: return@LaunchedEffect
         if (!listInView) return@LaunchedEffect
-        val fix = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) { model.location.cachedFix() }
+        val station = stationForTour(stations)
         if (tourDecided || searching || mapShowing || opened != null || coveredByAlert) return@LaunchedEffect
-        val station = tourStation(fix?.coordinate, stations)
         tourDecided = true
         if (stations.any { it.id == station }) {
             open(station)
@@ -165,7 +198,7 @@ fun StationsHome(onCredits: () -> Unit, coveredByAlert: Boolean = false, externa
                 pageState.SaveableStateProvider("list") {
                     StationListScreen(model, ::open, onSearch = { initialChoiceMade = true; searching = true }, onCredits = onCredits,
                         now = now, showing = showing, onMap = if (expanded && mapShowing && opened == null) null else ::toggleMap,
-                        onAsk = ask, footerExtras = footerExtras)
+                        onAsk = ask, footerExtras = { footerExtras { settingsOpen = true } })
                 }
             }
             if (!coveredByAlert && (expanded || !listVisible)) {
@@ -174,11 +207,11 @@ fun StationsHome(onCredits: () -> Unit, coveredByAlert: Boolean = false, externa
                     when {
                         station != null -> pageState.SaveableStateProvider(station) {
                             CompositionLocalProvider(LocalOpenStationMap provides ::focus) {
-                                StationPage(model, StationId(station), now, recordVisit = !automatic, onBack = ::closePage)
+                                key(replayGeneration) { StationPage(model, StationId(station), now, recordVisit = !automatic, onBack = ::closePage) }
                             }
                         }
                         mapShowing -> pageState.SaveableStateProvider("discovery-map") {
-                            MapScreen(model, mapModel.value, now, focused, mapGeneration, ::open, ::toggleMap, onSettings,
+                            MapScreen(model, mapModel.value, now, focused, mapGeneration, ::open, ::toggleMap, { settingsOpen = true },
                                 showListButton = !expanded)
                         }
                         else -> Column(Modifier.align(Alignment.Center), horizontalAlignment = Alignment.CenterHorizontally) {

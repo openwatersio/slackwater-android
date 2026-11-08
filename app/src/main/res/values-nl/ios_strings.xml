@@ -261,6 +261,8 @@
     <string name="gate_offline_available">"Offline beschikbaar"</string>
     <string name="gate_offline_expectation">"Slackwater bewaart ongeveer een maand op dit apparaat en vernieuwt die zodra je online bent."</string>
     <string name="gate_update">"Nu bijwerken"</string>
+    <string name="tour_replay_title">"Een station aflezen"</string>
+    <string name="tour_replay_subtitle">"Rondleiding opnieuw tonen"</string>
     <string name="tour_read_title">"De tijdlijn lezen"</string>
     <string name="tour_read">"De middenlijn markeert het tijdstip dat hieronder wordt weergegeven."</string>
     <string name="tour_swipe_title">"Veeg om meer te zien"</string>

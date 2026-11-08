@@ -261,6 +261,8 @@
     <string name="gate_offline_available">"Ar fáil as líne"</string>
     <string name="gate_offline_expectation">"Coinníonn Slackwater thart ar mhí ar an ngléas seo agus athnuann sé í aon uair a bhíonn tú ar líne."</string>
     <string name="gate_update">"Nuashonraigh anois"</string>
+    <string name="tour_replay_title">"Conas stáisiún a léamh"</string>
+    <string name="tour_replay_subtitle">"Taispeáin an turas arís"</string>
     <string name="tour_read_title">"An stiall a léamh"</string>
     <string name="tour_read">"Léiríonn an lárlíne an nóiméad a thaispeántar thíos."</string>
     <string name="tour_swipe_title">"Svaidhpeáil chun tuilleadh a fheiceáil"</string>

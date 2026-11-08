@@ -261,6 +261,8 @@
     <string name="gate_offline_available">"Offline verfügbar"</string>
     <string name="gate_offline_expectation">"Slackwater speichert etwa einen Monat auf diesem Gerät und aktualisiert ihn, sobald du online bist."</string>
     <string name="gate_update">"Jetzt aktualisieren"</string>
+    <string name="tour_replay_title">"Eine Station verstehen"</string>
+    <string name="tour_replay_subtitle">"Einführung erneut anzeigen"</string>
     <string name="tour_read_title">"Die Zeitleiste lesen"</string>
     <string name="tour_read">"Die Mittellinie markiert den unten angezeigten Zeitpunkt."</string>
     <string name="tour_swipe_title">"Wischen, um mehr zu sehen"</string>

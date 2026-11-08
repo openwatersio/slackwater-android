@@ -1,5 +1,7 @@
 package io.openwaters.slackwater.android.map
 
+import androidx.compose.ui.draw.alpha
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
@@ -35,7 +37,7 @@ internal val SpeedUnit.unitLabel get() = when (this) {
 }
 
 @Composable
-internal fun MapSettings(close: () -> Unit) {
+internal fun MapSettings(replay: (suspend () -> Unit)?, close: () -> Unit) {
     val context = LocalContext.current
     val store = remember { ReadingPreferencesStore.get(context) }
     val reading by store.preferences.collectAsState(Result.success(ReadingPreferences()))
@@ -75,6 +77,27 @@ internal fun MapSettings(close: () -> Unit) {
             }
             if (BuildConfig.PREMIUM_ENABLED) TextButton(onClick = { premiumOpen = true }) { Text(stringResource(R.string.settings_premium)) }
             AboutSettingsLinks()
+            var replaying by remember { mutableStateOf(false) }
+            val replayEnabled = replay != null && !replaying
+            Column(
+                Modifier.fillMaxWidth().heightIn(min = 48.dp).alpha(if (replayEnabled) 1f else 0.38f)
+                    .clickable(enabled = replayEnabled,
+                    role = Role.Button) {
+                    if (replay != null) {
+                        replaying = true
+                        save {
+                            try {
+                                replay()
+                            } finally {
+                                replaying = false
+                            }
+                        }
+                    }
+                }.padding(horizontal = 12.dp, vertical = 8.dp)
+            ) {
+                Text(stringResource(R.string.tour_replay_title), style = MaterialTheme.typography.titleSmall)
+                Text(stringResource(R.string.tour_replay_subtitle), style = MaterialTheme.typography.bodySmall)
+            }
         }
     }, confirmButton = { TextButton(onClick = close) { Text(stringResource(R.string.close)) } })
     if (premiumOpen) {

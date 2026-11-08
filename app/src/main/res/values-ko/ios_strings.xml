@@ -261,6 +261,8 @@
     <string name="gate_offline_available">"오프라인 사용 가능"</string>
     <string name="gate_offline_expectation">"Slackwater는 약 한 달 분량을 이 기기에 저장하고 온라인일 때마다 새로 받습니다."</string>
     <string name="gate_update">"지금 업데이트"</string>
+    <string name="tour_replay_title">"관측소 정보 읽는 법"</string>
+    <string name="tour_replay_subtitle">"안내 다시 보기"</string>
     <string name="tour_read_title">"타임라인 읽기"</string>
     <string name="tour_read">"가운데 선은 아래에 표시된 시점을 나타냅니다."</string>
     <string name="tour_swipe_title">"쓸어넘겨 더 보기"</string>

@@ -23,7 +23,7 @@ class FreeDayControlTest {
 
     @Test fun settingsPremiumEntryMatchesBuild() {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
-        compose.setContent { MapSettings(close = {}) }
+        compose.setContent { MapSettings(replay = null, close = {}) }
         val premium = compose.onNodeWithText(context.getString(R.string.settings_premium))
         if (!BuildConfig.PREMIUM_ENABLED) {
             premium.assertDoesNotExist()

@@ -261,6 +261,8 @@
     <string name="gate_offline_available">"Tillgängligt offline"</string>
     <string name="gate_offline_expectation">"Slackwater sparar ungefär en månad på den här enheten och uppdaterar den när du är online."</string>
     <string name="gate_update">"Uppdatera nu"</string>
+    <string name="tour_replay_title">"Så läser du en station"</string>
+    <string name="tour_replay_subtitle">"Visa introduktionen igen"</string>
     <string name="tour_read_title">"Så läser du tidslinjen"</string>
     <string name="tour_read">"Mittlinjen markerar tidpunkten som visas nedan."</string>
     <string name="tour_swipe_title">"Svep för att se mer"</string>
