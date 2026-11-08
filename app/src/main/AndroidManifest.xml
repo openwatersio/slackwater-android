@@ -42,6 +42,14 @@
   <activity android:name=".widgets.WidgetConfigurationActivity" android:exported="true">
    <intent-filter><action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/></intent-filter>
   </activity>
+  <activity android:name=".premium.PremiumLinkActivity" android:theme="@android:style/Theme.Translucent.NoTitleBar" android:enabled="${premiumEnabled}" android:exported="true">
+   <intent-filter>
+    <action android:name="android.intent.action.VIEW"/>
+    <category android:name="android.intent.category.DEFAULT"/>
+    <category android:name="android.intent.category.BROWSABLE"/>
+    <data android:scheme="slackwater" android:host="premium"/>
+   </intent-filter>
+  </activity>
   <activity android:name=".shortcuts.QueryActivity" android:exported="false"/>
   <activity android:name=".MainActivity" android:exported="true">
    <intent-filter>

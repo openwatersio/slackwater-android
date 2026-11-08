@@ -325,4 +325,5 @@
     <string name="settings_increase">"Àrdaich crìoch an t-srutha"</string>
     <string name="about_chs_predictions">"Tha cuid de ro-sheallaidhean làin is stèiseanan srutha ann an Canada a’ sealltainn ro-aithrisean oifigeil a chaidh a luchdadh a-nuas bho Sheirbheis Hydro-grafaigeach Chanada."</string>
     <string name="settings_save_error">"Cha b’ urrainn dhuinn an roghainn seo a shàbhaladh. Feuch ris a-rithist."</string>
+    <string name="premium_day_unavailable">"Cha ghabh ceann-là an latha an-asgaidh agad a leughadh."</string>
 </resources>

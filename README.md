@@ -46,6 +46,12 @@ The app follows the device language, or its per-app language setting on Android 
 
 `node scripts/export-strings.mjs` exports shared text from the exact iOS commit in `upstream.lock.json`. `scripts/strings-map.json` maps existing Android resource IDs to iOS keys and preserves Android's English wording and the existing Canadian French copy through explicit migration overrides. Edit Android-specific copy in `scripts/translations/android/*.json`; the exporter writes it separately to `strings_android.xml`. Generated files record their source, and `--check` rejects stale output, incomplete locale coverage and incompatible format arguments. See [translation validation](docs/validation/localization.md) for coverage and device evidence.
 
+## Monthly free day
+
+In a debug build, open **Settings → Premium → Try everything free today** to start 24 hours of planning access. The start is saved on this device. Eligibility compares the saved start and the current time in the device’s current calendar and time zone, including after a clock or calendar change. A free day that crosses into the next month runs until its original end. The next month’s offer becomes available after that.
+
+Debug builds enable the Premium sheet and `slackwater://premium` link by default. Build with `-PpremiumEnabled=false` to test the disabled debug variant. Release and benchmark builds keep these entry points disabled. Live Play products, purchase acknowledgement and restore are tracked in [#12](https://github.com/openwatersio/slackwater-android/issues/12).
+
 ## Android reminders
 
 The alert editor previews station events offline. Saving a reminder requires a current Premium entitlement or active free day. The first save on Android 13 or later asks for notification permission. A denial keeps the rule available in My alerts. Enable notifications for Slackwater and its Station reminders channel in Android settings to resume delivery.
@@ -58,7 +64,7 @@ Reminders use Android notification and boot permissions. Declaring special exact
 
 Open **Station calendars** from a station to publish the next 90 days of tide turns, slack windows or derived slacks, plus visible lunar eclipses. Each station and series has a local Android calendar. Events open the station at the event time and have no reminders. Publishing requires read and write calendar access.
 
-A subscription started with purchased Premium keeps publishing after lapse. A free-day subscription stops when the free day ends, and purchasing converts it to a purchased subscription. Android schedules refresh and expiry work. If execution or calendar access is blocked, already-published events can remain until the next successful reconciliation. Opening Slackwater retries pending work.
+A subscription started with purchased Premium keeps publishing after lapse. A free-day subscription stops when the free day ends, resumes during a later free day, and becomes a purchased subscription if the user buys Premium. Android schedules refresh and expiry work. If execution or calendar access is blocked, already-published events can remain until the next successful reconciliation. Opening Slackwater retries pending work.
 
 Removing a favorite keeps its calendar subscription. Removing the subscription asks for confirmation with the station name and number of generated events that will be removed. Personal entries and events already underway stay in Calendar.
 

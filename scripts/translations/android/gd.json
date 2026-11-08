@@ -322,5 +322,6 @@
   "settings_decrease": "Lùghdaich crìoch an t-srutha",
   "settings_increase": "Àrdaich crìoch an t-srutha",
   "about_chs_predictions": "Tha cuid de ro-sheallaidhean làin is stèiseanan srutha ann an Canada a’ sealltainn ro-aithrisean oifigeil a chaidh a luchdadh a-nuas bho Sheirbheis Hydro-grafaigeach Chanada.",
-  "settings_save_error": "Cha b’ urrainn dhuinn an roghainn seo a shàbhaladh. Feuch ris a-rithist."
+  "settings_save_error": "Cha b’ urrainn dhuinn an roghainn seo a shàbhaladh. Feuch ris a-rithist.",
+  "premium_day_unavailable": "Cha ghabh ceann-là an latha an-asgaidh agad a leughadh."
 }

@@ -317,4 +317,5 @@
     <string name="settings_increase">"Strömungsgrenze erhöhen"</string>
     <string name="about_chs_predictions">"Einige kanadische Gezeitenvorschauen und Strömungsstationen zeigen offizielle Vorhersagen des Canadian Hydrographic Service, die auf das Gerät geladen wurden."</string>
     <string name="settings_save_error">"Die Einstellung konnte nicht gespeichert werden. Versuche es erneut."</string>
+    <string name="premium_day_unavailable">"Das gespeicherte Datum deines kostenlosen Tages ist nicht lesbar."</string>
 </resources>

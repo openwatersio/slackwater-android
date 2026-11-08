@@ -26,6 +26,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import io.openwaters.slackwater.android.BuildConfig
+import io.openwaters.slackwater.android.map.PremiumSheet
 import io.openwaters.slackwater.android.R
 import io.openwaters.slackwater.android.alerts.ReminderAccessStore
 import io.openwaters.slackwater.android.alerts.activeAt
@@ -145,7 +147,8 @@ internal fun SchedulePanel(
             }
         }, modifier = Modifier.testTag("printable-tables-row")) { Text(stringResource(R.string.schedule_table_action)) }
     }
-    if (support) AlertDialog(onDismissRequest = { support = false },
+    if (support && BuildConfig.PREMIUM_ENABLED) PremiumSheet { support = false }
+    else if (support) AlertDialog(onDismissRequest = { support = false },
         title = { Text(stringResource(R.string.schedule_support_title)) },
         text = { Text(stringResource(R.string.schedule_premium_message)) },
         confirmButton = { TextButton(onClick = { support = false }) { Text(stringResource(R.string.close)) } })

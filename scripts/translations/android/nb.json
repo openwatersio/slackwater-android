@@ -314,5 +314,6 @@
   "settings_decrease": "Senk strømgrensen",
   "settings_increase": "Øk strømgrensen",
   "about_chs_predictions": "Noen kanadiske tidevannsvisninger og strømstasjoner viser offisielle prognoser lastet ned fra Canadian Hydrographic Service.",
-  "settings_save_error": "Kunne ikke lagre innstillingen. Prøv igjen."
+  "settings_save_error": "Kunne ikke lagre innstillingen. Prøv igjen.",
+  "premium_day_unavailable": "Den lagrede datoen for gratisdagen kan ikke leses."
 }

@@ -2,6 +2,7 @@ package io.openwaters.slackwater.android.calendars
 
 import android.content.Intent
 import android.provider.CalendarContract
+import io.openwaters.slackwater.android.BuildConfig
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import io.openwaters.slackwater.android.MainActivity
@@ -37,7 +38,10 @@ class CalendarSettingsTest {
             // Availability evaluates the same full forecast horizon as publishing.
             compose.waitUntil(90_000) { compose.onAllNodes(hasText("Publish calendar") and isEnabled()).fetchSemanticsNodes().isNotEmpty() }
             compose.onNodeWithText("Publish calendar").performClick()
-            compose.onNodeWithText("Publishing a new station calendar requires Premium.").assertExists()
+            if (BuildConfig.PREMIUM_ENABLED) {
+                compose.onNodeWithText("Slackwater Premium").assertIsDisplayed()
+                compose.onNode(hasText("Close") and hasAnyAncestor(hasAnyDescendant(hasText("Slackwater Premium")))).performClick()
+            } else compose.onNodeWithText("Publishing a new station calendar requires Premium.").assertExists()
             assertFalse(runBlocking { repository.subscriptions.first().any { it.stationId == fridayHarbor } })
             grantCalendarPermissions(app)
             runBlocking { access.update(ReminderEntitlement.Purchased) }

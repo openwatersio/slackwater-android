@@ -7,6 +7,7 @@ import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -15,6 +16,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
+import io.openwaters.slackwater.android.BuildConfig
 import io.openwaters.slackwater.android.R
 import io.openwaters.slackwater.android.data.*
 import io.openwaters.slackwater.android.alerts.ReminderAccessStore
@@ -39,7 +41,7 @@ internal fun MapSettings(close: () -> Unit) {
     val reading by store.preferences.collectAsState(Result.success(ReadingPreferences()))
     val prefs = reading.getOrNull() ?: ReadingPreferences()
     val save = rememberSettingsEdit()
-    var premiumRequired by remember { mutableStateOf(false) }
+    var premiumOpen by rememberSaveable { mutableStateOf(false) }
     AlertDialog(onDismissRequest = close, title = { Text(stringResource(R.string.settings_title)) }, text = {
         Column(Modifier.verticalScroll(rememberScrollState())) {
             Text(stringResource(R.string.map_tide_units), style = MaterialTheme.typography.titleSmall)
@@ -64,19 +66,23 @@ internal fun MapSettings(close: () -> Unit) {
                     val changed = store.changeSkyVisibility(show) {
                         ReminderAccessStore.get(context).current().allows(Instant.now())
                     }
-                    premiumRequired = !changed
+                    if (!changed) premiumOpen = true
                 } }), verticalAlignment = Alignment.CenterVertically) {
                 Text(stringResource(R.string.detail_show_sky), Modifier.weight(1f))
                 val premiumLabel = stringResource(R.string.settings_premium)
                 Text("✦", Modifier.padding(horizontal = 6.dp).clearAndSetSemantics { contentDescription = premiumLabel })
                 Switch(prefs.showSky, onCheckedChange = null)
             }
+            if (BuildConfig.PREMIUM_ENABLED) TextButton(onClick = { premiumOpen = true }) { Text(stringResource(R.string.settings_premium)) }
             AboutSettingsLinks()
         }
     }, confirmButton = { TextButton(onClick = close) { Text(stringResource(R.string.close)) } })
-    if (premiumRequired) AlertDialog(onDismissRequest = { premiumRequired = false },
-        text = { Text(stringResource(R.string.reminder_premium_required)) },
-        confirmButton = { TextButton(onClick = { premiumRequired = false }) { Text(stringResource(R.string.close)) } })
+    if (premiumOpen) {
+        if (BuildConfig.PREMIUM_ENABLED) PremiumSheet(onClose = { premiumOpen = false })
+        else AlertDialog(onDismissRequest = { premiumOpen = false },
+            text = { Text(stringResource(R.string.reminder_premium_required)) },
+            confirmButton = { TextButton(onClick = { premiumOpen = false }) { Text(stringResource(R.string.close)) } })
+    }
 }
 
 @Composable
@@ -109,7 +115,7 @@ internal fun ComfortCurrentControl(prefs: ReadingPreferences, station: StationId
 }
 
 @Composable
-private fun rememberSettingsEdit(): (suspend () -> Unit) -> Unit {
+internal fun rememberSettingsEdit(): (suspend () -> Unit) -> Unit {
     val scope = rememberCoroutineScope()
     var failed by remember { mutableStateOf(false) }
     if (failed) AlertDialog(onDismissRequest = { failed = false },

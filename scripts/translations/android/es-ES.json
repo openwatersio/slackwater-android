@@ -318,5 +318,6 @@
   "settings_decrease": "Reducir el límite de corriente",
   "settings_increase": "Aumentar el límite de corriente",
   "about_chs_predictions": "Algunas vistas previas de mareas y estaciones de corrientes de Canadá muestran predicciones oficiales descargadas del Servicio Hidrográfico Canadiense.",
-  "settings_save_error": "No se pudo guardar el ajuste. Inténtalo de nuevo."
+  "settings_save_error": "No se pudo guardar el ajuste. Inténtalo de nuevo.",
+  "premium_day_unavailable": "No se puede leer la fecha guardada de tu día gratis."
 }

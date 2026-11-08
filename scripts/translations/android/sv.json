@@ -314,5 +314,6 @@
   "settings_decrease": "Sänk strömgränsen",
   "settings_increase": "Höj strömgränsen",
   "about_chs_predictions": "Vissa kanadensiska tidvattenvyer och strömstationer visar officiella prognoser som hämtats från Canadian Hydrographic Service.",
-  "settings_save_error": "Det gick inte att spara inställningen. Försök igen."
+  "settings_save_error": "Det gick inte att spara inställningen. Försök igen.",
+  "premium_day_unavailable": "Det sparade datumet för din kostnadsfria dag kan inte läsas."
 }

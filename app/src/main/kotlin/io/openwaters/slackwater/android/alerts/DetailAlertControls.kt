@@ -1,6 +1,8 @@
 package io.openwaters.slackwater.android.alerts
 
 import androidx.compose.ui.window.Dialog
+import io.openwaters.slackwater.android.BuildConfig
+import io.openwaters.slackwater.android.map.PremiumSheet
 import io.openwaters.slackwater.android.R
 import android.Manifest
 import android.content.pm.PackageManager
@@ -13,12 +15,11 @@ import androidx.compose.ui.platform.LocalContext
 import io.openwaters.slackwater.android.core.planning.*
 import io.openwaters.slackwater.android.core.station.*
 import io.openwaters.slackwater.android.data.*
-import java.time.Instant
+import io.openwaters.slackwater.android.premium.entitlementClock
 import kotlinx.coroutines.launch
 
 @Composable
 internal fun DetailAlertControls(
-    now: Instant,
     content: @Composable (List<AlertRule>, (AlertEditorDraft) -> Unit, () -> Unit) -> Unit,
 ) {
     val context = LocalContext.current.applicationContext
@@ -29,10 +30,15 @@ internal fun DetailAlertControls(
     val scope = rememberCoroutineScope()
     val rules by remember { rulesStore.rules.retryAlertReads() }.collectAsState(emptyList())
     val entitlement by remember { ReminderAccessStore.get(context).changes.retryAlertReads() }.collectAsState(ReminderEntitlement.Free)
-    val premium = entitlement.activeAt(now)
+    val premium = entitlement.activeAt(entitlementClock(entitlement))
     var editor by remember { mutableStateOf<AlertEditorDraft?>(null) }
     var showRules by remember { mutableStateOf(false) }
     var message by remember { mutableStateOf<String?>(null) }
+    var premiumOpen by remember { mutableStateOf(false) }
+    fun requestPremium() {
+        if (BuildConfig.PREMIUM_ENABLED) premiumOpen = true
+        else message = context.getString(R.string.reminder_save_premium)
+    }
     val promptState = remember { context.getSharedPreferences("reminder_permission", 0) }
     val permission = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
         reconcile.foreground()
@@ -74,7 +80,7 @@ internal fun DetailAlertControls(
                     return@launch
                 }
                 if (!saved) {
-                    message = context.getString(R.string.reminder_save_premium)
+                    requestPremium()
                     return@launch
                 }
                 editor = null
@@ -93,8 +99,9 @@ internal fun DetailAlertControls(
                 }
             }
         }, onDelete = { scope.launch { rulesStore.remove(it); editor = null } },
-            onPremium = { message = context.getString(R.string.reminder_save_premium) }, onDismiss = { editor = null })
+            onPremium = ::requestPremium, onDismiss = { editor = null })
     }
+    if (premiumOpen) PremiumSheet { premiumOpen = false }
     message?.let { text ->
         AlertDialog(onDismissRequest = { message = null }, text = { Text(text) },
             confirmButton = { TextButton(onClick = { message = null }) { Text(context.getString(android.R.string.ok)) } })

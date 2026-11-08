@@ -30,6 +30,18 @@ jobs:
       - run: node scripts/sync-upstream.mjs --check
       - run: node scripts/export-strings.mjs --check
       - run: ./gradlew :app:checkStudioSources :core:test :core:nationalTideDirectionSweep :app:testDebugUnitTest :app:assembleDebug :app:assembleRelease :app:assembleBenchmark :benchmark:assembleBenchmark :app:lintDebug :app:assembleDebugAndroidTest
+      - name: Verify Premium links are disabled in shipping variants
+        run: |
+          python3 - <<'PYTHON'
+          from pathlib import Path
+          from xml.etree import ElementTree
+          android = "{http://schemas.android.com/apk/res/android}"
+          for variant in ("release", "benchmark"):
+              manifest, = (Path("app/build/intermediates/merged_manifest") / variant).glob("*/AndroidManifest.xml")
+              activities = ElementTree.parse(manifest).findall("./application/activity")
+              premium, = [activity for activity in activities if activity.get(android + "name", "").endswith(".PremiumLinkActivity")]
+              assert premium.get(android + "enabled") == "false", f"Premium link enabled in {variant}"
+          PYTHON
       - run: python3 scripts/check-apk.py app/build/outputs/apk/benchmark/app-benchmark.apk
       - run: python3 scripts/check-apk.py app/build/outputs/apk/debug/app-debug.apk
       - run: python3 scripts/check-apk.py app/build/outputs/apk/release/app-release-unsigned.apk
@@ -68,9 +80,11 @@ jobs:
           api-level: ${{ matrix.api }}
           arch: x86_64
           target: google_apis
-          script: ./gradlew :app:connectedDebugAndroidTest
+          script: |
+            ./gradlew :app:connectedDebugAndroidTest
+            if [ "${{ matrix.api }}" = "37.0" ]; then cp -R app/build/reports/androidTests app/build/reports/androidTests-enabled && ./gradlew -PpremiumEnabled=false :app:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=io.openwaters.slackwater.android.premium.PremiumLinkTest,io.openwaters.slackwater.android.map.FreeDayControlTest,io.openwaters.slackwater.android.calendars.CalendarSettingsTest,io.openwaters.slackwater.android.sharing.StationScheduleTest; fi
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: device-reports-${{ matrix.api }}
-          path: app/build/reports/androidTests
+          path: app/build/reports/androidTests*
