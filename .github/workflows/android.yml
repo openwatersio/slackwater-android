@@ -78,6 +78,8 @@ jobs:
       - uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: ${{ matrix.api }}
+          # Oreo System UI requires a software navigation bar when the keyguard changes.
+          profile: ${{ matrix.api == '26' && 'pixel_2' || '' }}
           arch: x86_64
           target: google_apis
           script: |

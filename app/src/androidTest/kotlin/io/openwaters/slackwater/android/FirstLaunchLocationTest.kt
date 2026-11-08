@@ -3,7 +3,6 @@ package io.openwaters.slackwater.android
 import android.Manifest
 import android.app.Instrumentation
 import android.os.Bundle
-import android.os.Build
 import android.content.Intent
 import android.content.pm.PackageManager
 import androidx.test.platform.app.InstrumentationRegistry
@@ -46,12 +45,9 @@ class FirstLaunchLocationTest {
 
         device.wakeUp()
         device.executeShellCommand("wm dismiss-keyguard")
-        dismissOreoSystemUiCrash(device)
         context.startActivity(Intent(context, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
         if (first) {
-            val promptVisible = device.wait(Until.hasObject(deny), 30_000) ||
-                (dismissOreoSystemUiCrash(device) && device.wait(Until.hasObject(deny), 30_000))
-            if (!promptVisible) {
+            if (!device.wait(Until.hasObject(deny), 30_000)) {
                 val hierarchy = ByteArrayOutputStream()
                 device.dumpWindowHierarchy(hierarchy)
                 fail("Missing Android location permission dialog; visible UI:\n" + hierarchy.toString("UTF-8"))
@@ -82,16 +78,6 @@ class FirstLaunchLocationTest {
         instrumentation.sendStatus(0, Bundle().apply {
             putString(Instrumentation.REPORT_KEY_STREAMRESULT, "\nVerified location prompt: $phase\n")
         })
-    }
-
-    // The API 26 CI image can boot with a System UI crash dialog above the app. Leave other errors visible.
-    private fun dismissOreoSystemUiCrash(device: UiDevice): Boolean {
-        if (Build.VERSION.SDK_INT != Build.VERSION_CODES.O) return false
-        val title = By.res("android", "alertTitle").text(Pattern.compile("System UI (?:has stopped|keeps stopping)"))
-        if (!device.hasObject(title)) return false
-        requireNotNull(device.findObject(By.res("android", "aerr_close"))) { "System UI crash dialog has no close action" }.click()
-        check(device.wait(Until.gone(title), 10_000)) { "System UI crash dialog is still visible" }
-        return true
     }
 
 }
