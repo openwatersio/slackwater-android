@@ -320,6 +320,13 @@ private fun LazyListScope.savedSection(
                         },
                     )
                 }
+                if (!isFavorites) {
+                    Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
+                        TextButton(onClick = trailing.onAction, modifier = Modifier.heightIn(min = 48.dp)) {
+                            Text("${trailing.label} · ${station.name}")
+                        }
+                    }
+                }
             }
         }
     }

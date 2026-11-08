@@ -70,6 +70,8 @@ Record the commit, build variant, device or emulator, Android API, screen size/p
 | 24. Heading navigation | Pending | With a fix, a favorite, and a recent, the headings rotor steps through My Location, Favorites, Near Me, and Recents, and stops on nothing inside a card. |
 | 25. Resume and live readings | Pending | Leave the app overnight, then reopen it with the list and a selected detail visible. Mounted cards refresh immediately, keep updating every 60 seconds while active, and preserve the selection and scroll position. A map preview keeps its eager first frame until the next tick. After midnight, online current cards select the current day’s cached window without a network request. |
 
+A recent station has a keyboard-focusable Remove button with the station name. `StationListTest.keyboardCanRemoveOneRecentAndKeepTheOthers` reaches the card and button with Tab, checks the card’s TalkBack Remove action and activates the button with Enter.
+
 ## Station detail
 
 [Reference scenarios, §18](https://github.com/openwatersio/slackwater-ios/blob/02188f2a2f5ef4166cd74c373a5885736d7ef159/docs/detail.md#18-conformance-scenarios).
