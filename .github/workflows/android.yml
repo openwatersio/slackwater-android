@@ -87,6 +87,7 @@ jobs:
             ./gradlew :app:installDebug :app:installDebugAndroidTest
             mkdir -p app/build/reports
             bash -o pipefail -c './scripts/test-location-prompt.sh 2>&1 | tee app/build/reports/location-prompt.log' || touch "$RUNNER_TEMP/location-prompt.failed"
+            adb logcat -b crash -d -v threadtime > app/build/reports/location-prompt-crashes.log
             # API 26's connected-test installer requires both packages to be absent.
             adb uninstall io.openwaters.slackwater.android.test
             adb uninstall io.openwaters.slackwater.android
@@ -109,6 +110,6 @@ jobs:
           name: device-reports-${{ matrix.api }}
           # The XML results and every test's logcat sit beside the HTML reports.
           path: |
-            app/build/reports/location-prompt.log
+            app/build/reports/location-prompt*.log
             app/build/reports/androidTests*
             app/build/outputs/androidTest-results*
