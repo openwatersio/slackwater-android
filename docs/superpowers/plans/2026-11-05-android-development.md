@@ -128,7 +128,7 @@ Each task should fit a focused PR, or a short sequence of PRs if the listed file
 - [ ] Add tests for full IDs containing `:` and `/`, successive retired-ID remaps, tombstoned favorites, restricted identities, corrupt storage, interrupted atomic replacement, and preservation of unknown record fields.
 - [ ] Implement lazy identity loading and one-record database lookup without decoding every constituent record at startup. Keep ownership of datum conversion in the prediction adapter.
 - [ ] Define migration/version handling before storing the first model; on unsupported data preserve user intent and report an unavailable state. Never lose a favorite because its model is absent.
-- [ ] Verify `rtk ./gradlew :core:test :app:testDebugUnitTest`; inspect process restart and widget reads during a model replacement on a device.
+- [x] Verify `rtk ./gradlew :core:test :app:testDebugUnitTest`; inspect process restart and widget reads during a model replacement on a device.
 - [ ] Commit storage and catalog readers with migration fixtures.
 
 ### Task 3: Prediction adapters and current semantics
