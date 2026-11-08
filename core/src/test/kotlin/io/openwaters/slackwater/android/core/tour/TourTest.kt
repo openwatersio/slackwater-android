@@ -19,10 +19,10 @@ class TourTest {
     private val here = StationId("noaa/9447130")
     private val there = StationId("noaa/9444900")
 
-    private fun walk(): List<TourStep> = buildList {
+    private fun walk(moonCardAvailable: Boolean = true): List<TourStep> = buildList {
         while (true) {
             add(coach.state.value.step ?: break)
-            coach.advance()
+            coach.advance(moonCardAvailable)
         }
     }
 
@@ -38,6 +38,14 @@ class TourTest {
         coach.arm(seen = false)
         coach.begin(here, starsAvailable = false, moonAvailable = false)
         assertEquals(listOf(TourStep.READ, TourStep.MOON_CARD, TourStep.STAR), walk())
+    }
+
+    @Test fun skipsMoonDetailsWhenItsTileIsAbsent() {
+        coach.arm(seen = false)
+        coach.begin(here, starsAvailable = true, moonAvailable = true)
+        assertEquals(listOf(TourStep.READ, TourStep.STARS, TourStep.MOON, TourStep.STAR),
+            walk(moonCardAvailable = false))
+        assertEquals(1, seen)
     }
 
     @Test fun skipsOnlyTheMoonWhenOnlyTheStarsAreReachable() {
@@ -63,7 +71,7 @@ class TourTest {
     @Test fun onlyTheFirstDetailWithATimelineBeginsIt() {
         coach.arm(seen = false)
         coach.begin(here, true, true)
-        coach.advance()
+        coach.advance(moonCardAvailable = true)
         coach.begin(there, true, true)
         assertEquals(TourStep.STARS, coach.state.value.step)
         assertEquals(here, coach.state.value.station)
@@ -80,7 +88,7 @@ class TourTest {
     @Test fun aHandedOffTourIsClaimedOnlyByTheLinkedStation() {
         coach.arm(seen = false)
         coach.begin(here, true, true)
-        coach.advance()
+        coach.advance(moonCardAvailable = true)
         coach.handOff(there)
         assertNull(coach.state.value.step)
         // The replaced detail leaving does not mark the tour seen, and it cannot claim the tour back.
@@ -105,7 +113,7 @@ class TourTest {
     @Test fun aLinkToTheTourStationChangesNothing() {
         coach.arm(seen = false)
         coach.begin(here, true, true)
-        coach.advance()
+        coach.advance(moonCardAvailable = true)
         coach.handOff(here)
         assertEquals(TourStep.STARS, coach.state.value.step)
     }

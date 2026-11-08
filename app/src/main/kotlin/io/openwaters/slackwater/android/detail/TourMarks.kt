@@ -51,6 +51,7 @@ import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.unit.toSize
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import android.os.Handler
 import android.os.Looper
@@ -134,6 +135,7 @@ internal fun DetailTour(
     anchors: TourAnchors,
     scroll: ScrollState,
     showSky: Boolean,
+    moonCardAvailable: Boolean?,
     beforeScroll: () -> Unit,
 ) {
     val activity = androidx.activity.compose.LocalActivity.current
@@ -160,6 +162,15 @@ internal fun DetailTour(
             moonAvailable = sky && tourMoonTime(timeline.days, state.now, coverage) != null)
     }
     val step = tour.step?.takeIf { tour.station == id } ?: return
+    val hasMoonCard by rememberUpdatedState(moonCardAvailable)
+    if (step == TourStep.MOON_CARD && moonCardAvailable != true) {
+        // Wait for the rebuilt timeline before deciding whether a restored mark still has a tile.
+        if (moonCardAvailable == false) LaunchedEffect(coach, id) {
+            val current = coach.state.value
+            if (current.station == id && current.step == step) coach.advance(moonCardAvailable = false)
+        }
+        return
+    }
     // False until the glide for the step has had time to settle, which swaps the stars copy for its payoff. Saved, so
     // a rotation keeps a settled step settled; one rebuilt before it settles waits again.
     var arrived by rememberSaveable(id) { mutableStateOf(false) }
@@ -169,7 +180,7 @@ internal fun DetailTour(
     val reduceMotion = !ValueAnimator.areAnimatorsEnabled()
     fun next() {
         arrived = false
-        coach.advance()
+        coach.advance(moonCardAvailable = hasMoonCard != false)
         val now = coach.state.value
         if (timeline != null && now.station == id) {
             val state = timeline.state

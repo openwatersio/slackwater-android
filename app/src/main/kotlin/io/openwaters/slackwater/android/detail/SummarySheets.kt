@@ -67,11 +67,17 @@ internal fun PredictionSeries.waterMarks(): List<WaterMark> = when (this) {
 
 private enum class Sheet { WATER, MOON, SUN }
 
+@Composable
+internal fun rememberDetailMoon(selected: Instant): MoonIllumination? =
+    remember(selected.epochSecond / 60) {
+        try { moonIllumination(selected) } catch (_: AlmanacOutOfRangeException) { null }
+    }
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun DetailSummary(
     station: StationIdentity, timeline: DetailTimeline, preferences: ReadingPreferences, repository: PredictionRepository,
-    referencePortName: String? = null, provisional: Boolean = false,
+    moon: MoonIllumination?, referencePortName: String? = null, provisional: Boolean = false,
 ) {
     val context = LocalContext.current
     val locale = LocalConfiguration.current.locales[0]
@@ -139,9 +145,6 @@ internal fun DetailSummary(
         else -> stringResource(R.string.panel_at, direction, clock.format(mark.time))
     }
     var sheet by rememberStationDialog<Sheet?>(null, station.id.value)
-    val moon = remember(selected.epochSecond / 60) {
-        try { moonIllumination(selected) } catch (_: AlmanacOutOfRangeException) { null }
-    }
     val phases = stringArrayResource(R.array.panel_phases)
     val phase = moon?.let { phaseIndex(it.phase) }
     val observer = remember(station) { Observer(station.latitude, station.longitude) }
