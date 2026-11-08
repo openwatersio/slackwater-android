@@ -13,6 +13,10 @@ import io.openwaters.slackwater.android.data.*
 import java.io.File
 import java.time.Instant
 import java.util.UUID
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 import org.json.JSONArray
 import org.json.JSONObject
@@ -59,6 +63,48 @@ class WidgetRenderingTest {
             assertEquals(context.getString(R.string.card_unavailable), invalid.findViewById<TextView>(R.id.widget_reading).text)
             assertEquals(View.GONE, invalid.findViewById<View>(R.id.widget_curve).visibility)
         } finally { directory.deleteRecursively() }
+        Unit
+    }
+
+    @Test fun widgetReadsCompleteFitOnBothSidesOfAtomicReplacement() = runBlocking {
+        val directory = File(context.cacheDir, "widget-replace-${UUID.randomUUID()}")
+        val writer = ModelStore(directory)
+        val repo = AndroidPredictionRepository(context, writer)
+        val station = StationId("chs-johnstone-strait-central")
+        fun fit(amplitude: Double) = JSONObject()
+            .put("recipe", ChsCurrentFit.STAMP).put("fitDays", 60).put("offset", 0.0)
+            .put("floodDirection", 20).put("ebbDirection", 215)
+            .put("constituents", JSONArray().put(JSONObject().put("name", "M2")
+                .put("amplitude", amplitude).put("phase", 10)))
+        suspend fun reading(): String {
+            val card = rendered(repo, station)
+            assertEquals(View.VISIBLE, card.findViewById<View>(R.id.widget_curve).visibility)
+            return card.findViewById<TextView>(R.id.widget_reading).text.toString()
+        }
+        val staged = CountDownLatch(1)
+        val publish = CountDownLatch(1)
+        try {
+            writer.write(station, ModelKind.CURRENT, fit(6.0))
+            val newReading = reading()
+            writer.write(station, ModelKind.CURRENT, fit(1.0))
+            val oldReading = reading()
+            assertNotEquals(oldReading, newReading)
+            writer.beforeCommit = {
+                staged.countDown()
+                check(publish.await(30, TimeUnit.SECONDS)) { "Widget did not finish reading the staged fit" }
+            }
+            val replacement = async(Dispatchers.IO) { writer.write(station, ModelKind.CURRENT, fit(6.0)) }
+            try {
+                assertTrue(staged.await(30, TimeUnit.SECONDS))
+                assertEquals(oldReading, reading())
+            } finally {
+                publish.countDown()
+            }
+            replacement.await()
+            assertEquals(newReading, reading())
+        } finally {
+            directory.deleteRecursively()
+        }
         Unit
     }
 
