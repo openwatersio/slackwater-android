@@ -318,4 +318,7 @@
     <string name="about_chs_predictions">"Joissakin Kanadan vuorovesien esikatseluissa ja virta-asemilla näytetään Kanadan hydrografiselta laitokselta ladattuja virallisia ennusteita."</string>
     <string name="settings_save_error">"Asetusta ei voitu tallentaa. Yritä uudelleen."</string>
     <string name="premium_day_unavailable">"Maksuttoman päivän tallennettua päivämäärää ei voi lukea."</string>
+    <string name="calendar_window_range">"%1$s–%2$s, alle %3$s"</string>
+    <string name="calendar_window_start">"%1$s, alle %2$s"</string>
+    <string name="calendar_no_window">"%1$s, ei jaksoa alle %2$s"</string>
 </resources>

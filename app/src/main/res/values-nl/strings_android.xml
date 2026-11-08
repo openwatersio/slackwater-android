@@ -318,4 +318,7 @@
     <string name="about_chs_predictions">"Sommige Canadese getijdenvoorbeelden en stroomstations tonen officiële voorspellingen die zijn gedownload van de Canadese hydrografische dienst."</string>
     <string name="settings_save_error">"Deze instelling kon niet worden opgeslagen. Probeer het opnieuw."</string>
     <string name="premium_day_unavailable">"De opgeslagen datum van je gratis dag kan niet worden gelezen."</string>
+    <string name="calendar_window_range">"%1$s–%2$s, onder %3$s"</string>
+    <string name="calendar_window_start">"%1$s, onder %2$s"</string>
+    <string name="calendar_no_window">"%1$s, geen periode onder %2$s"</string>
 </resources>

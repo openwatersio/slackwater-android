@@ -8,10 +8,16 @@ import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
+enum class CalendarEventKind(val key: String) {
+    HIGH_TIDE("high_tide"), LOW_TIDE("low_tide"), SLACK("slack"), SLACK_WINDOW("slack_window"), LUNAR_ECLIPSE("lunar_eclipse"),
+}
+
 /** The provider uses stationId and start together to open the station at this event. */
 data class StationCalendarEvent(
     val stationId: StationId, val title: String, val start: Instant, val end: Instant,
-    val notes: String, val zone: ZoneId,
+    val notes: String, val zone: ZoneId, val kind: CalendarEventKind,
+    val heightM: Double? = null, val imperial: Boolean = false, val thresholdKnots: Double? = null,
+    val windowEnd: Instant? = null,
 )
 
 fun stationCalendarTitle(station: StationIdentity): String? = when (station.series) {
@@ -57,37 +63,40 @@ fun stationCalendarEvents(
     val horizon = TimeSpan(now, now.plus(CALENDAR_HORIZON))
     val triggers = calendarTriggers(station.kind)
     val zone = station.calendarZone()
+    val clock = DateTimeFormatter.ofPattern("HH:mm", Locale.ROOT).withZone(zone)
     return (triggers + AlertTrigger.Eclipse).flatMap { trigger ->
         val rule = AlertRule(stationId = station.id, trigger = trigger)
         OccurrenceResolver.occurrences(rule, listOf(ready), zone, station.latitude, station.longitude, thresholdKnots)
             .filter { it.event > now && it.event <= horizon.end }
-            .map { calendarEvent(station.id, trigger, it, thresholdKnots, imperial, zone) }
+            .map { calendarEvent(station.id, trigger, it, thresholdKnots, imperial, zone, clock) }
     }.distinct().sortedBy { it.start }
 }
 
 private fun calendarEvent(
     station: StationId, trigger: AlertTrigger, occurrence: AlertOccurrence,
-    threshold: Double, imperial: Boolean, zone: ZoneId,
+    threshold: Double, imperial: Boolean, zone: ZoneId, clock: DateTimeFormatter,
 ): StationCalendarEvent {
-    val clock = DateTimeFormatter.ofPattern("HH:mm", Locale.ROOT).withZone(zone)
     val start = clock.format(occurrence.event)
     val speed = "%.1f kn".format(Locale.ROOT, threshold)
-    val (title, notes) = when (trigger) {
+    val (kind, title, notes) = when (trigger) {
         AlertTrigger.SlackWindowOpens -> when {
-            occurrence.noWindow && threshold == 0.0 -> "Slack" to start
-            occurrence.noWindow -> "Slack" to "$start, no window under $speed"
-            occurrence.end != null -> "Slack window" to "$start–${clock.format(occurrence.end)}, under $speed"
-            else -> "Slack window" to "$start, under $speed"
+            occurrence.noWindow && threshold == 0.0 -> Triple(CalendarEventKind.SLACK, "Slack", start)
+            occurrence.noWindow -> Triple(CalendarEventKind.SLACK, "Slack", "$start, no window under $speed")
+            occurrence.end != null -> Triple(CalendarEventKind.SLACK_WINDOW, "Slack window", "$start–${clock.format(occurrence.end)}, under $speed")
+            else -> Triple(CalendarEventKind.SLACK_WINDOW, "Slack window", "$start, under $speed")
         }
-        AlertTrigger.Slack -> "Slack" to start
-        AlertTrigger.Eclipse -> "Lunar eclipse" to start
+        AlertTrigger.Slack -> Triple(CalendarEventKind.SLACK, "Slack", start)
+        AlertTrigger.Eclipse -> Triple(CalendarEventKind.LUNAR_ECLIPSE, "Lunar eclipse", start)
         is AlertTrigger.TideExtreme -> {
             val height = requireNotNull(occurrence.heightM)
             val level = if (imperial) "%.1f ft".format(Locale.ROOT, height / 0.3048) else "%.2f m".format(Locale.ROOT, height)
             val turn = if (trigger.high) "High tide" else "Low tide"
-            "$turn $level" to "$start · $level"
+            Triple(if (trigger.high) CalendarEventKind.HIGH_TIDE else CalendarEventKind.LOW_TIDE, "$turn $level", "$start · $level")
         }
         is AlertTrigger.CurrentPeak, is AlertTrigger.TideCrossing -> error("Unsupported calendar trigger: $trigger")
     }
-    return StationCalendarEvent(station, title, occurrence.event, occurrence.end ?: occurrence.event, notes, zone)
+    return StationCalendarEvent(station, title, occurrence.event, occurrence.end ?: occurrence.event, notes, zone,
+        kind = kind, heightM = occurrence.heightM, imperial = imperial,
+        thresholdKnots = threshold.takeIf { trigger == AlertTrigger.SlackWindowOpens && (!occurrence.noWindow || it > 0) },
+        windowEnd = occurrence.end)
 }

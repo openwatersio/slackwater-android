@@ -322,4 +322,7 @@
     <string name="about_chs_predictions">"Certains aperçus des marées et certaines stations de courant au Canada affichent des prévisions officielles téléchargées du Service hydrographique du Canada."</string>
     <string name="settings_save_error">"Impossible d’enregistrer ce réglage. Réessayez."</string>
     <string name="premium_day_unavailable">"Impossible de lire la date enregistrée de votre journée gratuite."</string>
+    <string name="calendar_window_range">"%1$s à %2$s, sous %3$s"</string>
+    <string name="calendar_window_start">"%1$s, sous %2$s"</string>
+    <string name="calendar_no_window">"%1$s, aucune période sous %2$s"</string>
 </resources>

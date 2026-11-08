@@ -315,5 +315,8 @@
   "settings_increase": "流速上限を上げる",
   "about_chs_predictions": "カナダの一部の潮汐プレビューや潮流観測点では、カナダ水路局からダウンロードした公式予測を表示します。",
   "settings_save_error": "設定を保存できませんでした。もう一度お試しください。",
-  "premium_day_unavailable": "保存されている無料体験日の日時を読み取れません。"
+  "premium_day_unavailable": "保存されている無料体験日の日時を読み取れません。",
+  "calendar_window_range": "%1$s～%2$s、%3$s未満",
+  "calendar_window_start": "%1$s、%2$s未満",
+  "calendar_no_window": "%1$s、%2$s未満の時間帯なし"
 }

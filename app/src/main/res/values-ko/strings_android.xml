@@ -318,4 +318,7 @@
     <string name="about_chs_predictions">"일부 캐나다 조석 미리보기와 조류 관측소에는 캐나다 수로국에서 내려받은 공식 예측이 표시됩니다."</string>
     <string name="settings_save_error">"설정을 저장하지 못했습니다. 다시 시도하세요."</string>
     <string name="premium_day_unavailable">"저장된 무료 이용일의 날짜를 읽을 수 없습니다."</string>
+    <string name="calendar_window_range">"%1$s~%2$s, %3$s 미만"</string>
+    <string name="calendar_window_start">"%1$s, %2$s 미만"</string>
+    <string name="calendar_no_window">"%1$s, %2$s 미만인 시간대 없음"</string>
 </resources>

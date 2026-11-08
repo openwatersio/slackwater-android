@@ -322,4 +322,7 @@
     <string name="about_chs_predictions">"Algunas vistas previas de mareas y estaciones de corrientes de Canadá muestran predicciones oficiales descargadas del Servicio Hidrográfico Canadiense."</string>
     <string name="settings_save_error">"No se pudo guardar el ajuste. Inténtalo de nuevo."</string>
     <string name="premium_day_unavailable">"No se puede leer la fecha guardada de tu día gratis."</string>
+    <string name="calendar_window_range">"%1$s–%2$s, por debajo de %3$s"</string>
+    <string name="calendar_window_start">"%1$s, por debajo de %2$s"</string>
+    <string name="calendar_no_window">"%1$s, sin intervalo por debajo de %2$s"</string>
 </resources>

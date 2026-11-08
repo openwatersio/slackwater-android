@@ -13,6 +13,7 @@ import android.provider.CalendarContract
 import android.provider.CalendarContract.Calendars
 import android.provider.CalendarContract.Events
 import io.openwaters.slackwater.android.alerts.AlertDestination
+import io.openwaters.slackwater.android.core.planning.CalendarEventKind
 import io.openwaters.slackwater.android.core.planning.StationCalendarEvent
 import io.openwaters.slackwater.android.core.station.StationId
 import java.io.IOException
@@ -68,21 +69,22 @@ class StationCalendarProvider(context: Context) {
         val args = arrayOf(id.toString(), stationId.value)
         val existing = query(Events.CONTENT_URI, arrayOf(Events._ID, Events.TITLE, Events.DTSTART,
             Events.DTEND, Events.HAS_ALARM, Events.DESCRIPTION, Events.EVENT_TIMEZONE, Events.CUSTOM_APP_PACKAGE,
-            Events.CUSTOM_APP_URI), "$eventOwner AND ${Events.DTSTART}>=?", args + (millis - TOLERANCE_MS).toString()).use {
+            Events.CUSTOM_APP_URI, Events.SYNC_DATA2, Events.SYNC_DATA3), "$eventOwner AND ${Events.DTSTART}>=?", args + (millis - TOLERANCE_MS).toString()).use {
             buildList {
                 while (it.moveToNext()) add(Existing(it.getLong(0), it.getString(1), it.getLong(2), it.getLong(3), it.getInt(4) != 0,
-                    Metadata(it.getString(5), it.getString(6), it.getString(7), it.getString(8))))
+                    Metadata(it.getString(5), it.getString(6), it.getString(7), it.getString(8), it.getString(9), it.getString(10))))
             }.toMutableList()
         }
         val changes = mutableListOf<ContentProviderOperation>()
-        val wanted = desired.filter { it.start > now }.distinctBy { Triple(it.title, it.start, it.end) }
+        val wanted = desired.filter { it.start > now }.distinctBy { Triple(it.kind, it.start, it.end) }
         for (entry in wanted) {
             val start = entry.start.toEpochMilli()
             val end = entry.end.toEpochMilli()
             val match = existing.indexOfFirst {
-                !it.alarm && it.title == entry.title && abs(it.start - start) <= TOLERANCE_MS && abs(it.end - end) <= TOLERANCE_MS
+                !it.alarm && it.matches(entry.kind) && abs(it.start - start) <= TOLERANCE_MS && abs(it.end - end) <= TOLERANCE_MS
             }
-            val metadata = Metadata(entry.notes, entry.zone.id, account, AlertDestination.intent(app, stationId, entry.start).dataString)
+            val metadata = Metadata(entry.notes, entry.zone.id, account, AlertDestination.intent(app, stationId, entry.start).dataString,
+                entry.kind.key, entry.title)
             if (match >= 0) {
                 val row = existing.removeAt(match)
                 if (row.start > millis && row.metadata != metadata) {
@@ -96,13 +98,12 @@ class StationCalendarProvider(context: Context) {
             changes += ContentProviderOperation.newInsert(sync(Events.CONTENT_URI)).withValues(metadata.values().apply {
                 put(Events.CALENDAR_ID, id)
                 put(Events.SYNC_DATA1, stationId.value)
-                put(Events.TITLE, entry.title)
                 put(Events.DTSTART, start)
                 put(Events.DTEND, end)
                 put(Events.HAS_ALARM, 0)
             }).build()
         }
-        for (row in existing.filter { it.start > millis }) {
+        for (row in existing.filter { it.start > millis && (it.metadata.kindKey == null || it.metadata.kindKey in knownKeys) }) {
             changes += ContentProviderOperation.newDelete(sync(Events.CONTENT_URI))
                 .withSelection("$eventOwner AND ${Events.DTSTART}>? AND ${Events._ID}=?", args + arrayOf(millis.toString(), row.id.toString())).build()
         }
@@ -111,10 +112,33 @@ class StationCalendarProvider(context: Context) {
     }
 
     private data class Existing(val id: Long, val title: String?, val start: Long, val end: Long, val alarm: Boolean,
-                                val metadata: Metadata)
+                                val metadata: Metadata) {
+        fun matches(kind: CalendarEventKind): Boolean {
+            if (metadata.kindKey != null) return metadata.kindKey == kind.key && metadata.publishedTitle == title
+            return when (kind) {
+                CalendarEventKind.HIGH_TIDE -> title?.matches(highTideTitle) == true
+                CalendarEventKind.LOW_TIDE -> title?.matches(lowTideTitle) == true
+                CalendarEventKind.SLACK -> title == "Slack"
+                CalendarEventKind.SLACK_WINDOW -> title == "Slack window"
+                CalendarEventKind.LUNAR_ECLIPSE -> title == "Lunar eclipse"
+            }
+        }
+    }
 
-    private data class Metadata(val notes: String?, val zone: String?, val appPackage: String?, val link: String?) {
+    private companion object {
+        val knownKeys = CalendarEventKind.entries.map { it.key }.toSet()
+        // The original Android formatter always emitted two decimals in metres and one in feet.
+        const val HEIGHT = """-?[0-9]+(?:\.[0-9]{2} m|\.[0-9] ft)"""
+        val highTideTitle = Regex("High tide $HEIGHT")
+        val lowTideTitle = Regex("Low tide $HEIGHT")
+    }
+
+    private data class Metadata(val notes: String?, val zone: String?, val appPackage: String?, val link: String?,
+                                val kindKey: String?, val publishedTitle: String?) {
         fun values() = ContentValues().apply {
+            put(Events.TITLE, publishedTitle)
+            put(Events.SYNC_DATA2, kindKey)
+            put(Events.SYNC_DATA3, publishedTitle)
             put(Events.DESCRIPTION, notes)
             put(Events.EVENT_TIMEZONE, zone)
             put(Events.CUSTOM_APP_PACKAGE, appPackage)

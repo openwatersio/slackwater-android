@@ -318,4 +318,7 @@
     <string name="about_chs_predictions">"Nogle canadiske tidevandsvisninger og strømstationer viser officielle prognoser hentet fra Canadian Hydrographic Service."</string>
     <string name="settings_save_error">"Indstillingen kunne ikke gemmes. Prøv igen."</string>
     <string name="premium_day_unavailable">"Den gemte dato for din gratis dag kan ikke læses."</string>
+    <string name="calendar_window_range">"%1$s–%2$s, under %3$s"</string>
+    <string name="calendar_window_start">"%1$s, under %2$s"</string>
+    <string name="calendar_no_window">"%1$s, intet tidsrum under %2$s"</string>
 </resources>

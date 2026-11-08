@@ -318,4 +318,7 @@
     <string name="about_chs_predictions">"Einige kanadische Gezeitenvorschauen und Strömungsstationen zeigen offizielle Vorhersagen des Canadian Hydrographic Service, die auf das Gerät geladen wurden."</string>
     <string name="settings_save_error">"Die Einstellung konnte nicht gespeichert werden. Versuche es erneut."</string>
     <string name="premium_day_unavailable">"Das gespeicherte Datum deines kostenlosen Tages ist nicht lesbar."</string>
+    <string name="calendar_window_range">"%1$s–%2$s, unter %3$s"</string>
+    <string name="calendar_window_start">"%1$s, unter %2$s"</string>
+    <string name="calendar_no_window">"%1$s, kein Zeitfenster unter %2$s"</string>
 </resources>

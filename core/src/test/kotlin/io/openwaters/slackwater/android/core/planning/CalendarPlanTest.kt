@@ -46,6 +46,8 @@ class CalendarPlanTest {
         val series = PredictionSeries.Tide(emptyList(), emptyList(), turns)
         val rows = events(series, StationCapabilities.HARMONIC_TIDE, StationKind.Tide)!!.filter { it.title.contains("tide") }
         assertEquals(TimeSpan(now, end), requested)
+        assertEquals(listOf(CalendarEventKind.HIGH_TIDE, CalendarEventKind.LOW_TIDE), rows.map { it.kind })
+        assertEquals(listOf(1.0, -0.6), rows.map { it.heightM })
         assertEquals(listOf("High tide 1.00 m", "Low tide -0.60 m"), rows.map { it.title })
         assertEquals("05:01 · 1.00 m", rows.first().notes)
         assertEquals(listOf(now.plusSeconds(60), end), rows.map { it.start })
@@ -68,12 +70,17 @@ class CalendarPlanTest {
             null, null)
         val window = events(series, StationCapabilities.FINAL_CURRENT, StationKind.CanadianCurrent)!!.single { it.title != "Lunar eclipse" }
         assertEquals("Slack window", window.title)
+        assertEquals(CalendarEventKind.SLACK_WINDOW, window.kind)
+        assertEquals(window.end, window.windowEnd)
+        assertEquals(0.5, requireNotNull(window.thresholdKnots), 0.0)
         assertEquals(now.plusSeconds(900), window.start)
         assertEquals(now.plusSeconds(1500), window.end)
         assertEquals("05:15–05:25, under 0.5 kn", window.notes)
         val off = events(series, StationCapabilities.HARMONIC_CURRENT, StationKind.Current, threshold = 0.0)!!
             .single { it.title != "Lunar eclipse" }
         assertEquals("Slack", off.title)
+        assertEquals(CalendarEventKind.SLACK, off.kind)
+        assertNull(off.thresholdKnots)
         assertEquals(times[1], off.start)
         assertEquals(off.start, off.end)
         assertEquals("05:20", off.notes)
@@ -88,6 +95,7 @@ class CalendarPlanTest {
             .truncatedTo(java.time.temporal.ChronoUnit.MINUTES)
         assertEquals(listOf("Slack", "Lunar eclipse"), rows.map { it.title })
         assertEquals(listOf(turn, eclipse), rows.map { it.start })
+        assertEquals(listOf(CalendarEventKind.SLACK, CalendarEventKind.LUNAR_ECLIPSE), rows.map { it.kind })
         assertTrue(rows.all { it.end == it.start })
         assertEquals("Friday Harbor Currents", stationCalendarTitle(station.copy(kind = StationKind.DerivedGate)))
         assertEquals("Friday Harbor Tides", stationCalendarTitle(station))
