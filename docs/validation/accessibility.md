@@ -72,6 +72,12 @@ Record the commit, build variant, device or emulator, Android API, screen size/p
 
 A recent station has a keyboard-focusable Remove button with the station name. `StationListTest.keyboardCanRemoveOneRecentAndKeepTheOthers` reaches the card and button with Tab, checks the card’s TalkBack Remove action and activates the button with Enter.
 
+### First-launch location prompt
+
+On a disposable emulator, install the debug app and instrumentation APKs with `./gradlew :app:installDebug :app:installDebugAndroidTest`, select that emulator with `ANDROID_SERIAL`, and run `./scripts/test-location-prompt.sh`. The script clears all data for `io.openwaters.slackwater.android` before and after the test and requires the installed target to be debuggable. It preserves data between the two launches and force-stops the app before each instrumentation process.
+
+On API 37 the real permission controller showed its location dialog while the unseen tour was on Friday Harbor’s reading step. After denial, the stored ask flag was set. The next process reopened the tour without an automatic prompt. Returning to the list and choosing “Find tides near me” showed the permission dialog again. The Android CI device matrix runs both phases separately from the suite that pre-seeds the list preferences.
+
 ## Station detail
 
 [Reference scenarios, §18](https://github.com/openwatersio/slackwater-ios/blob/02188f2a2f5ef4166cd74c373a5885736d7ef159/docs/detail.md#18-conformance-scenarios).

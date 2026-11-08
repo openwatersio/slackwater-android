@@ -84,17 +84,28 @@ jobs:
             # API 26 delivers the emulator's own GPS position past a test provider, so put it at the position
             # LocationRepositoryTest's providers report (its `here`).
             adb emu geo fix -140.0 30.0
+            ./gradlew :app:installDebug :app:installDebugAndroidTest
+            mkdir -p app/build/reports
+            bash -o pipefail -c './scripts/test-location-prompt.sh 2>&1 | tee app/build/reports/location-prompt.log' || touch "$RUNNER_TEMP/location-prompt.failed"
             ./gradlew :app:connectedDebugAndroidTest
             if [ "${{ matrix.api }}" = "37.0" ]; then cp -R app/build/reports/androidTests app/build/reports/androidTests-enabled && cp -R app/build/outputs/androidTest-results app/build/outputs/androidTest-results-enabled && ./gradlew -PpremiumEnabled=false :app:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=io.openwaters.slackwater.android.premium.PremiumLinkTest,io.openwaters.slackwater.android.map.FreeDayControlTest,io.openwaters.slackwater.android.calendars.CalendarSettingsTest,io.openwaters.slackwater.android.sharing.StationScheduleTest; fi
       - name: Name the failed device tests
         # Cancelled covers a run that hangs until the job's timeout.
         if: failure() || cancelled()
         run: python3 scripts/report-device-failures.py "$GITHUB_STEP_SUMMARY" app/build/outputs/androidTest-results*
+      - name: Check the first-launch location result
+        if: always()
+        run: |
+          if test -f "$RUNNER_TEMP/location-prompt.failed"; then
+            echo 'Location prompt test failed. See location-prompt.log in the device reports.' >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: device-reports-${{ matrix.api }}
           # The XML results and every test's logcat sit beside the HTML reports.
           path: |
+            app/build/reports/location-prompt.log
             app/build/reports/androidTests*
             app/build/outputs/androidTest-results*
