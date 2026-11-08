@@ -60,13 +60,13 @@ The emulator ran build CE2A.260420.051.A2 with airplane mode off. The target was
 The tide and current cases in `DetailBenchmark` open Friday Harbor and Flat Point through dated public links. Both links select November 6, 2025 at 08:00 Pacific, outside the current opening window, so the schedule starts on the linked day. Each station runs five times with a cold process and five times with a warm process. Use a compact portrait phone in US English with heights in feet and speeds in knots.
 
 - `launchToDetailReading` starts before the link opens. It ends when the station title, the tide or current timeline, and a spoken reading with the expected unit and date are visible.
-- `revealScheduleEvent` starts at that boundary and includes swipe and accessibility-idle time as the page scrolls until a high tide or slack event row is visible in the schedule. This measures a scripted navigation journey. Gesture and idle time dominate the duration, so it is unsuitable for a schedule-rendering regression budget. Each iteration opens a fresh activity task. The warm run retains the target process.
+- `revealScheduleEvent` starts at that boundary and includes swipe and accessibility-idle time as the page scrolls until a high tide or slack event row is visible in the schedule. This measures a scripted navigation journey. Gesture and idle time dominate the duration, so it is unsuitable for a schedule-rendering regression budget. If five downward swipes miss the event, the harness searches back toward the top to recover a schedule that loaded above the viewport. Each iteration opens a fresh activity task. The warm run retains the target process.
 
 Use the same optimized APKs and device setup as the physical run above. Run `io.openwaters.slackwater.benchmark.DetailBenchmark` in the instrumentation command. The links record station visits. Run the list benchmarks first or restore their Friday Harbor setup before repeating them.
 
 ### API 37 emulator run
 
-On November 7, 2026 (Pacific), all four journeys completed five iterations on the API 37 arm64 phone emulator (build CE2A.260420.051.A2). The target APK was built from base `c2db9426fa988e180bd4bca23c78dc0277bba494` and had SHA-256 `751d6ed7d457030a2debe8537bc693b511776e7531edc2ae2141944738893fd4`. The raw results include frame timings and time to initial display. [Device measurements](evidence/detail-benchmarks-api37.json)
+On November 7, 2026 (Pacific), all four journeys completed five iterations on the API 37 arm64 phone emulator (build CE2A.260420.051.A2). The target APK was built from base `c2db9426fa988e180bd4bca23c78dc0277bba494` and had SHA-256 `751d6ed7d457030a2debe8537bc693b511776e7531edc2ae2141944738893fd4`. This historical run used only the downward search. Its raw results include frame timings and time to initial display. [Device measurements](evidence/detail-benchmarks-api37.json)
 
 | Journey | Launch to dated reading, median (ms) | Reveal schedule event, median (ms) |
 | --- | ---: | ---: |

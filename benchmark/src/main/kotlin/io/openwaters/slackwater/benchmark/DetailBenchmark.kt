@@ -70,9 +70,13 @@ class DetailBenchmark {
         val event = By.text(station.event)
         check(!device.hasObject(event)) { "The schedule is already visible. Use a compact portrait phone." }
         measured("revealScheduleEvent") {
-            for (attempt in 1..5) {
-                device.swipe(device.displayWidth / 2, device.displayHeight * 4 / 5,
-                    device.displayWidth / 2, device.displayHeight / 3, 85)
+            val lower = device.displayHeight * 4 / 5
+            val upper = device.displayHeight / 3
+            for (attempt in 1..10) {
+                // A late-loading schedule can appear above the viewport during the downward search.
+                val movingDown = attempt <= 5
+                device.swipe(device.displayWidth / 2, if (movingDown) lower else upper,
+                    device.displayWidth / 2, if (movingDown) upper else lower, 85)
                 device.waitForIdle()
                 if (device.hasObject(event)) break
             }
