@@ -67,7 +67,7 @@ class FirstLaunchLocationTest {
             // Android can still ask after one denial. Only the user's explicit request should show it now.
             device.awaitControl(By.desc(context.getString(R.string.tour_skip)), "Skip tour").click()
             if (!device.wait(Until.gone(mark), 10_000)) device.missing("tour dismissal")
-            val back = By.desc(context.getString(R.string.station_back))
+            val back = By.pkg(context.packageName).desc(context.getString(R.string.station_back))
             device.awaitControl(back, "station Back button after tour dismissal").click()
             if (!device.wait(Until.gone(back), 10_000)) device.missing("station page dismissal")
             val request = By.text(context.getString(R.string.list_find_tides_near_me))
