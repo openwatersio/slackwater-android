@@ -17,6 +17,8 @@ In a separate API 37 arm64 emulator run based on `fb73156`, all four `ChartKeybo
 
 In the debug build based on `b22a084` on the API 37 arm64 emulator, `SearchBackFocusTest` focuses the station list’s Search button in keyboard mode and opens the text field with Enter. After the soft keyboard is dismissed, Android Back closes search and returns focus to the same button. A second Enter reopens the focused text field.
 
+On API 37, `expandedSearchBackPreservesTheLinkedStationUntilTheNextBack` exercised the two-pane layout. Back dismissed Search and retained the linked Newport News page. A second Back returned to the current station.
+
 The layout test passed at the following activity sizes reported by Android. The expanded and landscape cases used display overrides on the same emulator.
 
 | Activity (dp) | App locale | Font scale | Animator duration scale |

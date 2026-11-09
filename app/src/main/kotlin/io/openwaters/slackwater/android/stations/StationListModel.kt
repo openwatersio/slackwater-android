@@ -116,11 +116,11 @@ class StationListModel internal constructor(
     val listPreferences: ListPreferencesStore = ListPreferencesStore.get(context),
     val location: LocationRepository = LocationRepository.get(context),
     private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Default),
+    val places: UserStateStore = UserStateStore.get(context.applicationContext),
 ) {
     private val app = context.applicationContext
     private val catalogSource = BundledStationCatalog(app.assets)
     private val predictions = AndroidPredictionRepository(app)
-    val places = UserStateStore.get(app)
     private val reading = ReadingPreferencesStore.get(app)
 
     private val _catalog = MutableStateFlow<LoadedCatalog?>(null)
