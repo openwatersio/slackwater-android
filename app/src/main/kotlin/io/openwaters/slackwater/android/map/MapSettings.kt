@@ -37,9 +37,9 @@ internal val SpeedUnit.unitLabel get() = when (this) {
 }
 
 @Composable
-internal fun MapSettings(replay: (suspend () -> Unit)?, close: () -> Unit) {
+internal fun MapSettings(replay: (suspend () -> Unit)?, close: () -> Unit,
+                         store: ReadingPreferencesStore = ReadingPreferencesStore.get(LocalContext.current)) {
     val context = LocalContext.current
-    val store = remember { ReadingPreferencesStore.get(context) }
     val reading by store.preferences.collectAsState(Result.success(ReadingPreferences()))
     val prefs = reading.getOrNull() ?: ReadingPreferences()
     val save = rememberSettingsEdit()
@@ -60,7 +60,7 @@ internal fun MapSettings(replay: (suspend () -> Unit)?, close: () -> Unit) {
                 stringResource(if (choice == SetFormat.COMPASS) R.string.settings_compass else R.string.settings_degrees),
                 prefs.setFormat == choice
             ) { save { store.setSetFormat(choice) } }
-            ComfortCurrentControl(prefs)
+            ComfortCurrentControl(prefs, store = store)
             SlackWindowPreview(prefs.slackWindowKnots)
             Text(stringResource(R.string.settings_comfort_help), style = MaterialTheme.typography.bodySmall)
             Row(Modifier.fillMaxWidth().heightIn(min = 48.dp).toggleable(value = prefs.showSky, role = Role.Switch,
@@ -109,10 +109,9 @@ internal fun MapSettings(replay: (suspend () -> Unit)?, close: () -> Unit) {
 }
 
 @Composable
-internal fun ComfortCurrentControl(prefs: ReadingPreferences, station: StationId? = null) {
-    val context = LocalContext.current
+internal fun ComfortCurrentControl(prefs: ReadingPreferences, station: StationId? = null,
+                                  store: ReadingPreferencesStore = ReadingPreferencesStore.get(LocalContext.current)) {
     val locale = LocalConfiguration.current.locales[0]
-    val store = remember(context) { ReadingPreferencesStore.get(context) }
     val save = rememberSettingsEdit()
     val knots = station?.let(prefs::effectiveThresholdKn) ?: prefs.slackWindowKnots
     val enabled = station == null || !prefs.slackWindowOff

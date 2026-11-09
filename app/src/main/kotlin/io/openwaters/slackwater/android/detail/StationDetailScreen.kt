@@ -241,7 +241,7 @@ private fun StationDetailBody(model: StationListModel, id: StationId, clock: Ins
             if (station != null) {
                 if (live) {
                     if (station.series == StationSeries.Current && station.kind != StationKind.DerivedGate) {
-                        io.openwaters.slackwater.android.map.ComfortCurrentControl(prefs, station.id)
+                        io.openwaters.slackwater.android.map.ComfortCurrentControl(prefs, station.id, model.readingStore)
                     }
                     if (!missing && (station.kind != StationKind.CanadianCurrent || metadata != null) && (!gate || detail != null)) {
                         StationCalendarButton(station.id)
@@ -257,7 +257,7 @@ private fun StationDetailBody(model: StationListModel, id: StationId, clock: Ins
             }
         }
         DetailTour(model.tour, tour, id, station?.name.orEmpty(), timeline, anchors, scroll, prefs.showSky,
-            moonCardAvailable = if (timeline == null && (loading || expired != null)) null else moon != null, beforeScroll = page::cancelRestore)
+            moonCardAvailable = if (timeline == null && (loading || expired != null)) null else moon != null, preferences = model.readingStore, beforeScroll = page::cancelRestore)
     } } }
     picker?.let { day ->
         StationDialogContent { DetailDatePicker(LocalDate.parse(day), ::pickDay, { picker = null }) }

@@ -137,6 +137,7 @@ internal fun DetailTour(
     scroll: ScrollState,
     showSky: Boolean,
     moonCardAvailable: Boolean?,
+    preferences: ReadingPreferencesStore = ReadingPreferencesStore.get(LocalContext.current),
     beforeScroll: () -> Unit,
 ) {
     val activity = androidx.activity.compose.LocalActivity.current
@@ -152,7 +153,6 @@ internal fun DetailTour(
         }
     }
     val talkBack = rememberTouchExploration()
-    val preferences = ReadingPreferencesStore.get(LocalContext.current)
     if (timeline != null) LaunchedEffect(timeline, tour.armed, tour.reservedFor) {
         if (!tour.armed) return@LaunchedEffect
         val state = timeline.state

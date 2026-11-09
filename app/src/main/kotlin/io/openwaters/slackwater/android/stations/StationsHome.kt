@@ -13,7 +13,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.openwaters.slackwater.android.R
 import io.openwaters.slackwater.android.rememberStationDialog
-import io.openwaters.slackwater.android.data.ReadingPreferencesStore
 import io.openwaters.slackwater.android.map.*
 import io.openwaters.slackwater.android.core.station.Coordinate
 import io.openwaters.slackwater.android.core.station.StationIdentity
@@ -48,6 +47,7 @@ fun StationsHome(onCredits: () -> Unit, coveredByAlert: Boolean = false, externa
                  linkOpened: Boolean = false,
                  cachedTourCoordinate: (LocationRepository) -> Coordinate? = { it.cachedFix()?.coordinate },
                  model: StationListModel = StationListModel.get(LocalContext.current),
+                 clock: () -> Instant = Instant::now,
                  footerExtras: @Composable (openSettings: () -> Unit) -> Unit = {}) {
     val context = LocalContext.current
     var settingsOpen by rememberStationDialog(false)
@@ -67,7 +67,7 @@ fun StationsHome(onCredits: () -> Unit, coveredByAlert: Boolean = false, externa
     val catalog by model.catalog.collectAsState()
     val mapModel = remember(context) { lazy { StationMapModel(context) } }
     val current by model.state.collectAsState()
-    var now by remember { mutableStateOf(Instant.now()) }
+    var now by remember { mutableStateOf(clock()) }
     // The tick loop below starts once, so it reads the latest value through this rather than the first one.
     val covered by rememberUpdatedState(coveredByAlert)
     val pendingLink by rememberUpdatedState(linkPending)
@@ -93,7 +93,7 @@ fun StationsHome(onCredits: () -> Unit, coveredByAlert: Boolean = false, externa
         val target = stationForTour(stations)
         if (covered || pendingLink) return
         if (stations.none { it.id == target }) throw IOException("Tour station is unavailable")
-        ReadingPreferencesStore.get(context).changeSkyVisibility(true) { true }
+        model.readingStore.changeSkyVisibility(true) { true }
         if (covered || pendingLink) return
         settingsOpen = false
         mapShowing = false
@@ -104,7 +104,7 @@ fun StationsHome(onCredits: () -> Unit, coveredByAlert: Boolean = false, externa
         model.tour.replay()
     }
     if (settingsOpen) {
-        MapSettings(replay = catalog?.stations?.takeUnless { coveredByAlert || linkPending }?.let { stations -> suspend { replayTour(stations) } },
+        MapSettings(store = model.readingStore, replay = catalog?.stations?.takeUnless { coveredByAlert || linkPending }?.let { stations -> suspend { replayTour(stations) } },
             close = { settingsOpen = false })
     }
     fun toggleMap() {
@@ -151,13 +151,13 @@ fun StationsHome(onCredits: () -> Unit, coveredByAlert: Boolean = false, externa
     BoxWithConstraints(Modifier.fillMaxSize()) {
         val expanded = maxWidth >= 600.dp && maxHeight >= 480.dp
         val wideLayout by rememberUpdatedState(expanded)
-        LaunchedEffect(lifecycle) {
+        LaunchedEffect(lifecycle, clock) {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 // Location is asked for when the list becomes active, then on a tick while locating or once the held fix
                 // is halfway to the reuse limit; the clock pauses in the background.
                 launch { model.refreshLocation() }
                 while (true) {
-                    now = Instant.now()
+                    now = clock()
                     delay(CARD_REFRESH_MILLIS)
                     model.tick()
                     val showing = !searching && (wideLayout || opened == null) && !covered
