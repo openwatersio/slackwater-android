@@ -93,6 +93,7 @@ fun StationListScreen(
     onMap: (() -> Unit)? = null,
     /** Raises the location prompt; a host that asks from above the list passes its own. */
     onAsk: (() -> Unit)? = null,
+    searchButtonModifier: Modifier = Modifier,
     footerExtras: @Composable () -> Unit = {},
 ) {
     val context = LocalContext.current
@@ -136,7 +137,7 @@ fun StationListScreen(
         ) { Text(stringResource(R.string.map_open)) }
         ExtendedFloatingActionButton(
             onClick = onSearch,
-            modifier = Modifier.align(Alignment.BottomStart).safeDrawingPadding().padding(start = 16.dp, bottom = 24.dp).heightIn(min = 56.dp),
+            modifier = searchButtonModifier.align(Alignment.BottomStart).safeDrawingPadding().padding(start = 16.dp, bottom = 24.dp).heightIn(min = 56.dp),
         ) { Text(stringResource(R.string.list_search)) }
     }
 

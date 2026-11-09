@@ -4,6 +4,10 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.input.InputMode
+import androidx.compose.ui.platform.LocalInputModeManager
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -186,9 +190,16 @@ fun StationsHome(onCredits: () -> Unit, coveredByAlert: Boolean = false, externa
                 }
             }
         }
-        BackHandler(!coveredByAlert && (searching || opened != null || mapShowing)) {
+        val searchButton = remember { FocusRequester() }
+        val inputMode = LocalInputModeManager.current
+        fun dismissSearch() {
+            searching = false
+            if (listVisible && !coveredByAlert && inputMode.inputMode == InputMode.Keyboard) {
+                searchButton.requestFocus()
+            }
+        }
+        BackHandler(!coveredByAlert && (opened != null || mapShowing)) {
             when {
-                searching -> searching = false
                 opened != null -> closePage()
                 else -> toggleMap()
             }
@@ -198,7 +209,7 @@ fun StationsHome(onCredits: () -> Unit, coveredByAlert: Boolean = false, externa
                 pageState.SaveableStateProvider("list") {
                     StationListScreen(model, ::open, onSearch = { initialChoiceMade = true; searching = true }, onCredits = onCredits,
                         now = now, showing = showing, onMap = if (expanded && mapShowing && opened == null) null else ::toggleMap,
-                        onAsk = ask, footerExtras = { footerExtras { settingsOpen = true } })
+                        searchButtonModifier = Modifier.focusRequester(searchButton), onAsk = ask, footerExtras = { footerExtras { settingsOpen = true } })
                 }
             }
             if (!coveredByAlert && (expanded || !listVisible)) {
@@ -222,6 +233,9 @@ fun StationsHome(onCredits: () -> Unit, coveredByAlert: Boolean = false, externa
                 }
             }
         }
-        if (searching) SearchOverlay(model, now, ::open) { searching = false }
+        if (searching) {
+            SearchOverlay(model, now, ::open, ::dismissSearch)
+            BackHandler(enabled = !coveredByAlert, onBack = ::dismissSearch)
+        }
     }
 }
