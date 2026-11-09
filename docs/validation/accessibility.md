@@ -13,6 +13,8 @@ On November 6, 2026, the API 37 arm64 Google Play emulator (build CE2A.260420.05
 | Dated shortcut | `QueryActivityTest` verifies both high tides for July 16 at Friday Harbor. `QueryLayoutTest` scrolls the submit button and both dated event rows into view, and checks each line of text for truncation and clipping. |
 | Light theme contrast | Screenshot samples on the phone gave 16.23:1 for heading text (#1D1B20) and 6.12:1 for the tide curve (#6750A4) against the surface (#FEF7FF). The event rows give text equivalents for the plotted tide times. Other backgrounds and current states still need separate checks. |
 
+In a separate API 37 arm64 emulator run based on `fb73156`, all four `ChartKeyboardChronologyTest` cases passed. Injected Right and Left keys moved Friday Harbor’s focused chart across midnight and the repeated Pacific hour and back. The test checks the accessible date, time and zone in English LTR and an Arabic RTL test configuration.
+
 The layout test passed at the following activity sizes reported by Android. The expanded and landscape cases used display overrides on the same emulator.
 
 | Activity (dp) | App locale | Font scale | Animator duration scale |
