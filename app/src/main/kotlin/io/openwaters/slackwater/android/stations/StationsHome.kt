@@ -47,9 +47,9 @@ fun StationsHome(onCredits: () -> Unit, coveredByAlert: Boolean = false, externa
                  consumeFocus: () -> Unit = {}, linkPending: Boolean = false,
                  linkOpened: Boolean = false,
                  cachedTourCoordinate: (LocationRepository) -> Coordinate? = { it.cachedFix()?.coordinate },
+                 model: StationListModel = StationListModel.get(LocalContext.current),
                  footerExtras: @Composable (openSettings: () -> Unit) -> Unit = {}) {
     val context = LocalContext.current
-    val model = remember { StationListModel.get(context) }
     var settingsOpen by rememberStationDialog(false)
     var replayGeneration by rememberSaveable { mutableIntStateOf(0) }
     var searching by rememberSaveable { mutableStateOf(false) }
