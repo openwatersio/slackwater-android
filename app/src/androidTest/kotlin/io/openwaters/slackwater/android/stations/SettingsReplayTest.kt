@@ -55,8 +55,8 @@ class SettingsReplayTest {
             }
         }
         compose.waitUntil(60_000) { model.state.value != null && compose.onAllNodes(hasScrollAction()).fetchSemanticsNodes().isNotEmpty() }
-        compose.onNode(hasScrollAction()).performScrollToNode(hasText(settings))
-        compose.onNodeWithText(settings).performClick()
+        compose.onNode(hasScrollAction()).performScrollToKey("footer")
+        compose.onNodeWithText(settings).performScrollTo().performClick()
         compose.onNodeWithText(context.getString(R.string.tour_replay_title)).performScrollTo().performClick()
     }
 
