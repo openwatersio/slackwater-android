@@ -89,18 +89,23 @@ class TimelineChunksTest {
         assertEquals(start(origin), span.clamp(start(origin), 390.0))
     }
 
-    @Test fun harmonicRepositoryLoadsPaddedRootsAndRealDayChromeWithoutDuplicateSeams() {
-        val station = StationIdentity(StationId("test"), "Vancouver", "BC", 49.28, -123.12, StationKind.Tide)
+    private val vancouver = StationIdentity(StationId("test"), "Vancouver", "BC", 49.28, -123.12, StationKind.Tide)
+
+    private fun harmonicRepository(spans: MutableList<TimeSpan> = mutableListOf()): PredictionRepository {
         val engine = Station(listOf(HarmonicConstituent("M2", 1.0, 30.0)), 0.0)
-        val spans = mutableListOf<TimeSpan>()
-        val repository = object : PredictionRepository {
+        return object : PredictionRepository {
             override suspend fun load(id: StationId, span: TimeSpan, purpose: PredictionPurpose): PredictionResult {
                 spans += span
                 return PredictionResult.Ready(id, span, "Test", StationCapabilities.HARMONIC_TIDE,
                     EngineAdapter.tide(engine, span))
             }
         }
-        val store = TimelineChunks(origin, zone, start(origin)) { repository.timelineChunk(station, zone, it) }
+    }
+
+    @Test fun harmonicRepositoryLoadsPaddedRootsAndRealDayChromeWithoutDuplicateSeams() {
+        val spans = mutableListOf<TimeSpan>()
+        val repository = harmonicRepository(spans)
+        val store = TimelineChunks(origin, zone, start(origin)) { repository.timelineChunk(vancouver, zone, it) }
         val snapshot = store.open(start(origin)).join()!!
         assertEquals(snapshot.window.start.minus(Duration.ofHours(6)), spans.first().start)
         val data = snapshot.data
@@ -115,6 +120,68 @@ class TimelineChunksTest {
             assertEquals(day.date, day.sunrise!!.atZone(zone).toLocalDate())
             assertEquals(day.date, day.sunset!!.atZone(zone).toLocalDate())
             assertTrue(day.sunrise < day.sunset)
+        }
+    }
+
+    @Test fun browsingWeeksAcrossDstKeepsEverySeamContinuousInBothDirections() {
+        checkBrowsingAcrossDst(LocalDate.parse("2026-03-01"), 167)
+        checkBrowsingAcrossDst(LocalDate.parse("2025-10-26"), 169)
+    }
+
+    private fun checkBrowsingAcrossDst(anchor: LocalDate, transitionWeekHours: Long) {
+        val direct = Executor { it.run() }
+        val now = start(anchor).plusSeconds(12 * 3600)
+        val repository = harmonicRepository()
+        assertEquals(transitionWeekHours, Duration.between(start(anchor.plusWeeks(1)), start(anchor.plusWeeks(2))).toHours())
+        val referenceSpan = TimeSpan(start(anchor.minusWeeks(7)), start(anchor.plusWeeks(9)))
+        val reference = kotlinx.coroutines.runBlocking {
+            repository.load(vancouver.id, referenceSpan, PredictionPurpose.DISPLAY) as PredictionResult.Ready
+        }.series as PredictionSeries.Tide
+        val chunks = TimelineChunks(anchor, zone, now, direct) { repository.timelineChunk(vancouver, zone, it) }
+        val opening = chunks.open(now).join()!!
+        var elapsed = 0L
+        val controller = TimelineController(now, zone, opening.window, 360.0, initialSelection = now, clockMillis = { elapsed })
+        ContinuousTimeline(controller, chunks, opening, direct).use { timeline ->
+            timeline.refresh().join()
+            val weeks = listOf(1L, 2L, 3L, 2L, 1L, 0L, -1L, -2L)
+            for (week in weeks) {
+                val target = anchor.plusWeeks(week).atTime(12, 0).atZone(zone).toInstant()
+                val left = timeline.content.window.start
+                timeline.dispatch(TimelineAction.BeginDrag)
+                val drag = Duration.between(target, timeline.state.selected).seconds / TimelineWindow.SECONDS_PER_DP
+                timeline.dispatch(TimelineAction.DragBy(drag))
+                timeline.refresh().join()
+                assertEquals(target, timeline.state.selected)
+                assertEquals(left, timeline.content.window.start)
+                assertTrue(timeline.content.window.end >= start(anchor.plusWeeks(week + 3)))
+
+                timeline.dispatch(TimelineAction.EndDrag(momentum = false))
+                elapsed += 600
+                timeline.dispatch(TimelineAction.Tick)
+                timeline.refresh().join()
+                assertEquals(target, timeline.state.selected)
+                val view = timeline.content
+                assertEquals(timeline.state.coverage, view.window)
+                assertTrue(view.window.start <= start(anchor.plusWeeks(week - 2)))
+                assertTrue(view.window.end >= start(anchor.plusWeeks(week + 3)))
+                val points = view.data.tidePoints
+                assertEquals(view.window.start, points.first().time)
+                assertEquals(view.window.end, points.last().time)
+                assertTrue(points.zipWithNext().all { (a, b) -> b.time == a.time.plusSeconds(600) })
+                val events = view.data.tideEvents
+                val expected = reference.events.filter { it.time >= view.window.start && it.time < view.window.end }
+                assertEquals(expected.map { it.kind }, events.map { it.kind })
+                for ((whole, chunked) in expected.zip(events)) {
+                    assertTrue(Duration.between(whole.time, chunked.time).abs() < Duration.ofSeconds(2))
+                }
+                val days = view.data.days
+                assertEquals(view.window.start.atZone(zone).toLocalDate().minusDays(1), days.first().date)
+                assertEquals(view.window.end.atZone(zone).toLocalDate(), days.last().date)
+                assertTrue(days.zipWithNext().all { (day, next) ->
+                    next.date == day.date.plusDays(1) && day.sunset!!.atZone(zone).toLocalDate() == day.date &&
+                        next.sunrise!!.atZone(zone).toLocalDate() == next.date && day.sunset < next.sunrise
+                })
+            }
         }
     }
 
