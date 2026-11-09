@@ -15,6 +15,8 @@ On November 6, 2026, the API 37 arm64 Google Play emulator (build CE2A.260420.05
 
 In a separate API 37 arm64 emulator run based on `fb73156`, all four `ChartKeyboardChronologyTest` cases passed. Injected Right and Left keys moved Friday Harbor’s focused chart across midnight and the repeated Pacific hour and back. The test checks the accessible date, time and zone in English LTR and an Arabic RTL test configuration.
 
+In the debug build based on `b22a084` on the API 37 arm64 emulator, `SearchBackFocusTest` focuses the station list’s Search button in keyboard mode and opens the text field with Enter. After the soft keyboard is dismissed, Android Back closes search and returns focus to the same button. A second Enter reopens the focused text field.
+
 The layout test passed at the following activity sizes reported by Android. The expanded and landscape cases used display overrides on the same emulator.
 
 | Activity (dp) | App locale | Font scale | Animator duration scale |
@@ -34,7 +36,7 @@ Record the commit, build variant, device or emulator, Android API, screen size/p
 |---|---|
 | Phone, TalkBack | Navigate by headings through My Location, Favorites, Near Me and Recents. Traverse cards as single controls, then open detail and traverse the event table. Each event announces its type, station-local date, time, and known value. Activating it selects that instant. |
 | TalkBack on tide, measured/vector current, derived and online detail | Adjust the timeline forward and back five minutes, then invoke next/previous event. Compare speech, lead, and table selection, including the last reachable event. Verify unknown speed and direction are spoken honestly. |
-| Phone, keyboard and RTL | In English and an RTL locale, tab through search, chart controls and dated events. Operate controls from a hardware keyboard and confirm dates advance chronologically across midnight and DST. Confirm native Back returns focus to the originating control. |
+| Phone, keyboard and RTL | In English and an RTL locale, tab through search, chart controls and dated events. Operate controls from a hardware keyboard and confirm dates advance chronologically across midnight and DST. The station search return path has emulator coverage above. Check focus restoration for other controls and repeat the traversal with a physical keyboard. |
 | Phone at maximum font and display size, tablet at expanded width | Check translated long names, dates and values in portrait, landscape and split screen. Read each control and event without overlap or truncation of its meaning. Inspect effective touch bounds for at least 48 × 48 dp. |
 | Foldable, folded and unfolded | Follow scrubber scenario 38 in both directions, including while the schedule loads. Record selected instant, week, and first visible content. |
 | System animations disabled | Open detail, change day, select an event, return to Now and settle near a target. Confirm instant landing and stable focus. |
