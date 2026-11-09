@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
+import androidx.test.uiautomator.BySelector
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.Until
 import io.openwaters.slackwater.android.core.tour.TOUR_FALLBACK_STATION
@@ -47,11 +48,7 @@ class FirstLaunchLocationTest {
         device.executeShellCommand("wm dismiss-keyguard")
         context.startActivity(Intent(context, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
         if (first) {
-            if (!device.wait(Until.hasObject(deny), 30_000)) {
-                val hierarchy = ByteArrayOutputStream()
-                device.dumpWindowHierarchy(hierarchy)
-                fail("Missing Android location permission dialog; visible UI:\n" + hierarchy.toString("UTF-8"))
-            }
+            device.awaitControl(deny, "first Android permission prompt")
             runBlocking {
                 withTimeout(60_000) {
                     StationListModel.get(context).tour.state.first { it.station == TOUR_FALLBACK_STATION && it.step == TourStep.READ }
@@ -61,23 +58,36 @@ class FirstLaunchLocationTest {
             assertTrue("Android did not dismiss the location dialog after denial", device.wait(Until.gone(deny), 10_000))
         }
         val mark = By.text(context.getString(R.string.tour_read_title))
-        assertTrue("Tour is not visible after launch", device.wait(Until.hasObject(mark), 60_000))
-        assertTrue(device.hasObject(By.text("Friday Harbor")))
+        device.awaitControl(mark, "tour reading step")
+        device.awaitControl(By.text("Friday Harbor"), "Friday Harbor station heading")
         if (!first) assertFalse("Automatic location prompt on relaunch", device.wait(Until.hasObject(anyDeny), 2_000))
         assertTrue(runBlocking { prefs.first().getOrThrow().locationAsked })
 
         if (!first) {
             // Android can still ask after one denial. Only the user's explicit request should show it now.
-            requireNotNull(device.findObject(By.desc(context.getString(R.string.tour_skip)))).click()
-            requireNotNull(device.wait(Until.findObject(By.desc(context.getString(R.string.station_back))), 10_000)).click()
-            val request = requireNotNull(device.wait(Until.findObject(By.text(context.getString(R.string.list_find_tides_near_me))), 30_000))
+            device.awaitControl(By.desc(context.getString(R.string.tour_skip)), "Skip tour").click()
+            if (!device.wait(Until.gone(mark), 10_000)) device.missing("tour dismissal")
+            val back = By.pkg(context.packageName).desc(context.getString(R.string.station_back))
+            device.awaitControl(back, "station Back button after tour dismissal").click()
+            if (!device.wait(Until.gone(back), 10_000)) device.missing("station page dismissal")
+            val request = By.text(context.getString(R.string.list_find_tides_near_me))
+            device.awaitControl(request, "explicit location request on the station list")
             assertFalse("Automatic location prompt on return to the list", device.wait(Until.hasObject(anyDeny), 2_000))
-            request.click()
-            requireNotNull(device.wait(Until.findObject(anyDeny), 10_000)) { "Explicit location request did not show Android’s prompt" }.click()
+            device.awaitControl(request, "explicit location request").click()
+            device.awaitControl(anyDeny, "permission prompt after explicit location request").click()
         }
         instrumentation.sendStatus(0, Bundle().apply {
             putString(Instrumentation.REPORT_KEY_STREAMRESULT, "\nVerified location prompt: $phase\n")
         })
+    }
+
+    private fun UiDevice.awaitControl(selector: BySelector, name: String) =
+        wait(Until.findObject(selector), 60_000) ?: missing(name)
+
+    private fun UiDevice.missing(name: String): Nothing {
+        val hierarchy = ByteArrayOutputStream()
+        dumpWindowHierarchy(hierarchy)
+        throw AssertionError("Timed out waiting for $name. Visible UI:\n" + hierarchy.toString("UTF-8"))
     }
 
 }

@@ -3,6 +3,8 @@ package io.openwaters.slackwater.android.stations
 import android.view.accessibility.AccessibilityManager
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.test.platform.app.InstrumentationRegistry
@@ -54,9 +56,18 @@ class SettingsReplayTest {
                 TextButton(onClick = openSettings) { Text(settings) }
             }
         }
-        compose.waitUntil(60_000) { model.state.value != null && compose.onAllNodes(hasScrollAction()).fetchSemanticsNodes().isNotEmpty() }
-        compose.onNode(hasScrollAction()).performScrollToNode(hasText(settings))
-        compose.onNodeWithText(settings).performClick()
+        val list = compose.onNode(hasScrollAction())
+        compose.waitUntil("Station list has a footer", 60_000) {
+            compose.onAllNodes(hasScrollAction()).fetchSemanticsNodes().any { node ->
+                SemanticsProperties.IndexForKey in node.config && node.config[SemanticsProperties.IndexForKey]("footer") >= 0
+            }
+        }
+        compose.waitUntil("Settings footer is available", 30_000) {
+            // Card heights can change while predictions load, moving the footer out of composition.
+            list.performScrollToKey("footer")
+            val footer = compose.onAllNodes(hasText(settings) and hasClickAction()).fetchSemanticsNodes().singleOrNull()
+            footer?.config?.get(SemanticsActions.OnClick)?.action?.let { click -> compose.runOnIdle { click() } } == true
+        }
         compose.onNodeWithText(context.getString(R.string.tour_replay_title)).performScrollTo().performClick()
     }
 
