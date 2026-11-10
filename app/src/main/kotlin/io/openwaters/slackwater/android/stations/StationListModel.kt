@@ -117,11 +117,11 @@ class StationListModel internal constructor(
     val location: LocationRepository = LocationRepository.get(context),
     private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Default),
     val places: UserStateStore = UserStateStore.get(context.applicationContext),
+    val readingStore: ReadingPreferencesStore = ReadingPreferencesStore.get(context.applicationContext),
 ) {
     private val app = context.applicationContext
     private val catalogSource = BundledStationCatalog(app.assets)
     private val predictions = AndroidPredictionRepository(app)
-    private val reading = ReadingPreferencesStore.get(app)
 
     private val _catalog = MutableStateFlow<LoadedCatalog?>(null)
     val catalog: StateFlow<LoadedCatalog?> = _catalog.asStateFlow()
@@ -153,7 +153,7 @@ class StationListModel internal constructor(
     }
 
     // The stores end their flow after a failed read; collecting again recovers from a transient failure.
-    val readingPreferences: StateFlow<ReadingPreferences> = reading.preferences
+    val readingPreferences: StateFlow<ReadingPreferences> = readingStore.preferences
         .orRetrying(ReadingPreferences())
         .stateIn(scope, SharingStarted.Eagerly, ReadingPreferences())
 
