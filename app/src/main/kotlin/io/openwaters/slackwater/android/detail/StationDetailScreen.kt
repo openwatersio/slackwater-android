@@ -319,6 +319,9 @@ private fun DetailContent(station: StationIdentity, detail: LoadedDetail, prefs:
                     DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withZone(timeline.zone).format(state.coverage.end)))
             }
         }
+        if (station.kind == StationKind.CanadianTide) {
+            TideDownloadControls(station.id, StationListModel.get(LocalContext.current))
+        }
         if (timeline.mode == TimelineMode.ONLINE) {
             val today = state.now.atZone(timeline.zone).toLocalDate()
             OnlineGateValidity(downloads, station.id, today, timeline.zone, revision)
