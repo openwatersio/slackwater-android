@@ -2,6 +2,12 @@ package io.openwaters.slackwater.android.data
 
 import androidx.test.platform.app.InstrumentationRegistry
 import io.openwaters.slackwater.android.core.station.StationId
+import io.openwaters.slackwater.ChsTideFit
+import io.openwaters.slackwater.HarmonicConstituent
+import io.openwaters.slackwater.iwls.ChsSample
+import io.openwaters.slackwater.Station
+import java.time.Instant
+import java.time.ZoneId
 import java.io.File
 import java.io.IOException
 import java.util.UUID
@@ -48,6 +54,33 @@ class ModelStoreTest {
         assertNull(ModelStore.decodeName("a/b"))
         assertNull(ModelStore.decodeName("%2"))
         assertNull(ModelStore.decodeName("%2f"))
+    }
+
+    @Test fun rejectedTideFitPreservesThePreviousUsableModel() = withStore { store, _ ->
+        val start = Instant.parse("2026-01-01T08:00:00Z")
+        val end = start.plusSeconds(ChsTideFit.DAYS * 86400L)
+        val port = Station(listOf(HarmonicConstituent("M2", 1.0, 15.0)), 2.3)
+        store.fitCanadianTide(millBay, end.plusSeconds(12345), ZoneId.of("America/Vancouver")) { chunk, grid ->
+            port.heights(chunk.start, chunk.end, grid.sampleMinutes * 60.0)
+                .map { ChsSample(it.time.toEpochMilli(), it.heightMetres) }
+        }
+        val previous = store.read(millBay, ModelKind.TIDE).ready().record
+        val next = end.plusSeconds(86400)
+        val expected = port.heights(next, next).single().heightMetres
+        assertEquals(expected, previous.fittedTide().heights(next, next).single().heightMetres, 0.01)
+        val revision = store.revision.value
+        try {
+            store.fitCanadianTide(millBay, end.plusSeconds(12345), ZoneId.of("America/Vancouver")) { chunk, grid ->
+                if (chunk.end < end) throw IOException("Interrupted tide download")
+                port.heights(chunk.start, chunk.end, grid.sampleMinutes * 60.0)
+                    .map { ChsSample(it.time.toEpochMilli(), it.heightMetres) }
+            }
+            fail("Expected an interrupted download")
+        } catch (_: IOException) {
+            val saved = store.read(millBay, ModelKind.TIDE).ready().record
+            assertEquals(previous.toString(), saved.toString())
+            assertEquals(revision, store.revision.value)
+        }
     }
 
     @Test fun kindsAreSeparateFiles() = withStore { store, _ ->

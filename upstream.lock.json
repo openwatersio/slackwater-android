@@ -7,7 +7,7 @@
   "sources": {
     "slackwater": {
       "repository": "openwatersio/slackwater",
-      "commit": "e66586a0e2a12c1565e2aefb866c14317f257961"
+      "commit": "dd73b91fe92d3c29160a11553f73f0322a71c5b7"
     },
     "almanac": {
       "repository": "openwatersio/almanac",
