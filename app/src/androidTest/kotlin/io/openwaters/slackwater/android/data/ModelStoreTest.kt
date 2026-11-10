@@ -2,6 +2,10 @@ package io.openwaters.slackwater.android.data
 
 import androidx.test.platform.app.InstrumentationRegistry
 import io.openwaters.slackwater.android.core.station.StationId
+import io.openwaters.slackwater.android.core.prediction.PredictionPurpose
+import io.openwaters.slackwater.android.core.prediction.PredictionResult
+import io.openwaters.slackwater.android.core.prediction.PredictionSeries
+import io.openwaters.slackwater.android.core.prediction.TimeSpan
 import io.openwaters.slackwater.ChsTideFit
 import io.openwaters.slackwater.HarmonicConstituent
 import io.openwaters.slackwater.iwls.ChsSample
@@ -54,6 +58,39 @@ class ModelStoreTest {
         assertNull(ModelStore.decodeName("a/b"))
         assertNull(ModelStore.decodeName("%2"))
         assertNull(ModelStore.decodeName("%2f"))
+    }
+
+    @Test fun detailCanReadASparseFitWhileLaterWeeksDownload() = withStore { store, _ ->
+        val now = Instant.parse("2026-03-02T12:00:00Z")
+        val zone = ZoneId.of("America/Vancouver")
+        val port = Station(listOf(HarmonicConstituent("M2", 1.0, 15.0)), 2.3)
+        val repository = AndroidPredictionRepository(context, store)
+        val span = TimeSpan(now, now.plusSeconds(86400))
+        suspend fun displayedHeight(): Double {
+            val ready = repository.load(millBay, span, PredictionPurpose.DISPLAY) as PredictionResult.Ready
+            return (ready.series as PredictionSeries.Tide).points.first().heightMetres
+        }
+        val cutoff = now.minusSeconds(21 * 86400L)
+        store.fitCanadianTide(millBay, now, zone) { chunk, grid ->
+            if (chunk.end < cutoff) emptyList() else
+                port.heights(chunk.start, chunk.end, grid.sampleMinutes * 60.0)
+                    .map { ChsSample(it.time.toEpochMilli(), it.heightMetres + 0.5) }
+        }
+        val firstHeight = displayedHeight()
+        val firstRevision = store.revision.value
+        var checkedDuringRefresh = false
+        store.fitCanadianTide(millBay, now, zone) { chunk, grid ->
+            if (!checkedDuringRefresh && chunk.end < cutoff) {
+                assertEquals(firstHeight, displayedHeight(), 0.0)
+                assertEquals(firstRevision, store.revision.value)
+                checkedDuringRefresh = true
+            }
+            port.heights(chunk.start, chunk.end, grid.sampleMinutes * 60.0)
+                .map { ChsSample(it.time.toEpochMilli(), it.heightMetres) }
+        }
+        assertTrue(checkedDuringRefresh)
+        assertTrue(store.revision.value > firstRevision)
+        assertEquals(firstHeight - 0.5, displayedHeight(), 0.01)
     }
 
     @Test fun rejectedTideFitPreservesThePreviousUsableModel() = withStore { store, _ ->

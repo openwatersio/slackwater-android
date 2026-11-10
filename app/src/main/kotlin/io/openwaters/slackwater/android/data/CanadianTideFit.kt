@@ -12,7 +12,7 @@ import kotlinx.coroutines.withContext
 import org.json.JSONArray
 import org.json.JSONObject
 
-/** Publish only after the complete IWLS sample batch has fitted successfully. */
+/** Publish a successful fit even when IWLS returned empty weeks. Detail can use it during the next download. */
 internal suspend fun ModelStore.fitCanadianTide(id: StationId, now: Instant, stationZone: ZoneId, fetch: suspend (ChsChunk, IwlsSampleGrid) -> List<ChsSample>) {
     val model = fitCanadianTideWindow(now, stationZone, fetch)
     val record = withContext(Dispatchers.Default) {
