@@ -34,7 +34,7 @@ class TidePreviewDownloadsTest {
             preferencesOf(stringSetPreferencesKey("previewRequested") to setOf(station.value))
         }, catalog)
         val queue = TidePreviewDownloads(worker, store, models, catalog,
-            MutableStateFlow(TideDownloadState.WAITING_FOR_NETWORK), AndroidPredictionRepository(context, models)) { _, _ ->
+            MutableStateFlow(TideDownloadState.WAITING_FOR_NETWORK), AndroidPredictionRepository(context, models), fit = { _, _, _ -> }) { _, _ ->
             error("offline request must not fetch")
         }
         queue.activityStarted()
@@ -85,7 +85,7 @@ class TidePreviewDownloadsTest {
         val fetching = CompletableDeferred<Unit>()
         val response = CompletableDeferred<Unit>()
         val queue = TidePreviewDownloads(worker, store, models, catalog, network.paused,
-            AndroidPredictionRepository(context, models), network.recovery) { _, _ ->
+            AndroidPredictionRepository(context, models), network.recovery, fit = { _, _, _ -> }) { _, _ ->
             if (calls.incrementAndGet() == 1) throw IwlsException.Transient("No route")
             fetching.complete(Unit)
             response.await()
@@ -106,12 +106,54 @@ class TidePreviewDownloadsTest {
         assertTrue(models.read(station, ModelKind.TIDE_PREVIEW) is StoredModel.Ready)
     }
 
+    @Test fun foregroundRequestPublishesPreviewBeforeFittingAndResumesWithoutFetchingItAgain() = withQueue { worker, catalog, store, models ->
+        val fitting = CompletableDeferred<Unit>()
+        val resumed = CompletableDeferred<Unit>()
+        val finish = CompletableDeferred<Unit>()
+        val attempts = AtomicInteger()
+        val previewCalls = AtomicInteger()
+        val network = MutableStateFlow<TideDownloadState?>(null)
+        val queue = TidePreviewDownloads(worker, store, models, catalog, network,
+            AndroidPredictionRepository(context, models), fit = { _, _, _ ->
+                if (attempts.incrementAndGet() == 1) {
+                    fitting.complete(Unit)
+                    awaitCancellation()
+                }
+                resumed.complete(Unit)
+                finish.await()
+                models.write(station, ModelKind.TIDE, org.json.JSONObject(
+                    """{"offset":2.0,"constituents":[{"name":"M2","amplitude":1.0,"phase":15}]}"""))
+            }) { _, at ->
+            previewCalls.incrementAndGet()
+            listOf(TidePoint(at.minusSeconds(300), 2.0), TidePoint(at.plusSeconds(300), 2.5))
+        }
+        store.requestDownloads(listOf(station)) // A derived gate also needs this reference tide.
+        queue.activityStarted()
+        queue.request(station)
+        fitting.await()
+        assertTrue(models.read(station, ModelKind.TIDE_PREVIEW) is StoredModel.Ready)
+        assertEquals(StoredModel.Missing, models.read(station, ModelKind.TIDE))
+        network.value = TideDownloadState.DATA_SAVER
+        queue.states.first { it[station] == TideDownloadState.DATA_SAVER }
+        assertTrue(station in store.state.first().getOrThrow().requested)
+        network.value = null
+        resumed.await()
+        finish.complete(Unit)
+        store.state.first { station !in it.getOrThrow().tideFitRequested }
+        assertTrue(models.read(station, ModelKind.TIDE) is StoredModel.Ready)
+        assertTrue(station in store.state.first().getOrThrow().requested)
+        queue.request(station)
+        store.state.first { station !in it.getOrThrow().tideFitRequested }
+        assertEquals(3, attempts.get())
+        assertEquals(1, previewCalls.get())
+    }
+
     @Test fun restoredRequestWaitsForAllowedNetworkAndPublishesPreview() = withQueue { worker, catalog, store, models ->
         store.requestDownloads(listOf(station))
         store.requestPreviews(listOf(station))
         val network = MutableStateFlow<TideDownloadState?>(TideDownloadState.WAITING_FOR_NETWORK)
         val calls = AtomicInteger()
-        val queue = TidePreviewDownloads(worker, store, models, catalog, network, AndroidPredictionRepository(context, models)) { _, _ ->
+        val queue = TidePreviewDownloads(worker, store, models, catalog, network, AndroidPredictionRepository(context, models), fit = { _, _, _ -> }) { _, _ ->
             calls.incrementAndGet()
             points
         }
@@ -136,7 +178,7 @@ class TidePreviewDownloadsTest {
         store.requestPreviews(ids)
         val calls = AtomicInteger()
         val queue = TidePreviewDownloads(worker, store, models, catalog, MutableStateFlow(null),
-            AndroidPredictionRepository(context, models)) { _, _ ->
+            AndroidPredictionRepository(context, models), fit = { _, _, _ -> }) { _, _ ->
             calls.incrementAndGet()
             points
         }
@@ -151,7 +193,7 @@ class TidePreviewDownloadsTest {
         models.write(station, ModelKind.TIDE_PREVIEW, org.json.JSONObject().put("old", true))
         val started = CompletableDeferred<Unit>()
         val calls = AtomicInteger()
-        val queue = TidePreviewDownloads(worker, store, models, catalog, MutableStateFlow(null), AndroidPredictionRepository(context, models)) { _, _ ->
+        val queue = TidePreviewDownloads(worker, store, models, catalog, MutableStateFlow(null), AndroidPredictionRepository(context, models), fit = { _, _, _ -> }) { _, _ ->
             if (calls.incrementAndGet() == 1) {
                 started.complete(Unit)
                 try { awaitCancellation() } finally { throw java.io.IOException("cancelled transport") }
@@ -176,7 +218,7 @@ class TidePreviewDownloadsTest {
     @Test fun permanentFailureReleasesDurableRequestAndManualRetryRestartsIt() = withQueue { worker, catalog, store, models ->
         val calls = AtomicInteger()
         val queue = TidePreviewDownloads(worker, store, models, catalog, MutableStateFlow(null),
-            AndroidPredictionRepository(context, models)) { _, _ ->
+            AndroidPredictionRepository(context, models), fit = { _, _, _ -> }) { _, _ ->
             if (calls.incrementAndGet() == 1) throw io.openwaters.slackwater.iwls.IwlsException.Permanent("unavailable")
             points
         }
@@ -201,7 +243,7 @@ class TidePreviewDownloadsTest {
         store.requestPreviews(listOf(station, fit))
         val calls = AtomicInteger()
         val queue = TidePreviewDownloads(worker, store, models, catalog,
-            MutableStateFlow(TideDownloadState.WAITING_FOR_NETWORK), AndroidPredictionRepository(context, models)) { _, _ ->
+            MutableStateFlow(TideDownloadState.WAITING_FOR_NETWORK), AndroidPredictionRepository(context, models), fit = { _, _, _ -> }) { _, _ ->
             calls.incrementAndGet()
             points
         }
@@ -216,7 +258,7 @@ class TidePreviewDownloadsTest {
         val started = CompletableDeferred<Unit>()
         val cancelled = CompletableDeferred<Unit>()
         val queue = TidePreviewDownloads(worker, store, models, catalog,
-            MutableStateFlow(null), AndroidPredictionRepository(context, models)) { _, _ ->
+            MutableStateFlow(null), AndroidPredictionRepository(context, models), fit = { _, _, _ -> }) { _, _ ->
             if (calls.incrementAndGet() == 1) {
                 started.complete(Unit)
                 try { awaitCancellation() } finally { cancelled.complete(Unit) }

@@ -66,7 +66,10 @@ class SettingsReplayTest {
             // Card heights can change while predictions load, moving the footer out of composition.
             list.performScrollToKey("footer")
             val footer = compose.onAllNodes(hasText(settings) and hasClickAction()).fetchSemanticsNodes().singleOrNull()
-            footer?.config?.get(SemanticsActions.OnClick)?.action?.let { click -> compose.runOnIdle { click() } } == true
+            compose.runOnIdle {
+                footer != null && footer.layoutInfo.isAttached &&
+                    footer.config[SemanticsActions.OnClick].action?.invoke() == true
+            }
         }
         compose.onNodeWithText(context.getString(R.string.tour_replay_title)).performScrollTo().performClick()
     }

@@ -60,8 +60,8 @@ class TideDownloadActionsTest {
             TideDownloadState.QUEUED to R.string.detail_queued,
             TideDownloadState.WAITING_FOR_NETWORK to R.string.tide_download_network,
             TideDownloadState.DATA_SAVER to R.string.tide_download_restricted,
-            TideDownloadState.DOWNLOADING to R.string.tide_download_active,
-            TideDownloadState.RETRY to R.string.tide_download_failed,
+            TideDownloadState.DOWNLOADING to R.string.gate_downloading,
+            TideDownloadState.RETRY to R.string.gate_failed,
         )) {
             compose.runOnIdle { status.value = state }
             button(label).assertExists()

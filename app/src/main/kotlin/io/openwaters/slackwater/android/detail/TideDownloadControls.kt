@@ -54,10 +54,10 @@ internal fun TideDownloadActions(state: TideDownloadState?, request: () -> Unit,
     }
     Text(stringResource(when (state) {
         TideDownloadState.QUEUED -> R.string.detail_queued
-        TideDownloadState.DOWNLOADING -> R.string.tide_download_active
+        TideDownloadState.DOWNLOADING -> R.string.gate_downloading
         TideDownloadState.WAITING_FOR_NETWORK -> R.string.tide_download_network
         TideDownloadState.DATA_SAVER -> R.string.tide_download_restricted
-        TideDownloadState.RETRY -> R.string.tide_download_failed
+        TideDownloadState.RETRY -> R.string.gate_failed
     }))
     if (state == TideDownloadState.DOWNLOADING) LinearProgressIndicator()
     Row {

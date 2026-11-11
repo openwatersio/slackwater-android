@@ -44,10 +44,12 @@ internal class TidePreviewDownloads(
     private val network: StateFlow<TideDownloadState?>,
     private val predictions: PredictionRepository,
     private val networkRecovery: StateFlow<Long> = MutableStateFlow(0L),
+    private val fit: suspend (StationIdentity, Instant, Boolean) -> Unit,
     private val fetch: suspend (StationIdentity, Instant) -> List<TidePoint>,
 ) {
     private val lock = Mutex()
     private val transfer = Mutex()
+    private val fits = Mutex()
     private val startedActivities = MutableStateFlow(0)
     fun activityStarted() = startedActivities.update { it + 1 }
     fun activityStopped() = startedActivities.update { (it - 1).coerceAtLeast(0) }
@@ -62,11 +64,12 @@ internal class TidePreviewDownloads(
                 if (observation.isFailure) return@onEach
                 lock.withLock {
                     // A queued observation may predate an explicit cancel or retry that held this lock.
-                    val requested = intents.state.first().getOrThrow().previewRequested
+                    val intent = intents.state.first().getOrThrow()
+                    val requested = intent.previewRequested
                     for (id in jobs.keys.toList() - requested) stop(id)
                     for (id in requested - jobs.keys) {
                         val station = liveStation(id)
-                        if (station == null) intents.releasePreviews(listOf(id)) else start(station)
+                        if (station == null) intents.cancelTide(id) else start(station, full = id in intent.tideFitRequested)
                     }
                 }
             }.retryAlertReads().collect()
@@ -78,13 +81,13 @@ internal class TidePreviewDownloads(
 
     suspend fun request(id: StationId) = lock.withLock {
         val station = liveStation(id) ?: return@withLock
-        intents.requestPreviews(listOf(id))
+        intents.requestTide(id)
         if (states.value[id] == TideDownloadState.RETRY) stop(id)
-        if (id !in jobs) start(station)
+        if (id !in jobs) start(station, full = true, manual = true)
     }
 
     suspend fun cancel(id: StationId) = lock.withLock {
-        intents.releasePreviews(listOf(id))
+        intents.cancelTide(id)
         stop(id)
     }
 
@@ -108,29 +111,24 @@ internal class TidePreviewDownloads(
         return result is PredictionResult.Ready && now in result.coverage
     }
 
-    private suspend fun finish(id: StationId, record: JSONObject? = null, failed: Boolean = false) = lock.withLock {
+    private suspend fun finish(id: StationId, failed: Boolean = false) = lock.withLock {
         currentCoroutineContext().ensureActive()
-        if (record != null) models.write(id, ModelKind.TIDE_PREVIEW, record)
-        intents.releasePreviews(listOf(id))
+        intents.cancelTide(id)
         stop(id)
         if (failed) status(id, TideDownloadState.RETRY)
     }
 
     private suspend fun download(station: StationIdentity) = transfer.withLock {
         activeStatus(station.id, TideDownloadState.DOWNLOADING)
-        val samples = try {
-            fetch(station, Instant.now())
-        } catch (_: IwlsException.Permanent) {
-            finish(station.id, failed = true)
-            return@withLock
-        }
+        val samples = fetch(station, Instant.now())
         val record = JSONObject().put("samples", JSONArray().apply {
             for (point in samples) put(JSONObject().put("time", point.time.toString()).put("height", point.heightMetres))
         })
-        finish(station.id, record)
+        currentCoroutineContext().ensureActive()
+        models.write(station.id, ModelKind.TIDE_PREVIEW, record)
     }
 
-    private fun start(station: StationIdentity) {
+    private fun start(station: StationIdentity, full: Boolean, manual: Boolean = false) {
         val id = station.id
         status(id, TideDownloadState.QUEUED)
         jobs[id] = scope.launch {
@@ -141,7 +139,8 @@ internal class TidePreviewDownloads(
                 while (true) {
                     val recoveryAtStart = networkRecovery.value
                     try {
-                        if (alreadyAvailable(id)) {
+                        val available = alreadyAvailable(id)
+                        if (available && !full) {
                             finish(id)
                             return@collectLatest
                         }
@@ -150,7 +149,20 @@ internal class TidePreviewDownloads(
                             return@collectLatest
                         }
                         activeStatus(id, TideDownloadState.QUEUED)
-                        download(station)
+                        if (!available) download(station)
+                        if (full) {
+                            fits.withLock {
+                                activeStatus(id, TideDownloadState.DOWNLOADING)
+                                fit(station, Instant.now(), manual)
+                            }
+                        }
+                        finish(id)
+                        return@collectLatest
+                    } catch (_: IwlsException.Permanent) {
+                        finish(id, failed = true)
+                        return@collectLatest
+                    } catch (_: io.openwaters.slackwater.HarmonicFitException) {
+                        finish(id, failed = true)
                         return@collectLatest
                     } catch (_: IwlsException.Transient) {
                         activeStatus(id, TideDownloadState.RETRY)
@@ -173,9 +185,13 @@ internal class TidePreviewDownloads(
             return shared ?: run {
                 val network = TideDownloadNetwork()
                 watchDownloadNetwork(app, update = network::update)
+                val source = IwlsTidePreviewSource(app.cacheDir)
+                val models = ModelStore.get(app)
                 TidePreviewDownloads(CoroutineScope(SupervisorJob() + Dispatchers.IO),
-                    UserStateStore.get(app).downloads, ModelStore.get(app), BundledStationCatalog(app.assets),
-                    network.paused, AndroidPredictionRepository(app), network.recovery, IwlsTidePreviewSource(app.cacheDir)::fetch)
+                    UserStateStore.get(app).downloads, models, BundledStationCatalog(app.assets),
+                    network.paused, AndroidPredictionRepository(app), network.recovery, fit = { station, now, manual ->
+                        models.fitCanadianTide(station.id, now, source.stationZone(station), source.fitChunks(station, now, manual))
+                    }, fetch = source::fetch)
             }.also { shared = it }
         }
     }
