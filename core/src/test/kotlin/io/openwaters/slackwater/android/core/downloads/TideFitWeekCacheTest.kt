@@ -31,4 +31,34 @@ class TideFitWeekCacheTest {
             assertEquals(samples, cache.load(id, chunk, otherGrid, now) { samples })
         }
     }
+
+    @Test fun onlyAlignedWeeksWithBothExactEndpointsAreReusable() = runBlocking {
+        val cache = TideFitWeekCache(folder.root)
+        val grid = IwlsSampleGrid(15)
+        val week = 604800L
+        val now = Instant.EPOCH.plusSeconds(week * 3)
+        val first = ChsChunk(Instant.EPOCH, Instant.EPOCH.plusSeconds(week))
+        val second = ChsChunk(first.end, first.end.plusSeconds(week))
+        fun endpoints(chunk: ChsChunk) = listOf(ChsSample(chunk.start.toEpochMilli(), 1.0),
+            ChsSample(chunk.end.toEpochMilli(), 2.0))
+        for (chunk in listOf(first, second)) {
+            val complete = endpoints(chunk)
+            val lateStart = complete.first().copy(tMillis = chunk.start.plusSeconds(900).toEpochMilli())
+            val earlyEnd = complete.last().copy(tMillis = chunk.end.minusSeconds(900).toEpochMilli())
+            for (incomplete in listOf(listOf(lateStart, complete.last()), listOf(complete.first(), earlyEnd))) {
+                assertEquals(incomplete, cache.load("port", chunk, grid, now) { incomplete })
+            }
+            assertEquals(complete, cache.load("port", chunk, grid, now) { complete })
+        }
+        val reopened = TideFitWeekCache(folder.root)
+        for (chunk in listOf(first, second)) {
+            assertEquals(endpoints(chunk), reopened.load("port", chunk, grid, now) { error("missing saved week") })
+        }
+        val shifted = ChsChunk(first.start.plusSeconds(900), first.end.plusSeconds(900))
+        val partial = ChsChunk(first.start, first.end.minusSeconds(900))
+        for (chunk in listOf(shifted, partial)) {
+            assertEquals(endpoints(chunk), cache.load("port", chunk, grid, now) { endpoints(chunk) })
+            assertEquals(emptyList<ChsSample>(), cache.load("port", chunk, grid, now) { emptyList() })
+        }
+    }
 }
