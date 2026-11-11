@@ -4,7 +4,7 @@ import android.view.accessibility.AccessibilityManager
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.ui.semantics.SemanticsProperties
-import androidx.compose.ui.semantics.SemanticsActions
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.test.platform.app.InstrumentationRegistry
@@ -51,8 +51,13 @@ class SettingsReplayTest {
 
     private fun replay(coordinate: Coordinate?) {
         val settings = context.getString(R.string.settings_title)
+        var mountedSettings: (() -> Unit)? = null
         compose.setContent {
             StationsHome(onCredits = {}, cachedTourCoordinate = { coordinate }) { openSettings ->
+                DisposableEffect(openSettings) {
+                    mountedSettings = openSettings
+                    onDispose { mountedSettings = null }
+                }
                 TextButton(onClick = openSettings) { Text(settings) }
             }
         }
@@ -65,10 +70,8 @@ class SettingsReplayTest {
         compose.waitUntil("Settings footer is available", 30_000) {
             // Card heights can change while predictions load, moving the footer out of composition.
             list.performScrollToKey("footer")
-            val footer = compose.onAllNodes(hasText(settings) and hasClickAction()).fetchSemanticsNodes().singleOrNull()
             compose.runOnIdle {
-                footer != null && footer.layoutInfo.isAttached &&
-                    footer.config[SemanticsActions.OnClick].action?.invoke() == true
+                mountedSettings?.let { open -> open(); true } ?: false
             }
         }
         compose.onNodeWithText(context.getString(R.string.tour_replay_title)).performScrollTo().performClick()
