@@ -111,8 +111,15 @@ internal class TidePreviewDownloads(
         return result is PredictionResult.Ready && now in result.coverage
     }
 
-    private suspend fun finish(id: StationId, failed: Boolean = false) = lock.withLock {
+    private suspend fun finish(station: StationIdentity, previewOnly: Boolean = false, failed: Boolean = false) = lock.withLock {
+        val id = station.id
         currentCoroutineContext().ensureActive()
+        // A full request can arrive while a restored preview is downloading.
+        if (previewOnly && id in intents.state.first().getOrThrow().tideFitRequested) {
+            stop(id)
+            start(station, full = true, manual = true)
+            return@withLock
+        }
         intents.cancelTide(id)
         stop(id)
         if (failed) status(id, TideDownloadState.RETRY)
@@ -141,7 +148,7 @@ internal class TidePreviewDownloads(
                     try {
                         val available = alreadyAvailable(id)
                         if (available && !full) {
-                            finish(id)
+                            finish(station, previewOnly = true)
                             return@collectLatest
                         }
                         if (paused != null) {
@@ -156,13 +163,13 @@ internal class TidePreviewDownloads(
                                 fit(station, Instant.now(), manual)
                             }
                         }
-                        finish(id)
+                        finish(station, previewOnly = !full)
                         return@collectLatest
                     } catch (_: IwlsException.Permanent) {
-                        finish(id, failed = true)
+                        finish(station, failed = true)
                         return@collectLatest
                     } catch (_: io.openwaters.slackwater.HarmonicFitException) {
-                        finish(id, failed = true)
+                        finish(station, failed = true)
                         return@collectLatest
                     } catch (_: IwlsException.Transient) {
                         activeStatus(id, TideDownloadState.RETRY)

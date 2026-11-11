@@ -148,6 +148,32 @@ class TidePreviewDownloadsTest {
         assertEquals(1, previewCalls.get())
     }
 
+    @Test fun explicitRequestPromotesAnInFlightRestoredPreview() = withQueue { worker, catalog, store, models ->
+        store.requestPreviews(listOf(station))
+        val fetching = CompletableDeferred<Unit>()
+        val releasePreview = CompletableDeferred<Unit>()
+        val manualFit = CompletableDeferred<Boolean>()
+        val fetches = AtomicInteger()
+        val queue = TidePreviewDownloads(worker, store, models, catalog, MutableStateFlow(null),
+            AndroidPredictionRepository(context, models), fit = { _, _, manual ->
+                assertTrue(models.read(station, ModelKind.TIDE_PREVIEW) is StoredModel.Ready)
+                manualFit.complete(manual)
+            }) { _, at ->
+            fetches.incrementAndGet()
+            fetching.complete(Unit)
+            releasePreview.await()
+            listOf(TidePoint(at.minusSeconds(300), 1.0), TidePoint(at.plusSeconds(300), 2.0))
+        }
+        queue.activityStarted()
+        fetching.await()
+        queue.request(station)
+        assertTrue(station in store.state.first().getOrThrow().tideFitRequested)
+        releasePreview.complete(Unit)
+        assertTrue(manualFit.await())
+        store.state.first { station !in it.getOrThrow().previewRequested }
+        assertEquals(1, fetches.get())
+    }
+
     @Test fun restoredRequestWaitsForAllowedNetworkAndPublishesPreview() = withQueue { worker, catalog, store, models ->
         store.requestDownloads(listOf(station))
         store.requestPreviews(listOf(station))
