@@ -38,7 +38,7 @@ Dependency checksums are in `gradle/verification-metadata.xml`; the wrapper has 
 
 ## Remaining work
 
-The [parity ledger](docs/ios-parity.md) defines the remaining work against iOS main at the merge commit of PR #900 (`02188f2a2f5ef4166cd74c373a5885736d7ef159`). Work is tracked in [repository issues](https://github.com/openwatersio/slackwater-android/issues) and the [Slackwater Android project](https://github.com/orgs/openwatersio/projects/5).
+The [parity ledger](docs/ios-parity.md) defines the remaining work against iOS main at the merge commit of PR #921 (`6457d71b46af0e1c3310e1f8688dffc0db102d33`). Work is tracked in [repository issues](https://github.com/openwatersio/slackwater-android/issues) and the [Slackwater Android project](https://github.com/orgs/openwatersio/projects/5).
 
 ## Translations
 

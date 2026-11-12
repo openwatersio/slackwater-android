@@ -28,7 +28,7 @@ Prediction engine and IWLS client: Slackwater (MIT).
 
 Canadian station identities, device-downloaded tide predictions, and current-gate evidence: Canadian Hydrographic Service, Fisheries and Oceans Canada. DFO terms (clause 10). Derived gate evidence is not CHS-published prediction data and is not for navigation. This app target bundles no CHS predictions or user-fitted models.
 
-Station and bathymetry credits follow slackwater-ios/Slackwater/AboutView.swift at 02188f2a2f5ef4166cd74c373a5885736d7ef159.
+Station and bathymetry credits follow slackwater-ios/Slackwater/AboutView.swift at 6457d71b46af0e1c3310e1f8688dffc0db102d33.
 
 SOFTWARE LICENSES
 

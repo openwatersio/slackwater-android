@@ -2,7 +2,7 @@
 
 Android verification is tracked in the [scenario and accessibility matrix](validation/accessibility.md), the [station detail checks](validation/station-detail.md), the [timeline fixtures and interruption trace](validation/timeline.md), and the [performance evidence ledger](validation/android-performance.md).
 
-This ledger is the acceptance map for the Android work tracked in [repository issues](https://github.com/openwatersio/slackwater-android/issues) and the [Slackwater Android project](https://github.com/orgs/openwatersio/projects/5); each row names the issues that own it. Its source is the entire iOS tree at [PR #900 merge commit `02188f2a2f5ef4166cd74c373a5885736d7ef159`](https://github.com/openwatersio/slackwater-ios/tree/02188f2a2f5ef4166cd74c373a5885736d7ef159). Rows describe work to implement and verify, not existing Android features.
+This ledger is the acceptance map for the Android work tracked in [repository issues](https://github.com/openwatersio/slackwater-android/issues) and the [Slackwater Android project](https://github.com/orgs/openwatersio/projects/5); each row names the issues that own it. Its source is the entire iOS tree at [PR #921 merge commit `6457d71b46af0e1c3310e1f8688dffc0db102d33`](https://github.com/openwatersio/slackwater-ios/tree/6457d71b46af0e1c3310e1f8688dffc0db102d33). Rows describe work to implement and verify, not existing Android features.
 
 Use the owning product document when its wording differs from incidental iOS code. Source documents that point to moving upstream links must be resolved to reviewed dependency SHAs in `upstream.lock.json` before implementation. Refresh this baseline deliberately; do not make CI compare a pinned export with the latest unreviewed iOS `main`.
 
@@ -27,7 +27,7 @@ Use the owning product document when its wording differs from incidental iOS cod
 | [App Store metadata][ios-metadata], [listing source][ios-listing] | #16, #27, #17 | Reuse applicable product/localized copy; independently verify Play forms, limits, SDK disclosure, and actual Android claims. |
 | [Licensing][ios-licensing] | #2, #4, #15, #17 | Preserve GPL source/notice and contributor workflow; Apple-specific distribution analysis is not a Play conclusion. |
 | [TestFlight][ios-testflight], [App Store release procedure][ios-appstore], [release notes][ios-release-notes] | #17 | Replace Apple operational tooling with an Android release runbook; keep useful release-copy discipline. Do not port App Store Connect scripts/signing. |
-| Historical plans/specs under `docs/superpowers/` | Source context only | Product contracts above take precedence. PR #900 already includes its Premium base-branch behavior. |
+| Historical plans/specs under `docs/superpowers/` | Source context only | Product contracts above take precedence. The pinned tree already includes the Premium behavior those plans describe. |
 
 ## Browser and station identity
 
@@ -56,6 +56,8 @@ The selected instant is the page's clock. Range/Next max/Moon/Sun content, sched
 | Continuous schedule re-anchors after 600 ms outside the existing window. Online re-anchors after 600 ms within half viewport plus 1 h of an edge, retaining visible week while extending. [Scrubber §4.2][ios-scrubber] | Late response after Now or another gesture cannot replace current selection; explicit jumps build coverage first. | #5, #10 |
 | Opening now−2 h → now in 650 ms, one-shot; rest controls after 450 ms with 200 ms fade. Reduced motion is direct. Touch-down alone does not cancel opening. [Scrubber §6][ios-scrubber] | Recognized drag/tap/500 ms press, lead hit-through, pill inertness while moving, hard edges, vertical/edge-back arbitration. | #5, #6 |
 | Magnet strictly within 4.5 dp; earlier wins tie; under 0.5 dp takes exact instant without a ride. Explicit moves animate from 0.5 dp through 7 elapsed days; newest request wins, active drag defers latest request to finger-up. [Scrubber §§7–8][ios-scrubber] | Boundary equality, cancellation of stale frames, queued requests, clamped reachable target, resize/fold preservation. | #5, #6 |
+| Tide direction comes from the engine's tide reading on the lead, card and widget: Rising toward a high and Falling toward a low, by the rate's sign when no later turn is loaded. Only the lead reads High or Low, within 1 s of a turn; cards and widgets read Rising or Falling. A Canadian preview reads the same way, so its flat rounded high reads Rising to its midpoint and Falling after it. [List §6.2][ios-list], [scrubber §9.1][ios-scrubber] | Card reading cases for a preview's flat high and for a series with no later turn. | #6, #9, #103 |
+| A tide card's high and low share one ink across dot, reading arrow and axis time: high teal, low amber. A current card's slack times are go green. Past ones fade with the past line. [List §6.4][ios-list], [scrubber §12.3][ios-scrubber] | Tide and current card screenshots, the medium widget, and contrast at the past fade. | #4, #11, #104 |
 | Snap targets include correct tide/current/derived events, drawn window edges, enabled sun events, greatest eclipse. Schedule eclipse is first contact. Thinned/edge-suppressed annotations and maxima without a displayed time row remain magnetic; disabled sun marks, undrawn short-window edges, and out-of-data candidates do not. [Scrubber §§7, 10, 12–14][ios-scrubber], [detail §8][ios-detail] | Equal-time priority, hidden-label event targets, sky switch removes sun targets, event tap versus eclipse row difference. | #5, #6 |
 | Slack is the zero instant, within 1 s for the displayed reading. Window requires reversal and interpolated threshold crossings; weak water without reversal is not slack. Measured readings use vector speed/set; curve and map pins use major-axis semantics. [Current charts §§2–4][ios-current] | Cross-axis flow at major slack, Dodd 355° flood/155° ebb, exact zero vector, same-sign lull, fierce sampled-over reversal. | #21, #6, #7, #22 |
 | Shared comfort threshold default 0.5 kn; nonzero range 0.1–10, Off 0. Touching windows merge; above-threshold excursions remain visible. Clipped edges have no measured duration. [Current charts §§3–4][ios-current] | All surfaces agree; threshold changes rebuild preserving selection and reschedule planning; off leaves slack instants. | #21, #6, #11, #22, #12, #23, #24, #25, #13, #26 |
@@ -95,6 +97,7 @@ The selected instant is the page's clock. Range/Next max/Moon/Sun content, sched
 | Requirement and source | Acceptance evidence to add | Issues |
 |---|---|---|
 | All readings/dates/default chart/settings/home-screen widgets free; planning alerts/calendars/print and changing default sky are Premium. Revert to default is free; lapse preserves values. [Premium][ios-premium] | Capability matrix exercised in free, purchased, trial, lapsed, and Premium-disabled builds. | #11, #12, #23, #24, #25 |
+| Settings gathers Premium into one card marked with sparkles: a Sky controls row holding the "Sun, moon and stars" switch, then "Support Slackwater", which reads "You have Premium — thank you." once purchased and opens the Premium sheet either way. With Premium sales disabled the card has no button. Android leaves out the card's Alerts and Calendars rows, because it has no all-alerts or favorites-calendars screen, and keeps the free widgets off the Premium sheet; the Lock screen row falls under Apple-only surfaces. [List §8][ios-list] | Free, purchased and Premium-disabled Settings screenshots; refused sky switch opens the sheet. | #105 |
 | Free day once per device-calendar month, 24 elapsed hours, first-of-month eligibility; purchased-or-free-day is one shared gate. [Premium][ios-premium] | Month/DST/time-zone transitions, pending purchase, buying during trial, expiry with process absent; local-only state disclosed. | #12, #23, #24, #25 |
 | Rules name concrete stations, preserve unknown serialized forms; once is nearest occurrence within six hours, not exact-minute matching. [Alerts §§3–4][ios-alerts] | Rule upgrade/downgrade round trip, shifted event, no nearby occurrence, expired-rule pruning. | #22 |
 | Triggers and sun filters reuse shared predictions; heights stored in metres, minute-floor identities, per-local-day extremes. New editor lead 30 min; choices 0/15/30/60/180/1440. [Alerts §§3–4, 7][ios-alerts] | All triggers, golden 0°…+6°, blue −4°…−8°, cross-midnight/polar behavior, threshold Off and window opening. | #22, #23 |
@@ -125,7 +128,7 @@ These are deliberate Android product decisions. Add device evidence and user-fac
 
 ## Specified targets and open designs
 
-PR #900 makes the implementation gaps explicit. A known iOS gap does not waive an Android contract. Some current-chart targets also conflict with the more specific scrubber; those conflicts must be visible in the issues.
+The pinned product docs make the implementation gaps explicit. A known iOS gap does not waive an Android contract. Some current-chart targets also conflict with the more specific scrubber; those conflicts must be visible in the issues.
 
 | Topic | Disposition for Android | Owner and acceptance |
 |---|---|---|
@@ -149,28 +152,28 @@ PR #900 makes the implementation gaps explicit. A known iOS gap does not waive a
 - Record release-build performance with device/OS and named boundaries. Published iOS numbers are comparison context, not Android service-level targets.
 - Every row ends with an implementation/test link, an explicit platform adaptation, or a named unresolved design disposition. Do not claim generic "iOS parity" while a missing behavior is only hidden behind an unchecked issue.
 
-[ios-index]: https://github.com/openwatersio/slackwater-ios/blob/02188f2a2f5ef4166cd74c373a5885736d7ef159/docs/README.md
-[ios-list]: https://github.com/openwatersio/slackwater-ios/blob/02188f2a2f5ef4166cd74c373a5885736d7ef159/docs/list.md
-[ios-detail]: https://github.com/openwatersio/slackwater-ios/blob/02188f2a2f5ef4166cd74c373a5885736d7ef159/docs/detail.md
-[ios-scrubber]: https://github.com/openwatersio/slackwater-ios/blob/02188f2a2f5ef4166cd74c373a5885736d7ef159/docs/scrubber.md
-[ios-current]: https://github.com/openwatersio/slackwater-ios/blob/02188f2a2f5ef4166cd74c373a5885736d7ef159/docs/current-charts.md
-[ios-chs]: https://github.com/openwatersio/slackwater-ios/blob/02188f2a2f5ef4166cd74c373a5885736d7ef159/docs/chs-data-model.md
-[ios-premium]: https://github.com/openwatersio/slackwater-ios/blob/02188f2a2f5ef4166cd74c373a5885736d7ef159/docs/premium.md
-[ios-alerts]: https://github.com/openwatersio/slackwater-ios/blob/02188f2a2f5ef4166cd74c373a5885736d7ef159/docs/alerts.md
-[ios-siri]: https://github.com/openwatersio/slackwater-ios/blob/02188f2a2f5ef4166cd74c373a5885736d7ef159/docs/siri.md
-[ios-resources]: https://github.com/openwatersio/slackwater-ios/blob/02188f2a2f5ef4166cd74c373a5885736d7ef159/Slackwater/Resources/README.md
-[ios-chs-validation]: https://github.com/openwatersio/slackwater-ios/blob/02188f2a2f5ef4166cd74c373a5885736d7ef159/docs/validation/chs-currents.md
-[ios-world-validation]: https://github.com/openwatersio/slackwater-ios/blob/02188f2a2f5ef4166cd74c373a5885736d7ef159/docs/validation/world-tide-stations.md
-[ios-fill]: https://github.com/openwatersio/slackwater-ios/blob/02188f2a2f5ef4166cd74c373a5885736d7ef159/tools/fill-pipeline/README.md
-[ios-patches]: https://github.com/openwatersio/slackwater-ios/blob/02188f2a2f5ef4166cd74c373a5885736d7ef159/tools/patch-pipeline/README.md
-[ios-patch-certification]: https://github.com/openwatersio/slackwater-ios/blob/02188f2a2f5ef4166cd74c373a5885736d7ef159/tools/patch-pipeline/passes/CERTIFICATION.md
-[ios-performance]: https://github.com/openwatersio/slackwater-ios/blob/02188f2a2f5ef4166cd74c373a5885736d7ef159/docs/performance.md
-[ios-metadata]: https://github.com/openwatersio/slackwater-ios/blob/02188f2a2f5ef4166cd74c373a5885736d7ef159/docs/appstore-metadata.md
-[ios-listing]: https://github.com/openwatersio/slackwater-ios/blob/02188f2a2f5ef4166cd74c373a5885736d7ef159/docs/appstore-listing.json
-[ios-licensing]: https://github.com/openwatersio/slackwater-ios/blob/02188f2a2f5ef4166cd74c373a5885736d7ef159/docs/licensing.md
-[ios-testflight]: https://github.com/openwatersio/slackwater-ios/blob/02188f2a2f5ef4166cd74c373a5885736d7ef159/docs/testflight.md
-[ios-appstore]: https://github.com/openwatersio/slackwater-ios/blob/02188f2a2f5ef4166cd74c373a5885736d7ef159/docs/appstore.md
-[ios-release-notes]: https://github.com/openwatersio/slackwater-ios/tree/02188f2a2f5ef4166cd74c373a5885736d7ef159/docs/release-notes
+[ios-index]: https://github.com/openwatersio/slackwater-ios/blob/6457d71b46af0e1c3310e1f8688dffc0db102d33/docs/README.md
+[ios-list]: https://github.com/openwatersio/slackwater-ios/blob/6457d71b46af0e1c3310e1f8688dffc0db102d33/docs/list.md
+[ios-detail]: https://github.com/openwatersio/slackwater-ios/blob/6457d71b46af0e1c3310e1f8688dffc0db102d33/docs/detail.md
+[ios-scrubber]: https://github.com/openwatersio/slackwater-ios/blob/6457d71b46af0e1c3310e1f8688dffc0db102d33/docs/scrubber.md
+[ios-current]: https://github.com/openwatersio/slackwater-ios/blob/6457d71b46af0e1c3310e1f8688dffc0db102d33/docs/current-charts.md
+[ios-chs]: https://github.com/openwatersio/slackwater-ios/blob/6457d71b46af0e1c3310e1f8688dffc0db102d33/docs/chs-data-model.md
+[ios-premium]: https://github.com/openwatersio/slackwater-ios/blob/6457d71b46af0e1c3310e1f8688dffc0db102d33/docs/premium.md
+[ios-alerts]: https://github.com/openwatersio/slackwater-ios/blob/6457d71b46af0e1c3310e1f8688dffc0db102d33/docs/alerts.md
+[ios-siri]: https://github.com/openwatersio/slackwater-ios/blob/6457d71b46af0e1c3310e1f8688dffc0db102d33/docs/siri.md
+[ios-resources]: https://github.com/openwatersio/slackwater-ios/blob/6457d71b46af0e1c3310e1f8688dffc0db102d33/Slackwater/Resources/README.md
+[ios-chs-validation]: https://github.com/openwatersio/slackwater-ios/blob/6457d71b46af0e1c3310e1f8688dffc0db102d33/docs/validation/chs-currents.md
+[ios-world-validation]: https://github.com/openwatersio/slackwater-ios/blob/6457d71b46af0e1c3310e1f8688dffc0db102d33/docs/validation/world-tide-stations.md
+[ios-fill]: https://github.com/openwatersio/slackwater-ios/blob/6457d71b46af0e1c3310e1f8688dffc0db102d33/tools/fill-pipeline/README.md
+[ios-patches]: https://github.com/openwatersio/slackwater-ios/blob/6457d71b46af0e1c3310e1f8688dffc0db102d33/tools/patch-pipeline/README.md
+[ios-patch-certification]: https://github.com/openwatersio/slackwater-ios/blob/6457d71b46af0e1c3310e1f8688dffc0db102d33/tools/patch-pipeline/passes/CERTIFICATION.md
+[ios-performance]: https://github.com/openwatersio/slackwater-ios/blob/6457d71b46af0e1c3310e1f8688dffc0db102d33/docs/performance.md
+[ios-metadata]: https://github.com/openwatersio/slackwater-ios/blob/6457d71b46af0e1c3310e1f8688dffc0db102d33/docs/appstore-metadata.md
+[ios-listing]: https://github.com/openwatersio/slackwater-ios/blob/6457d71b46af0e1c3310e1f8688dffc0db102d33/docs/appstore-listing.json
+[ios-licensing]: https://github.com/openwatersio/slackwater-ios/blob/6457d71b46af0e1c3310e1f8688dffc0db102d33/docs/licensing.md
+[ios-testflight]: https://github.com/openwatersio/slackwater-ios/blob/6457d71b46af0e1c3310e1f8688dffc0db102d33/docs/testflight.md
+[ios-appstore]: https://github.com/openwatersio/slackwater-ios/blob/6457d71b46af0e1c3310e1f8688dffc0db102d33/docs/appstore.md
+[ios-release-notes]: https://github.com/openwatersio/slackwater-ios/tree/6457d71b46af0e1c3310e1f8688dffc0db102d33/docs/release-notes
 
 ### Android saved places
 

@@ -22,4 +22,4 @@ The executable trace in `TimelineInterruptionTraceTest` opens at March 1, 2026, 
 
 The July jump lands directly because its replacement window excludes the starting offset. A late momentum frame from the earlier generation leaves the July instant in place. After 600 ms at rest the continuous schedule can re-anchor to July 22.
 
-Run the core fixtures with `./gradlew :core:test --tests '*Timeline*' --tests '*Magnetic*'`. [Pinned scrubber specification](https://github.com/openwatersio/slackwater-ios/blob/02188f2a2f5ef4166cd74c373a5885736d7ef159/docs/scrubber.md)
+Run the core fixtures with `./gradlew :core:test --tests '*Timeline*' --tests '*Magnetic*'`. [Pinned scrubber specification](https://github.com/openwatersio/slackwater-ios/blob/6457d71b46af0e1c3310e1f8688dffc0db102d33/docs/scrubber.md)

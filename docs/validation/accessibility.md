@@ -1,6 +1,6 @@
 # Android accessibility and conformance checks
 
-Use these checks with the [Android parity ledger](../ios-parity.md). The tables preserve the scenario titles and numbering from iOS revision `02188f2a2f5ef4166cd74c373a5885736d7ef159`, including both detail scenarios numbered 31. The middle column names related Android tests. A model or storage test covers only that layer. Each final column gives the outstanding end-to-end check for its feature. Source wording that names an iOS control maps to its Android equivalent, such as TalkBack heading navigation, system location permission, or the native print and document pickers.
+Use these checks with the [Android parity ledger](../ios-parity.md). The tables preserve the scenario titles and numbering from iOS revision `6457d71b46af0e1c3310e1f8688dffc0db102d33`, including both detail scenarios numbered 31. The middle column names related Android tests. A model or storage test covers only that layer. Each final column gives the outstanding end-to-end check for its feature. Source wording that names an iOS control maps to its Android equivalent, such as TalkBack heading navigation, system location permission, or the native print and document pickers.
 
 ## Verified on Android
 
@@ -46,7 +46,7 @@ Record the commit, build variant, device or emulator, Android API, screen size/p
 
 ## Station list and search
 
-[Reference scenarios, §14](https://github.com/openwatersio/slackwater-ios/blob/02188f2a2f5ef4166cd74c373a5885736d7ef159/docs/list.md#14-conformance-scenarios).
+[Reference scenarios, §14](https://github.com/openwatersio/slackwater-ios/blob/6457d71b46af0e1c3310e1f8688dffc0db102d33/docs/list.md#14-conformance-scenarios).
 
 | Scenario | Related Android test | Pending device check |
 |---|---|---|
@@ -86,7 +86,7 @@ On API 37 the real permission controller showed its location dialog while the un
 
 ## Station detail
 
-[Reference scenarios, §18](https://github.com/openwatersio/slackwater-ios/blob/02188f2a2f5ef4166cd74c373a5885736d7ef159/docs/detail.md#18-conformance-scenarios).
+[Reference scenarios, §18](https://github.com/openwatersio/slackwater-ios/blob/6457d71b46af0e1c3310e1f8688dffc0db102d33/docs/detail.md#18-conformance-scenarios).
 
 | Scenario | Related Android test | Pending device check |
 |---|---|---|
@@ -127,7 +127,7 @@ On API 37 the real permission controller showed its location dialog while the un
 
 ## Timeline scrubber
 
-[Reference scenarios, §17](https://github.com/openwatersio/slackwater-ios/blob/02188f2a2f5ef4166cd74c373a5885736d7ef159/docs/scrubber.md#17-conformance-scenarios).
+[Reference scenarios, §17](https://github.com/openwatersio/slackwater-ios/blob/6457d71b46af0e1c3310e1f8688dffc0db102d33/docs/scrubber.md#17-conformance-scenarios).
 
 | Scenario | Related Android test | Pending device check |
 |---|---|---|
