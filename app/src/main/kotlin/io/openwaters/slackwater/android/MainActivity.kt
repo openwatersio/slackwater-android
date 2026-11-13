@@ -19,7 +19,6 @@ import io.openwaters.slackwater.android.detail.DetailRecords
 import io.openwaters.slackwater.android.core.station.StationId
 import android.os.Bundle
 import io.openwaters.slackwater.android.map.DataCreditsDialog
-import androidx.activity.enableEdgeToEdge
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -156,13 +155,13 @@ class MainActivity : ComponentActivity() {
                 downloads.prefetchWhileStarted(wanted)
             }
         }
-        enableEdgeToEdge()
+        enableWaterEdgeToEdge()
         setContent {
             var showDownloads by key(dialogSession) {
                 androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf(false) }
             }
             CompositionLocalProvider(LocalDialogSession provides dialogSession, io.openwaters.slackwater.android.detail.LocalOpenDownloads provides { showDownloads = true }) {
-            MaterialTheme {
+            SlackwaterTheme {
                 LaunchedEffect(Unit) { withContext(Dispatchers.IO) { ShortcutPublisher.publish(this@MainActivity) } }
                 if (showDownloads) io.openwaters.slackwater.android.map.ChartDownloads(chartPacks) { showDownloads = false }
                 var showCredits by key(dialogSession) { remember { mutableStateOf(false) } }

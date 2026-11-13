@@ -6,7 +6,6 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -19,6 +18,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.openwaters.slackwater.android.R
+import io.openwaters.slackwater.android.SlackwaterTheme
+import io.openwaters.slackwater.android.enableWaterEdgeToEdge
 import io.openwaters.slackwater.android.core.station.*
 import io.openwaters.slackwater.android.data.BundledStationCatalog
 import io.openwaters.slackwater.android.data.UserStateStore
@@ -39,9 +40,9 @@ class WidgetConfigurationActivity : ComponentActivity() {
             finish()
             return
         }
-        enableEdgeToEdge()
+        enableWaterEdgeToEdge()
         setContent {
-            MaterialTheme {
+            SlackwaterTheme {
                 Surface(Modifier.fillMaxSize()) {
                     Picker { choice ->
                         saveWidgetChoice(this, id, choice)

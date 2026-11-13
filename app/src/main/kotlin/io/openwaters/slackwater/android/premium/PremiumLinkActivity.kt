@@ -4,7 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.material3.MaterialTheme
+import io.openwaters.slackwater.android.SlackwaterTheme
 import io.openwaters.slackwater.android.calendars.CalendarRepository
 import io.openwaters.slackwater.android.data.AlertReconciliation
 import io.openwaters.slackwater.android.map.PremiumSheet
@@ -21,6 +21,6 @@ class PremiumLinkActivity : ComponentActivity() {
         // A cold link bypasses MainActivity. Its retained reminders and calendars still need to observe the claim.
         AlertReconciliation.get(this).foreground()
         CalendarRepository.get(this).foreground()
-        setContent { MaterialTheme { PremiumSheet(onClose = { finish() }) } }
+        setContent { SlackwaterTheme { PremiumSheet(onClose = { finish() }) } }
     }
 }
