@@ -55,6 +55,13 @@ private const val GLYPH_FONT_SP = 12f
 private const val TIME_BASELINE_DP = 10f
 private const val TIME_LABEL_SPACE_DP = 6f
 
+internal fun axisTimeColor(axisInk: CardCurve.AxisInk?, ink: Color): Color = when (axisInk) {
+    CardCurve.AxisInk.HIGH -> GraphHigh
+    CardCurve.AxisInk.LOW -> GraphLow
+    CardCurve.AxisInk.SLACK -> GoGreen
+    null -> ink
+}
+
 /** The station's clock in the reader's locale, as the card's times print. */
 fun cardTimeFormatter(locale: Locale, zone: ZoneId): DateTimeFormatter =
     DateTimeFormatter.ofPattern(DateFormat.getBestDateTimePattern(locale, "jm"), locale).withZone(zone)
@@ -146,7 +153,7 @@ internal fun DrawScope.drawCurve(
 
     if (!showAnnotations) return
 
-    // Axis times, thinned so they clear both edges and each other; a current's are green.
+    // Axis times, thinned so they clear both edges and each other, each in its turn's ink.
     val timeStyle = TextStyle(fontSize = TIME_FONT_SP.sp, fontWeight = FontWeight.Medium)
     // Thinned by the widest time as it will actually print, so large text never overlaps or clips.
     val candidates = curve.axisMoments(dpPerHour)
@@ -159,7 +166,7 @@ internal fun DrawScope.drawCurve(
     val timeInk = mutableListOf<Rect>()
     for (time in kept) {
         val fade = if (time < curve.now) CardCurveStyle.PAST_FADE else 1f
-        val color = (if (curve.includesZero) GoGreen else ink).copy(alpha = fade)
+        val color = axisTimeColor(curve.axisInk(time), ink).copy(alpha = fade)
         val layout = measurer.measure(formatter.format(time), timeStyle.copy(color = color))
         val centre = Offset(x(time), size.height - TIME_BASELINE_DP * dp)
         val topLeft = Offset(centre.x - layout.size.width / 2f, centre.y - layout.size.height / 2f)
