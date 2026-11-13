@@ -70,6 +70,7 @@
     <string name="detail_context">"Contexte des grandes marées : %1$s. Il ne s’agit pas d’une prévision pour ce passage."</string>
     <string name="detail_instead">"Consulter plutôt %1$s"</string>
     <string name="detail_show_sky">"Soleil, Lune et étoiles"</string>
+    <string name="premium_sky_controls">"Réglages du ciel"</string>
     <string name="panel_today">"Aujourd’hui"</string>
     <string name="panel_tomorrow">"Demain"</string>
     <string name="panel_yesterday">"Hier"</string>

@@ -70,6 +70,7 @@
     <string name="detail_context">"Context bij groot getijverschil: %1$s. Dit is geen voorspelling voor deze doorgang."</string>
     <string name="detail_instead">"Probeer in plaats daarvan %1$s"</string>
     <string name="detail_show_sky">"Zon, maan en sterren"</string>
+    <string name="premium_sky_controls">"Hemelopties"</string>
     <string name="panel_today">"Vandaag"</string>
     <string name="panel_tomorrow">"Morgen"</string>
     <string name="panel_yesterday">"Gisteren"</string>

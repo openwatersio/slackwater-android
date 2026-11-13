@@ -70,6 +70,7 @@
     <string name="detail_context">"Einordnung bei großem Tidenhub: %1$s. Dies ist keine Vorhersage für diese Passage."</string>
     <string name="detail_instead">"Versuche stattdessen %1$s"</string>
     <string name="detail_show_sky">"Sonne, Mond und Sterne"</string>
+    <string name="premium_sky_controls">"Himmeloptionen"</string>
     <string name="panel_today">"Heute"</string>
     <string name="panel_tomorrow">"Morgen"</string>
     <string name="panel_yesterday">"Gestern"</string>

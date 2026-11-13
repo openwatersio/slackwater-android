@@ -70,6 +70,7 @@
     <string name="detail_context">"Co-theacsa seòl-mara mhòir: %1$s. Chan e ro-innse a tha seo airson an turais seo."</string>
     <string name="detail_instead">"Feuch %1$s na àite"</string>
     <string name="detail_show_sky">"Grian, gealach agus reultan"</string>
+    <string name="premium_sky_controls">"Roghainnean an speura"</string>
     <string name="panel_today">"An-diugh"</string>
     <string name="panel_tomorrow">"A-màireach"</string>
     <string name="panel_yesterday">"An-dè"</string>

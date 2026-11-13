@@ -70,6 +70,7 @@
     <string name="detail_context">"Comhthéacs taoidí móra: %1$s. Ní tuar don turas seo é."</string>
     <string name="detail_instead">"Bain triail as %1$s ina ionad"</string>
     <string name="detail_show_sky">"Grian, gealach agus réaltaí"</string>
+    <string name="premium_sky_controls">"Rialuithe na spéire"</string>
     <string name="panel_today">"Inniu"</string>
     <string name="panel_tomorrow">"Amárach"</string>
     <string name="panel_yesterday">"Inné"</string>

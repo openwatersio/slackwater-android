@@ -70,6 +70,7 @@
     <string name="detail_context">"Suurten vuorovesien tausta: %1$s. Tämä ei ole ennuste tälle salmelle."</string>
     <string name="detail_instead">"Kokeile sen sijaan asemaa %1$s"</string>
     <string name="detail_show_sky">"Aurinko, kuu ja tähdet"</string>
+    <string name="premium_sky_controls">"Taivaan asetukset"</string>
     <string name="panel_today">"Tänään"</string>
     <string name="panel_tomorrow">"Huomenna"</string>
     <string name="panel_yesterday">"Eilen"</string>
