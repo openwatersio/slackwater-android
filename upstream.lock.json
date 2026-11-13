@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "productDocs": {
     "repository": "openwatersio/slackwater-ios",
-    "commit": "02188f2a2f5ef4166cd74c373a5885736d7ef159"
+    "commit": "6457d71b46af0e1c3310e1f8688dffc0db102d33"
   },
   "sources": {
     "slackwater": {
@@ -20,7 +20,7 @@
   },
   "resources": {
     "repository": "openwatersio/slackwater-ios",
-    "commit": "02188f2a2f5ef4166cd74c373a5885736d7ef159",
+    "commit": "6457d71b46af0e1c3310e1f8688dffc0db102d33",
     "assets": [
       {
         "name": "station-index.json",
@@ -30,7 +30,7 @@
       {
         "name": "stations.tcdb",
         "path": "Slackwater/Resources/stations.tcdb",
-        "sha256": "a8654087f1f3972089f69b70fb47f26e5d558c272e0ac576d4b6d2bcd9b00b6a"
+        "sha256": "1bfe567af943cbd5357db6d69af09d113f0ae9b6fb24137ed3f8e9b4522b4d1d"
       },
       {
         "name": "currents.json",
@@ -101,7 +101,7 @@
   },
   "recipeEvidence": {
     "repository": "openwatersio/slackwater-ios",
-    "commit": "02188f2a2f5ef4166cd74c373a5885736d7ef159",
+    "commit": "6457d71b46af0e1c3310e1f8688dffc0db102d33",
     "path": "tools/chs-current-recipe.json"
   }
 }

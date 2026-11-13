@@ -7,6 +7,7 @@ import io.openwaters.slackwater.ExtremeKind
 import io.openwaters.slackwater.TideExtreme
 import io.openwaters.slackwater.TidePoint
 import io.openwaters.slackwater.TideRatePoint
+import io.openwaters.slackwater.android.core.prediction.BoundedPredictions
 import io.openwaters.slackwater.android.core.prediction.PredictionResult
 import io.openwaters.slackwater.android.core.prediction.PredictionSeries
 import io.openwaters.slackwater.android.core.prediction.StationCapabilities
@@ -37,6 +38,28 @@ class CardReadingTest {
         val reading = cardReading(ready(tide, StationCapabilities.HARMONIC_TIDE), at(180)) as CardReading.Tide
         assertEquals(1.5, reading.heightMetres, 1e-9)
         assertTrue(reading.rising)
+    }
+
+    // A Canadian preview rounded to the centimetre: a flat high from 45 to 75 min, then a flat low from 2 h 30 min to 2 h 45 min.
+    @Test fun aPreviewsFlatHighReadsRisingToItsMidpointAndFallingAfterIt() {
+        val heights = listOf(1.0, 1.5, 1.9, 2.0, 2.0, 2.0, 1.9, 1.5, 1.0, 0.6, 0.5, 0.5, 0.6, 1.0)
+        val preview = BoundedPredictions.tide(id, TimeSpan(t0, at(195)),
+            heights.mapIndexed { i, h -> TidePoint(at(i * 15L), h) })
+        assertTrue((cardReading(preview, at(50)) as CardReading.Tide).rising)
+        // At the turn itself a card has no High state; it still reads Rising.
+        assertTrue((cardReading(preview, at(60)) as CardReading.Tide).rising)
+        assertFalse((cardReading(preview, at(70)) as CardReading.Tide).rising)
+        assertEquals(2.0, (cardReading(preview, at(70)) as CardReading.Tide).heightMetres, 1e-9)
+    }
+
+    // A falling tide whose next low lies past the loaded span.
+    @Test fun withNoLaterTurnLoadedATideReadsByTheSignOfItsRate() {
+        val falling = PredictionSeries.Tide(
+            points = (0..36).map { TidePoint(at(it * 10L), 2.0 - it / 36.0) },
+            rates = (0..36).map { TideRatePoint(at(it * 10L), -1.0 / 6) },
+            events = emptyList(),
+        )
+        assertFalse((cardReading(ready(falling, StationCapabilities.HARMONIC_TIDE), at(180)) as CardReading.Tide).rising)
     }
 
     @Test fun outsideCoverageOrWithoutADownloadThereIsNoReading() {
