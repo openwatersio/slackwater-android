@@ -70,6 +70,7 @@
     <string name="detail_context">"大きな潮差の参考情報：%1$s。この水道の予測ではありません。"</string>
     <string name="detail_instead">"代わりに%1$sを試す"</string>
     <string name="detail_show_sky">"太陽・月・星"</string>
+    <string name="premium_sky_controls">"空の表示設定"</string>
     <string name="panel_today">"今日"</string>
     <string name="panel_tomorrow">"明日"</string>
     <string name="panel_yesterday">"昨日"</string>

@@ -70,6 +70,7 @@
     <string name="detail_context">"Bakgrunn for store tidevann: %1$s. Dette er ikke en prognose for dette sundet."</string>
     <string name="detail_instead">"Prøv %1$s i stedet"</string>
     <string name="detail_show_sky">"Sol, måne og stjerner"</string>
+    <string name="premium_sky_controls">"Himmelinnstillinger"</string>
     <string name="panel_today">"I dag"</string>
     <string name="panel_tomorrow">"I morgen"</string>
     <string name="panel_yesterday">"I går"</string>

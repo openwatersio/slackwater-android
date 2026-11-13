@@ -70,6 +70,7 @@
     <string name="detail_context">"Large-tide context: %1$s. This is not a prediction for this pass."</string>
     <string name="detail_instead">"Try %1$s instead"</string>
     <string name="detail_show_sky">"Sun, moon and stars"</string>
+    <string name="premium_sky_controls">"Sky controls"</string>
     <string name="panel_today">"Today"</string>
     <string name="panel_tomorrow">"Tomorrow"</string>
     <string name="panel_yesterday">"Yesterday"</string>

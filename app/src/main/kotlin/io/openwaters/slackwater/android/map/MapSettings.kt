@@ -5,7 +5,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
-import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -15,7 +14,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import io.openwaters.slackwater.android.BuildConfig
@@ -63,19 +61,13 @@ internal fun MapSettings(replay: (suspend () -> Unit)?, close: () -> Unit,
             ComfortCurrentControl(prefs, store = store)
             SlackWindowPreview(prefs.slackWindowKnots)
             Text(stringResource(R.string.settings_comfort_help), style = MaterialTheme.typography.bodySmall)
-            Row(Modifier.fillMaxWidth().heightIn(min = 48.dp).toggleable(value = prefs.showSky, role = Role.Switch,
-                onValueChange = { show -> save {
-                    val changed = store.changeSkyVisibility(show) {
-                        ReminderAccessStore.get(context).current().allows(Instant.now())
-                    }
-                    if (!changed) premiumOpen = true
-                } }), verticalAlignment = Alignment.CenterVertically) {
-                Text(stringResource(R.string.detail_show_sky), Modifier.weight(1f))
-                val premiumLabel = stringResource(R.string.settings_premium)
-                Text("✦", Modifier.padding(horizontal = 6.dp).clearAndSetSemantics { contentDescription = premiumLabel })
-                Switch(prefs.showSky, onCheckedChange = null)
-            }
-            if (BuildConfig.PREMIUM_ENABLED) TextButton(onClick = { premiumOpen = true }) { Text(stringResource(R.string.settings_premium)) }
+            val access = remember(context) { ReminderAccessStore.get(context) }
+            val record by remember(access) { access.freeDayRecord.retryAlertReads() }.collectAsState(null)
+            PremiumSettingsCard(prefs.showSky, purchased = record?.purchased,
+                onSky = { show -> save {
+                    if (!store.changeSkyVisibility(show) { access.current().allows(Instant.now()) }) premiumOpen = true
+                } },
+                onSupport = { premiumOpen = true })
             AboutSettingsLinks()
             var replaying by remember { mutableStateOf(false) }
             val replayEnabled = replay != null && !replaying

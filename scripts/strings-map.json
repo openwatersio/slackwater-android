@@ -428,6 +428,11 @@
       }
     },
     {
+      "name": "premium_sky_controls",
+      "key": "Sky controls",
+      "english": "Sky controls"
+    },
+    {
       "name": "panel_today",
       "key": "Today",
       "english": "Today"

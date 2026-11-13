@@ -70,6 +70,7 @@
     <string name="detail_context">"Contexto de marés grandes: %1$s. Isto não é uma previsão para esta passagem."</string>
     <string name="detail_instead">"Experimente %1$s"</string>
     <string name="detail_show_sky">"Sol, lua e estrelas"</string>
+    <string name="premium_sky_controls">"Controlos do céu"</string>
     <string name="panel_today">"Hoje"</string>
     <string name="panel_tomorrow">"Amanhã"</string>
     <string name="panel_yesterday">"Ontem"</string>

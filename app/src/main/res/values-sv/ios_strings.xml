@@ -70,6 +70,7 @@
     <string name="detail_context">"Sammanhang för stort tidvatten: %1$s. Detta är ingen prognos för den här passagen."</string>
     <string name="detail_instead">"Prova %1$s i stället"</string>
     <string name="detail_show_sky">"Sol, måne och stjärnor"</string>
+    <string name="premium_sky_controls">"Himmelsinställningar"</string>
     <string name="panel_today">"I dag"</string>
     <string name="panel_tomorrow">"I morgon"</string>
     <string name="panel_yesterday">"I går"</string>
