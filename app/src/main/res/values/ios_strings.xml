@@ -71,6 +71,7 @@
     <string name="detail_instead">"Try %1$s instead"</string>
     <string name="detail_show_sky">"Sun, moon and stars"</string>
     <string name="premium_sky_controls">"Sky controls"</string>
+    <string name="settings_sky_footnote">"Draw them in the sky above the chart as they stand at the selected time, and mark sunrise and sunset under each day. Off keeps the sky\'s day and night colors."</string>
     <string name="panel_today">"Today"</string>
     <string name="panel_tomorrow">"Tomorrow"</string>
     <string name="panel_yesterday">"Yesterday"</string>

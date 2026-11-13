@@ -433,6 +433,11 @@
       "english": "Sky controls"
     },
     {
+      "name": "settings_sky_footnote",
+      "key": "Draw them in the sky above the chart as they stand at the selected time, and mark sunrise and sunset under each day. Off keeps the sky's day and night colors.",
+      "english": "Draw them in the sky above the chart as they stand at the selected time, and mark sunrise and sunset under each day. Off keeps the sky's day and night colors."
+    },
+    {
       "name": "panel_today",
       "key": "Today",
       "english": "Today"

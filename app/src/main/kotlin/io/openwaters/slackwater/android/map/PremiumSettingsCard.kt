@@ -45,6 +45,8 @@ internal fun PremiumSettingsCard(showSky: Boolean, purchased: Boolean?, onSky: (
                         Text(stringResource(R.string.detail_show_sky), Modifier.weight(1f))
                         Switch(showSky, onCheckedChange = null)
                     }
+                    Text(stringResource(R.string.settings_sky_footnote), style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             }
             if (BuildConfig.PREMIUM_ENABLED && purchased != null) {
