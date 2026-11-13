@@ -14,8 +14,11 @@ internal val WaterColors = darkColorScheme(
     secondary = Color(0xff8ec6d6), tertiary = Color(0xfff0c860),
     surface = Color(0xff0c1b24), background = Color(0xff0c1b24),
     onSurface = Color(0xfff3f5ef), onSurfaceVariant = Color(0xffc2cfcf),
-    surfaceVariant = Color(0xff20323b), surfaceContainer = Color(0xff182b34),
-    surfaceContainerHigh = Color(0xff21353e), surfaceContainerHighest = Color(0xff293e46),
+    // Surface and outline roles step along one water ramp, so no sheet, divider or chip falls back to Material's gray.
+    surfaceContainerLowest = Color(0xff07131a), surfaceDim = Color(0xff0c1b24), outlineVariant = Color(0xff354a51),
+    surfaceContainerLow = Color(0xff12232c), surfaceContainer = Color(0xff182b34), surfaceVariant = Color(0xff20323b),
+    surfaceContainerHigh = Color(0xff21353e), surfaceContainerHighest = Color(0xff293e46), surfaceBright = Color(0xff31474e),
+    inverseSurface = Color(0xfff3f5ef), inverseOnSurface = Color(0xff0c1b24),
     outline = Color(0xff789086), primaryContainer = Color(0xff29472e),
     secondaryContainer = Color(0xff23444f), onSecondaryContainer = Color(0xffd6f2f0),
 )
