@@ -74,13 +74,17 @@ class AlertDeliveryTest {
         }
         val manager = app.getSystemService(NotificationManager::class.java)
         val id = StationId("noaa/9449880")
-        val rule = AlertRule(stationId = id, trigger = AlertTrigger.TideExtreme(high = true), leadSeconds = 86400)
         val access = ReminderAccessStore.get(app)
         val priorAccess = access.current()
         val rules = AlertRuleStore.get(app)
         val plans = DeliveryPlanStore.get(app)
         val now = Instant.now()
-        val span = TimeSpan(now.plusSeconds(60), now.plusSeconds(86400))
+        val span = TimeSpan(now.plusSeconds(60), now.plus(NEXT_HIGH_SEARCH))
+        val high = AlertRule(stationId = id, trigger = AlertTrigger.TideExtreme(high = true))
+        val next = OccurrenceResolver.resolve(high, AndroidPredictionRepository(app), span, ZoneOffset.UTC,
+            station.latitude, station.longitude, 0.5).first().event
+        // The lead reaches back to now, so the reminder is already due when saved, however far off the high is.
+        val rule = high.copy(leadSeconds = next.epochSecond - now.epochSecond)
         val entry = OccurrenceResolver.resolve(rule, AndroidPredictionRepository(app), span, ZoneOffset.UTC,
             station.latitude, station.longitude, 0.5).first()
         try {
@@ -123,7 +127,7 @@ class AlertDeliveryTest {
         val template = AlertRule(stationId = id, trigger = AlertTrigger.TideExtreme(high = true))
         val now = Instant.now()
         val event = OccurrenceResolver.resolve(template, AndroidPredictionRepository(app),
-            TimeSpan(now.plusSeconds(120), now.plusSeconds(86400)), ZoneOffset.UTC, 48.0, -123.0, 0.5).first()
+            TimeSpan(now.plusSeconds(120), now.plus(NEXT_HIGH_SEARCH)), ZoneOffset.UTC, 48.0, -123.0, 0.5).first()
         val rule = template.copy(once = event.event)
         val access = ReminderAccessStore.get(app)
         val prior = access.current()
