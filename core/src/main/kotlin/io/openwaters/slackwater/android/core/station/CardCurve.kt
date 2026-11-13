@@ -128,6 +128,15 @@ class CardCurve(
         else -> extremes.filter { it.kind == CurveExtreme.Kind.TIDE }.map { it.time }.sorted()
     }
 
+    /** The ink an axis time prints in: its tide turn's, or slack's on a current or derived gate (list §6.4). */
+    fun axisInk(time: Instant): AxisInk? = when {
+        includesZero -> AxisInk.SLACK
+        else -> extremes.firstOrNull { it.kind == CurveExtreme.Kind.TIDE && it.time == time }
+            ?.let { if (it.high) AxisInk.HIGH else AxisInk.LOW }
+    }
+
+    enum class AxisInk { HIGH, LOW, SLACK }
+
     companion object {
         val SAMPLE_STEP: Duration = Duration.ofMinutes(10)
 
