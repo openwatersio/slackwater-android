@@ -66,6 +66,7 @@ class FreeDayControlTest {
     @Test fun noOfferOrThanksBeforeThePurchaseRecordLoads() {
         compose.setContent { PremiumSettingsCard(showSky = true, purchased = null, onSky = {}, onSupport = {}) }
         compose.onNodeWithText(context.getString(R.string.premium_sky_controls)).assertExists()
+        compose.onNodeWithText(context.getString(R.string.settings_sky_footnote)).assertExists()
         compose.onNodeWithText(context.getString(R.string.schedule_support_title)).assertDoesNotExist()
         compose.onNodeWithText(context.getString(R.string.premium_purchased)).assertDoesNotExist()
     }

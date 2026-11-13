@@ -71,6 +71,7 @@
     <string name="detail_instead">"Experimente %1$s"</string>
     <string name="detail_show_sky">"Sol, lua e estrelas"</string>
     <string name="premium_sky_controls">"Controles do céu"</string>
+    <string name="settings_sky_footnote">"Desenha-os no céu acima do gráfico como estão no horário selecionado e marca o nascer e o pôr do sol sob cada dia. Desligado mantém as cores de dia e de noite do céu."</string>
     <string name="panel_today">"Hoje"</string>
     <string name="panel_tomorrow">"Amanhã"</string>
     <string name="panel_yesterday">"Ontem"</string>

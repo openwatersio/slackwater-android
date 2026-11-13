@@ -71,6 +71,7 @@
     <string name="detail_instead">"Consulter plutôt %1$s"</string>
     <string name="detail_show_sky">"Soleil, Lune et étoiles"</string>
     <string name="premium_sky_controls">"Réglages du ciel"</string>
+    <string name="settings_sky_footnote">"Les dessine dans le ciel au-dessus du graphique, tels qu\'ils se trouvent à l\'heure choisie, et indique le lever et le coucher du soleil sous chaque jour. Désactivé conserve les couleurs de jour et de nuit du ciel."</string>
     <string name="panel_today">"Aujourd’hui"</string>
     <string name="panel_tomorrow">"Demain"</string>
     <string name="panel_yesterday">"Hier"</string>

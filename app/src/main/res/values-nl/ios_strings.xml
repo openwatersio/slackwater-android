@@ -71,6 +71,7 @@
     <string name="detail_instead">"Probeer in plaats daarvan %1$s"</string>
     <string name="detail_show_sky">"Zon, maan en sterren"</string>
     <string name="premium_sky_controls">"Hemelopties"</string>
+    <string name="settings_sky_footnote">"Tekent ze aan de lucht boven de grafiek zoals ze op het gekozen moment staan, en markeert zonsopkomst en zonsondergang onder elke dag. Uit behoudt de dag- en nachtkleuren van de lucht."</string>
     <string name="panel_today">"Vandaag"</string>
     <string name="panel_tomorrow">"Morgen"</string>
     <string name="panel_yesterday">"Gisteren"</string>

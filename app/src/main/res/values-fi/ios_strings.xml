@@ -71,6 +71,7 @@
     <string name="detail_instead">"Kokeile sen sijaan asemaa %1$s"</string>
     <string name="detail_show_sky">"Aurinko, kuu ja tähdet"</string>
     <string name="premium_sky_controls">"Taivaan asetukset"</string>
+    <string name="settings_sky_footnote">"Piirtää ne kaavion yläpuoliselle taivaalle sellaisina kuin ne ovat valittuna hetkenä ja merkitsee auringonnousun ja -laskun kunkin päivän alle. Pois päältä säilyttää taivaan päivä- ja yövärit."</string>
     <string name="panel_today">"Tänään"</string>
     <string name="panel_tomorrow">"Huomenna"</string>
     <string name="panel_yesterday">"Eilen"</string>

@@ -71,6 +71,7 @@
     <string name="detail_instead">"Bain triail as %1$s ina ionad"</string>
     <string name="detail_show_sky">"Grian, gealach agus réaltaí"</string>
     <string name="premium_sky_controls">"Rialuithe na spéire"</string>
+    <string name="settings_sky_footnote">"Tarraingíonn sé iad sa spéir os cionn an ghraif mar a bhíonn siad ag an am roghnaithe, agus marcálann sé éirí agus luí na gréine faoi gach lá. Coinníonn As dathanna lae agus oíche na spéire."</string>
     <string name="panel_today">"Inniu"</string>
     <string name="panel_tomorrow">"Amárach"</string>
     <string name="panel_yesterday">"Inné"</string>

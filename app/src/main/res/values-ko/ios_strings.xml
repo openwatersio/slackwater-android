@@ -71,6 +71,7 @@
     <string name="detail_instead">"대신 %1$s 사용"</string>
     <string name="detail_show_sky">"해, 달, 별"</string>
     <string name="premium_sky_controls">"하늘 설정"</string>
+    <string name="settings_sky_footnote">"선택한 시각의 위치대로 그래프 위 하늘에 그리고, 각 날짜 아래에 일출과 일몰을 표시합니다. 끄면 하늘의 낮과 밤 색은 그대로 유지됩니다."</string>
     <string name="panel_today">"오늘"</string>
     <string name="panel_tomorrow">"내일"</string>
     <string name="panel_yesterday">"어제"</string>

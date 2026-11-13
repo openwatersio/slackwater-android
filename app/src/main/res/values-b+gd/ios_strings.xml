@@ -71,6 +71,7 @@
     <string name="detail_instead">"Feuch %1$s na àite"</string>
     <string name="detail_show_sky">"Grian, gealach agus reultan"</string>
     <string name="premium_sky_controls">"Roghainnean an speura"</string>
+    <string name="settings_sky_footnote">"Tarraingidh e iad san speur os cionn a\' ghraif mar a tha iad aig an àm a thagh thu, agus comharraichidh e èirigh is laighe na grèine fo gach latha. Cumaidh Dheth dathan latha is oidhche an speura."</string>
     <string name="panel_today">"An-diugh"</string>
     <string name="panel_tomorrow">"A-màireach"</string>
     <string name="panel_yesterday">"An-dè"</string>

@@ -71,6 +71,7 @@
     <string name="detail_instead">"代わりに%1$sを試す"</string>
     <string name="detail_show_sky">"太陽・月・星"</string>
     <string name="premium_sky_controls">"空の表示設定"</string>
+    <string name="settings_sky_footnote">"選択した時刻の位置に合わせて、グラフの上の空に描き、各日の下に日の出と日の入りを表示します。オフにしても空の昼夜の色は残ります。"</string>
     <string name="panel_today">"今日"</string>
     <string name="panel_tomorrow">"明日"</string>
     <string name="panel_yesterday">"昨日"</string>

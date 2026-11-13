@@ -71,6 +71,7 @@
     <string name="detail_instead">"Prova %1$s i stället"</string>
     <string name="detail_show_sky">"Sol, måne och stjärnor"</string>
     <string name="premium_sky_controls">"Himmelsinställningar"</string>
+    <string name="settings_sky_footnote">"Ritar dem på himlen ovanför grafen som de står vid vald tidpunkt och markerar soluppgång och solnedgång under varje dag. Av behåller himlens dag- och nattfärger."</string>
     <string name="panel_today">"I dag"</string>
     <string name="panel_tomorrow">"I morgon"</string>
     <string name="panel_yesterday">"I går"</string>

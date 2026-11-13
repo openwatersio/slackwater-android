@@ -71,6 +71,7 @@
     <string name="detail_instead">"Prova %1$s invece"</string>
     <string name="detail_show_sky">"Sole, luna e stelle"</string>
     <string name="premium_sky_controls">"Controlli del cielo"</string>
+    <string name="settings_sky_footnote">"Li disegna nel cielo sopra il grafico come si trovano all\'ora selezionata e segna alba e tramonto sotto ogni giorno. Disattivato mantiene i colori del giorno e della notte del cielo."</string>
     <string name="panel_today">"Oggi"</string>
     <string name="panel_tomorrow">"Domani"</string>
     <string name="panel_yesterday">"Ieri"</string>

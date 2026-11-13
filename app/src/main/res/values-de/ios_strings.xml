@@ -71,6 +71,7 @@
     <string name="detail_instead">"Versuche stattdessen %1$s"</string>
     <string name="detail_show_sky">"Sonne, Mond und Sterne"</string>
     <string name="premium_sky_controls">"Himmeloptionen"</string>
+    <string name="settings_sky_footnote">"Zeichnet sie am Himmel über dem Diagramm, so wie sie zur gewählten Zeit stehen, und markiert Sonnenaufgang und Sonnenuntergang unter jedem Tag. Aus behält die Tag- und Nachtfarben des Himmels."</string>
     <string name="panel_today">"Heute"</string>
     <string name="panel_tomorrow">"Morgen"</string>
     <string name="panel_yesterday">"Gestern"</string>
