@@ -3,6 +3,7 @@ package io.openwaters.slackwater.android.map
 import android.graphics.RectF
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
@@ -10,12 +11,14 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import io.openwaters.slackwater.android.WaterColors
 import io.openwaters.slackwater.android.core.station.Coordinate
 import io.openwaters.slackwater.android.core.station.StationId
 import org.maplibre.android.MapLibre
 import org.maplibre.android.camera.CameraUpdateFactory
 import org.maplibre.android.geometry.LatLng
 import org.maplibre.android.maps.MapLibreMap
+import org.maplibre.android.maps.MapLibreMapOptions
 import org.maplibre.android.maps.MapView
 import org.maplibre.android.maps.Style
 import kotlin.math.abs
@@ -50,7 +53,9 @@ internal fun NativeStationMap(
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     val view = remember(context, lifecycle) {
         MapLibre.getInstance(context)
-        MapView(context).also { it.onCreate(null) }
+        // MapLibre's default loading cover is light, and the app's system bar icons are always light.
+        val options = MapLibreMapOptions.createFromAttributes(context).foregroundLoadColor(WaterColors.surface.toArgb())
+        MapView(context, options).also { it.onCreate(null) }
     }
     var map by remember(view) { mutableStateOf<MapLibreMap?>(null) }
     var layers by remember(view) { mutableStateOf<StationLayers?>(null) }

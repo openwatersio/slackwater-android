@@ -3,7 +3,7 @@ package io.openwaters.slackwater.android.alerts
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.MaterialTheme
+import io.openwaters.slackwater.android.SlackwaterTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
@@ -37,7 +37,7 @@ class AlertEditorTest {
     @Test fun freePreviewCanChangeOptionsAndOnlySaveRequestsPremium() {
         var upsells = 0
         compose.setContent {
-            MaterialTheme {
+            SlackwaterTheme {
                 AlertEditor(AlertEditorDraft(AlertRule.forEditor(station.id, trigger, date), station, date), false,
                     onSave = { fail("Free preview wrote a rule") }, onDelete = {}, onPremium = { upsells++ }, onDismiss = {})
             }
