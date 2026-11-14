@@ -144,6 +144,59 @@ class TidePreviewDownloadsTest {
         assertEquals(1, calls.get())
     }
 
+    @Test fun directPreviewFailureLeavesTheDerivedGateFitRunnable() = withQueue { worker, catalog, store, models ->
+        val fetching = CompletableDeferred<Unit>()
+        val failPreview = CompletableDeferred<Unit>()
+        val fitStarted = CompletableDeferred<Unit>()
+        val finishFit = CompletableDeferred<Unit>()
+        val queue = TidePreviewDownloads(worker, store, models, catalog, MutableStateFlow(null),
+            AndroidPredictionRepository(context, models), referencePortIds = { setOf(station) },
+            fit = { _, _, _ -> fitStarted.complete(Unit); finishFit.await() }) { _, _ ->
+            fetching.complete(Unit)
+            failPreview.await()
+            throw IwlsException.Permanent("Incomplete tide preview")
+        }
+        queue.activityStarted()
+        queue.request(station)
+        fetching.await()
+        store.requestDownloads(listOf(station))
+        failPreview.complete(Unit)
+        fitStarted.await()
+        val pending = store.state.first().getOrThrow()
+        assertTrue(station in pending.requested)
+        assertFalse(station in pending.previewRequested)
+        finishFit.complete(Unit)
+        store.state.first { station !in it.getOrThrow().requested }
+    }
+
+    @Test fun directRequestDuringReferenceFitPublishesPreviewBeforeManualFit() = withQueue { worker, catalog, store, models ->
+        val referenceStarted = CompletableDeferred<Unit>()
+        val referenceCancelled = CompletableDeferred<Unit>()
+        val manualStarted = CompletableDeferred<Unit>()
+        val finishManual = CompletableDeferred<Unit>()
+        store.requestDownloads(listOf(station))
+        val queue = TidePreviewDownloads(worker, store, models, catalog, MutableStateFlow(null),
+            AndroidPredictionRepository(context, models), referencePortIds = { setOf(station) },
+            fit = { _, _, manual ->
+                if (!manual) {
+                    referenceStarted.complete(Unit)
+                    try { awaitCancellation() } finally { referenceCancelled.complete(Unit) }
+                }
+                manualStarted.complete(Unit)
+                finishManual.await()
+            }) { _, at -> listOf(TidePoint(at.minusSeconds(300), 1.0), TidePoint(at.plusSeconds(300), 2.0)) }
+        queue.activityStarted()
+        referenceStarted.await()
+        queue.request(station)
+        manualStarted.await()
+        assertTrue(referenceCancelled.isCompleted)
+        assertTrue(models.read(station, ModelKind.TIDE_PREVIEW) is StoredModel.Ready)
+        val pending = store.state.first().getOrThrow()
+        assertTrue(station in pending.requested && station in pending.tideFitRequested)
+        finishManual.complete(Unit)
+        store.state.first { it.getOrThrow().let { state -> station !in state.requested && station !in state.previewRequested } }
+    }
+
     @Test fun managerCancellationClearsBothRequestsForAReferencePort() = withQueue { worker, catalog, store, models ->
         val queue = TidePreviewDownloads(worker, store, models, catalog,
             MutableStateFlow(TideDownloadState.DATA_SAVER), AndroidPredictionRepository(context, models),

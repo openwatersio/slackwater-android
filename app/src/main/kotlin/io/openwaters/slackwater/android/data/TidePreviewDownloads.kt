@@ -94,13 +94,20 @@ internal class TidePreviewDownloads(
     suspend fun request(id: StationId) = lock.withLock {
         val station = liveStation(id) ?: return@withLock
         if (currentGate(id)) intents.requestDownloads(listOf(id)) else intents.requestTide(id)
-        if (states.value[id] == TideDownloadState.RETRY) stop(id)
+        if (id in referenceJobs || states.value[id] == TideDownloadState.RETRY) stop(id)
         if (id !in jobs) start(station, full = true, manual = true)
     }
 
+    suspend fun requestReference(id: StationId) = lock.withLock {
+        val station = liveStation(id) ?: return@withLock
+        if (id !in referencePorts) return@withLock
+        intents.requestDownloads(listOf(id))
+        if (id !in jobs) start(station, full = true, manual = true, referenceOnly = true)
+    }
+
     suspend fun cancel(id: StationId) = lock.withLock {
-        release(id)
-        if (id !in referenceJobs) stop(id)
+        if (id in referenceJobs) intents.releaseDownloadRequests(listOf(id)) else release(id)
+        stop(id)
     }
 
     suspend fun cancelFromManager(id: StationId) = lock.withLock {
@@ -133,7 +140,7 @@ internal class TidePreviewDownloads(
         return result is PredictionResult.Ready && now in result.coverage
     }
 
-    private suspend fun finish(station: StationIdentity, previewOnly: Boolean = false, failed: Boolean = false, referenceOnly: Boolean = false) = lock.withLock {
+    private suspend fun finish(station: StationIdentity, previewOnly: Boolean = false, failed: Boolean = false, referenceOnly: Boolean = false, previewFailure: Boolean = false) = lock.withLock {
         val id = station.id
         currentCoroutineContext().ensureActive()
         // A full request can arrive while a restored preview is downloading.
@@ -142,7 +149,9 @@ internal class TidePreviewDownloads(
             start(station, full = true, manual = true)
             return@withLock
         }
-        if (id in referencePorts && (referenceOnly || !previewOnly)) {
+        if (referenceOnly) {
+            intents.releaseDownloadRequests(listOf(id))
+        } else if (id in referencePorts && !previewOnly && !previewFailure) {
             intents.cancelReferenceAndTide(id)
         } else release(id)
         stop(id)
@@ -189,7 +198,14 @@ internal class TidePreviewDownloads(
                             return@collectLatest
                         }
                         activeStatus(id, TideDownloadState.QUEUED)
-                        if (!referenceOnly && !available && station.kind == StationKind.CanadianTide) download(station)
+                        if (!referenceOnly && !available && station.kind == StationKind.CanadianTide) {
+                            try {
+                                download(station)
+                            } catch (_: IwlsException.Permanent) {
+                                finish(station, failed = true, previewFailure = true)
+                                return@collectLatest
+                            }
+                        }
                         if (full) {
                             fits.withLock {
                                 activeStatus(id, TideDownloadState.DOWNLOADING)
