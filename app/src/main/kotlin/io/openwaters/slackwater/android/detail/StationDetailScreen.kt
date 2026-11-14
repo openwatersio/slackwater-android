@@ -59,6 +59,12 @@ private fun StationDetailBody(model: StationListModel, id: StationId, clock: Ins
     val known = (resolved as? StationResolution.Successor)?.target ?: resolved as? StationResolution.Known
     val station = known?.identity
     val live = known is StationResolution.Live
+    DisposableEffect(station?.id, live, recordVisit) {
+        val queue = TidePreviewDownloads.get(context)
+        val opened = station?.id?.takeIf { live && recordVisit }
+        if (opened != null) queue.openStation.value = opened
+        onDispose { if (opened != null) queue.openStation.compareAndSet(opened, null) }
+    }
     val data by model.state.collectAsState()
     val prefs by model.readingPreferences.collectAsState()
     val revision by ModelStore.get(context).revision.collectAsState()

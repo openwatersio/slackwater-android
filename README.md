@@ -10,6 +10,8 @@ Open a Canadian tide station and tap **Download for offline use** to request its
 
 Canadian current gates with a validated fit recipe download official speed and direction predictions on request. The app fits them along the published flood axis over the gate’s 60- or 210-day window. Where the catalog authorizes a provisional fit, detail can use the first 60 days while the rest downloads. Online-only gates continue to use official prediction weeks.
 
+On the phone, Canadian stations in the list and favorites download while the app is open. Opening a station moves it ahead of other queued stations. In Downloads, select **Within 25 km**, **Within 150 km**, or **All current stations** to extend coverage. Radius choices use the device location. Clearing a choice stops pending automatic work outside the remaining selection and keeps downloaded predictions for offline use.
+
 ## Build
 
 Install JDK 17 so Gradle can discover it for both Android Studio sync and command-line builds. If Gradle cannot find your installation, set `org.gradle.java.installations.paths=/absolute/path/to/jdk-17` in `~/.gradle/gradle.properties`, using the JDK home that contains `bin/java`.

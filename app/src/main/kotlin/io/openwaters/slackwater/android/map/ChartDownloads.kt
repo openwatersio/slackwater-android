@@ -1,6 +1,8 @@
 package io.openwaters.slackwater.android.map
 
 import android.content.Context
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.selection.toggleable
 import android.text.format.Formatter
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -101,6 +103,18 @@ internal fun ChartDownloads(manager: ChartPackManager, close: () -> Unit) {
         text = {
             Column(Modifier.verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 val model = StationListModel.get(LocalContext.current)
+                val store = model.places.downloads
+                val selection by store.selection.collectAsState(initial = null)
+                selection?.let { choices ->
+                    for (km in listOf(25, 150)) {
+                        DownloadChoice(stringResource(if (km == 25) R.string.download_25 else R.string.download_150), choices.radiusKm >= km) {
+                            model.launchEdit { store.selectRadius(km, it) }
+                        }
+                    }
+                    DownloadChoice(stringResource(R.string.download_all_currents), choices.allCurrents) {
+                        model.launchEdit { store.selectCurrents(it) }
+                    }
+                }
                 val downloads = TidePreviewDownloads.get(LocalContext.current)
                 val states by downloads.states.collectAsState()
                 val catalog by model.catalog.collectAsState()
@@ -167,4 +181,15 @@ internal fun ChartDownloads(manager: ChartPackManager, close: () -> Unit) {
                 }
             }
         }, confirmButton = { TextButton(onClick = close) { Text(stringResource(R.string.close)) } })
+}
+
+@Composable
+private fun DownloadChoice(label: String, checked: Boolean, change: (Boolean) -> Unit) {
+    androidx.compose.foundation.layout.Row(
+        Modifier.heightIn(min = 48.dp).toggleable(checked, role = androidx.compose.ui.semantics.Role.Checkbox, onValueChange = change),
+        verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+    ) {
+        androidx.compose.material3.Checkbox(checked, onCheckedChange = null)
+        Text(label)
+    }
 }

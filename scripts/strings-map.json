@@ -2,6 +2,21 @@
   "catalog": "Slackwater/Localizable.xcstrings",
   "entries": [
     {
+      "name": "download_25",
+      "key": "Within 25 km",
+      "english": "Within 25 km"
+    },
+    {
+      "name": "download_150",
+      "key": "Within 150 km",
+      "english": "Within 150 km"
+    },
+    {
+      "name": "download_all_currents",
+      "key": "All current stations",
+      "english": "All current stations"
+    },
+    {
       "name": "alert_plot_reset",
       "key": "Return to now",
       "english": "Return to now"
