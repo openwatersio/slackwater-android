@@ -24,7 +24,11 @@ import io.openwaters.slackwater.android.stations.StationListModel
 internal fun TideDownloadControls(id: StationId, model: StationListModel) {
     val downloads = TidePreviewDownloads.get(LocalContext.current)
     val states by downloads.states.collectAsState()
-    TideDownloadEdits(states[id], model::launchEdit, { downloads.request(id) }, { downloads.cancel(id) })
+    val intent by model.places.downloads.state.collectAsState(null)
+    val referenceOnly = intent?.getOrNull()?.let { id in it.requested && id !in it.previewRequested } == true
+    TideDownloadEdits(states[id], model::launchEdit, { downloads.request(id) }, {
+        if (referenceOnly) downloads.cancelFromManager(id) else downloads.cancel(id)
+    })
 }
 
 @Composable

@@ -94,6 +94,11 @@ class DownloadIntentStore internal constructor(
         intent.copy(tideFitRequested = intent.tideFitRequested - stations, previewRequested = intent.previewRequested - stations)
     }
 
+    suspend fun cancelReferenceAndTide(id: StationId) = editDownloads(listOf(id)) { intent, stations ->
+        intent.copy(requested = intent.requested - stations, previewRequested = intent.previewRequested - stations,
+            tideFitRequested = intent.tideFitRequested - stations)
+    }
+
     suspend fun releasePreviews(ids: Collection<StationId>) = editDownloads(ids) { intent, stations ->
         intent.copy(previewRequested = intent.previewRequested - stations)
     }

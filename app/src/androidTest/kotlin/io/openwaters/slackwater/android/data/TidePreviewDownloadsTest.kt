@@ -116,6 +116,53 @@ class TidePreviewDownloadsTest {
         assertTrue(station in store.state.first().getOrThrow().requested)
     }
 
+    @Test fun restoredGateReferenceFitsWithoutAPreviewAndUnlocksGateDetail() = withQueue { worker, catalog, store, models ->
+        val gate = StationId("chs-malibu-rapids")
+        val references = derivedGatesByReference(context.assets)
+        assertTrue(gate in references.getValue(station))
+        store.requestDownloads(listOf(station))
+        val repository = AndroidPredictionRepository(context, models)
+        val network = MutableStateFlow<TideDownloadState?>(TideDownloadState.DATA_SAVER)
+        val calls = AtomicInteger()
+        val queue = TidePreviewDownloads(worker, store, models, catalog, network, repository,
+            referencePortIds = { references.keys }, fit = { port, _, _ ->
+                assertEquals(station, port.id)
+                calls.incrementAndGet()
+                models.write(station, ModelKind.TIDE, org.json.JSONObject(
+                    """{"offset":2.0,"constituents":[{"name":"M2","amplitude":1.0,"phase":15}]}"""))
+            }) { _, _ -> error("A derived gate requires a full reference fit") }
+        queue.activityStarted()
+        queue.states.first { it[station] == TideDownloadState.DATA_SAVER }
+        assertEquals(0, calls.get())
+        network.value = null
+        store.state.first { station !in it.getOrThrow().requested }
+        val result = repository.load(gate, TimeSpan(now, now.plusSeconds(86400)), PredictionPurpose.DISPLAY)
+        assertEquals(StationCapabilities.DERIVED_TIMING, (result as PredictionResult.Ready).capabilities)
+        network.value = TideDownloadState.WAITING_FOR_NETWORK
+        store.requestDownloads(listOf(station))
+        store.state.first { station !in it.getOrThrow().requested }
+        assertEquals(1, calls.get())
+    }
+
+    @Test fun managerCancellationClearsBothRequestsForAReferencePort() = withQueue { worker, catalog, store, models ->
+        val queue = TidePreviewDownloads(worker, store, models, catalog,
+            MutableStateFlow(TideDownloadState.DATA_SAVER), AndroidPredictionRepository(context, models),
+            referencePortIds = { setOf(station) }, fit = { _, _, _ -> error("Unexpected fit") }) { _, _ -> error("Unexpected preview") }
+        queue.activityStarted()
+        for (referenceFirst in listOf(false, true)) {
+            if (referenceFirst) {
+                store.requestDownloads(listOf(station))
+                queue.states.first { it[station] == TideDownloadState.DATA_SAVER }
+            }
+            queue.request(station)
+            if (!referenceFirst) store.requestDownloads(listOf(station))
+            queue.cancelFromManager(station)
+            val intent = store.state.first().getOrThrow()
+            assertFalse(station in intent.requested || station in intent.previewRequested || station in intent.tideFitRequested)
+            assertNull(queue.states.value[station])
+        }
+    }
+
     @Test fun newlyValidatedNetworkWakesTransientBackoff() = withQueue { worker, catalog, store, models ->
         val network = TideDownloadNetwork()
         network.update(online = true, restricted = false, validated = false)

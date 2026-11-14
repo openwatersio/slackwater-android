@@ -108,7 +108,7 @@ internal fun ChartDownloads(manager: ChartPackManager, close: () -> Unit) {
                 for ((id, state) in states.entries.sortedBy { catalog?.byId?.get(it.key)?.name ?: it.key.value }) {
                     key(id) {
                         Text(catalog?.byId?.get(id)?.name ?: id.value)
-                        TideDownloadEdits(state, model::launchEdit, { downloads.request(id) }, { downloads.cancel(id) })
+                        TideDownloadEdits(state, model::launchEdit, { downloads.request(id) }, { downloads.cancelFromManager(id) })
                     }
                 }
                 val onlineGates = OnlineGateDownloads.get(LocalContext.current)
