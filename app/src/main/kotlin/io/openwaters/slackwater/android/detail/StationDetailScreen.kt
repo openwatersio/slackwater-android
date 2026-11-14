@@ -336,8 +336,9 @@ private fun MissingPredictions(station: StationIdentity, metadata: DetailMetadat
         val store = model.places.downloads
         val intent by store.state.collectAsState(null)
         val requestedId = metadata.pairedTide ?: return
+        val queue = TidePreviewDownloads.get(LocalContext.current)
         val queued = intent?.getOrNull()?.requested?.contains(requestedId) == true
-        Button(enabled = !queued, onClick = { model.launchEdit { store.requestDownloads(listOf(requestedId)) } }) {
+        Button(enabled = !queued, onClick = { model.launchEdit { queue.requestReference(requestedId) } }) {
             Text(stringResource(if (queued) R.string.detail_queued else R.string.detail_download))
         }
     }
