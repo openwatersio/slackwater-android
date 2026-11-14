@@ -72,6 +72,22 @@ class DownloadIntentStore internal constructor(
         .catch { if (it is IOException) emit(Result.failure(it)) else throw it }
         .distinctUntilChanged()
 
+    private val radiusKey = intPreferencesKey("phoneRadiusKm")
+    private val currentsKey = booleanPreferencesKey("phoneAllCurrents")
+    internal val selection = data.data.map {
+        PhoneSelection(it[radiusKey] ?: 0, it[currentsKey] ?: false)
+    }.retryAlertReads().catch { if (it !is IOException) throw it }.distinctUntilChanged()
+
+    internal suspend fun selectRadius(km: Int, enabled: Boolean) {
+        data.edit { prefs ->
+            prefs[radiusKey] = PhoneSelection(prefs[radiusKey] ?: 0, false).withRadius(km, enabled).radiusKm
+        }
+    }
+
+    internal suspend fun selectCurrents(enabled: Boolean) {
+        data.edit { it[currentsKey] = enabled }
+    }
+
     /** A direct request or explicit retry also resumes a previously trimmed job. */
     suspend fun requestDownloads(ids: Collection<StationId>) = editDownloads(ids) { intent, stations ->
         intent.copy(requested = intent.requested + stations, cancelled = intent.cancelled - stations)
@@ -87,7 +103,7 @@ class DownloadIntentStore internal constructor(
     }
 
     suspend fun requestTide(id: StationId) = editDownloads(listOf(id)) { intent, stations ->
-        intent.copy(tideFitRequested = intent.tideFitRequested + stations, previewRequested = intent.previewRequested + stations)
+        intent.copy(cancelled = intent.cancelled - stations, tideFitRequested = intent.tideFitRequested + stations, previewRequested = intent.previewRequested + stations)
     }
 
     suspend fun cancelTide(id: StationId) = editDownloads(listOf(id)) { intent, stations ->

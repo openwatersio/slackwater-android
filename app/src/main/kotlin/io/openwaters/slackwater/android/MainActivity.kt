@@ -145,12 +145,19 @@ class MainActivity : ComponentActivity() {
             lifecycle.repeatOnLifecycle(androidx.lifecycle.Lifecycle.State.STARTED) {
                 val downloads = OnlineGateDownloads.get(applicationContext)
                 val model = StationListModel.get(applicationContext)
-                val candidates = model.state.filterNotNull().map { list ->
-                    with(list.sections) { favorites + heroes.map { it.identity.id } + nearMe.map { it.identity.id } + recents }
+                val store = model.places.downloads
+                val fits = TidePreviewDownloads.get(applicationContext)
+                val candidates = combine(model.state.filterNotNull(), store.selection) { list, selection ->
+                    selection.stations(list)
+                }.flowOn(Dispatchers.Default).distinctUntilChanged()
+                val selected = combine(candidates, store.state, fits.openStation) { ids, intent, opened ->
+                    val saved = intent.getOrNull()
+                    if (saved == null) emptyList() else
+                        (listOfNotNull(opened) + ids).distinct().filter { it !in saved.cancelled }
                 }.distinctUntilChanged()
-                val wanted = combine(candidates, model.places.downloads.state, downloads.online) { ids, intent, online ->
-                    val desired = intent.getOrNull()
-                    if (!online || desired == null) emptySet() else (ids - desired.cancelled + desired.requested).toSet()
+                launch { fits.fitWhileStarted(selected) }
+                val wanted = combine(selected, store.state, downloads.online) { ids, intent, online ->
+                    if (!online) emptySet() else (ids + intent.getOrNull()?.requested.orEmpty()).toSet()
                 }
                 downloads.prefetchWhileStarted(wanted)
             }

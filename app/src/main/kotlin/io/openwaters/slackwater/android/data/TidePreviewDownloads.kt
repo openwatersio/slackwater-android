@@ -46,6 +46,7 @@ internal class TidePreviewDownloads(
     private val networkRecovery: StateFlow<Long> = MutableStateFlow(0L),
     private val currentGate: (StationId) -> Boolean = { false },
     referencePortIds: () -> Set<StationId> = { emptySet() },
+    private val gateReferences: () -> Map<StationId, StationId> = { emptyMap() },
     private val fit: suspend (StationIdentity, Instant, Boolean) -> Unit,
     private val fetch: suspend (StationIdentity, Instant) -> List<TidePoint>,
 ) {
@@ -56,6 +57,59 @@ internal class TidePreviewDownloads(
     fun activityStarted() = startedActivities.update { it + 1 }
     fun activityStopped() = startedActivities.update { (it - 1).coerceAtLeast(0) }
 
+    val openStation = MutableStateFlow<StationId?>(null)
+    private val automaticReferences by lazy(gateReferences)
+
+    suspend fun fitWhileStarted(candidates: Flow<List<StationId>>) = withContext(Dispatchers.IO) {
+        val finished = mutableSetOf<StationId>()
+        val retryAfter = mutableMapOf<StationId, Long>()
+        val wanted = candidates.stateIn(this)
+        while (currentCoroutineContext().isActive) {
+            val pending = wanted.first { ids -> ids.any { it !in finished } }
+            val now = android.os.SystemClock.elapsedRealtime()
+            val id = pending.firstOrNull { it !in finished && (retryAfter[it] ?: 0L) <= now }
+            if (id == null) {
+                val wake = pending.filter { it !in finished }.minOf { retryAfter.getValue(it) }
+                withTimeoutOrNull((wake - now).coerceAtLeast(1)) { wanted.first { it != pending } }
+                continue
+            }
+            val target = automaticReferences[id] ?: id
+            val station = liveStation(target)
+            val job = lock.withLock {
+                if (station == null || target in jobs || target in intents.state.first().getOrNull()?.cancelled.orEmpty()) return@withLock null
+                automaticJobs.add(target)
+                start(station, full = true, referenceOnly = target != id, automatic = true)
+                jobs.getValue(target)
+            }
+            if (job == null) {
+                finished.add(id)
+                continue
+            }
+            try {
+                coroutineScope {
+                    val removal = launch {
+                        combine(wanted, states) { selection, statuses ->
+                            id !in selection || statuses[target] == TideDownloadState.RETRY
+                        }.first { it }
+                        job.cancel()
+                    }
+                    job.join()
+                    removal.cancel()
+                }
+                if (states.value[target] == TideDownloadState.RETRY && jobsStillOwn(target, job)) {
+                    retryAfter[id] = android.os.SystemClock.elapsedRealtime() + 60_000
+                } else if (id in wanted.value) finished.add(id)
+            } finally {
+                withContext(NonCancellable) {
+                    lock.withLock { if (jobs[target] === job) stop(target) }
+                }
+            }
+        }
+    }
+
+    private suspend fun jobsStillOwn(id: StationId, job: Job) = lock.withLock { jobs[id] === job }
+
+    private val automaticJobs = mutableSetOf<StationId>()
     private val jobs = mutableMapOf<StationId, Job>()
     private val referencePorts by lazy(referencePortIds)
     private val referenceJobs = mutableSetOf<StationId>()
@@ -72,8 +126,8 @@ internal class TidePreviewDownloads(
                     val currents = intent.requested.filter(currentGate)
                     val references = intent.requested.intersect(referencePorts)
                     val requested = intent.previewRequested + currents + references
-                    for (id in jobs.keys.toList() - requested) stop(id)
-                    for (id in referenceJobs.toList() - references) stop(id)
+                    for (id in jobs.keys.toList() - requested - automaticJobs) stop(id)
+                    for (id in referenceJobs.toList() - references - automaticJobs) stop(id)
                     for (id in requested - jobs.keys) {
                         val station = liveStation(id)
                         if (station == null) {
@@ -94,7 +148,7 @@ internal class TidePreviewDownloads(
     suspend fun request(id: StationId) = lock.withLock {
         val station = liveStation(id) ?: return@withLock
         if (currentGate(id)) intents.requestDownloads(listOf(id)) else intents.requestTide(id)
-        if (id in referenceJobs || states.value[id] == TideDownloadState.RETRY) stop(id)
+        if (id in automaticJobs || id in referenceJobs || states.value[id] == TideDownloadState.RETRY) stop(id)
         if (id !in jobs) start(station, full = true, manual = true)
     }
 
@@ -102,15 +156,18 @@ internal class TidePreviewDownloads(
         val station = liveStation(id) ?: return@withLock
         if (id !in referencePorts) return@withLock
         intents.requestDownloads(listOf(id))
+        if (id in automaticJobs) stop(id)
         if (id !in jobs) start(station, full = true, manual = true, referenceOnly = true)
     }
 
     suspend fun cancel(id: StationId) = lock.withLock {
+        if (id in automaticJobs) intents.trimDownloads(listOf(id))
         if (id in referenceJobs) intents.releaseDownloadRequests(listOf(id)) else release(id)
         stop(id)
     }
 
     suspend fun cancelFromManager(id: StationId) = lock.withLock {
+        if (id in automaticJobs) intents.trimDownloads(listOf(id))
         if (id in referencePorts) intents.cancelReferenceAndTide(id) else release(id)
         stop(id)
     }
@@ -120,6 +177,7 @@ internal class TidePreviewDownloads(
     }
 
     private fun stop(id: StationId) {
+        automaticJobs.remove(id)
         referenceJobs.remove(id)
         jobs.remove(id)?.cancel()
         mutableStates.update { it - id }
@@ -143,6 +201,11 @@ internal class TidePreviewDownloads(
     private suspend fun finish(station: StationIdentity, previewOnly: Boolean = false, failed: Boolean = false, referenceOnly: Boolean = false, previewFailure: Boolean = false) = lock.withLock {
         val id = station.id
         currentCoroutineContext().ensureActive()
+        if (id in automaticJobs) {
+            stop(id)
+            if (failed) status(id, TideDownloadState.RETRY)
+            return@withLock
+        }
         // A full request can arrive while a restored preview is downloading.
         if (previewOnly && id in intents.state.first().getOrThrow().tideFitRequested) {
             stop(id)
@@ -168,7 +231,7 @@ internal class TidePreviewDownloads(
         models.write(station.id, ModelKind.TIDE_PREVIEW, record)
     }
 
-    private fun start(station: StationIdentity, full: Boolean, manual: Boolean = false, referenceOnly: Boolean = false) {
+    private fun start(station: StationIdentity, full: Boolean, manual: Boolean = false, referenceOnly: Boolean = false, automatic: Boolean = false) {
         val id = station.id
         if (referenceOnly) referenceJobs.add(id)
         status(id, TideDownloadState.QUEUED)
@@ -180,10 +243,10 @@ internal class TidePreviewDownloads(
                 while (true) {
                     val recoveryAtStart = networkRecovery.value
                     try {
-                        if (referenceOnly) {
+                        if (referenceOnly || automatic) {
                             val now = Instant.now()
                             val ready = predictions.load(id, TimeSpan(now, now), PredictionPurpose.DISPLAY) as? PredictionResult.Ready
-                            if (ready?.capabilities == StationCapabilities.FITTED_TIDE) {
+                            if (ready?.capabilities in setOf(StationCapabilities.FITTED_TIDE, StationCapabilities.FINAL_CURRENT, StationCapabilities.BOUNDED_CURRENT)) {
                                 finish(station, referenceOnly = true)
                                 return@collectLatest
                             }
@@ -248,7 +311,7 @@ internal class TidePreviewDownloads(
                     UserStateStore.get(app).downloads, models, BundledStationCatalog(app.assets),
                     network.paused, AndroidPredictionRepository(app), network.recovery, currentGate = { id ->
                         gates[id]?.allowsFinalFit(id) == true
-                    }, referencePortIds = { derivedGatesByReference(app.assets).keys }, fit = { station, now, manual ->
+                    }, gateReferences = { derivedGatesByReference(app.assets).flatMap { (reference, gates) -> gates.map { it to reference } }.toMap() }, referencePortIds = { derivedGatesByReference(app.assets).keys }, fit = { station, now, manual ->
                         if (station.kind == StationKind.CanadianCurrent) {
                             val gate = requireNotNull(gates[station.id])
                             val final = source.fitCurrent(station, gate, now, manual) { models.publishCurrentFit(gate, it) }
