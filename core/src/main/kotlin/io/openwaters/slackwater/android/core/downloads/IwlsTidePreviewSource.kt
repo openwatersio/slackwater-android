@@ -1,5 +1,7 @@
 package io.openwaters.slackwater.android.core.downloads
 
+import io.openwaters.slackwater.ChsCurrentFit
+import io.openwaters.slackwater.android.core.prediction.CurrentGateEvidence
 import io.openwaters.slackwater.ChsTideFit
 import io.openwaters.slackwater.TidePoint
 import io.openwaters.slackwater.iwls.ChsSample
@@ -34,6 +36,8 @@ class IwlsTidePreviewSource internal constructor(cacheDirectory: File, transport
     private val client = IwlsClient(serial)
     private val weeks = TideFitWeekCache(File(cacheDirectory, "tide-fit-weeks"))
 
+    private val currentWeeks = TideFitWeekCache(File(cacheDirectory, "current-fit-weeks"))
+
     fun stationZone(station: StationIdentity): ZoneId = try {
         station.timezone?.let(ZoneId::of) ?: ZoneId.systemDefault()
     } catch (_: DateTimeException) {
@@ -46,6 +50,26 @@ class IwlsTidePreviewSource internal constructor(cacheDirectory: File, transport
         return { chunk, grid ->
             weeks.load(iwls.id, chunk, grid, Instant.now(), manual) { client.series("wlp", iwls.id, chunk, grid) }
         }
+    }
+
+    suspend fun fitCurrent(
+        station: StationIdentity,
+        evidence: CurrentGateEvidence,
+        now: Instant,
+        manual: Boolean,
+        publishProvisional: suspend (CanadianCurrentModel) -> Unit,
+    ): CanadianCurrentModel = withContext(Dispatchers.IO) {
+        require(station.kind == StationKind.CanadianCurrent &&
+            evidence.allowsFinalFit(station.id))
+        val iwls = stations.resolve(station, ChsCurrentFit.SPEED_SERIES, now)
+        val metadata = client.metadata(iwls.id)
+        val flood = metadata.floodDirection ?: throw IwlsException.Permanent("Missing flood direction for ${station.name}")
+        val ebb = metadata.ebbDirection ?: throw IwlsException.Permanent("Missing ebb direction for ${station.name}")
+        fitCanadianCurrentWindow(station, evidence, now, flood, ebb, { code, chunk, grid ->
+            currentWeeks.load("$code/${iwls.id}", chunk, grid, Instant.now(), manual) {
+                client.series(code, iwls.id, chunk, grid)
+            }
+        }, publishProvisional)
     }
 
     suspend fun fetch(station: StationIdentity, now: Instant): List<TidePoint> = withContext(Dispatchers.IO) {

@@ -8,6 +8,8 @@ Slackwater automatically keeps a world overview, regional coverage around your l
 
 Open a Canadian tide station and tap **Download for offline use** to request its official tide preview from the Canadian Hydrographic Service. The requested window starts 48 hours before the station’s local midnight and ends five days after it. The chart shows the dates IWLS supplied. A saved preview must cover now through at least 48 hours after local midnight, with no gaps longer than 30 minutes. **Downloads** shows pending transfers and lets you cancel or retry. The saved chart reopens offline. An unfinished request resumes when the app is open and network access permits it. With Android Data Saver enabled, preview transfers wait for an unrestricted connection. While the preview is available, the app downloads the 60-day tide fit in the foreground. Detail adopts the fitted model when chart motion settles.
 
+Canadian current gates with a validated fit recipe download official speed and direction predictions on request. The app fits them along the published flood axis over the gate’s 60- or 210-day window. Where the catalog authorizes a provisional fit, detail can use the first 60 days while the rest downloads. Online-only gates continue to use official prediction weeks.
+
 ## Build
 
 Install JDK 17 so Gradle can discover it for both Android Studio sync and command-line builds. If Gradle cannot find your installation, set `org.gradle.java.installations.paths=/absolute/path/to/jdk-17` in `~/.gradle/gradle.properties`, using the JDK home that contains `bin/java`.
