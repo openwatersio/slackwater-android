@@ -44,6 +44,7 @@ internal class TidePreviewDownloads(
     private val network: StateFlow<TideDownloadState?>,
     private val predictions: PredictionRepository,
     private val networkRecovery: StateFlow<Long> = MutableStateFlow(0L),
+    private val currentGate: (StationId) -> Boolean = { false },
     private val fit: suspend (StationIdentity, Instant, Boolean) -> Unit,
     private val fetch: suspend (StationIdentity, Instant) -> List<TidePoint>,
 ) {
@@ -65,11 +66,12 @@ internal class TidePreviewDownloads(
                 lock.withLock {
                     // A queued observation may predate an explicit cancel or retry that held this lock.
                     val intent = intents.state.first().getOrThrow()
-                    val requested = intent.previewRequested
+                    val currents = intent.requested.filter(currentGate)
+                    val requested = intent.previewRequested + currents
                     for (id in jobs.keys.toList() - requested) stop(id)
                     for (id in requested - jobs.keys) {
                         val station = liveStation(id)
-                        if (station == null) intents.cancelTide(id) else start(station, full = id in intent.tideFitRequested)
+                        if (station == null) release(id) else start(station, full = id in currents || id in intent.tideFitRequested)
                     }
                 }
             }.retryAlertReads().collect()
@@ -77,18 +79,22 @@ internal class TidePreviewDownloads(
     }
 
     private suspend fun liveStation(id: StationId): StationIdentity? =
-        (catalog.resolve(id) as? StationResolution.Live)?.identity?.takeIf { it.kind == StationKind.CanadianTide }
+        (catalog.resolve(id) as? StationResolution.Live)?.identity?.takeIf { it.kind == StationKind.CanadianTide || (it.kind == StationKind.CanadianCurrent && currentGate(id)) }
 
     suspend fun request(id: StationId) = lock.withLock {
         val station = liveStation(id) ?: return@withLock
-        intents.requestTide(id)
+        if (currentGate(id)) intents.requestDownloads(listOf(id)) else intents.requestTide(id)
         if (states.value[id] == TideDownloadState.RETRY) stop(id)
         if (id !in jobs) start(station, full = true, manual = true)
     }
 
     suspend fun cancel(id: StationId) = lock.withLock {
-        intents.cancelTide(id)
+        release(id)
         stop(id)
+    }
+
+    private suspend fun release(id: StationId) {
+        if (currentGate(id)) intents.releaseDownloadRequests(listOf(id)) else intents.cancelTide(id)
     }
 
     private fun stop(id: StationId) {
@@ -120,7 +126,7 @@ internal class TidePreviewDownloads(
             start(station, full = true, manual = true)
             return@withLock
         }
-        intents.cancelTide(id)
+        release(id)
         stop(id)
         if (failed) status(id, TideDownloadState.RETRY)
     }
@@ -146,7 +152,7 @@ internal class TidePreviewDownloads(
                 while (true) {
                     val recoveryAtStart = networkRecovery.value
                     try {
-                        val available = alreadyAvailable(id)
+                        val available = station.kind == StationKind.CanadianTide && alreadyAvailable(id)
                         if (available && !full) {
                             finish(station, previewOnly = true)
                             return@collectLatest
@@ -156,7 +162,7 @@ internal class TidePreviewDownloads(
                             return@collectLatest
                         }
                         activeStatus(id, TideDownloadState.QUEUED)
-                        if (!available) download(station)
+                        if (!available && station.kind == StationKind.CanadianTide) download(station)
                         if (full) {
                             fits.withLock {
                                 activeStatus(id, TideDownloadState.DOWNLOADING)
@@ -194,10 +200,17 @@ internal class TidePreviewDownloads(
                 watchDownloadNetwork(app, update = network::update)
                 val source = IwlsTidePreviewSource(app.cacheDir)
                 val models = ModelStore.get(app)
+                val gates = BundledCurrentGates(app.assets)
                 TidePreviewDownloads(CoroutineScope(SupervisorJob() + Dispatchers.IO),
                     UserStateStore.get(app).downloads, models, BundledStationCatalog(app.assets),
-                    network.paused, AndroidPredictionRepository(app), network.recovery, fit = { station, now, manual ->
-                        models.fitCanadianTide(station.id, now, source.stationZone(station), source.fitChunks(station, now, manual))
+                    network.paused, AndroidPredictionRepository(app), network.recovery, currentGate = { id ->
+                        gates[id]?.allowsFinalFit(id) == true
+                    }, fit = { station, now, manual ->
+                        if (station.kind == StationKind.CanadianCurrent) {
+                            val gate = requireNotNull(gates[station.id])
+                            val final = source.fitCurrent(station, gate, now, manual) { models.publishCurrentFit(gate, it) }
+                            models.publishCurrentFit(gate, final)
+                        } else models.fitCanadianTide(station.id, now, source.stationZone(station), source.fitChunks(station, now, manual))
                     }, fetch = source::fetch)
             }.also { shared = it }
         }

@@ -1,5 +1,12 @@
 package io.openwaters.slackwater.android.data
 
+import io.openwaters.slackwater.HarmonicConstituent
+import io.openwaters.slackwater.HarmonicFit
+import io.openwaters.slackwater.android.core.downloads.CanadianCurrentModel
+import io.openwaters.slackwater.android.core.prediction.PredictionPurpose
+import io.openwaters.slackwater.android.core.prediction.PredictionResult
+import io.openwaters.slackwater.android.core.prediction.StationCapabilities
+import io.openwaters.slackwater.android.core.prediction.TimeSpan
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.preferencesOf
@@ -76,6 +83,37 @@ class TidePreviewDownloadsTest {
             }
         }
         Unit
+    }
+
+    @Test fun restoredCurrentRequestPublishesProvisionalThenFinalWithoutDowngrading() = withQueue { worker, catalog, store, models ->
+        val id = StationId("chs-johnstone-strait-central")
+        val gate = requireNotNull(BundledCurrentGates(context.assets)[id])
+        val repository = AndroidPredictionRepository(context, models)
+        val early = CanadianCurrentModel(id, 60.0, 30.0, 210.0,
+            HarmonicFit(listOf(HarmonicConstituent("M2", 2.0, 25.0)), 0.2, 0.0, emptyList()))
+        val provisionalReady = CompletableDeferred<Unit>()
+        val finish = CompletableDeferred<Unit>()
+        store.requestDownloads(listOf(id, station))
+        val queue = TidePreviewDownloads(worker, store, models, catalog, MutableStateFlow(null), repository,
+            currentGate = { it == id }, fit = { gateStation, _, _ ->
+                assertEquals(id, gateStation.id)
+                models.publishCurrentFit(gate, early)
+                provisionalReady.complete(Unit)
+                finish.await()
+                models.publishCurrentFit(gate, early.copy(fitDays = 210.0))
+            }) { _, _ -> error("Current gate requested a tide preview") }
+        queue.activityStarted()
+        provisionalReady.await()
+        suspend fun capability() = (repository.load(id, TimeSpan(now, now.plusSeconds(3600)),
+            PredictionPurpose.DISPLAY) as PredictionResult.Ready).capabilities
+        assertEquals(StationCapabilities.PROVISIONAL_CURRENT, capability())
+        finish.complete(Unit)
+        store.state.first { id !in it.getOrThrow().requested }
+        val revision = models.revision.value
+        models.publishCurrentFit(gate, early)
+        assertEquals(revision, models.revision.value)
+        assertEquals(gate.compatibleFit(id.value, early.recipe, 210.0)?.capability, capability())
+        assertTrue(station in store.state.first().getOrThrow().requested)
     }
 
     @Test fun newlyValidatedNetworkWakesTransientBackoff() = withQueue { worker, catalog, store, models ->
