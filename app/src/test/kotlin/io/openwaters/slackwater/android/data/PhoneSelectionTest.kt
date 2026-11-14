@@ -8,6 +8,27 @@ import org.junit.Test
 class PhoneSelectionTest {
     private val automatic = PhoneSelection(0, false)
 
+    @Test fun automaticRetriesBackOffIndependentlyAndWakeOnReconnect() {
+        val retries = AutomaticFitRetries()
+        retries.observeRecovery(0)
+        val a = StationId("a")
+        val b = StationId("b")
+        for (delay in listOf(60_000L, 120_000L, 240_000L, 480_000L, 900_000L, 900_000L)) {
+            retries.defer(a, 100L)
+            assertEquals(100L + delay, retries.due(a))
+        }
+        assertEquals(0L, retries.due(b))
+        retries.defer(b, 200L)
+        assertEquals(60_200L, retries.due(b))
+        retries.observeRecovery(0)
+        assertEquals(60_200L, retries.due(b))
+        retries.observeRecovery(1)
+        assertEquals(0L, retries.due(a))
+        assertEquals(0L, retries.due(b))
+        retries.defer(a, 300L)
+        assertEquals(60_300L, retries.due(a))
+    }
+
     @Test fun radiusChoicesAreInclusiveAndIndependentFromCurrents() {
         assertFalse(automatic.backgroundRequested)
         val currents = automatic.copy(allCurrents = true)

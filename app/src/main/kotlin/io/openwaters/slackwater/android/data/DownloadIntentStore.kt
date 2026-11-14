@@ -106,6 +106,17 @@ class DownloadIntentStore internal constructor(
         intent.copy(cancelled = intent.cancelled - stations, tideFitRequested = intent.tideFitRequested + stations, previewRequested = intent.previewRequested + stations)
     }
 
+    /** Cancel the selected request and suppress automatic selection in the same durable edit. */
+    internal suspend fun cancelSelection(id: StationId, general: Boolean, tide: Boolean) =
+        editDownloads(listOf(id)) { intent, stations ->
+            intent.copy(
+                requested = if (general) intent.requested - stations else intent.requested,
+                tideFitRequested = if (tide) intent.tideFitRequested - stations else intent.tideFitRequested,
+                previewRequested = if (tide) intent.previewRequested - stations else intent.previewRequested,
+                cancelled = intent.cancelled + stations,
+            )
+        }
+
     suspend fun cancelTide(id: StationId) = editDownloads(listOf(id)) { intent, stations ->
         intent.copy(tideFitRequested = intent.tideFitRequested - stations, previewRequested = intent.previewRequested - stations)
     }

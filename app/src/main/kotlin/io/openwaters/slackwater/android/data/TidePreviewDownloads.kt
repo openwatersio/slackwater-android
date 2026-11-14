@@ -60,17 +60,22 @@ internal class TidePreviewDownloads(
     val openStation = MutableStateFlow<StationId?>(null)
     private val automaticReferences by lazy(gateReferences)
 
+    private val retries = AutomaticFitRetries()
+
     suspend fun fitWhileStarted(candidates: Flow<List<StationId>>) = withContext(Dispatchers.IO) {
         val finished = mutableSetOf<StationId>()
-        val retryAfter = mutableMapOf<StationId, Long>()
         val wanted = candidates.stateIn(this)
         while (currentCoroutineContext().isActive) {
             val pending = wanted.first { ids -> ids.any { it !in finished } }
+            val recovery = networkRecovery.value
+            retries.observeRecovery(recovery)
             val now = android.os.SystemClock.elapsedRealtime()
-            val id = pending.firstOrNull { it !in finished && (retryAfter[it] ?: 0L) <= now }
+            val id = pending.firstOrNull { it !in finished && retries.due(automaticReferences[it] ?: it) <= now }
             if (id == null) {
-                val wake = pending.filter { it !in finished }.minOf { retryAfter.getValue(it) }
-                withTimeoutOrNull((wake - now).coerceAtLeast(1)) { wanted.first { it != pending } }
+                val wake = pending.filter { it !in finished }.minOf { retries.due(automaticReferences[it] ?: it) }
+                withTimeoutOrNull((wake - now).coerceAtLeast(1)) {
+                    combine(wanted, networkRecovery) { ids, generation -> ids != pending || generation != recovery }.first { it }
+                }
                 continue
             }
             val target = automaticReferences[id] ?: id
@@ -97,8 +102,11 @@ internal class TidePreviewDownloads(
                     removal.cancel()
                 }
                 if (states.value[target] == TideDownloadState.RETRY && jobsStillOwn(target, job)) {
-                    retryAfter[id] = android.os.SystemClock.elapsedRealtime() + 60_000
-                } else if (id in wanted.value) finished.add(id)
+                    retries.defer(target, android.os.SystemClock.elapsedRealtime())
+                } else if (id in wanted.value) {
+                    retries.clear(target)
+                    finished.add(id)
+                }
             } finally {
                 withContext(NonCancellable) {
                     lock.withLock { if (jobs[target] === job) stop(target) }
@@ -161,14 +169,14 @@ internal class TidePreviewDownloads(
     }
 
     suspend fun cancel(id: StationId) = lock.withLock {
-        if (id in automaticJobs) intents.trimDownloads(listOf(id))
-        if (id in referenceJobs) intents.releaseDownloadRequests(listOf(id)) else release(id)
+        val general = currentGate(id) || id in referenceJobs
+        intents.cancelSelection(id, general = general, tide = !general)
         stop(id)
     }
 
     suspend fun cancelFromManager(id: StationId) = lock.withLock {
-        if (id in automaticJobs) intents.trimDownloads(listOf(id))
-        if (id in referencePorts) intents.cancelReferenceAndTide(id) else release(id)
+        val current = currentGate(id)
+        intents.cancelSelection(id, general = current || id in referencePorts, tide = !current)
         stop(id)
     }
 
@@ -319,6 +327,28 @@ internal class TidePreviewDownloads(
                         } else models.fitCanadianTide(station.id, now, source.stationZone(station), source.fitChunks(station, now, manual))
                     }, fetch = source::fetch)
             }.also { shared = it }
+        }
+    }
+}
+
+internal class AutomaticFitRetries {
+    private data class Retry(val delay: Long, val due: Long)
+    private val stations = mutableMapOf<StationId, Retry>()
+
+    @Synchronized fun due(id: StationId): Long = stations[id]?.due ?: 0L
+
+    @Synchronized fun defer(id: StationId, now: Long) {
+        val delay = stations[id]?.let { (it.delay * 2).coerceAtMost(900_000L) } ?: 60_000L
+        stations[id] = Retry(delay, now + delay)
+    }
+
+    @Synchronized fun clear(id: StationId) { stations.remove(id) }
+
+    private var generation = -1L
+    @Synchronized fun observeRecovery(value: Long) {
+        if (value > generation) {
+            stations.clear()
+            generation = value
         }
     }
 }

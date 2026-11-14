@@ -216,6 +216,25 @@ class TidePreviewDownloadsTest {
         }
     }
 
+    @Test fun automaticFitResumesOnNetworkRecoveryWhileDeferred() = withQueue { worker, catalog, store, models ->
+        val recovery = MutableStateFlow(0L)
+        val calls = AtomicInteger()
+        val queue = TidePreviewDownloads(worker, store, models, catalog, MutableStateFlow(null),
+            AndroidPredictionRepository(context, models), recovery, fit = { _, _, _ -> }) { _, _ ->
+            if (calls.incrementAndGet() == 1) throw IwlsException.Transient("No route")
+            points
+        }
+        queue.activityStarted()
+        val automatic = worker.launch { queue.fitWhileStarted(MutableStateFlow(listOf(station))) }
+        withTimeout(10_000) {
+            while (calls.get() == 0 || queue.states.value.containsKey(station)) delay(10)
+            recovery.value++
+            while (models.read(station, ModelKind.TIDE_PREVIEW) !is StoredModel.Ready) delay(10)
+        }
+        assertEquals(2, calls.get())
+        automatic.cancelAndJoin()
+    }
+
     @Test fun newlyValidatedNetworkWakesTransientBackoff() = withQueue { worker, catalog, store, models ->
         val network = TideDownloadNetwork()
         network.update(online = true, restricted = false, validated = false)
@@ -369,12 +388,13 @@ class TidePreviewDownloadsTest {
         started.await()
         queue.cancel(station)
         val cancelled = store.state.first().getOrThrow()
-        assertFalse(station in cancelled.cancelled)
+        assertTrue(station in cancelled.cancelled)
         assertFalse(station in cancelled.previewRequested)
         assertTrue(station in cancelled.requested)
         assertTrue((models.read(station, ModelKind.TIDE_PREVIEW) as StoredModel.Ready).record.getBoolean("old"))
         queue.request(station)
         store.state.first { station !in it.getOrThrow().previewRequested }
+        assertFalse(station in store.state.first().getOrThrow().cancelled)
         assertEquals(2, calls.get())
         assertTrue((models.read(station, ModelKind.TIDE_PREVIEW) as StoredModel.Ready).record.has("samples"))
     }
