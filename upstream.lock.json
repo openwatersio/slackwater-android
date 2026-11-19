@@ -11,7 +11,7 @@
     },
     "almanac": {
       "repository": "openwatersio/almanac",
-      "commit": "75ba6f7b6db7904968db380ce82ad92e8c042b0c"
+      "commit": "e0fae0b0c56957cae8040577cc9c19ca7d6845d5"
     },
     "slackwater-database": {
       "repository": "openwatersio/slackwater-database",
