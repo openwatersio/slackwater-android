@@ -16,7 +16,7 @@ import kotlinx.coroutines.sync.withLock
 import org.json.JSONArray
 import org.json.JSONObject
 
-enum class TideDownloadState { QUEUED, DOWNLOADING, WAITING_FOR_NETWORK, DATA_SAVER, RETRY }
+enum class TideDownloadState { QUEUED, DOWNLOADING, WAITING_FOR_NETWORK, DATA_SAVER, WAITING_TO_RETRY, RETRY }
 
 internal class TideDownloadNetwork {
     private val pauseState = MutableStateFlow<TideDownloadState?>(TideDownloadState.WAITING_FOR_NETWORK)
@@ -60,15 +60,78 @@ internal class TidePreviewDownloads(
     val openStation = MutableStateFlow<StationId?>(null)
     private val automaticReferences by lazy(gateReferences)
 
+    /** Rows whose failure or backoff belongs to a reference-only fit, so the manager retries that fit. */
+    private val referenceRows = mutableSetOf<StationId>()
     private val retries = AutomaticFitRetries()
+    /** Candidates from each caller of [fitWhileStarted]; one shared loop fits their union. */
+    private val candidateSources = MutableStateFlow<Map<Any, List<StationId>>>(emptyMap())
+    /** Targets of the shared automatic loop, under [lock]; null while it is stopped. */
+    private var wantedTargets: Set<StationId>? = null
 
-    suspend fun fitWhileStarted(candidates: Flow<List<StationId>>) = withContext(Dispatchers.IO) {
+    /**
+     * Keep the automatic loop fitting [candidates] until the caller is cancelled. Callers overlap
+     * when a second activity instance runs (multi-window, a calendar launch) or one activity starts
+     * another. Each one adds its candidates to the single loop instead of running a loop of its own.
+     */
+    suspend fun fitWhileStarted(candidates: Flow<List<StationId>>) {
+        val source = Any()
+        try {
+            candidates.collect { ids -> candidateSources.update { it + (source to ids) } }
+            awaitCancellation()
+        } finally {
+            candidateSources.update { it - source }
+        }
+    }
+
+    private fun clearDeferrals(where: (StationId) -> Boolean) {
+        for ((id, state) in states.value) {
+            if (state == TideDownloadState.WAITING_TO_RETRY && id !in jobs && where(id)) stop(id)
+        }
+    }
+
+    /** Clear every backoff after a network recovery; their rows go with them. Called under [lock]. */
+    private fun observeRecovery() {
+        if (retries.observeRecovery(networkRecovery.value)) clearDeferrals { true }
+    }
+
+    private suspend fun runAutomaticLoop() {
+        val candidates = candidateSources.map { it.values.flatten().distinct() }.distinctUntilChanged()
+        try {
+            coroutineScope { fitCandidates(candidates) }
+        } finally {
+            withContext(NonCancellable) {
+                lock.withLock {
+                    wantedTargets = null
+                    // Nothing retries a deferral once the loop stops; the next loop shows it again while due.
+                    clearDeferrals { true }
+                }
+            }
+        }
+    }
+
+    private suspend fun CoroutineScope.fitCandidates(candidates: Flow<List<StationId>>) {
         val finished = mutableSetOf<StationId>()
-        val wanted = candidates.stateIn(this)
+        val wanted = candidates.onEach { ids ->
+            val targets = ids.groupBy { automaticReferences[it] ?: it }
+            lock.withLock {
+                currentCoroutineContext().ensureActive()
+                wantedTargets = targets.keys
+                observeRecovery()
+                // The backoff stays, so a station that flaps in and out of the selection is not refetched each time.
+                clearDeferrals { it !in targets }
+                // Restored here, not in the loop: the loop misses a removal and re-add that conflate to an equal list.
+                val now = android.os.SystemClock.elapsedRealtime()
+                for ((target, sources) in targets) {
+                    if (target in jobs || target in states.value || retries.due(target) <= now) continue
+                    if (target !in sources) referenceRows.add(target)
+                    status(target, TideDownloadState.WAITING_TO_RETRY)
+                }
+            }
+        }.stateIn(this)
         while (currentCoroutineContext().isActive) {
             val pending = wanted.first { ids -> ids.any { it !in finished } }
             val recovery = networkRecovery.value
-            retries.observeRecovery(recovery)
+            lock.withLock { observeRecovery() }
             val now = android.os.SystemClock.elapsedRealtime()
             val id = pending.firstOrNull { it !in finished && retries.due(automaticReferences[it] ?: it) <= now }
             if (id == null) {
@@ -81,7 +144,12 @@ internal class TidePreviewDownloads(
             val target = automaticReferences[id] ?: id
             val station = liveStation(target)
             val job = lock.withLock {
-                if (station == null || target in jobs || target in intents.state.first().getOrNull()?.cancelled.orEmpty()) return@withLock null
+                if (station == null || target in intents.state.first().getOrNull()?.cancelled.orEmpty()) {
+                    // A row waiting for this target would otherwise outlast the skip.
+                    clearDeferrals { it == target }
+                    return@withLock null
+                }
+                if (target in jobs) return@withLock null
                 automaticJobs.add(target)
                 start(station, full = true, referenceOnly = target != id, automatic = true)
                 jobs.getValue(target)
@@ -101,11 +169,17 @@ internal class TidePreviewDownloads(
                     job.join()
                     removal.cancel()
                 }
-                if (states.value[target] == TideDownloadState.RETRY && jobsStillOwn(target, job)) {
-                    retries.defer(target, android.os.SystemClock.elapsedRealtime())
-                } else if (id in wanted.value) {
-                    retries.clear(target)
-                    finished.add(id)
+                lock.withLock {
+                    // wantedTargets, unlike wanted.value, is current under this lock.
+                    if (jobs[target] === job && states.value[target] == TideDownloadState.RETRY && target in wantedTargets.orEmpty()) {
+                        retries.defer(target, android.os.SystemClock.elapsedRealtime())
+                        stop(target)
+                        if (id != target) referenceRows.add(target)
+                        status(target, TideDownloadState.WAITING_TO_RETRY)
+                    } else if (id in wanted.value) {
+                        retries.clear(target)
+                        finished.add(id)
+                    }
                 }
             } finally {
                 withContext(NonCancellable) {
@@ -114,8 +188,6 @@ internal class TidePreviewDownloads(
             }
         }
     }
-
-    private suspend fun jobsStillOwn(id: StationId, job: Job) = lock.withLock { jobs[id] === job }
 
     private val automaticJobs = mutableSetOf<StationId>()
     private val jobs = mutableMapOf<StationId, Job>()
@@ -148,35 +220,55 @@ internal class TidePreviewDownloads(
                 }
             }.retryAlertReads().collect()
         }
+        scope.launch(Dispatchers.IO) {
+            // collectLatest joins a stopping loop before the next one starts, so loops never overlap.
+            candidateSources.map { it.isNotEmpty() }.distinctUntilChanged().collectLatest { active ->
+                if (active) runAutomaticLoop()
+            }
+        }
     }
 
     private suspend fun liveStation(id: StationId): StationIdentity? =
         (catalog.resolve(id) as? StationResolution.Live)?.identity?.takeIf { it.kind == StationKind.CanadianTide || (it.kind == StationKind.CanadianCurrent && currentGate(id)) }
 
-    suspend fun request(id: StationId) = lock.withLock {
-        val station = liveStation(id) ?: return@withLock
+    suspend fun request(id: StationId) = lock.withLock { requestStation(id) }
+
+    /** Retry a failed or waiting row, restarting the reference-only fit when the row is one. */
+    suspend fun retry(id: StationId) = lock.withLock {
+        if (id in referenceRows || id in referenceJobs) requestReferenceLocked(id) else requestStation(id)
+    }
+
+    private suspend fun requestStation(id: StationId) {
+        val station = liveStation(id) ?: return
         if (currentGate(id)) intents.requestDownloads(listOf(id)) else intents.requestTide(id)
+        retries.clear(id)
         if (id in automaticJobs || id in referenceJobs || states.value[id] == TideDownloadState.RETRY) stop(id)
         if (id !in jobs) start(station, full = true, manual = true)
     }
 
-    suspend fun requestReference(id: StationId) = lock.withLock {
-        val station = liveStation(id) ?: return@withLock
-        if (id !in referencePorts) return@withLock
+    suspend fun requestReference(id: StationId) = lock.withLock { requestReferenceLocked(id) }
+
+    private suspend fun requestReferenceLocked(id: StationId) {
+        val station = liveStation(id) ?: return
+        if (id !in referencePorts) return
         intents.requestDownloads(listOf(id))
-        if (id in automaticJobs) stop(id)
+        retries.clear(id)
+        // A failed manual reference sleeps in its own backoff; an explicit retry restarts it now.
+        if (id in automaticJobs || states.value[id] == TideDownloadState.RETRY) stop(id)
         if (id !in jobs) start(station, full = true, manual = true, referenceOnly = true)
     }
 
     suspend fun cancel(id: StationId) = lock.withLock {
-        val general = currentGate(id) || id in referenceJobs
+        val general = currentGate(id) || id in referenceJobs || id in referenceRows
         intents.cancelSelection(id, general = general, tide = !general)
+        retries.clear(id)
         stop(id)
     }
 
     suspend fun cancelFromManager(id: StationId) = lock.withLock {
         val current = currentGate(id)
         intents.cancelSelection(id, general = current || id in referencePorts, tide = !current)
+        retries.clear(id)
         stop(id)
     }
 
@@ -185,6 +277,7 @@ internal class TidePreviewDownloads(
     }
 
     private fun stop(id: StationId) {
+        referenceRows.remove(id)
         automaticJobs.remove(id)
         referenceJobs.remove(id)
         jobs.remove(id)?.cancel()
@@ -211,7 +304,7 @@ internal class TidePreviewDownloads(
         currentCoroutineContext().ensureActive()
         if (id in automaticJobs) {
             stop(id)
-            if (failed) status(id, TideDownloadState.RETRY)
+            if (failed) failedStatus(id, referenceOnly)
             return@withLock
         }
         // A full request can arrive while a restored preview is downloading.
@@ -226,7 +319,12 @@ internal class TidePreviewDownloads(
             intents.cancelReferenceAndTide(id)
         } else release(id)
         stop(id)
-        if (failed) status(id, TideDownloadState.RETRY)
+        if (failed) failedStatus(id, referenceOnly)
+    }
+
+    private fun failedStatus(id: StationId, referenceOnly: Boolean) {
+        if (referenceOnly) referenceRows.add(id)
+        status(id, TideDownloadState.RETRY)
     }
 
     private suspend fun download(station: StationIdentity) = transfer.withLock {
@@ -241,6 +339,7 @@ internal class TidePreviewDownloads(
 
     private fun start(station: StationIdentity, full: Boolean, manual: Boolean = false, referenceOnly: Boolean = false, automatic: Boolean = false) {
         val id = station.id
+        referenceRows.remove(id)
         if (referenceOnly) referenceJobs.add(id)
         status(id, TideDownloadState.QUEUED)
         jobs[id] = scope.launch {
@@ -345,10 +444,11 @@ internal class AutomaticFitRetries {
     @Synchronized fun clear(id: StationId) { stations.remove(id) }
 
     private var generation = -1L
-    @Synchronized fun observeRecovery(value: Long) {
-        if (value > generation) {
-            stations.clear()
-            generation = value
-        }
+    /** True when [value] is a new recovery and every backoff was cleared. */
+    @Synchronized fun observeRecovery(value: Long): Boolean {
+        if (value <= generation) return false
+        stations.clear()
+        generation = value
+        return true
     }
 }
