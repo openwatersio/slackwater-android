@@ -20,17 +20,17 @@
   },
   "resources": {
     "repository": "openwatersio/slackwater-ios",
-    "commit": "6457d71b46af0e1c3310e1f8688dffc0db102d33",
+    "commit": "e9e49ee1a5d2dd66dfaead1b16880d84c767b8c6",
     "assets": [
       {
         "name": "station-index.json",
         "path": "Slackwater/Resources/station-index.json",
-        "sha256": "d469f3c162e6de10d8f4366b4b83ae732d9e759e228e14e956d47829f039028c"
+        "sha256": "99b5e6f64bd32e96cdf776f9d91f637de7dc9bf7f74105a3c8c04b941078b860"
       },
       {
         "name": "stations.tcdb",
         "path": "Slackwater/Resources/stations.tcdb",
-        "sha256": "1bfe567af943cbd5357db6d69af09d113f0ae9b6fb24137ed3f8e9b4522b4d1d"
+        "sha256": "741f9ce19b2a677d4e79b32771fc782d9a8bc52da2a3adfc17c08686d0b05774"
       },
       {
         "name": "currents.json",
@@ -65,7 +65,7 @@
       {
         "name": "station-tombstones.json",
         "path": "Slackwater/Resources/station-tombstones.json",
-        "sha256": "c470a35473e1c6c56562ff601f50fcdd7d84eec5406065e8cc5f5f5ad3eceaff"
+        "sha256": "64eb08b8df3d6237e2a73afe68a82673c9a29890a147f7db9e9e1e7fa0076ce6"
       },
       {
         "name": "unavailable-stations.json",
@@ -75,7 +75,7 @@
       {
         "name": "slugs.json",
         "path": "Slackwater/Resources/slugs.json",
-        "sha256": "33380beb0c7e58a7f995674bbf28ce5de504aae67ac74a0bd1c2fa140d061ba1"
+        "sha256": "1c1f313d5fbeee3c80dae3a9bb6fbc31d16bf69c2a16ca6afa3e6938870a8a07"
       },
       {
         "name": "fill-salish.json",
