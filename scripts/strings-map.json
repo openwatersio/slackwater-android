@@ -17,6 +17,14 @@
       "english": "All current stations"
     },
     {
+      "name": "download_stations_ready",
+      "key": "Stations ready: %lld of %lld"
+    },
+    {
+      "name": "download_waiting_retry",
+      "key": "Waiting to retry…"
+    },
+    {
       "name": "alert_plot_reset",
       "key": "Return to now",
       "english": "Return to now"

@@ -4,6 +4,8 @@
     <string name="download_25">"Laistigh de 25 km"</string>
     <string name="download_150">"Laistigh de 150 km"</string>
     <string name="download_all_currents">"Gach stáisiún srutha"</string>
+    <string name="download_stations_ready">"Stáisiúin réidh: %1$d as %2$d"</string>
+    <string name="download_waiting_retry">"Ag fanacht le triail eile…"</string>
     <string name="alert_plot_reset">"Fill ar anois"</string>
     <string name="alert_set_action">"Socraigh foláireamh"</string>
     <string name="alert_set_subject">"Foláireamh socraithe · %1$s"</string>

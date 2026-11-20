@@ -4,6 +4,8 @@
     <string name="download_25">"25 km以内"</string>
     <string name="download_150">"150 km以内"</string>
     <string name="download_all_currents">"すべての潮流観測所"</string>
+    <string name="download_stations_ready">"利用可能な観測所：%1$d / %2$d"</string>
+    <string name="download_waiting_retry">"再試行待ち…"</string>
     <string name="alert_plot_reset">"現在に戻る"</string>
     <string name="alert_set_action">"アラートを設定"</string>
     <string name="alert_set_subject">"アラート設定済み · %1$s"</string>

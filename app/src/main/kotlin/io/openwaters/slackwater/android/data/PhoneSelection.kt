@@ -11,9 +11,9 @@ internal data class PhoneSelection(val radiusKm: Int, val allCurrents: Boolean) 
         return copy(radiusKm = if (enabled) maxOf(radiusKm, km) else if (km == 150) minOf(radiusKm, 25) else 0)
     }
 
-    fun stations(list: StationListState): List<StationId> {
+    /** [origin] is where the radius is measured from: the list's fix, or one a caller held on to. */
+    fun stations(list: StationListState, origin: Coordinate? = list.slot.fixCoordinate): List<StationId> {
         val visible = with(list.sections) { favorites + heroes.map { it.id } + nearMe.map { it.id } + recents }.toSet()
-        val origin = list.slot.fixCoordinate
         return list.stations.values.asSequence().filter {
             it.kind in canadianKinds
         }.map { station ->
