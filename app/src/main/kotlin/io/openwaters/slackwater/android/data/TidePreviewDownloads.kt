@@ -53,9 +53,21 @@ internal class TidePreviewDownloads(
     private val lock = Mutex()
     private val transfer = Mutex()
     private val fits = Mutex()
-    private val startedActivities = MutableStateFlow(0)
-    fun activityStarted() = startedActivities.update { it + 1 }
-    fun activityStopped() = startedActivities.update { (it - 1).coerceAtLeast(0) }
+    /** Started activities plus a running background job. Transfers run only while one is open. */
+    private val runners = MutableStateFlow(0)
+    fun activityStarted() = runners.update { it + 1 }
+    fun activityStopped() = runners.update { (it - 1).coerceAtLeast(0) }
+    fun backgroundStarted() = activityStarted()
+    fun backgroundStopped() = activityStopped()
+
+    /** Why transfers are paused for the network, or null when they may run. */
+    val networkPause: StateFlow<TideDownloadState?> get() = network
+    /** A fitted current gate, or a reference tide that derived current gates are fitted through. */
+    fun isCurrentWork(id: StationId) = currentGate(id) || id in referencePorts
+
+    private val mutableProgress = MutableStateFlow<AutomaticProgress?>(null)
+    /** The shared automatic loop's candidates and what remains of them; null while the loop is stopped. */
+    val progress = mutableProgress.asStateFlow()
 
     val openStation = MutableStateFlow<StationId?>(null)
     private val automaticReferences by lazy(gateReferences)
@@ -106,11 +118,27 @@ internal class TidePreviewDownloads(
                     clearDeferrals { true }
                 }
             }
+            mutableProgress.value = null
         }
     }
 
     private suspend fun CoroutineScope.fitCandidates(candidates: Flow<List<StationId>>) {
-        val finished = mutableSetOf<StationId>()
+        // publish() reads these from the selection collector while the loop writes them.
+        val finished: MutableSet<StationId> = java.util.concurrent.ConcurrentHashMap.newKeySet()
+        // Candidates the loop passed over because they cannot be fitted or were cancelled.
+        val skipped: MutableSet<StationId> = java.util.concurrent.ConcurrentHashMap.newKeySet()
+        // Finished candidates whose fit failed for good; they are done but not ready.
+        val failed: MutableSet<StationId> = java.util.concurrent.ConcurrentHashMap.newKeySet()
+        val progressLock = Any()
+        var latest = emptyList<StationId>()
+        // Each publish reads the latest candidates and sets under one lock, so an older snapshot never lands last.
+        fun publish(ids: List<StationId>? = null) = synchronized(progressLock) {
+            if (ids != null) latest = ids
+            val pending = latest.filterTo(mutableSetOf()) { it !in finished }
+            val now = android.os.SystemClock.elapsedRealtime()
+            mutableProgress.value = AutomaticProgress(latest.toSet() - skipped, pending,
+                pending.filterTo(mutableSetOf()) { retries.due(automaticReferences[it] ?: it) > now }, latest.toSet().intersect(failed))
+        }
         val wanted = candidates.onEach { ids ->
             val targets = ids.groupBy { automaticReferences[it] ?: it }
             lock.withLock {
@@ -127,6 +155,7 @@ internal class TidePreviewDownloads(
                     status(target, TideDownloadState.WAITING_TO_RETRY)
                 }
             }
+            publish(ids)
         }.stateIn(this)
         while (currentCoroutineContext().isActive) {
             val pending = wanted.first { ids -> ids.any { it !in finished } }
@@ -147,6 +176,7 @@ internal class TidePreviewDownloads(
                 if (station == null || target in intents.state.first().getOrNull()?.cancelled.orEmpty()) {
                     // A row waiting for this target would otherwise outlast the skip.
                     clearDeferrals { it == target }
+                    skipped.add(id)
                     return@withLock null
                 }
                 if (target in jobs) return@withLock null
@@ -156,6 +186,7 @@ internal class TidePreviewDownloads(
             }
             if (job == null) {
                 finished.add(id)
+                publish()
                 continue
             }
             try {
@@ -178,9 +209,12 @@ internal class TidePreviewDownloads(
                         status(target, TideDownloadState.WAITING_TO_RETRY)
                     } else if (id in wanted.value) {
                         retries.clear(target)
+                        // A permanent failure leaves its row at RETRY.
+                        if (states.value[target] == TideDownloadState.RETRY) failed.add(id)
                         finished.add(id)
                     }
                 }
+                publish()
             } finally {
                 withContext(NonCancellable) {
                     lock.withLock { if (jobs[target] === job) stop(target) }
@@ -343,7 +377,7 @@ internal class TidePreviewDownloads(
         if (referenceOnly) referenceJobs.add(id)
         status(id, TideDownloadState.QUEUED)
         jobs[id] = scope.launch {
-            combine(startedActivities, network) { count, paused ->
+            combine(runners, network) { count, paused ->
                 if (count == 0) TideDownloadState.QUEUED else paused
             }.distinctUntilChanged().collectLatest { paused ->
                 var backoff = 60_000L
@@ -429,6 +463,17 @@ internal class TidePreviewDownloads(
         }
     }
 }
+
+/**
+ * [stations] the automatic loop wants and can fit; [pending] those it has not finished; [waiting]
+ * the pending ones sitting out a retry backoff; [failed] the finished ones whose fit failed for good.
+ */
+internal data class AutomaticProgress(
+    val stations: Set<StationId>,
+    val pending: Set<StationId>,
+    val waiting: Set<StationId>,
+    val failed: Set<StationId> = emptySet(),
+)
 
 internal class AutomaticFitRetries {
     private data class Retry(val delay: Long, val due: Long)

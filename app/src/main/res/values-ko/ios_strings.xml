@@ -4,6 +4,8 @@
     <string name="download_25">"25km 이내"</string>
     <string name="download_150">"150km 이내"</string>
     <string name="download_all_currents">"모든 조류 관측소"</string>
+    <string name="download_stations_ready">"준비된 관측소: %2$d개 중 %1$d개"</string>
+    <string name="download_waiting_retry">"재시도 대기 중…"</string>
     <string name="alert_plot_reset">"지금으로 돌아가기"</string>
     <string name="alert_set_action">"알림 설정"</string>
     <string name="alert_set_subject">"알림 설정됨 · %1$s"</string>

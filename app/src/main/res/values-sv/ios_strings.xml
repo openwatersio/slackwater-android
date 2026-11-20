@@ -4,6 +4,8 @@
     <string name="download_25">"Inom 25 km"</string>
     <string name="download_150">"Inom 150 km"</string>
     <string name="download_all_currents">"Alla strömstationer"</string>
+    <string name="download_stations_ready">"Stationer klara: %1$d av %2$d"</string>
+    <string name="download_waiting_retry">"Väntar på nytt försök…"</string>
     <string name="alert_plot_reset">"Tillbaka till nu"</string>
     <string name="alert_set_action">"Ställ in en avisering"</string>
     <string name="alert_set_subject">"Avisering skapad · %1$s"</string>

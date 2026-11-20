@@ -13,6 +13,9 @@ import java.time.Instant
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.flow.*
 import io.openwaters.slackwater.android.data.OnlineGateDownloads
+import io.openwaters.slackwater.android.data.automaticFitCandidates
+import io.openwaters.slackwater.android.data.automaticOnlineCandidates
+import io.openwaters.slackwater.android.downloads.BackgroundDownloads
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import io.openwaters.slackwater.android.detail.DetailRecords
@@ -120,6 +123,7 @@ class MainActivity : ComponentActivity() {
     }
 
     override fun onStop() {
+        BackgroundDownloads.activityStopping(isChangingConfigurations)
         TidePreviewDownloads.get(applicationContext).activityStopped()
         super.onStop()
     }
@@ -144,22 +148,12 @@ class MainActivity : ComponentActivity() {
         if (automaticChartDownloads) lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(androidx.lifecycle.Lifecycle.State.STARTED) {
                 val downloads = OnlineGateDownloads.get(applicationContext)
-                val model = StationListModel.get(applicationContext)
-                val store = model.places.downloads
                 val fits = TidePreviewDownloads.get(applicationContext)
-                val candidates = combine(model.state.filterNotNull(), store.selection) { list, selection ->
-                    selection.stations(list)
-                }.flowOn(Dispatchers.Default).distinctUntilChanged()
-                val selected = combine(candidates, store.state, fits.openStation) { ids, intent, opened ->
-                    val saved = intent.getOrNull()
-                    if (saved == null) emptyList() else
-                        (listOfNotNull(opened) + ids).distinct().filter { it !in saved.cancelled }
-                }.distinctUntilChanged()
+                val selected = automaticFitCandidates(applicationContext)
                 launch { fits.fitWhileStarted(selected) }
-                val wanted = combine(selected, store.state, downloads.online) { ids, intent, online ->
-                    if (!online) emptySet() else (ids + intent.getOrNull()?.requested.orEmpty()).toSet()
-                }
-                downloads.prefetchWhileStarted(wanted)
+                // Only a visible app may start the background job, so this watches while started.
+                launch { BackgroundDownloads.whileVisible(applicationContext) }
+                downloads.prefetchWhileStarted(automaticOnlineCandidates(applicationContext, selected))
             }
         }
         enableWaterEdgeToEdge()

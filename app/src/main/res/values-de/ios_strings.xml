@@ -4,6 +4,8 @@
     <string name="download_25">"Im Umkreis von 25 km"</string>
     <string name="download_150">"Im Umkreis von 150 km"</string>
     <string name="download_all_currents">"Alle Strömungsstationen"</string>
+    <string name="download_stations_ready">"Stationen bereit: %1$d von %2$d"</string>
+    <string name="download_waiting_retry">"Wartet auf erneuten Versuch…"</string>
     <string name="alert_plot_reset">"Zurück zu jetzt"</string>
     <string name="alert_set_action">"Meldung einrichten"</string>
     <string name="alert_set_subject">"Meldung gesetzt · %1$s"</string>

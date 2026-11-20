@@ -4,6 +4,8 @@
     <string name="download_25">"En un radio de 25 km"</string>
     <string name="download_150">"En un radio de 150 km"</string>
     <string name="download_all_currents">"Todas las estaciones de corrientes"</string>
+    <string name="download_stations_ready">"Estaciones listas: %1$d de %2$d"</string>
+    <string name="download_waiting_retry">"Esperando para reintentar…"</string>
     <string name="alert_plot_reset">"Volver a ahora"</string>
     <string name="alert_set_action">"Crear una alerta"</string>
     <string name="alert_set_subject">"Alerta creada · %1$s"</string>

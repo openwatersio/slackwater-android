@@ -316,6 +316,28 @@ class TidePreviewDownloadsTest {
         staying.cancelAndJoin()
     }
 
+    @Test fun progressCountsFittableCandidatesAndWhatRemains() = withQueue { worker, catalog, store, models ->
+        val unknown = StationId("missing-station")
+        val release = CompletableDeferred<Unit>()
+        val queue = TidePreviewDownloads(worker, store, models, catalog, MutableStateFlow(null),
+            AndroidPredictionRepository(context, models), fit = { _, _, _ -> }) { _, _ ->
+            release.await()
+            throw IwlsException.Transient("No route")
+        }
+        assertNull(queue.progress.value)
+        queue.backgroundStarted()
+        val automatic = worker.launch { queue.fitWhileStarted(MutableStateFlow(listOf(unknown, station))) }
+        // The unknown station is passed over and leaves the count; the Canadian one is still pending.
+        val running = queue.progress.first { it != null && unknown !in it.stations }!!
+        assertEquals(setOf(station), running.stations)
+        assertEquals(setOf(station), running.pending)
+        release.complete(Unit)
+        val waiting = queue.progress.first { it?.waiting == setOf(station) }!!
+        assertEquals(setOf(station), waiting.pending)
+        automatic.cancelAndJoin()
+        queue.progress.first { it == null }
+    }
+
     @Test fun managerRetryRestartsABackedOffManualReference() = withQueue { worker, catalog, store, models ->
         val fits = AtomicInteger()
         store.requestDownloads(listOf(station))
@@ -340,6 +362,10 @@ class TidePreviewDownloadsTest {
             gateReferences = { mapOf(gate to station) }, fit = { port, _, _ ->
                 assertEquals(station, port.id)
                 if (fits.incrementAndGet() == 1) throw IwlsException.Transient("No route")
+                // A real fit saves the reference tide; without it the cleared backoff lets the automatic
+                // loop find the gate unfitted and fit it again.
+                models.write(station, ModelKind.TIDE, org.json.JSONObject(
+                    """{"offset":2.0,"constituents":[{"name":"M2","amplitude":1.0,"phase":15}]}"""))
             }) { _, _ -> error("A reference fit needs no preview") }
         queue.activityStarted()
         val automatic = worker.launch { queue.fitWhileStarted(MutableStateFlow(listOf(gate))) }

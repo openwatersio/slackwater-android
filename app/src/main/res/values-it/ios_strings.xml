@@ -4,6 +4,8 @@
     <string name="download_25">"Entro 25 km"</string>
     <string name="download_150">"Entro 150 km"</string>
     <string name="download_all_currents">"Tutte le stazioni di correnti"</string>
+    <string name="download_stations_ready">"Stazioni pronte: %1$d di %2$d"</string>
+    <string name="download_waiting_retry">"In attesa di riprovare…"</string>
     <string name="alert_plot_reset">"Torna a ora"</string>
     <string name="alert_set_action">"Imposta un avviso"</string>
     <string name="alert_set_subject">"Avviso impostato · %1$s"</string>
