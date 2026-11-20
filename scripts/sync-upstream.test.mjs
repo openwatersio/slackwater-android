@@ -79,3 +79,31 @@ test('unsupported Node versions fail explicitly', () => {
  requireSupportedNode('24.2.0');
  requireSupportedNode('26.0.0');
 });
+
+test('fetches a separately pinned iOS documentation commit without changing the resource checkout', async () => {
+ const root = await sandbox();
+ try {
+  const remote = join(root, 'remotes', 'fixture', 'ios.git');
+  await mkdir(remote, {recursive:true});
+  const git = (...args) => execFileSync('git', args, {cwd:remote, encoding:'utf8'}).trim();
+  git('init', '--quiet');
+  await writeFile(join(remote, 'catalog.txt'), 'translations');
+  await writeFile(join(remote, 'asset.txt'), 'first');
+  git('add', '.');
+  git('-c','user.name=Fixture','-c','user.email=fixture@example.test','-c','commit.gpgsign=false','commit','--quiet','-m','docs');
+  const docs = git('rev-parse','HEAD');
+  await writeFile(join(remote, 'asset.txt'), 'second');
+  git('add', 'asset.txt');
+  git('-c','user.name=Fixture','-c','user.email=fixture@example.test','-c','commit.gpgsign=false','commit','--quiet','-m','assets');
+  const resources = git('rev-parse','HEAD');
+  await writeFile(join(root, 'upstream.lock.json'), JSON.stringify({sources:{}, productDocs:{repository:'fixture/ios',commit:docs}, resources:{repository:'fixture/ios',commit:resources,assets:[{name:'asset.txt',path:'asset.txt',sha256:createHash('sha256').update('second').digest('hex')}]}}));
+  const env = {GIT_CONFIG_COUNT:'1',GIT_CONFIG_KEY_0:`url.file://${root}/remotes/.insteadOf`,GIT_CONFIG_VALUE_0:'https://github.com/'};
+  const result = run(root, [], env);
+  assert.equal(result.status, 0, result.stderr);
+  const checkout = join(root,'vendor/slackwater-ios');
+  const shown = execFileSync('git',['show',`${docs}:catalog.txt`],{cwd:checkout,encoding:'utf8'});
+  assert.equal(shown, 'translations');
+  assert.equal(execFileSync('git',['rev-parse','HEAD'],{cwd:checkout,encoding:'utf8'}).trim(), resources);
+  assert.equal(run(root,['--check']).status, 0);
+ } finally { await rm(root,{recursive:true,force:true}); }
+});
