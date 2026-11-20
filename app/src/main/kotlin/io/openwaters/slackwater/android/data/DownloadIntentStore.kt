@@ -87,6 +87,7 @@ class DownloadIntentStore internal constructor(
     internal suspend fun selectCurrents(enabled: Boolean) {
         data.edit { it[currentsKey] = enabled }
     }
+
     /** A direct request or explicit retry also resumes a previously trimmed job. */
     suspend fun requestDownloads(ids: Collection<StationId>) = editDownloads(ids) { intent, stations ->
         intent.copy(requested = intent.requested + stations, cancelled = intent.cancelled - stations)
