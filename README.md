@@ -83,3 +83,7 @@ Tables use predictions already on the device. For online current gates and Canad
 Open Slackwater once, then touch and hold its launcher icon for **Next low tide**, **Next high tide**, or **Next slack window**. The launcher controls how many actions it shows. All three are also available under **Prediction shortcuts** in the app. Choose a place or date in the result screen; on a supported launcher you can pin the configured query to your home screen.
 
 A query without a place needs authorized device location. A named query stays at the selected station and uses predictions available offline. A date means the whole calendar day at that station, even when your device uses another time zone. An undated slack query looks ahead 48 hours using your comfort-current setting.
+
+## License
+
+Slackwater for Android is © Open Water Software, LLC and contributors, and licensed under [GPL-3.0](LICENSE).
