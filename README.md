@@ -14,7 +14,7 @@ On the phone, Canadian stations in the list and favorites download while the app
 
 ## Build
 
-Install JDK 17 so Gradle can discover it for both Android Studio sync and command-line builds. If Gradle cannot find your installation, set `org.gradle.java.installations.paths=/absolute/path/to/jdk-17` in `~/.gradle/gradle.properties`, using the JDK home that contains `bin/java`.
+Install JDK 17 so Gradle can discover it for both Android Studio sync and command-line builds. If Gradle cannot find your installation, set `org.gradle.java.installations.paths=/absolute/path/to/jdk-17` in `~/.gradle/gradle.properties`, using the JDK home that contains `bin/java`. CI runs Gradle on JDK 25; core and the included Kotlin builds use a JDK 17 toolchain, while app and benchmark use the Gradle JDK. A separate CI job runs the build checks with Gradle on JDK 17, and device tests run on both JDKs.
 
 Use Node 24.2 or later, Python 3, Git, and Android SDK platform 37. Gradle invokes `python3` to index the pinned current catalog, and accepts `-PpythonExecutable=/absolute/path/to/python3` when Python is outside the build process’s PATH. Set `ANDROID_HOME` or add `sdk.dir` to an ignored `local.properties` file. Gradle needs Node on its PATH; for Android Studio launched outside a shell, set `nodeExecutable=/absolute/path/to/node` in your user Gradle properties (`~/.gradle/gradle.properties`), or pass `-PnodeExecutable=/absolute/path/to/node` on the command line.
 
