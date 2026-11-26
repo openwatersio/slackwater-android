@@ -40,6 +40,7 @@ dependencies {
     implementation(libs.datastore)
     implementation(libs.maplibre)
     implementation(libs.work)
+    implementation(libs.billing)
     androidTestImplementation(testFixtures(project(":core")))
     androidTestImplementation(platform(libs.compose.bom))
     androidTestImplementation(libs.compose.test)
