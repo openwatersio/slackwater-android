@@ -6,7 +6,7 @@ workflows:
     '.github/workflows/android.yml':
         - 'actions/checkout@v7.0.1'
         - 'actions/setup-java@v6.3.0'
-        - 'actions/setup-node@v4.4.0'
+        - 'actions/setup-node@v7.1.0'
         - 'actions/upload-artifact@v4.6.2'
         - 'android-actions/setup-android@v4.0.4'
         - 'reactivecircus/android-emulator-runner@v2.38.0'
@@ -24,9 +24,9 @@ dependencies:
         commit: 'sha1-d1374f8ac74474200d16ef8ecee22c7ae7a51880'
         owner_id: 44036562
         repo_id: 196057608
-    'actions/setup-node@v4.4.0':
-        ref: 'v4.4.0'
-        commit: 'sha1-49933ea5288caeca8642d1e84afbd3f7d6820020'
+    'actions/setup-node@v7.1.0':
+        ref: 'v7.1.0'
+        commit: 'sha1-949feb2413d6458794dcd2491c4babbbce0c15c1'
         owner_id: 44036562
         repo_id: 189476904
     'actions/upload-artifact@v4.6.2':
