@@ -95,15 +95,16 @@ fun subordinateCurrentSpeed(now: Instant, referenceEvents: List<CurrentEvent>, s
     var after: Pair<Instant, Double>? = null
     for (event in referenceEvents.asReversed()) {
         val (offset, speed) = when (event.kind) {
-            CurrentEventKind.MAX_FLOOD -> station.floodTimeOffsetSeconds to event.speedKnots * station.floodSpeedRatio
-            CurrentEventKind.MAX_EBB -> station.ebbTimeOffsetSeconds to event.speedKnots * station.ebbSpeedRatio
+            CurrentEventKind.MAX_FLOOD, CurrentEventKind.MIN_FLOOD -> station.floodTimeOffsetSeconds to event.speedKnots * station.floodSpeedRatio
+            CurrentEventKind.MAX_EBB, CurrentEventKind.MIN_EBB -> station.ebbTimeOffsetSeconds to event.speedKnots * station.ebbSpeedRatio
             CurrentEventKind.SLACK -> when (nextPhase) {
                 CurrentEventKind.MAX_FLOOD -> station.slackBeforeFloodOffsetSeconds to 0.0
                 CurrentEventKind.MAX_EBB -> station.slackBeforeEbbOffsetSeconds to 0.0
                 else -> continue
             }
         }
-        if (event.kind != CurrentEventKind.SLACK) nextPhase = event.kind
+        // A slack's offset follows the next maximum; a lull keeps the phase without reversing it.
+        if (event.kind == CurrentEventKind.MAX_FLOOD || event.kind == CurrentEventKind.MAX_EBB) nextPhase = event.kind
         val time = event.time.plusNanos((offset * 1e9).roundToLong())
         if (time == now) return speed
         if (time < now && (before == null || time > before.first)) before = time to speed

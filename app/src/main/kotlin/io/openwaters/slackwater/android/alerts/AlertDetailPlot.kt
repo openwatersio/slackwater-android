@@ -43,10 +43,12 @@ private fun displayHeight(metres: Double, units: HeightUnits) =
 private fun eventStops(series: PredictionSeries) = when (series) {
     is PredictionSeries.Tide -> series.events.map { it.time to AlertTrigger.TideExtreme(it.kind == ExtremeKind.HIGH) }
     is PredictionSeries.Derived -> series.slacks.map { it.time to AlertTrigger.Slack }
-    is PredictionSeries.Current -> series.events.map { it.time to when (it.kind) {
+    // No alert trigger follows a lull.
+    is PredictionSeries.Current -> series.events.mapNotNull { it.time to when (it.kind) {
         CurrentEventKind.SLACK -> AlertTrigger.Slack
         CurrentEventKind.MAX_FLOOD -> AlertTrigger.CurrentPeak(true)
         CurrentEventKind.MAX_EBB -> AlertTrigger.CurrentPeak(false)
+        CurrentEventKind.MIN_FLOOD, CurrentEventKind.MIN_EBB -> return@mapNotNull null
     } }
 }
 

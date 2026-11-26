@@ -52,4 +52,12 @@ class AlertDetailPlotTest {
         assertEquals(AlertTrigger.SlackWindowOpens, plotSelection(current, rest, t(65), HeightUnits.METRIC)!!.trigger)
         assertEquals(AlertTrigger.Eclipse, plotSelection(current, rest, t(65), HeightUnits.METRIC, listOf(t(65)))!!.trigger)
     }
+
+    @Test fun aLullOffersNoPeak() {
+        val current = PredictionSeries.Current(emptyList(), listOf(
+            CurrentEvent(t(40), 0.0, CurrentEventKind.SLACK),
+            CurrentEvent(t(65), 0.4, CurrentEventKind.MIN_FLOOD),
+            CurrentEvent(t(90), 1.8, CurrentEventKind.MAX_FLOOD)), null, null)
+        assertEquals(AlertTrigger.SlackWindowOpens, plotSelection(current, rest, t(65), HeightUnits.METRIC)!!.trigger)
+    }
 }

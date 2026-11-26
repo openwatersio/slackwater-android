@@ -261,7 +261,8 @@ private fun DetailContent(station: StationIdentity, detail: LoadedDetail, prefs:
         val base = remember(series, cap, state.now, threshold) {
             val next = when (series) {
                 is PredictionSeries.Tide -> series.events.firstOrNull { it.time >= state.now }?.let { AlertTrigger.TideExtreme(it.kind == ExtremeKind.HIGH) to it.time }
-                is PredictionSeries.Current -> series.events.firstOrNull { it.time >= state.now }?.let {
+                is PredictionSeries.Current -> series.events.firstOrNull { it.time >= state.now &&
+                    it.kind != CurrentEventKind.MIN_FLOOD && it.kind != CurrentEventKind.MIN_EBB }?.let {
                     (if (it.kind == CurrentEventKind.SLACK) AlertTrigger.SlackWindowOpens else AlertTrigger.CurrentPeak(it.kind == CurrentEventKind.MAX_FLOOD)) to it.time }
                 is PredictionSeries.Derived -> series.slacks.firstOrNull { it.time >= state.now }?.let { AlertTrigger.Slack to it.time }
             }

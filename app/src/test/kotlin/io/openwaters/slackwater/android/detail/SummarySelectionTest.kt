@@ -30,6 +30,15 @@ class SummarySelectionTest {
         assertTrue(PredictionSeries.Derived(listOf(PredictionSeries.DerivedSlack(start, ExtremeKind.HIGH))).waterMarks().isEmpty())
     }
 
+    @Test fun lullsAreNotMaxima() {
+        val events = listOf(CurrentEvent(start, 2.0, CurrentEventKind.MAX_FLOOD),
+            CurrentEvent(start.plusSeconds(3600), 0.6, CurrentEventKind.MIN_FLOOD),
+            CurrentEvent(start.plusSeconds(7200), -1.5, CurrentEventKind.MAX_EBB),
+            CurrentEvent(start.plusSeconds(10800), -0.4, CurrentEventKind.MIN_EBB))
+        val marks = PredictionSeries.Current(emptyList(), events, null, null).waterMarks()
+        assertEquals(listOf(start, start.plusSeconds(7200)), marks.map { it.time })
+    }
+
     @Test fun phaseWindowsIncludeBothSidesOfNewMoonAndDistinguishQuarters() {
         assertEquals(0, phaseIndex(.99))
         assertEquals(0, phaseIndex(.01))

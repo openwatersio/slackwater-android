@@ -43,11 +43,13 @@ private fun PredictionSeries.entries(): List<PrintEntry> = when (this) {
         PrintEntry(it.time, if (it.kind == ExtremeKind.HIGH) PrintEventKind.HIGH else PrintEventKind.LOW, heightM = it.heightMetres)
     }
     is PredictionSeries.Derived -> slacks.map { PrintEntry(it.time, PrintEventKind.SLACK) }
-    is PredictionSeries.Current -> events.map {
+    // The table lists slacks and maximum flow; lulls have no row kind yet.
+    is PredictionSeries.Current -> events.mapNotNull {
         when (it.kind) {
             CurrentEventKind.SLACK -> PrintEntry(it.time, PrintEventKind.SLACK)
             CurrentEventKind.MAX_FLOOD -> PrintEntry(it.time, PrintEventKind.MAX_FLOOD, speedKnots = abs(it.speedKnots), setDegrees = floodBearing)
             CurrentEventKind.MAX_EBB -> PrintEntry(it.time, PrintEventKind.MAX_EBB, speedKnots = abs(it.speedKnots), setDegrees = ebbBearing)
+            CurrentEventKind.MIN_FLOOD, CurrentEventKind.MIN_EBB -> null
         }
     }
 }

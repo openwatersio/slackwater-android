@@ -100,6 +100,17 @@ class CardReadingTest {
         assertEquals(270.0, ebbing.setDegrees!!, 1e-6)
     }
 
+    @Test fun aLullReadsAsTheFloodOrEbbItWeakens() {
+        // Flood weakens to 0.7 kn at 1 h and ebb to -0.7 kn at 3 h, neither reversing.
+        val lulls = PredictionSeries.Current(
+            points = (0..24).map { CurrentPoint(at(it * 10L), if (it <= 12) 1.5 - 0.8 * Math.cos(Math.PI * it / 6.0) else -1.5 + 0.8 * Math.cos(Math.PI * it / 6.0)) },
+            events = listOf(CurrentEvent(at(60), 0.7, CurrentEventKind.MIN_FLOOD, 90.0), CurrentEvent(at(180), -0.7, CurrentEventKind.MIN_EBB, 270.0)),
+            floodBearing = 90.0, ebbBearing = 270.0,
+        )
+        assertEquals(CardCurrentState.FLOODING, (cardReading(ready(lulls, StationCapabilities.HARMONIC_CURRENT), at(60)) as CardReading.Current).state)
+        assertEquals(CardCurrentState.EBBING, (cardReading(ready(lulls, StationCapabilities.HARMONIC_CURRENT), at(180)) as CardReading.Current).state)
+    }
+
     @Test fun slackShowsANeutralDotUnlessCrossFlowStillPrints() {
         val slack = cardReading(ready(current(), StationCapabilities.HARMONIC_CURRENT), at(180)) as CardReading.Current
         assertEquals(CardCurrentState.SLACK, slack.state)

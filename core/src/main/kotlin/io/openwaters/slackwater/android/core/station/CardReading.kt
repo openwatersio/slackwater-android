@@ -77,8 +77,8 @@ private fun readSeries(result: PredictionResult.Ready, at: Instant): CardReading
     is PredictionSeries.Current -> series.readingAt(at)?.let { reading ->
         val state = when (reading.state) {
             CurrentState.SLACK -> CardCurrentState.SLACK
-            CurrentState.FLOODING, CurrentState.MAX_FLOOD -> CardCurrentState.FLOODING
-            CurrentState.EBBING, CurrentState.MAX_EBB -> CardCurrentState.EBBING
+            CurrentState.FLOODING, CurrentState.MAX_FLOOD, CurrentState.MIN_FLOOD -> CardCurrentState.FLOODING
+            CurrentState.EBBING, CurrentState.MAX_EBB, CurrentState.MIN_EBB -> CardCurrentState.EBBING
         }
         // At slack the set shows only while water still crosses the channel at 0.05 kn or more, the threshold the
         // list contract states in knots whatever the display unit.

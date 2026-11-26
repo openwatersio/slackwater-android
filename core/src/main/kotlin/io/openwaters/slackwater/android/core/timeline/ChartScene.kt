@@ -88,12 +88,14 @@ class ChartScene(
                     )
                 }
 
-        is PredictionSeries.Current -> series.events.map {
+        // Lulls have no stop yet: Flood and Ebb label maximum flow.
+        is PredictionSeries.Current -> series.events.mapNotNull {
             ChartMark(
                 it.time, when (it.kind) {
                     CurrentEventKind.SLACK -> ChartStop.Slack
                     CurrentEventKind.MAX_FLOOD -> ChartStop.Flood
                     CurrentEventKind.MAX_EBB -> ChartStop.Ebb
+                    CurrentEventKind.MIN_FLOOD, CurrentEventKind.MIN_EBB -> return@mapNotNull null
                 }
             )
         } + windows.flatMap { run ->

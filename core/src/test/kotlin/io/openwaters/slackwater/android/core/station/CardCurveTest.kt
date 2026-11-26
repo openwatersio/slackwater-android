@@ -73,6 +73,13 @@ class CardCurveTest {
         return PredictionSeries.Current(grid.map { CurrentPoint(it, speed(it)) }, events, 90.0, 270.0)
     }
 
+    @Test fun aLullIsNotDrawnAsAPeak() {
+        val series = current()
+        val lull = CurrentEvent(minutes(200), 1.1, CurrentEventKind.MIN_FLOOD, 90.0)
+        val curve = CardCurve.from(ready(series.copy(events = (series.events + lull).sortedBy { it.time }), StationCapabilities.HARMONIC_CURRENT), now, 0.5)!!
+        assertEquals(listOf(minutes(60), minutes(60 + 373)), curve.extremes.map { it.time })
+    }
+
     @Test fun aCurrentKeepsZeroInRangeAndDrawsItsWindows() {
         val series = current()
         val curve = CardCurve.from(ready(series, StationCapabilities.HARMONIC_CURRENT), now, 0.5)!!

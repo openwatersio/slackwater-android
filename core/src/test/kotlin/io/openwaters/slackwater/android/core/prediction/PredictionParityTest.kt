@@ -30,7 +30,15 @@ class PredictionParityTest {
         "slack" -> CurrentEventKind.SLACK
         "maxFlood" -> CurrentEventKind.MAX_FLOOD
         "maxEbb" -> CurrentEventKind.MAX_EBB
+        "minFlood" -> CurrentEventKind.MIN_FLOOD
+        "minEbb" -> CurrentEventKind.MIN_EBB
         else -> error("Unknown fixture event")
+    }
+
+    private val CurrentEvent.phase get() = when (kind) {
+        CurrentEventKind.MIN_FLOOD -> CurrentEventKind.MAX_FLOOD
+        CurrentEventKind.MIN_EBB -> CurrentEventKind.MAX_EBB
+        else -> kind
     }
 
     @Test fun harmonicTideTimelineAndTurns() {
@@ -138,7 +146,8 @@ class PredictionParityTest {
             val peaks = events.filter { eventKind(it) != CurrentEventKind.SLACK && abs(it.n("speed")) >= floor }
             assertTrue(peaks.isNotEmpty())
             for (peak in peaks) {
-                val nearest = series.events.filter { it.kind == eventKind(peak) }.minBy { Duration.between(it.time,peak.t("time")).abs() }
+                // NOAA tables label non-reversing minima by phase, as the engine's own accuracy check reads them.
+                val nearest = series.events.filter { it.phase == eventKind(peak) }.minBy { Duration.between(it.time,peak.t("time")).abs() }
                 near(nearest.time,peak.t("time"),minutes * 60.0)
                 assertEquals(abs(peak.n("speed")),abs(nearest.speedKnots),tolerance)
             }
