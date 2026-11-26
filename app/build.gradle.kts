@@ -6,7 +6,8 @@ android {
         applicationId = "io.openwaters.slackwater.android"
         minSdk = 26
         targetSdk = 37
-        versionCode = 1
+        // Play accepts each versionCode once; scripts/version-code.mjs supplies the one an uploaded build carries.
+        versionCode = providers.gradleProperty("slackwaterVersionCode").map { it.toInt() }.getOrElse(1)
         versionName = "0.1.0"
         buildConfigField("boolean", "PREMIUM_ENABLED", "false")
         manifestPlaceholders["premiumEnabled"] = false
@@ -16,6 +17,20 @@ android {
         val enabled = providers.gradleProperty("premiumEnabled").map { it.toBooleanStrict() }.orElse(true)
         buildConfigField("boolean", "PREMIUM_ENABLED", enabled.get().toString())
         manifestPlaceholders["premiumEnabled"] = enabled.get()
+    }
+    // For a bundle signed on a developer's machine, with the key in ~/.gradle/gradle.properties. The Play upload workflow
+    // builds unsigned and signs in a separate job, so the key never sits beside Gradle there.
+    val uploadStore = providers.gradleProperty("slackwaterUploadStoreFile")
+    if (uploadStore.isPresent) {
+        fun upload(name: String) = providers.gradleProperty(name).orNull
+            ?: throw GradleException("slackwaterUploadStoreFile is set, so $name must be set too.")
+        signingConfigs.create("upload") {
+            storeFile = file(uploadStore.get())
+            storePassword = upload("slackwaterUploadStorePassword")
+            keyAlias = upload("slackwaterUploadKeyAlias")
+            keyPassword = upload("slackwaterUploadKeyPassword")
+        }
+        buildTypes.getByName("release").signingConfig = signingConfigs.getByName("upload")
     }
     buildTypes.create("benchmark") {
         initWith(buildTypes.getByName("release"))

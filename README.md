@@ -36,9 +36,13 @@ Cards map the uncompressed tide database directly from the APK and look up each 
 
 When a pin changes, inspect `git -C vendor/slackwater-ios status --short`, fetch the commit recorded in the lock, then switch that clean checkout to the commit with `git switch --detach`. Sync deliberately preserves dependency checkouts instead of replacing them.
 
-Gradle checks the source pins and packaged inputs during configuration, including Android Studio sync. Kotlin compiler scratch files under `kotlin/.kotlin/` are excluded from the source cleanliness check. CI audits the debug, release and optimized benchmark APKs.
+Gradle checks the source pins and packaged inputs during configuration, including Android Studio sync. Kotlin compiler scratch files under `kotlin/.kotlin/` are excluded from the source cleanliness check. CI audits the debug, release and optimized benchmark APKs and the release bundle.
 
 Dependency checksums are in `gradle/verification-metadata.xml`; the wrapper has a distribution checksum. CI resolves published source variants for the debug app and tests. After updating Gradle or a dependency, sync the project in Android Studio to check the additional archives requested by the IDE. Verify any new sources, samples and Javadoc archives against the publisher before adding their SHA-256 pins. A wrapper update also needs the matching Gradle source ZIP checksum. Keep Studio’s generated .idea directory local. Upstream fixture provenance is recorded in the shared test fixture; data credits and third-party notices are available from the launch screen.
+
+## Releasing
+
+A nightly workflow uploads a signed bundle of `main` to Google Play internal testing. [Releasing to Google Play](docs/releasing.md) covers its setup, its version codes and how to run it by hand.
 
 ## Remaining work
 
