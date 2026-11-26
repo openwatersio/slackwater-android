@@ -1,0 +1,218 @@
+name: Play upload
+on:
+  schedule:
+    - cron: '23 9 * * *'
+  workflow_dispatch:
+    inputs:
+      track:
+        description: 'Play testing track: internal, alpha (closed testing) or a custom closed track name'
+        type: string
+        default: internal
+permissions: {}
+concurrency:
+  group: play-upload
+  cancel-in-progress: false
+env:
+  PLAY_PACKAGE_NAME: io.openwaters.slackwater.android
+jobs:
+  select:
+    # Forks have no signing key, and a run from another branch would upload code that is not on main.
+    if: github.repository == 'openwatersio/slackwater-android' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    permissions:
+      actions: read
+    outputs:
+      upload: ${{ steps.uploaded.outputs.upload }}
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Refuse to re-run a commit that is no longer the head of main
+        # A re-run keeps its old commit but would get a new, higher version code, putting old code ahead of newer uploads.
+        # A first attempt is exempt: main may move while it runs, and the newer commit's own run gets a later code.
+        if: github.run_attempt != 1
+        run: |
+          head=$(gh api "repos/$GITHUB_REPOSITORY/commits/main" --jq .sha)
+          if [ "$head" != "$GITHUB_SHA" ]; then
+            echo "::error title=Nothing uploaded::$GITHUB_SHA is no longer the head of main. Start a new run instead of re-running this one."
+            exit 1
+          fi
+      - name: Wait for Android CI to pass on this commit
+        run: |
+          for _ in $(seq 1 45); do
+            # One failed lookup in 45 is not a reason to lose the night's upload.
+            state=$(gh api "repos/$GITHUB_REPOSITORY/actions/workflows/android.yml/runs?head_sha=$GITHUB_SHA&event=push&per_page=1" --jq '.workflow_runs[0] | select(. != null) | "\(.status) \(.conclusion)"') || state='lookup failed'
+            case "$state" in
+              'completed success') exit 0 ;;
+              completed*) echo "::error title=Nothing uploaded::Android CI ended with ${state#completed } on $GITHUB_SHA."; exit 1 ;;
+            esac
+            echo "Android CI on $GITHUB_SHA: ${state:-no run yet}. Waiting."
+            sleep 60
+          done
+          echo "::error title=Nothing uploaded::Android CI did not finish on $GITHUB_SHA within 45 minutes."
+          exit 1
+      - name: Skip a commit already uploaded to internal testing
+        id: uploaded
+        run: |
+          if [ "$GITHUB_EVENT_NAME" = schedule ]; then
+            # Assigned before the loop so a failed lookup stops the step and decides nothing.
+            runs=$(gh api --paginate "repos/$GITHUB_REPOSITORY/actions/workflows/release.yml/runs?head_sha=$GITHUB_SHA&status=success&per_page=100" --jq '.workflow_runs[].id')
+            for run in $runs; do
+              # A successful run may have skipped the upload or sent it to another track, so only an internal upload job counts.
+              uploads=$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$run/jobs?per_page=100" --jq '[.jobs[] | select(.name == "Upload to internal" and .conclusion == "success")] | length')
+              if [ "$uploads" != 0 ]; then
+                echo "Run $run already uploaded $GITHUB_SHA to internal testing. Nothing to do." | tee -a "$GITHUB_STEP_SUMMARY"
+                echo "upload=false" >> "$GITHUB_OUTPUT"
+                exit 0
+              fi
+            done
+          fi
+          echo "upload=true" >> "$GITHUB_OUTPUT"
+
+  build:
+    needs: select
+    if: needs.select.outputs.upload == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    # No secrets reach this job: Gradle runs every plugin and dependency, so the bundle is signed afterwards, in its own job.
+    permissions:
+      contents: read
+    outputs:
+      version_code: ${{ steps.bundle.outputs.version_code }}
+    steps:
+      - name: Refuse to re-run a commit that is no longer the head of main
+        # "Re-run failed jobs" skips the select job, and the version code below comes from the clock.
+        if: github.run_attempt != 1
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          head=$(gh api "repos/$GITHUB_REPOSITORY/commits/main" --jq .sha)
+          if [ "$head" != "$GITHUB_SHA" ]; then
+            echo "::error title=Nothing uploaded::$GITHUB_SHA is no longer the head of main. Start a new run instead of re-running this one."
+            exit 1
+          fi
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - run: python3 scripts/check-wrapper-source.py
+      - uses: actions/setup-java@v6.3.0
+        with:
+          distribution: temurin
+          java-version: |
+            17
+            25
+      - name: Configure JDK 17 toolchain discovery
+        run: |
+          mkdir -p "$HOME/.gradle"
+          echo 'org.gradle.java.installations.fromEnv=JAVA_HOME_17_X64,JAVA_HOME_17_ARM64' >> "$HOME/.gradle/gradle.properties"
+      - name: Check Gradle daemon JVM
+        run: |
+          mkdir -p "$HOME/.gradle/init.d"
+          cp scripts/check-gradle-jvm.init.gradle "$HOME/.gradle/init.d/check-gradle-jvm.init.gradle"
+          echo "EXPECTED_GRADLE_JAVA=25" >> "$GITHUB_ENV"
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version: '24'
+      - uses: android-actions/setup-android@v4.0.4
+        with:
+          cmdline-tools-version: '16111833'
+          log-accepted-android-sdk-licenses: false
+          packages: 'platform-tools platforms;android-37.0 build-tools;36.0.0'
+      - run: node scripts/sync-upstream.mjs
+      - run: node scripts/sync-upstream.mjs --check
+      - name: Build the unsigned bundle
+        id: bundle
+        run: |
+          version_code=$(node scripts/version-code.mjs)
+          echo "version_code=$version_code" >> "$GITHUB_OUTPUT"
+          ./gradlew :app:bundleRelease -PslackwaterVersionCode="$version_code"
+      - run: python3 scripts/check-apk.py app/build/outputs/bundle/release/app-release.aab
+      - uses: actions/upload-artifact@v4.6.2
+        with:
+          name: bundle-unsigned
+          path: app/build/outputs/bundle/release/app-release.aab
+          if-no-files-found: error
+          retention-days: 1
+
+  sign:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    # The upload key lives in this environment, whose branch rule keeps it from workflows on other branches.
+    environment: play
+    # This job runs no code from the repository: only jarsigner from the runner's JDK touches the key.
+    permissions: {}
+    steps:
+      - uses: actions/download-artifact@v8.0.2
+        with:
+          name: bundle-unsigned
+          path: ${{ runner.temp }}/bundle
+      - name: Sign the bundle with the upload key
+        env:
+          UPLOAD_KEYSTORE_BASE64: ${{ secrets.UPLOAD_KEYSTORE_BASE64 }}
+          # A PKCS12 keystore protects its key with the store password.
+          UPLOAD_KEYSTORE_PASSWORD: ${{ secrets.UPLOAD_KEYSTORE_PASSWORD }}
+          UPLOAD_KEY_ALIAS: ${{ secrets.UPLOAD_KEY_ALIAS }}
+        run: |
+          if [ -z "$UPLOAD_KEYSTORE_BASE64" ] || [ -z "$UPLOAD_KEYSTORE_PASSWORD" ] || [ -z "$UPLOAD_KEY_ALIAS" ]; then
+            echo '::error title=Nothing uploaded::The UPLOAD_KEYSTORE_BASE64, UPLOAD_KEYSTORE_PASSWORD and UPLOAD_KEY_ALIAS secrets must all be set in the play environment. See docs/releasing.md.'
+            exit 1
+          fi
+          bundle="$RUNNER_TEMP/bundle/app-release.aab"
+          keystore="$RUNNER_TEMP/upload.p12"
+          trap 'rm -f "$keystore"' EXIT
+          printf '%s' "$UPLOAD_KEYSTORE_BASE64" | base64 --decode > "$keystore"
+          jarsigner -keystore "$keystore" -storetype PKCS12 -storepass:env UPLOAD_KEYSTORE_PASSWORD -sigalg SHA256withRSA -digestalg SHA-256 "$bundle" "$UPLOAD_KEY_ALIAS" > /dev/null
+          # jarsigner exits 0 for an unsigned file too, so the verdict line is what proves the signature.
+          verdict=$(jarsigner -verify "$bundle")
+          grep -q '^jar verified' <<< "$verdict"
+      - uses: actions/upload-artifact@v4.6.2
+        with:
+          name: bundle
+          path: ${{ runner.temp }}/bundle/app-release.aab
+          if-no-files-found: error
+          retention-days: 14
+
+  upload:
+    # The select job finds earlier internal uploads by this name.
+    name: Upload to ${{ inputs.track || 'internal' }}
+    needs: [select, build, sign]
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    # The environment's branch rule and Google's attribute condition both tie the Play credential to main.
+    environment: play
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Refuse to re-run a commit that is no longer the head of main
+        # Re-running only this job would send an old bundle after newer uploads.
+        if: github.run_attempt != 1
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          head=$(gh api "repos/$GITHUB_REPOSITORY/commits/main" --jq .sha)
+          if [ "$head" != "$GITHUB_SHA" ]; then
+            echo "::error title=Nothing uploaded::$GITHUB_SHA is no longer the head of main. Start a new run instead of re-running this one."
+            exit 1
+          fi
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version: '24'
+      - uses: actions/download-artifact@v8.0.2
+        with:
+          name: bundle
+          path: ${{ runner.temp }}/bundle
+      - name: Upload to Google Play
+        env:
+          PLAY_WORKLOAD_IDENTITY_PROVIDER: ${{ vars.PLAY_WORKLOAD_IDENTITY_PROVIDER }}
+          PLAY_SERVICE_ACCOUNT: ${{ vars.PLAY_SERVICE_ACCOUNT }}
+          PLAY_RELEASE_STATUS: ${{ vars.PLAY_RELEASE_STATUS }}
+          PLAY_TRACK: ${{ inputs.track || 'internal' }}
+          PLAY_VERSION_CODE: ${{ needs.build.outputs.version_code }}
+        run: |
+          export PLAY_RELEASE_NAME="$PLAY_VERSION_CODE (${GITHUB_SHA:0:7})"
+          node scripts/play-upload.mjs "$RUNNER_TEMP/bundle/app-release.aab"

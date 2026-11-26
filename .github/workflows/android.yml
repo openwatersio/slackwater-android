@@ -42,7 +42,7 @@ jobs:
       - run: test -z "$(git status --porcelain --untracked-files=all -- app/src/main/assets)"
       - run: node scripts/sync-upstream.mjs --check
       - run: node scripts/export-strings.mjs --check
-      - run: ./gradlew :app:checkStudioSources :core:test :core:nationalTideDirectionSweep :app:testDebugUnitTest :app:assembleDebug :app:assembleRelease :app:assembleBenchmark :benchmark:assembleBenchmark :app:lintDebug :app:assembleDebugAndroidTest
+      - run: ./gradlew :app:checkStudioSources :core:test :core:nationalTideDirectionSweep :app:testDebugUnitTest :app:assembleDebug :app:assembleRelease :app:bundleRelease :app:assembleBenchmark :benchmark:assembleBenchmark :app:lintDebug :app:assembleDebugAndroidTest
       - name: Verify Premium links are disabled in shipping variants
         run: |
           python3 - <<'PYTHON'
@@ -58,6 +58,8 @@ jobs:
       - run: python3 scripts/check-apk.py app/build/outputs/apk/benchmark/app-benchmark.apk
       - run: python3 scripts/check-apk.py app/build/outputs/apk/debug/app-debug.apk
       - run: python3 scripts/check-apk.py app/build/outputs/apk/release/app-release-unsigned.apk
+      # The nightly Play upload sends a bundle, so its layout and compression rules are checked here before merge.
+      - run: python3 scripts/check-apk.py app/build/outputs/bundle/release/app-release.aab
       - uses: actions/upload-artifact@v4.6.2
         if: always()
         with:
@@ -88,7 +90,7 @@ jobs:
           log-accepted-android-sdk-licenses: false
           packages: 'platform-tools platforms;android-37.0 build-tools;36.0.0'
       - run: node scripts/sync-upstream.mjs
-      - run: ./gradlew :app:checkStudioSources :core:test :core:nationalTideDirectionSweep :app:testDebugUnitTest :app:assembleDebug :app:assembleRelease :app:assembleBenchmark :benchmark:assembleBenchmark :app:lintDebug :app:assembleDebugAndroidTest
+      - run: ./gradlew :app:checkStudioSources :core:test :core:nationalTideDirectionSweep :app:testDebugUnitTest :app:assembleDebug :app:assembleRelease :app:bundleRelease :app:assembleBenchmark :benchmark:assembleBenchmark :app:lintDebug :app:assembleDebugAndroidTest
       - name: Verify Premium links are disabled in shipping variants
         run: |
           python3 - <<'PYTHON'
@@ -104,6 +106,8 @@ jobs:
       - run: python3 scripts/check-apk.py app/build/outputs/apk/benchmark/app-benchmark.apk
       - run: python3 scripts/check-apk.py app/build/outputs/apk/debug/app-debug.apk
       - run: python3 scripts/check-apk.py app/build/outputs/apk/release/app-release-unsigned.apk
+      # The nightly Play upload sends a bundle, so its layout and compression rules are checked here before merge.
+      - run: python3 scripts/check-apk.py app/build/outputs/bundle/release/app-release.aab
       - uses: actions/upload-artifact@v4.6.2
         if: always()
         with:
