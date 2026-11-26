@@ -54,7 +54,7 @@ The app follows the device language, or its per-app language setting on Android 
 
 In a debug build, open **Settings → Premium → Try everything free today** to start 24 hours of planning access. The start is saved on this device. Eligibility compares the saved start and the current time in the device’s current calendar and time zone, including after a clock or calendar change. A free day that crosses into the next month runs until its original end. The next month’s offer becomes available after that.
 
-Debug builds enable the Premium sheet and `slackwater://premium` link by default. Build with `-PpremiumEnabled=false` to test the disabled debug variant. Release and benchmark builds keep these entry points disabled. Live Play products, purchase acknowledgement and restore are tracked in [#12](https://github.com/openwatersio/slackwater-android/issues/12).
+Debug builds enable the Premium sheet and `slackwater://premium` link by default. Build with `-PpremiumEnabled=false` to test the disabled debug variant. Release and benchmark builds keep these entry points disabled. Every build includes the Google Play Billing Library, so Play Console accepts the app for product setup; nothing in the app calls it yet. The library adds the `com.android.vending.BILLING` permission and brings Google Play services and Google's DataTransport reporting library with it, all listed in the in-app notices. Live Play products, purchase acknowledgement and restore are tracked in [#12](https://github.com/openwatersio/slackwater-android/issues/12).
 
 ## Android reminders
 
