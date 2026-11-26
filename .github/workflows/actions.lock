@@ -8,7 +8,7 @@ workflows:
         - 'actions/setup-java@v4.9.1'
         - 'actions/setup-node@v4.4.0'
         - 'actions/upload-artifact@v4.6.2'
-        - 'android-actions/setup-android@v3.2.2'
+        - 'android-actions/setup-android@v4.0.4'
         - 'reactivecircus/android-emulator-runner@v2.38.0'
     '.github/workflows/verify-actions-lock.yml':
         - 'actions/checkout@v7.0.1'
@@ -39,9 +39,9 @@ dependencies:
         commit: 'sha1-ea165f8d65b6e75b540449e92b4886f43607fa02'
         owner_id: 44036562
         repo_id: 192625955
-    'android-actions/setup-android@v3.2.2':
-        ref: 'v3.2.2'
-        commit: 'sha1-9fc6c4e9069bf8d3d10b2204b1fb8f6ef7065407'
+    'android-actions/setup-android@v4.0.4':
+        ref: 'v4.0.4'
+        commit: 'sha1-be39fa834029ff78f1a44aa3bb0819b8fc2bd8fd'
         owner_id: 69522701
         repo_id: 286780795
     'github/gh-actions-lock@verify/v0.5.1':
