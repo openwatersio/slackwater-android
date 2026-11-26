@@ -87,3 +87,5 @@ A query without a place needs authorized device location. A named query stays at
 ## License
 
 Slackwater for Android is © Open Water Software, LLC and contributors, and licensed under [GPL-3.0](LICENSE).
+
+Contributors sign the [Contributor License Agreement](CLA.md) before their pull request can be merged; you are prompted automatically on your first pull request. [docs/licensing.md](docs/licensing.md) explains why.

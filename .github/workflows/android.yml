@@ -2,6 +2,8 @@ name: Android
 on:
   push:
     branches: [main]
+    # CLA signature commits change only the signatures file.
+    paths-ignore: [.cla.json]
   pull_request:
 permissions:
   contents: read
