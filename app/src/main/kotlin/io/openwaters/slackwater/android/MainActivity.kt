@@ -126,7 +126,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onStop() {
         BackgroundDownloads.activityStopping(isChangingConfigurations)
-        TidePreviewDownloads.get(applicationContext).activityStopped()
+        TidePreviewDownloads.get(applicationContext).activityStopped(isChangingConfigurations)
         super.onStop()
     }
 

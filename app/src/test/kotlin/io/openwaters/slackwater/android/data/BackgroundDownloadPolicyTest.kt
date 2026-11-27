@@ -177,6 +177,23 @@ class BackgroundDownloadPolicyTest {
         assertFalse(count(waiting, mapOf(tide to TideDownloadState.WAITING_TO_RETRY), listOf(OnlineDownloadState.DOWNLOADING)).waitingToRetry)
     }
 
+    @Test fun aRequestedDownloadWaitingToRetryContinuesInTheBackground() {
+        assertTrue(allowed(nearby, mapOf(tide to TideDownloadState.WAITING_TO_RETRY)))
+        assertFalse(allowed(currentsOnly, mapOf(tide to TideDownloadState.WAITING_TO_RETRY)))
+    }
+
+    @Test fun theHeldOriginFollowsTheFixAndIsDroppedWhenLocationIsNotAllowed() {
+        val here = io.openwaters.slackwater.android.core.station.Coordinate(48.4, -123.4)
+        val there = io.openwaters.slackwater.android.core.station.Coordinate(49.3, -123.1)
+        val located = io.openwaters.slackwater.android.core.station.LocationSlot.Located(
+            io.openwaters.slackwater.android.core.station.LocationFix(there, 10.0, 0), approximate = false)
+        assertEquals(there, heldOrigin(located, here))
+        assertEquals(here, heldOrigin(io.openwaters.slackwater.android.core.station.LocationSlot.Locating, here))
+        assertEquals(here, heldOrigin(io.openwaters.slackwater.android.core.station.LocationSlot.Failed, here))
+        assertNull(heldOrigin(io.openwaters.slackwater.android.core.station.LocationSlot.NotDetermined, here))
+        assertNull(heldOrigin(io.openwaters.slackwater.android.core.station.LocationSlot.Denied, here))
+    }
+
     @Test fun countIsInactiveOnlyWhenEverythingIsDone() {
         val done = AutomaticProgress(setOf(tide), emptySet(), emptySet())
         assertFalse(count(done, mapOf(current to TideDownloadState.RETRY)).active)

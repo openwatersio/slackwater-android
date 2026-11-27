@@ -14,7 +14,8 @@ import io.openwaters.slackwater.android.core.station.StationId
  * app before any selected station gets that far leaves the downloads for the next launch. [isCurrentWork] covers fitted
  * current gates and the reference tides that derived gates are fitted through, since All current
  * stations on Android includes derived gates. Data Saver keeps background transfers off metered
- * networks, so it allows nothing.
+ * networks, so it allows nothing. A download the person requested counts while it waits to retry, as
+ * an automatic one does; only a failure that will not be retried does not.
  */
 internal fun backgroundDownloadsAllowed(
     selection: PhoneSelection,

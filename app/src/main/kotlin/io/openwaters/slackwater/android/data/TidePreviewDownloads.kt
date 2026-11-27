@@ -55,10 +55,21 @@ internal class TidePreviewDownloads(
     private val fits = Mutex()
     /** Started activities plus a running background job. Transfers run only while one is open. */
     private val runners = MutableStateFlow(0)
-    fun activityStarted() = runners.update { it + 1 }
-    fun activityStopped() = runners.update { (it - 1).coerceAtLeast(0) }
-    fun backgroundStarted() = activityStarted()
-    fun backgroundStopped() = activityStopped()
+    /** Counts visits to the app. A running loop gives its permanently failed stations another attempt on each. */
+    private val visits = MutableStateFlow(0)
+    /** Activities stopped for a configuration change and not yet started again; two can rotate together in split screen. */
+    private val rotating = java.util.concurrent.atomic.AtomicInteger()
+    fun activityStarted() {
+        runners.update { it + 1 }
+        // A rotation restarts the activity without the person leaving, so it is not a visit.
+        if (rotating.getAndUpdate { (it - 1).coerceAtLeast(0) } == 0) visits.update { it + 1 }
+    }
+    fun activityStopped(changingConfigurations: Boolean = false) {
+        if (changingConfigurations) rotating.incrementAndGet()
+        runners.update { (it - 1).coerceAtLeast(0) }
+    }
+    fun backgroundStarted() = runners.update { it + 1 }
+    fun backgroundStopped() = runners.update { (it - 1).coerceAtLeast(0) }
 
     /** Why transfers are paused for the network, or null when they may run. */
     val networkPause: StateFlow<TideDownloadState?> get() = network
@@ -129,6 +140,10 @@ internal class TidePreviewDownloads(
         val skipped: MutableSet<StationId> = java.util.concurrent.ConcurrentHashMap.newKeySet()
         // Finished candidates whose fit failed for good; they are done but not ready.
         val failed: MutableSet<StationId> = java.util.concurrent.ConcurrentHashMap.newKeySet()
+        // Candidates whose target a requested download holds. They stay pending, and the loop takes them up
+        // again once that download's job is gone: its own job then finds the saved model, or fits what a
+        // preview-only or failed request left unfitted. Only the loop reads or writes this.
+        val held = mutableSetOf<StationId>()
         val progressLock = Any()
         var latest = emptyList<StationId>()
         // Each publish reads the latest candidates and sets under one lock, so an older snapshot never lands last.
@@ -157,36 +172,76 @@ internal class TidePreviewDownloads(
             }
             publish(ids)
         }.stateIn(this)
+        // A background run keeps this loop alive across visits to the app. Without one, each visit starts a
+        // new loop that tries a failed station again; a visit to a running loop does the same.
+        val revisits = MutableStateFlow(0)
+        val startingVisit = visits.value
+        launch {
+            visits.first { it != startingVisit }
+            visits.collect {
+                lock.withLock {
+                    finished.removeAll(failed)
+                    failed.clear()
+                }
+                publish()
+                revisits.update { it + 1 }
+            }
+        }
         while (currentCoroutineContext().isActive) {
-            val pending = wanted.first { ids -> ids.any { it !in finished } }
+            // Read before the candidates and the held jobs are checked, so a change after either check ends the wait below.
+            val visit = revisits.value
+            val rows = states.value
+            val pending = combine(wanted, revisits) { ids, _ -> ids }.first { ids -> ids.any { it !in finished } }
             val recovery = networkRecovery.value
-            lock.withLock { observeRecovery() }
+            lock.withLock {
+                observeRecovery()
+                val released = held.filter { (automaticReferences[it] ?: it) !in jobs }
+                held.removeAll(released.toSet())
+                // A request that failed for good left its row at RETRY. Its station is failed, not tried again now.
+                for (freed in released) {
+                    if (states.value[automaticReferences[freed] ?: freed] != TideDownloadState.RETRY) continue
+                    failed.add(freed)
+                    finished.add(freed)
+                }
+            }
+            publish()
             val now = android.os.SystemClock.elapsedRealtime()
-            val id = pending.firstOrNull { it !in finished && retries.due(automaticReferences[it] ?: it) <= now }
+            val open = pending.filter { it !in finished && it !in held }
+            val id = open.firstOrNull { retries.due(automaticReferences[it] ?: it) <= now }
             if (id == null) {
-                val wake = pending.filter { it !in finished }.minOf { retries.due(automaticReferences[it] ?: it) }
-                withTimeoutOrNull((wake - now).coerceAtLeast(1)) {
-                    combine(wanted, networkRecovery) { ids, generation -> ids != pending || generation != recovery }.first { it }
+                // With every pending candidate held, only a change wakes the loop: a held job ending changes the rows.
+                val wake = open.minOfOrNull { retries.due(automaticReferences[it] ?: it) }
+                withTimeoutOrNull(if (wake == null) Long.MAX_VALUE else (wake - now).coerceAtLeast(1)) {
+                    combine(wanted, networkRecovery, revisits, states) { ids, generation, visits, statuses ->
+                        ids != pending || generation != recovery || visits != visit || statuses != rows
+                    }.first { it }
                 }
                 continue
             }
             val target = automaticReferences[id] ?: id
             val station = liveStation(target)
+            var skip = false
             val job = lock.withLock {
                 if (station == null || target in intents.state.first().getOrNull()?.cancelled.orEmpty()) {
                     // A row waiting for this target would otherwise outlast the skip.
                     clearDeferrals { it == target }
                     skipped.add(id)
+                    skip = true
                     return@withLock null
                 }
-                if (target in jobs) return@withLock null
+                if (target in jobs) {
+                    held.add(id)
+                    return@withLock null
+                }
                 automaticJobs.add(target)
                 start(station, full = true, referenceOnly = target != id, automatic = true)
                 jobs.getValue(target)
             }
             if (job == null) {
-                finished.add(id)
-                publish()
+                if (skip) {
+                    finished.add(id)
+                    publish()
+                }
                 continue
             }
             try {
@@ -207,6 +262,9 @@ internal class TidePreviewDownloads(
                         stop(target)
                         if (id != target) referenceRows.add(target)
                         status(target, TideDownloadState.WAITING_TO_RETRY)
+                    } else if (jobs[target] !== job && target in jobs) {
+                        // A requested download took the loop's place; the station is ready when that one is done.
+                        held.add(id)
                     } else if (id in wanted.value) {
                         retries.clear(target)
                         // A permanent failure leaves its row at RETRY.
@@ -276,7 +334,7 @@ internal class TidePreviewDownloads(
         val station = liveStation(id) ?: return
         if (currentGate(id)) intents.requestDownloads(listOf(id)) else intents.requestTide(id)
         retries.clear(id)
-        if (id in automaticJobs || id in referenceJobs || states.value[id] == TideDownloadState.RETRY) stop(id)
+        if (id in automaticJobs || id in referenceJobs || states.value[id] in RESTARTABLE) stop(id)
         if (id !in jobs) start(station, full = true, manual = true)
     }
 
@@ -287,8 +345,8 @@ internal class TidePreviewDownloads(
         if (id !in referencePorts) return
         intents.requestDownloads(listOf(id))
         retries.clear(id)
-        // A failed manual reference sleeps in its own backoff; an explicit retry restarts it now.
-        if (id in automaticJobs || states.value[id] == TideDownloadState.RETRY) stop(id)
+        // A manual reference waiting to retry sleeps in its own backoff; an explicit retry restarts it now.
+        if (id in automaticJobs || states.value[id] in RESTARTABLE) stop(id)
         if (id !in jobs) start(station, full = true, manual = true, referenceOnly = true)
     }
 
@@ -376,6 +434,9 @@ internal class TidePreviewDownloads(
         referenceRows.remove(id)
         if (referenceOnly) referenceJobs.add(id)
         status(id, TideDownloadState.QUEUED)
+        // The automatic loop reads RETRY to end its job and defer the station. A requested download keeps its
+        // job and retries by itself, so its row says it is waiting, not that it failed.
+        val transientFailure = if (automatic) TideDownloadState.RETRY else TideDownloadState.WAITING_TO_RETRY
         jobs[id] = scope.launch {
             combine(runners, network) { count, paused ->
                 if (count == 0) TideDownloadState.QUEUED else paused
@@ -425,9 +486,9 @@ internal class TidePreviewDownloads(
                         finish(station, failed = true, referenceOnly = referenceOnly)
                         return@collectLatest
                     } catch (_: IwlsException.Transient) {
-                        activeStatus(id, TideDownloadState.RETRY)
+                        activeStatus(id, transientFailure)
                     } catch (_: IOException) {
-                        activeStatus(id, TideDownloadState.RETRY)
+                        activeStatus(id, transientFailure)
                     }
                     val recovered = withTimeoutOrNull(backoff) { networkRecovery.first { it != recoveryAtStart } } != null
                     backoff = if (recovered) 60_000L else (backoff * 2).coerceAtMost(15 * 60_000L)
@@ -437,6 +498,8 @@ internal class TidePreviewDownloads(
     }
 
     companion object {
+        /** Rows an explicit request starts over: a failed one, and one sleeping out a retry backoff. */
+        private val RESTARTABLE = setOf(TideDownloadState.RETRY, TideDownloadState.WAITING_TO_RETRY)
         private var shared: TidePreviewDownloads? = null
 
         @Synchronized
@@ -467,6 +530,7 @@ internal class TidePreviewDownloads(
 /**
  * [stations] the automatic loop wants and can fit; [pending] those it has not finished; [waiting]
  * the pending ones sitting out a retry backoff; [failed] the finished ones whose fit failed for good.
+ * A station whose download the person requested stays pending until the loop has checked it afterwards.
  */
 internal data class AutomaticProgress(
     val stations: Set<StationId>,
