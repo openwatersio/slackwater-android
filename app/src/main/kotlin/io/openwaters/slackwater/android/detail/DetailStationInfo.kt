@@ -37,17 +37,19 @@ import kotlinx.coroutines.withContext
 
 @Composable
 internal fun DetailHeader(station: StationIdentity?, id: StationId, live: Boolean, data: StationListState?,
-                          link: String?, linked: Boolean, back: () -> Unit, toggle: () -> Unit) {
+                          link: String?, linked: Boolean, onSky: Boolean, back: () -> Unit, toggle: () -> Unit) {
     val context = LocalContext.current
     val favorite = data?.favorites?.contains(station?.id ?: id) == true
     Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
         val backLabel = stringResource(if (linked) R.string.reminder_back_to_stations else R.string.station_back)
         IconButton(onClick = back, modifier = Modifier.semantics { contentDescription = backLabel }) { Text("‹", style = MaterialTheme.typography.headlineMedium) }
         Spacer(Modifier.weight(1f))
+        // Over the sky the label is white: the theme's green falls short of 4.5:1 on a day sky (scrubber §14).
         if (link != null) TextButton(onClick = {
             context.startActivity(Intent.createChooser(Intent(Intent.ACTION_SEND).setType("text/plain")
                 .putExtra(Intent.EXTRA_TEXT, link), null))
-        }) { Text(stringResource(R.string.detail_share)) }
+        }, colors = if (onSky) ButtonDefaults.textButtonColors(contentColor = androidx.compose.ui.graphics.Color.White)
+            else ButtonDefaults.textButtonColors()) { Text(stringResource(R.string.detail_share)) }
         if (live) {
             val star = stringResource(if (favorite) R.string.station_unstar else R.string.station_star)
             IconButton(onClick = toggle, modifier = Modifier.tourAnchor(TourStep.STAR).semantics { contentDescription = star }) {

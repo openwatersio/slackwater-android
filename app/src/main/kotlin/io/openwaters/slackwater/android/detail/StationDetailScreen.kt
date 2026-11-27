@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.openwaters.slackwater.CurrentEventKind
@@ -36,6 +37,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
+
+private val PagePadding = 16.dp
 
 private data class LoadedDetail(val timeline: DetailTimeline, val ready: PredictionResult.Ready)
 
@@ -182,12 +185,19 @@ private fun StationDetailBody(model: StationListModel, id: StationId, clock: Ins
     val moon = if (live && !missing && timeline != null) rememberDetailMoon(timeline.state.selected) else null
     val anchors = remember(id) { TourAnchors() }
     Surface(Modifier.fillMaxSize()) { CompositionLocalProvider(LocalTourAnchors provides anchors) { Box(Modifier.fillMaxSize()) {
-        Column(Modifier.fillMaxSize().safeDrawingPadding().then(page.viewportModifier)
-            .onGloballyPositioned { page.measureViewport(it, scroll) }.verticalScroll(scroll).padding(16.dp),
+        // The page scrolls under the status bar, so the sky can start at the very top of the screen (scrubber §1).
+        val statusBar = WindowInsets.safeDrawing.only(WindowInsetsSides.Top)
+        val statusBarHeight = statusBar.getTop(LocalDensity.current)
+        val pageTop = with(LocalDensity.current) { statusBarHeight.toDp() } + PagePadding
+        Column(Modifier.fillMaxSize()
+            .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom))
+            .then(page.viewportModifier).onGloballyPositioned { page.measureViewport(it, scroll, statusBarHeight) }
+            .verticalScroll(scroll).windowInsetsPadding(statusBar).padding(PagePadding),
             verticalArrangement = Arrangement.spacedBy(12.dp)) {
             val selected = timeline?.state?.let { if (it.home) null else it.selected }
             val link = detailShareLink(metadata?.route, timeline?.state?.selected.takeUnless { missing }, timeline?.state?.now ?: clock, zone)
-            DetailHeader(station, id, live, data, link, linkedTime != null, onBack) {
+            val charted = resolved != null && live && station != null && !missing && detail != null
+            DetailHeader(station, id, live, data, link, linkedTime != null, onSky = charted, onBack) {
                 if (station != null) model.launchEdit { model.places.setFavorite(station.id, data?.favorites?.contains(station.id) != true) }
             }
             if (linkedTime != null && timeline == null && station != null) Text(station.timeLabel(linkedTime))
@@ -215,7 +225,7 @@ private fun StationDetailBody(model: StationListModel, id: StationId, clock: Ins
                     OnlineAlternative(station, model, repository, clock, revision, onOpen)
                 }
                 detail == null -> MissingPredictions(station, metadata, model)
-                else -> DetailContent(station, detail, prefs, repository, downloads, revision, metadata, moon, page.scheduleModifier(scroll),
+                else -> DetailContent(station, detail, prefs, repository, downloads, revision, metadata, moon, pageTop, page.scheduleModifier(scroll),
                     related = { DetailRelated(station, metadata, model, onOpen, nearby = false) }) {
                     page.cancelRestore()
                     picker = it.toString()
@@ -249,7 +259,7 @@ private fun StationDetailBody(model: StationListModel, id: StationId, clock: Ins
 
 @Composable
 private fun DetailContent(station: StationIdentity, detail: LoadedDetail, prefs: ReadingPreferences,
-                          repository: PredictionRepository, downloads: OnlineGateDownloads, revision: Long, metadata: DetailMetadata?, moon: MoonIllumination?, scheduleModifier: Modifier, related: @Composable () -> Unit, pick: (LocalDate) -> Unit) {
+                          repository: PredictionRepository, downloads: OnlineGateDownloads, revision: Long, metadata: DetailMetadata?, moon: MoonIllumination?, pageTop: androidx.compose.ui.unit.Dp, scheduleModifier: Modifier, related: @Composable () -> Unit, pick: (LocalDate) -> Unit) {
     val timeline = detail.timeline
     val state = timeline.state
     val series = timeline.series
@@ -291,7 +301,7 @@ private fun DetailContent(station: StationIdentity, detail: LoadedDetail, prefs:
             approximate = cap == StationCapabilities.BOUNDED_CURRENT || cap == StationCapabilities.PROVISIONAL_CURRENT,
             chartModel = detail.ready.chartModel, modelYear = state.now.atZone(timeline.zone).year,
             showSky = prefs.showSky, fixedWindow = timeline.mode != TimelineMode.CONTINUOUS,
-            parked = parked?.epochSecond?.div(60) == state.selected.epochSecond / 60, controlsVisible = state.pillsVisible, onTarget = timeline::jump, onNow = { timeline.dispatch(TimelineAction.Now(Instant.now())) })
+            parked = parked?.epochSecond?.div(60) == state.selected.epochSecond / 60, bleed = PagePadding, pageTop = pageTop, controlsVisible = state.pillsVisible, onTarget = timeline::jump, onNow = { timeline.dispatch(TimelineAction.Now(Instant.now())) })
         val active = state.selected.takeIf { state.motion == TimelineMotion.RESTING && (!state.home || parked?.epochSecond?.div(60) == it.epochSecond / 60) }
         if (supportsAlerts) AlertLine(active?.let { plotSelection(series, base, it, units) } ?: base, active != null, rules, state.now, edit)
         detail.ready.slackErrorBoundMinutes?.let { Text(stringResource(R.string.detail_bound, station.name, it)) }

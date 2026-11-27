@@ -18,7 +18,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.platform.*
+import androidx.compose.ui.layout.layout
+import androidx.compose.ui.layout.onPlaced
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.layout.positionInParent
+import androidx.compose.ui.zIndex
 import kotlinx.coroutines.flow.conflate
 import androidx.compose.ui.semantics.*
 import androidx.compose.ui.text.font.FontWeight
@@ -56,6 +60,8 @@ internal fun TimelineCanvas(
     chartModel: ChartModel? = null,
     modelYear: Int = now.atZone(ZoneOffset.UTC).year,
     parked: Boolean = false,
+    bleed: Dp = 0.dp,
+    pageTop: Dp = 0.dp,
     inputModifier: (String) -> Modifier = { Modifier },
 ) {
     val resources = LocalContext.current.resources
@@ -104,17 +110,22 @@ internal fun TimelineCanvas(
         }
     }
     val latestTime by rememberUpdatedState(selected)
-    var renderedSky by remember(station.id) { mutableStateOf<Pair<Long, SkyFrame?>?>(null) }
-    val sky = renderedSky?.second
-    // Frames keep coming with the bodies off: the gradient and eclipse shading still follow the sun (scrubber §14).
+    // The sun and moon are placed with the frame that draws them, so they move in step with the curve. Placed on
+    // another thread they land a frame or more late and stutter against the strip. Frames keep coming with the
+    // bodies off: the gradient and eclipse shading still follow the sun (scrubber §14).
+    val skyBucket = selected.epochSecond / 10
+    val bodies = remember(skyScene, skyBucket) { skyScene?.frame(Instant.ofEpochSecond(skyBucket * 10), stars = false) }
+    // The star field costs too much for the main thread on every frame of a drag, and a late star does not show.
+    // It outlives a rebuilt scene, so the stars stay up until the new scene places them.
+    var starField by remember(station.id) { mutableStateOf<Pair<Long, List<SkyStar>>?>(null) }
     LaunchedEffect(skyScene) {
         val source = skyScene ?: return@LaunchedEffect
         snapshotFlow { latestTime.epochSecond / 10 }.conflate().collect { bucket ->
-            val frame =
-                withContext(Dispatchers.Default) { source.frame(Instant.ofEpochSecond(bucket * 10)) }
-            if (latestTime.epochSecond / 10 == bucket) renderedSky = bucket to frame
+            val field = withContext(Dispatchers.Default) { source.stars(Instant.ofEpochSecond(bucket * 10)) }
+            starField = bucket to field
         }
     }
+    val sky = remember(bodies, starField) { bodies?.copy(stars = starField?.second.orEmpty()) }
     val sampled = remember(scene, selected, useFeet, speedUnit, bearingDegrees, locale) {
         scene.lead(selected, useFeet, speedUnit, bearingDegrees, locale)
     }
@@ -200,10 +211,15 @@ internal fun TimelineCanvas(
             kotlinx.coroutines.delay(125)
         } else value = 0.0
     }
+    // The strip's distance below its parent's content, which with the parent's [pageTop] padding is how far the
+    // sky paints back up to reach the top of the page.
+    var rise by remember { mutableFloatStateOf(0f) }
+    // Under its siblings, so the sky it paints above itself sits behind the station header.
     BoxWithConstraints(
-        Modifier.testTag(if (sky != null && renderedSky?.first == selected.epochSecond / 10) "detailSkyReady" else "detailSkyPending").fillMaxWidth()
+        Modifier.zIndex(-1f).bleed(bleed).onPlaced { rise = it.positionInParent().y.coerceAtLeast(0f) }
+            .testTag(if (sky != null && starField?.first == skyBucket) "detailSkyReady" else "detailSkyPending").fillMaxWidth()
             .tourAnchor(TourStep.STARS)
-            .height(height.dp).clipToBounds().background(Color(0xff06182c))
+            .height(height.dp).background(Color(0xff06182c))
     ) {
         val width = maxWidth.value
         val stop = candidate?.takeIf {
@@ -230,12 +246,13 @@ internal fun TimelineCanvas(
                 native.scale(density.density, density.density)
                 ChartDrawing(native, width, selected, now).sky(
                     sky, 186f + extra, twinkle.value,
-                    leadSize.width / density.density, leadSize.height / density.density, bodies = showSky
+                    leadSize.width / density.density, leadSize.height / density.density, bodies = showSky,
+                    rise = rise / density.density + pageTop.value, floor = height
                 )
                 native.restore()
             }
         }
-        Canvas(Modifier.fillMaxSize().then(modifier).then(inputModifier(description))) {
+        Canvas(Modifier.fillMaxSize().clipToBounds().then(modifier).then(inputModifier(description))) {
             drawIntoCanvas { canvas ->
                 val native = canvas.nativeCanvas
                 native.save()
@@ -377,6 +394,16 @@ internal fun TimelineCanvas(
             }
         }
     }
+}
+
+/** Widens a child past its parent's horizontal padding, so the strip runs to the edges of the page. */
+private fun Modifier.bleed(side: Dp) = if (side == 0.dp) this else layout { measurable, constraints ->
+    val extra = side.roundToPx() * 2
+    val placeable = measurable.measure(constraints.copy(
+        minWidth = if (constraints.hasBoundedWidth) constraints.minWidth + extra else constraints.minWidth,
+        maxWidth = if (constraints.hasBoundedWidth) constraints.maxWidth + extra else constraints.maxWidth,
+    ))
+    layout((placeable.width - extra).coerceAtLeast(0), placeable.height) { placeable.place(-side.roundToPx(), 0) }
 }
 
 @Composable

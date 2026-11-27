@@ -19,6 +19,7 @@ internal class DetailPageScroll(
     private var atSchedule: Boolean = false,
 ) {
     private var viewport: LayoutCoordinates? = null
+    private var topInset = 0
     private var schedule: LayoutCoordinates? = null
     var destination by mutableStateOf<Boolean?>(null)
         private set
@@ -32,7 +33,9 @@ internal class DetailPageScroll(
         }
     })
 
-    fun measureViewport(coordinates: LayoutCoordinates, scroll: ScrollState) {
+    /** [topInset] is the part of the viewport under the status bar, which a restored schedule stays clear of. */
+    fun measureViewport(coordinates: LayoutCoordinates, scroll: ScrollState, topInset: Int = 0) {
+        this.topInset = topInset
         val measuredWidth = coordinates.size.width
         if (width > 0 && width != measuredWidth) {
             destination = atSchedule
@@ -53,9 +56,9 @@ internal class DetailPageScroll(
     private fun measure(scroll: ScrollState) {
         val view = viewport?.takeIf { it.isAttached } ?: return
         val card = schedule?.takeIf { it.isAttached && it.size.height > 0 } ?: return
-        val relative = card.positionInWindow().y - view.positionInWindow().y
+        val relative = card.positionInWindow().y - view.positionInWindow().y - topInset
         scheduleOffset = (relative + scroll.value).roundToInt()
-        if (destination == null) atSchedule = relative < view.size.height / 2f && relative + card.size.height > 0f
+        if (destination == null) atSchedule = relative < (view.size.height - topInset) / 2f && relative + card.size.height > 0f
     }
 
     companion object {
