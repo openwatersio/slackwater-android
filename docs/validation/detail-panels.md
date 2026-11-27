@@ -1,6 +1,6 @@
 # Detail panel conformance
 
-The reference is detail §18 at iOS commit `02188f2a2f5ef4166cd74c373a5885736d7ef159`. The tests below exercise the panel or its underlying data. Host navigation, sharing, download orchestration and chart gestures have separate coverage.
+The reference is detail §18 at iOS commit `6457d71b46af0e1c3310e1f8688dffc0db102d33`. The tests below exercise the panel or its underlying data. Host navigation, sharing, download orchestration and chart gestures have separate coverage.
 
 | Scenario | Android behavior and evidence |
 | --- | --- |

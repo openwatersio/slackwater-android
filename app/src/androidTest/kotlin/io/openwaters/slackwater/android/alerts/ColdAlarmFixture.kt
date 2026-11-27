@@ -35,7 +35,7 @@ class ColdAlarmFixture {
         val rule = AlertRule(stationId = StationId("noaa/9449880"), trigger = AlertTrigger.TideExtreme(high = true))
         val now = Instant.now()
         val event = OccurrenceResolver.resolve(rule, AndroidPredictionRepository(app),
-            TimeSpan(now.plusSeconds(900), now.plusSeconds(86400)), ZoneOffset.UTC,
+            TimeSpan(now.plusSeconds(900), now.plus(NEXT_HIGH_SEARCH)), ZoneOffset.UTC,
             48.0, -123.0, 0.5).first().event
         val fire = Instant.now().plusSeconds(45).epochSecond
         val saved = rule.copy(once = event, leadSeconds = event.epochSecond - fire)

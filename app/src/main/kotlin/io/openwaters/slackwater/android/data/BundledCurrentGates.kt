@@ -1,5 +1,7 @@
 package io.openwaters.slackwater.android.data
 
+import io.openwaters.slackwater.android.core.prediction.StationCapabilities
+import io.openwaters.slackwater.android.core.downloads.CanadianCurrentModel
 import android.content.res.AssetManager
 import io.openwaters.slackwater.android.core.prediction.CurrentGateEvidence
 import io.openwaters.slackwater.android.core.prediction.CurrentGateFit
@@ -41,3 +43,18 @@ internal fun CurrentGateEvidence.compatibleFit(record: JSONObject): CurrentGateF
     record.opt("recipe") as? String,
     (record.opt("fitDays") as? Number)?.toDouble(),
 )
+
+internal suspend fun ModelStore.publishCurrentFit(
+    gate: CurrentGateEvidence,
+    model: CanadianCurrentModel,
+) {
+    val capability = requireNotNull(gate.compatibleFit(model.station.value, model.recipe, model.fitDays)).capability
+    update(gate.id, ModelKind.CURRENT) { stored ->
+        val previous = (stored as? StoredModel.Ready)?.record
+        val provisional = StationCapabilities.PROVISIONAL_CURRENT
+        if (capability == provisional && previous != null &&
+            gate.compatibleFit(previous)?.let { it.capability != provisional } == true) return@update null
+        model.harmonics.toFitRecord().put("recipe", model.recipe).put("fitDays", model.fitDays)
+            .put("floodDirection", model.floodDirection).put("ebbDirection", model.ebbDirection)
+    }
+}

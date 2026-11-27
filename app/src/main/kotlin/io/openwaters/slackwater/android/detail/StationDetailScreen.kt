@@ -1,6 +1,7 @@
 package io.openwaters.slackwater.android.detail
 
 import io.openwaters.almanac.MoonIllumination
+import io.openwaters.slackwater.android.SlackwaterTheme
 import io.openwaters.slackwater.android.StationDialogContent
 import io.openwaters.slackwater.android.rememberStationDialog
 import android.animation.ValueAnimator
@@ -12,7 +13,6 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -39,34 +39,11 @@ import kotlinx.coroutines.withContext
 
 private data class LoadedDetail(val timeline: DetailTimeline, val ready: PredictionResult.Ready)
 
-private val waterColors = darkColorScheme(
-    primary = Color(0xffa4d77d), onPrimary = Color(0xff143511),
-    secondary = Color(0xff8ec6d6), tertiary = Color(0xfff0c860),
-    surface = Color(0xff0c1b24), background = Color(0xff0c1b24),
-    onSurface = Color(0xfff3f5ef), onSurfaceVariant = Color(0xffc2cfcf),
-    surfaceVariant = Color(0xff20323b), surfaceContainer = Color(0xff182b34),
-    surfaceContainerHigh = Color(0xff21353e), surfaceContainerHighest = Color(0xff293e46),
-    outline = Color(0xff789086), primaryContainer = Color(0xff29472e),
-    secondaryContainer = Color(0xff23444f), onSecondaryContainer = Color(0xffd6f2f0),
-)
-
 @Composable
 internal fun StationDetailScreen(model: StationListModel, id: StationId, clock: Instant, linkedTime: Instant?,
                                 onOpen: (StationId) -> Unit, onBack: () -> Unit, recordVisit: Boolean = true,
                                 downloads: OnlineGateDownloads = OnlineGateDownloads.get(LocalContext.current)) {
-    val activity = androidx.activity.compose.LocalActivity.current
-    DisposableEffect(activity) {
-        val bars = activity?.let { androidx.core.view.WindowCompat.getInsetsController(it.window, it.window.decorView) }
-        val lightStatus = bars?.isAppearanceLightStatusBars
-        val lightNavigation = bars?.isAppearanceLightNavigationBars
-        bars?.isAppearanceLightStatusBars = false
-        bars?.isAppearanceLightNavigationBars = false
-        onDispose {
-            if (lightStatus != null) bars.isAppearanceLightStatusBars = lightStatus
-            if (lightNavigation != null) bars.isAppearanceLightNavigationBars = lightNavigation
-        }
-    }
-    MaterialTheme(colorScheme = waterColors) { StationDetailBody(model, id, clock, linkedTime, onOpen, onBack, recordVisit, downloads) }
+    SlackwaterTheme { StationDetailBody(model, id, clock, linkedTime, onOpen, onBack, recordVisit, downloads) }
 }
 
 @Composable
@@ -82,6 +59,12 @@ private fun StationDetailBody(model: StationListModel, id: StationId, clock: Ins
     val known = (resolved as? StationResolution.Successor)?.target ?: resolved as? StationResolution.Known
     val station = known?.identity
     val live = known is StationResolution.Live
+    DisposableEffect(station?.id, live, recordVisit) {
+        val queue = TidePreviewDownloads.get(context)
+        val opened = station?.id?.takeIf { live && recordVisit }
+        if (opened != null) queue.openStation.value = opened
+        onDispose { if (opened != null) queue.openStation.compareAndSet(opened, null) }
+    }
     val data by model.state.collectAsState()
     val prefs by model.readingPreferences.collectAsState()
     val revision by ModelStore.get(context).revision.collectAsState()
@@ -319,6 +302,9 @@ private fun DetailContent(station: StationIdentity, detail: LoadedDetail, prefs:
                     DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withZone(timeline.zone).format(state.coverage.end)))
             }
         }
+        if (station.kind == StationKind.CanadianTide || cap == StationCapabilities.PROVISIONAL_CURRENT) {
+            TideDownloadControls(station.id, StationListModel.get(LocalContext.current))
+        }
         if (timeline.mode == TimelineMode.ONLINE) {
             val today = state.now.atZone(timeline.zone).toLocalDate()
             OnlineGateValidity(downloads, station.id, today, timeline.zone, revision)
@@ -350,14 +336,15 @@ private fun DetailContent(station: StationIdentity, detail: LoadedDetail, prefs:
 private fun MissingPredictions(station: StationIdentity, metadata: DetailMetadata?, model: StationListModel) {
     Text(stringResource(R.string.detail_no_data))
     metadata?.magnitudeNote?.let { Text(stringResource(R.string.detail_context, it)) }
-    if (station.kind == StationKind.CanadianTide) {
+    if (station.kind == StationKind.CanadianTide || (station.kind == StationKind.CanadianCurrent && metadata?.gate?.allowsFinalFit(station.id) == true)) {
         TideDownloadControls(station.id, model)
-    } else if (metadata != null && metadata.gate?.online != true && (station.kind == StationKind.CanadianCurrent || station.kind == StationKind.DerivedGate)) {
+    } else if (metadata != null && station.kind == StationKind.DerivedGate) {
         val store = model.places.downloads
         val intent by store.state.collectAsState(null)
-        val requestedId = metadata?.pairedTide?.takeIf { station.kind == StationKind.DerivedGate } ?: station.id
+        val requestedId = metadata.pairedTide ?: return
+        val queue = TidePreviewDownloads.get(LocalContext.current)
         val queued = intent?.getOrNull()?.requested?.contains(requestedId) == true
-        Button(enabled = !queued, onClick = { model.launchEdit { store.requestDownloads(listOf(requestedId)) } }) {
+        Button(enabled = !queued, onClick = { model.launchEdit { queue.requestReference(requestedId) } }) {
             Text(stringResource(if (queued) R.string.detail_queued else R.string.detail_download))
         }
     }

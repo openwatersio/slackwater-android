@@ -18,6 +18,7 @@ data class DownloadIntent(
     val requested: Set<StationId> = emptySet(),
     val cancelled: Set<StationId> = emptySet(),
     val previewRequested: Set<StationId> = emptySet(),
+    val tideFitRequested: Set<StationId> = emptySet(),
 ) {
     /** Filter existing queue candidates by current catalog ID after checking stored coverage. */
     fun allowsRestore(canonicalId: StationId, ready: Boolean): Boolean =
@@ -28,6 +29,7 @@ private val versionKey = intPreferencesKey("version")
 private val requestedKey = stringSetPreferencesKey("requested")
 private val knownRequestsKey = stringSetPreferencesKey("knownGeneralRequests")
 private val previewRequestedKey = stringSetPreferencesKey("previewRequested")
+private val tideFitKey = stringSetPreferencesKey("tideFitRequested")
 private val cancelledKey = stringSetPreferencesKey("cancelled")
 
 private class InvalidDownloadIntent(message: String) : IOException(message)
@@ -44,7 +46,7 @@ private fun Preferences.readIntent(): DownloadIntent {
     val fields = asMap()
     val version = fields[versionKey]
     if (version != null && version != 1) throw InvalidDownloadIntent("Unsupported download intent version: $version")
-    return DownloadIntent(ids(requestedKey), ids(cancelledKey), ids(previewRequestedKey))
+    return DownloadIntent(ids(requestedKey), ids(cancelledKey), ids(previewRequestedKey), ids(tideFitKey).intersect(ids(previewRequestedKey)))
 }
 
 private fun MutablePreferences.storeIntent(intent: DownloadIntent) {
@@ -52,6 +54,7 @@ private fun MutablePreferences.storeIntent(intent: DownloadIntent) {
     this[requestedKey] = intent.requested.mapTo(mutableSetOf()) { it.value }
     this[knownRequestsKey] = this[requestedKey].orEmpty()
     this[previewRequestedKey] = intent.previewRequested.mapTo(mutableSetOf()) { it.value }
+    this[tideFitKey] = intent.tideFitRequested.mapTo(mutableSetOf()) { it.value }
     this[cancelledKey] = intent.cancelled.mapTo(mutableSetOf()) { it.value }
 }
 
@@ -69,6 +72,22 @@ class DownloadIntentStore internal constructor(
         .catch { if (it is IOException) emit(Result.failure(it)) else throw it }
         .distinctUntilChanged()
 
+    private val radiusKey = intPreferencesKey("phoneRadiusKm")
+    private val currentsKey = booleanPreferencesKey("phoneAllCurrents")
+    internal val selection = data.data.map {
+        PhoneSelection(it[radiusKey] ?: 0, it[currentsKey] ?: false)
+    }.retryAlertReads().catch { if (it !is IOException) throw it }.distinctUntilChanged()
+
+    internal suspend fun selectRadius(km: Int, enabled: Boolean) {
+        data.edit { prefs ->
+            prefs[radiusKey] = PhoneSelection(prefs[radiusKey] ?: 0, false).withRadius(km, enabled).radiusKm
+        }
+    }
+
+    internal suspend fun selectCurrents(enabled: Boolean) {
+        data.edit { it[currentsKey] = enabled }
+    }
+
     /** A direct request or explicit retry also resumes a previously trimmed job. */
     suspend fun requestDownloads(ids: Collection<StationId>) = editDownloads(ids) { intent, stations ->
         intent.copy(requested = intent.requested + stations, cancelled = intent.cancelled - stations)
@@ -81,6 +100,30 @@ class DownloadIntentStore internal constructor(
 
     suspend fun requestPreviews(ids: Collection<StationId>) = editDownloads(ids) { intent, stations ->
         intent.copy(previewRequested = intent.previewRequested + stations)
+    }
+
+    suspend fun requestTide(id: StationId) = editDownloads(listOf(id)) { intent, stations ->
+        intent.copy(cancelled = intent.cancelled - stations, tideFitRequested = intent.tideFitRequested + stations, previewRequested = intent.previewRequested + stations)
+    }
+
+    /** Cancel the selected request and suppress automatic selection in the same durable edit. */
+    internal suspend fun cancelSelection(id: StationId, general: Boolean, tide: Boolean) =
+        editDownloads(listOf(id)) { intent, stations ->
+            intent.copy(
+                requested = if (general) intent.requested - stations else intent.requested,
+                tideFitRequested = if (tide) intent.tideFitRequested - stations else intent.tideFitRequested,
+                previewRequested = if (tide) intent.previewRequested - stations else intent.previewRequested,
+                cancelled = intent.cancelled + stations,
+            )
+        }
+
+    suspend fun cancelTide(id: StationId) = editDownloads(listOf(id)) { intent, stations ->
+        intent.copy(tideFitRequested = intent.tideFitRequested - stations, previewRequested = intent.previewRequested - stations)
+    }
+
+    suspend fun cancelReferenceAndTide(id: StationId) = editDownloads(listOf(id)) { intent, stations ->
+        intent.copy(requested = intent.requested - stations, previewRequested = intent.previewRequested - stations,
+            tideFitRequested = intent.tideFitRequested - stations)
     }
 
     suspend fun releasePreviews(ids: Collection<StationId>) = editDownloads(ids) { intent, stations ->
@@ -137,7 +180,8 @@ class DownloadIntentStore internal constructor(
                             id !in references && (catalog.resolve(id) as? StationResolution.Live)?.identity?.kind == StationKind.CanadianTide
                         }
                     }
-                    val next = DownloadIntent(requested, catalog.remapSavedIds(previous.cancelled.toList()).toSet(), previews)
+                    val next = DownloadIntent(requested, catalog.remapSavedIds(previous.cancelled.toList()).toSet(), previews,
+                        catalog.remapSavedIds(previous.tideFitRequested.toList()).toSet())
                     if (currentData.contains(knownRequestsKey) && known == requested && next == previous) return currentData
                     return currentData.toMutablePreferences().apply { storeIntent(next) }
                 }

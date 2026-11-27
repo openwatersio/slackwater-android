@@ -10,10 +10,12 @@ import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToNode
+import androidx.core.view.WindowCompat
 import androidx.test.core.app.ActivityScenario
 import androidx.test.platform.app.InstrumentationRegistry
 import io.openwaters.slackwater.android.core.FixtureSmoke
 import org.junit.After
+import org.junit.Assert.assertFalse
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -30,6 +32,15 @@ class LaunchTest {
     @After fun close() = scenario.close()
 
     @Test fun engineAndAstronomyMatchFixtures() { FixtureSmoke.verify() }
+
+    // Emulators boot in light mode, where Android would otherwise give the bars dark icons.
+    @Test fun systemBarIconsStayLightOverTheDarkApp() {
+        scenario.onActivity { activity ->
+            val bars = WindowCompat.getInsetsController(activity.window, activity.window.decorView)
+            assertFalse(bars.isAppearanceLightStatusBars)
+            assertFalse(bars.isAppearanceLightNavigationBars)
+        }
+    }
 
     @Test fun opensDownloadsAndCanKeepChartPacks() {
         val context = InstrumentationRegistry.getInstrumentation().targetContext

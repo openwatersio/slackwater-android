@@ -130,7 +130,8 @@ internal class ChartDrawing(
         pen.clearShadowLayer()
     }
 
-    fun sky(sky: SkyFrame?, horizon: Float, twinkle: Double, leadWidth: Float, leadHeight: Float) {
+    /** The sky backdrop; with [bodies] off it keeps the gradient and drops the stars, sun and moon (scrubber §14). */
+    fun sky(sky: SkyFrame?, horizon: Float, twinkle: Double, leadWidth: Float, leadHeight: Float, bodies: Boolean = true) {
         c.drawColor(navy)
         if (sky == null) return
         val (top, bottom) = skyColors(sky)
@@ -138,6 +139,7 @@ internal class ChartDrawing(
         pen.color = paper
         pen.shader = LinearGradient(0f, 0f, 0f, horizon, top, bottom, Shader.TileMode.CLAMP)
         c.drawRect(0f, 0f, width, horizon + 240, pen); pen.shader = null
+        if (!bodies) return
         val bodyLayer = c.saveLayer(0f, 0f, width, horizon + 30, null)
         fun cx(body: SkyBody, r: Float): Float {
             val px = (body.x * (width + 2 * r) - r).toFloat()

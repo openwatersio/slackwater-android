@@ -53,6 +53,13 @@ class CardCurveTest {
         assertEquals(3.0, curve.valueAt(now), 1e-3)
     }
 
+    @Test fun aTideCardsAxisTimesTakeTheirTurnsInk() {
+        val curve = CardCurve.from(ready(tide, StationCapabilities.HARMONIC_TIDE), now, 0.5)!!
+        val inks = curve.axisMoments(10f).map(curve::axisInk)
+        assertEquals(curve.extremes.map { if (it.high) CardCurve.AxisInk.HIGH else CardCurve.AxisInk.LOW }, inks)
+        assertTrue(CardCurve.AxisInk.HIGH in inks && CardCurve.AxisInk.LOW in inks)
+    }
+
     // A flood peaking at +2 kn at 1 h, slack at 4 h, then ebb, with a second slack the window cannot merge.
     private fun current(): PredictionSeries.Current {
         fun speed(t: Instant) = 2.0 * cos(2 * PI * (Duration.between(now, t).toMinutes() - 60) / (12.42 * 60))
@@ -77,6 +84,7 @@ class CardCurveTest {
         assertTrue(series.events[1].time in curve.windows.single())
         // One green time at the window's opening.
         assertEquals(listOf(curve.windows.single().start), curve.axisMoments(10f))
+        assertEquals(CardCurve.AxisInk.SLACK, curve.axisInk(curve.windows.single().start))
         // Off, the comfort current draws no window; slack keeps its own time.
         val off = CardCurve.from(ready(series, StationCapabilities.HARMONIC_CURRENT), now, 0.0)!!
         assertTrue(off.windows.isEmpty())
@@ -136,6 +144,7 @@ class CardCurveTest {
         assertEquals(0.0, curve.valueAt(minutes(60)), 0.05)
         assertEquals(listOf(true, false, true), curve.extremes.map { it.flood })
         assertEquals(curve.slacks, curve.axisMoments(10f))
+        assertTrue(curve.axisMoments(10f).all { curve.axisInk(it) == CardCurve.AxisInk.SLACK })
         assertTrue(curve.samples.all { it.value in -1.0..1.0 })
     }
 

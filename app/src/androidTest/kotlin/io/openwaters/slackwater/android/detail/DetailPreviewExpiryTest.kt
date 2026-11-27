@@ -53,7 +53,7 @@ class DetailPreviewExpiryTest {
                 compose.waitUntil(30_000) { compose.onAllNodes(now).fetchSemanticsNodes().isNotEmpty() }
                 compose.onNode(now).performClick()
             }
-            compose.waitUntil(30_000) { compose.onAllNodesWithText("Download for offline use").fetchSemanticsNodes().isNotEmpty() }
+            compose.waitUntil(30_000) { compose.onAllNodesWithTag("detailTimeline").fetchSemanticsNodes().isEmpty() }
             compose.onNodeWithTag("detailTimeline").assertDoesNotExist()
             compose.onNodeWithText("Schedule").assertDoesNotExist()
         } finally {

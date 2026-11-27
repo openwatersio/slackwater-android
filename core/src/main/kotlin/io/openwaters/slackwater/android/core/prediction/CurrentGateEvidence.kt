@@ -19,6 +19,9 @@ data class CurrentGateEvidence(
     val magnitudeNote: String? = null,
     val tideReference: StationId? = null,
 ) {
+    fun allowsFinalFit(station: StationId): Boolean =
+        compatibleFit(station.value, ChsCurrentFit.STAMP, fitDays) != null
+
     fun compatibleFit(stationId: String?, storedRecipe: String?, storedDays: Double?): CurrentGateFit? {
         if (online || stationId != id.value || recipe != ChsCurrentFit.STAMP || storedRecipe != recipe) return null
         if (ChsCurrentFit.days.none { it.toDouble() == fitDays }) return null

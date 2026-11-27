@@ -7,7 +7,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Density
 import io.openwaters.slackwater.android.alerts.AlarmScheduler
 import android.graphics.Bitmap
-import androidx.compose.material3.MaterialTheme
+import io.openwaters.slackwater.android.SlackwaterTheme
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -91,7 +91,7 @@ class LocalizationTest(private val tag: String, private val favorites: String) {
             val owner = checkNotNull(LocalActivityResultRegistryOwner.current)
             val density = Density(LocalDensity.current.density, config.fontScale)
             CompositionLocalProvider(LocalActivityResultRegistryOwner provides owner, LocalDensity provides density, LocalContext provides localized, LocalConfiguration provides config) {
-                MaterialTheme { StationListScreen(StationListModel.get(localized), {}, {}, {}, now) }
+                SlackwaterTheme { StationListScreen(StationListModel.get(localized), {}, {}, {}, now) }
             }
         }
         compose.waitUntil(60_000) {
@@ -115,7 +115,7 @@ class LocalizationTest(private val tag: String, private val favorites: String) {
             val owner = checkNotNull(LocalActivityResultRegistryOwner.current)
             val density = Density(LocalDensity.current.density, config.fontScale)
             CompositionLocalProvider(LocalActivityResultRegistryOwner provides owner, LocalDensity provides density, LocalContext provides localized, LocalConfiguration provides config) {
-                MaterialTheme {
+                SlackwaterTheme {
                     StationDetailScreen(StationListModel.get(localized), StationId("noaa/9449880"), now, now, {}, {})
                 }
             }

@@ -104,11 +104,12 @@ internal fun TimelineCanvas(
         }
     }
     val latestTime by rememberUpdatedState(selected)
-    var renderedSky by remember(station.id, showSky) { mutableStateOf<Pair<Long, SkyFrame?>?>(null) }
+    var renderedSky by remember(station.id) { mutableStateOf<Pair<Long, SkyFrame?>?>(null) }
     val sky = renderedSky?.second
-    LaunchedEffect(skyScene, showSky) {
+    // Frames keep coming with the bodies off: the gradient and eclipse shading still follow the sun (scrubber §14).
+    LaunchedEffect(skyScene) {
         val source = skyScene ?: return@LaunchedEffect
-        if (showSky) snapshotFlow { latestTime.epochSecond / 10 }.conflate().collect { bucket ->
+        snapshotFlow { latestTime.epochSecond / 10 }.conflate().collect { bucket ->
             val frame =
                 withContext(Dispatchers.Default) { source.frame(Instant.ofEpochSecond(bucket * 10)) }
             if (latestTime.epochSecond / 10 == bucket) renderedSky = bucket to frame
@@ -192,8 +193,9 @@ internal fun TimelineCanvas(
         ) == 0f
     }
     var leadSize by remember { mutableStateOf(IntSize.Zero) }
-    val twinkle = produceState(0.0, sky?.stars?.isNotEmpty() == true, reduceMotion) {
-        if (!reduceMotion && sky?.stars?.isNotEmpty() == true) while (true) {
+    val starsDrawn = showSky && sky?.stars?.isNotEmpty() == true
+    val twinkle = produceState(0.0, starsDrawn, reduceMotion) {
+        if (!reduceMotion && starsDrawn) while (true) {
             value = android.os.SystemClock.uptimeMillis() / 1000.0
             kotlinx.coroutines.delay(125)
         } else value = 0.0
@@ -228,7 +230,7 @@ internal fun TimelineCanvas(
                 native.scale(density.density, density.density)
                 ChartDrawing(native, width, selected, now).sky(
                     sky, 186f + extra, twinkle.value,
-                    leadSize.width / density.density, leadSize.height / density.density
+                    leadSize.width / density.density, leadSize.height / density.density, bodies = showSky
                 )
                 native.restore()
             }

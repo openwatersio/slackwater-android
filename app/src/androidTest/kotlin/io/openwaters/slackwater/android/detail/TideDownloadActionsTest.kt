@@ -60,8 +60,9 @@ class TideDownloadActionsTest {
             TideDownloadState.QUEUED to R.string.detail_queued,
             TideDownloadState.WAITING_FOR_NETWORK to R.string.tide_download_network,
             TideDownloadState.DATA_SAVER to R.string.tide_download_restricted,
-            TideDownloadState.DOWNLOADING to R.string.tide_download_active,
-            TideDownloadState.RETRY to R.string.tide_download_failed,
+            TideDownloadState.DOWNLOADING to R.string.gate_downloading,
+            TideDownloadState.RETRY to R.string.gate_failed,
+            TideDownloadState.WAITING_TO_RETRY to R.string.gate_waiting,
         )) {
             compose.runOnIdle { status.value = state }
             button(label).assertExists()
@@ -69,10 +70,12 @@ class TideDownloadActionsTest {
                 compose.onNode(SemanticsMatcher.keyIsDefined(SemanticsProperties.ProgressBarRangeInfo)).assertExists()
             }
         }
+        button(R.string.gate_retry_now).performClick()
+        compose.runOnIdle { status.value = TideDownloadState.RETRY }
         button(R.string.table_sheet_retry).performClick()
         button(R.string.alert_cancel).performClick()
         compose.runOnIdle {
-            assertEquals(2, requests)
+            assertEquals(3, requests)
             assertEquals(1, cancellations)
         }
     }

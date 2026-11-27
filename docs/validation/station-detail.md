@@ -4,7 +4,7 @@ Station cards, reminder and calendar events, and public tide/current links open 
 
 ## Detail conformance
 
-These rows refer to the numbered titles in [detail §18](https://github.com/openwatersio/slackwater-ios/blob/02188f2a2f5ef4166cd74c373a5885736d7ef159/docs/detail.md#18-conformance-scenarios). The [summary and schedule evidence](detail-panels.md) covers the tile, sheet, week, print and row scenarios. The [chart evidence](detail-chart.md) and [input checks](detail-input.md) cover the 39 scrubber scenarios, gesture arbitration, interruption, focus, and posture restoration.
+These rows refer to the numbered titles in [detail §18](https://github.com/openwatersio/slackwater-ios/blob/6457d71b46af0e1c3310e1f8688dffc0db102d33/docs/detail.md#18-conformance-scenarios). The [summary and schedule evidence](detail-panels.md) covers the tile, sheet, week, print and row scenarios. The [chart evidence](detail-chart.md) and [input checks](detail-input.md) cover the 39 scrubber scenarios, gesture arbitration, interruption, focus, and posture restoration.
 
 | Detail scenario | Android evidence and boundary |
 |---|---|

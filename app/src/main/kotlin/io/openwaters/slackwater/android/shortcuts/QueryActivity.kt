@@ -7,7 +7,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -22,6 +21,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.openwaters.slackwater.android.R
+import io.openwaters.slackwater.android.SlackwaterTheme
+import io.openwaters.slackwater.android.enableWaterEdgeToEdge
 import io.openwaters.slackwater.android.core.settings.ReadingSettings
 import io.openwaters.slackwater.android.core.shortcuts.*
 import io.openwaters.slackwater.android.core.station.StationIdentity
@@ -58,9 +59,9 @@ class QueryActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         generation = savedInstanceState?.getInt("generation") ?: 0
         launchIntent = intent
-        enableEdgeToEdge()
+        enableWaterEdgeToEdge()
         setContent {
-            MaterialTheme {
+            SlackwaterTheme {
                 Surface(Modifier.fillMaxSize()) {
                     Column(Modifier.safeDrawingPadding().verticalScroll(rememberScrollState()).padding(20.dp),
                         verticalArrangement = Arrangement.spacedBy(12.dp)) {

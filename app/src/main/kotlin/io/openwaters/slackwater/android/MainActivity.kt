@@ -6,6 +6,7 @@ import io.openwaters.slackwater.android.shortcuts.ShortcutPublisher
 import android.content.Intent
 import android.provider.CalendarContract
 import io.openwaters.slackwater.android.calendars.CalendarRepository
+import io.openwaters.slackwater.android.premium.PremiumStore
 import io.openwaters.slackwater.android.alerts.AlertDestination
 import io.openwaters.slackwater.android.stations.StationPage
 import io.openwaters.slackwater.android.stations.StationListModel
@@ -13,13 +14,15 @@ import java.time.Instant
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.flow.*
 import io.openwaters.slackwater.android.data.OnlineGateDownloads
+import io.openwaters.slackwater.android.data.automaticFitCandidates
+import io.openwaters.slackwater.android.data.automaticOnlineCandidates
+import io.openwaters.slackwater.android.downloads.BackgroundDownloads
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import io.openwaters.slackwater.android.detail.DetailRecords
 import io.openwaters.slackwater.android.core.station.StationId
 import android.os.Bundle
 import io.openwaters.slackwater.android.map.DataCreditsDialog
-import androidx.activity.enableEdgeToEdge
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -118,9 +121,12 @@ class MainActivity : ComponentActivity() {
         TidePreviewDownloads.get(applicationContext).activityStarted()
         AlertReconciliation.get(this).foreground()
         CalendarRepository.get(this).foreground()
+        // A purchase, refund or lapse made elsewhere reaches the saved record here.
+        PremiumStore.foreground(this)
     }
 
     override fun onStop() {
+        BackgroundDownloads.activityStopping(isChangingConfigurations)
         TidePreviewDownloads.get(applicationContext).activityStopped()
         super.onStop()
     }
@@ -145,24 +151,21 @@ class MainActivity : ComponentActivity() {
         if (automaticChartDownloads) lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(androidx.lifecycle.Lifecycle.State.STARTED) {
                 val downloads = OnlineGateDownloads.get(applicationContext)
-                val model = StationListModel.get(applicationContext)
-                val candidates = model.state.filterNotNull().map { list ->
-                    with(list.sections) { favorites + heroes.map { it.identity.id } + nearMe.map { it.identity.id } + recents }
-                }.distinctUntilChanged()
-                val wanted = combine(candidates, model.places.downloads.state, downloads.online) { ids, intent, online ->
-                    val desired = intent.getOrNull()
-                    if (!online || desired == null) emptySet() else (ids - desired.cancelled + desired.requested).toSet()
-                }
-                downloads.prefetchWhileStarted(wanted)
+                val fits = TidePreviewDownloads.get(applicationContext)
+                val selected = automaticFitCandidates(applicationContext)
+                launch { fits.fitWhileStarted(selected) }
+                // Only a visible app may start the background job, so this watches while started.
+                launch { BackgroundDownloads.whileVisible(applicationContext) }
+                downloads.prefetchWhileStarted(automaticOnlineCandidates(applicationContext, selected))
             }
         }
-        enableEdgeToEdge()
+        enableWaterEdgeToEdge()
         setContent {
             var showDownloads by key(dialogSession) {
                 androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf(false) }
             }
             CompositionLocalProvider(LocalDialogSession provides dialogSession, io.openwaters.slackwater.android.detail.LocalOpenDownloads provides { showDownloads = true }) {
-            MaterialTheme {
+            SlackwaterTheme {
                 LaunchedEffect(Unit) { withContext(Dispatchers.IO) { ShortcutPublisher.publish(this@MainActivity) } }
                 if (showDownloads) io.openwaters.slackwater.android.map.ChartDownloads(chartPacks) { showDownloads = false }
                 var showCredits by key(dialogSession) { remember { mutableStateOf(false) } }

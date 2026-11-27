@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- The window draws WaterColors' surface (SlackwaterTheme.kt) before Compose does, so launch never flashes light. -->
+    <color name="water_surface">#0C1B24</color>
+    <style name="Theme.Slackwater" parent="@android:style/Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@color/water_surface</item>
+        <item name="android:colorBackground">@color/water_surface</item>
+    </style>
+</resources>

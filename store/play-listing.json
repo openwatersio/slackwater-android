@@ -1,0 +1,50 @@
+{
+  "packageName": "io.openwaters.slackwater.android",
+  "defaultLanguage": "en-US",
+  "contact": {
+    "website": "https://slackwater.xyz",
+    "supportUrl": "https://slackwater.xyz/support/",
+    "privacyPolicyUrl": "https://slackwater.xyz/privacy/"
+  },
+  "products": {
+    "subscription": "io.openwaters.slackwater.premium.yearly",
+    "oneTime": "io.openwaters.slackwater.premium.lifetime"
+  },
+  "listings": {
+    "en-US": {
+      "title": "Slackwater – Tides & Currents",
+      "shortDescription": "Tides and currents that work offline. Slack water times, no signal needed.",
+      "fullDescription": [
+        "The tide and currents app that works without signal. Tides for more than 5,000 stations worldwide and currents across the US and Canada, already on your phone — on the water, on the beach, in the anchorage, with no bars and nothing to load.",
+        "",
+        "No spinner. No \"no internet connection\". You open it, and the answer is there: rising or falling, flooding or ebbing, and how long until the next high, low or slack.",
+        "",
+        "And it does the part most tide apps skip. Heights are the easy half. The harder question is the current: when does the pass go slack? How hard is it running at max? Can you get through before it turns?",
+        "",
+        "WORKS WHERE THERE IS NO SIGNAL",
+        "Predictions are made on your phone, not fetched. Down a dead-end road, out at the point, in an anchorage, or with the boat's electronics down — you get the same answer you would have got at the dock. The map for your area and your favourite stations stays on your phone too.",
+        "",
+        "CURRENTS, NOT JUST TIDES",
+        "Slack, max flood and max ebb on one curve, with speed and direction. Drag your thumb across the week to read any moment. Paired current stations link to the tide at their reference port.",
+        "",
+        "SUN, MOON AND THE TIDES THEY DRIVE",
+        "Sunrise, sunset and twilight, the moon's phase, spring and neap tides explained, and solar and lunar eclipses, for every station.",
+        "",
+        "ON YOUR HOME SCREEN",
+        "Home screen widgets for the next event and today's curve. Launcher shortcuts for the next low tide, high tide or slack window. On phones, tablets and foldables, in 16 languages.",
+        "",
+        "FREE, NO ACCOUNT, NO ADS",
+        "Every station and every date is free and stays free. No account, no ads, no tracking, and the app is open source.",
+        "",
+        "Slackwater Premium is optional and funds development: alerts before the tides and currents you care about, station calendars, and chart controls. Choose a yearly subscription or a one-time lifetime purchase.",
+        "",
+        "WHERE THE NUMBERS COME FROM",
+        "Tides for more than 5,000 stations across a hundred countries are built in, from NOAA, the Canadian Hydrographic Service, Norway's Kartverket, Toitū Te Whenua Land Information New Zealand (LINZ), Denmark's DMI, the Japan Coast Guard, the Japan Meteorological Agency and the TICON-4 global tide-gauge catalogue. Currents cover the United States and Canada: more than 2,500 NOAA current stations, plus 23 Canadian passes from the Salish Sea to Haida Gwaii and Cape Breton. Canadian tide stations download their data from the Canadian Hydrographic Service once, then work offline. Seven Canadian current passes use downloaded harmonic models; the other sixteen fetch CHS predictions when you are online and keep the downloaded window for offline use. Where we cannot publish numbers we trust, the station is listed but blank instead of guessed.",
+        "",
+        "Predictions are not observations — conditions vary with weather and river flow. Not for navigation.",
+        "",
+        "Privacy Policy: https://slackwater.xyz/privacy/"
+      ]
+    }
+  }
+}

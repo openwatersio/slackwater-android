@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.test.*
 import io.openwaters.slackwater.android.R
+import io.openwaters.slackwater.android.SlackwaterTheme
 import io.openwaters.slackwater.android.data.BundledStationCatalog
 import io.openwaters.slackwater.android.data.UserStateStore
 import androidx.compose.ui.test.junit4.v2.createComposeRule
@@ -49,7 +50,7 @@ class StationCardThresholdTest {
         val loaded = AtomicReference<Double>()
         compose.setContent {
             val prefs = store.preferences.collectAsState(initial = null).value?.getOrThrow()
-            if (prefs != null) {
+            if (prefs != null) SlackwaterTheme {
                 StationCard(station, null, now, prefs, { at, threshold ->
                     model.card(id, at, threshold).also { data ->
                         checkNotNull(data.curve) { "Missing Tacoma Narrows curve at $at" }
@@ -104,9 +105,11 @@ class StationCardThresholdTest {
         val card = compose.onNodeWithContentDescription(station.name, substring = true)
 
         compose.setContent {
-            Box(Modifier.widthIn(max = 390.dp)) {
-                StationsHome(onCredits = {}, model = model, clock = { fixed }) { openSettings ->
-                    TextButton(onClick = openSettings) { Text(settings) }
+            SlackwaterTheme {
+                Box(Modifier.widthIn(max = 390.dp)) {
+                    StationsHome(onCredits = {}, model = model, clock = { fixed }) { openSettings ->
+                        TextButton(onClick = openSettings) { Text(settings) }
+                    }
                 }
             }
         }

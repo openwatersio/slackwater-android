@@ -9,13 +9,19 @@ import androidx.test.core.app.ActivityScenario
 import androidx.test.platform.app.InstrumentationRegistry
 import io.openwaters.slackwater.android.BuildConfig
 import io.openwaters.slackwater.android.R
+import io.openwaters.slackwater.android.alerts.NEXT_HIGH_SEARCH
 import io.openwaters.slackwater.android.alerts.ReminderAccessStore
 import io.openwaters.slackwater.android.core.planning.AlertRule
 import io.openwaters.slackwater.android.core.planning.AlertTrigger
+import io.openwaters.slackwater.android.core.planning.OccurrenceResolver
 import io.openwaters.slackwater.android.core.planning.ReminderEntitlement
+import io.openwaters.slackwater.android.core.prediction.TimeSpan
 import io.openwaters.slackwater.android.core.station.StationId
 import io.openwaters.slackwater.android.data.AlertRuleStore
+import io.openwaters.slackwater.android.data.AndroidPredictionRepository
 import io.openwaters.slackwater.android.data.DeliveryPlanStore
+import java.time.Instant
+import java.time.ZoneOffset
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.first
 import org.junit.Assert.assertTrue
@@ -33,7 +39,16 @@ class PremiumLinkClaimTest {
         val original = runBlocking { access.freeDayRecord.first() }
         assertTrue("Expected readable test preferences", original.historyReadable)
         val rules = AlertRuleStore.get(app)
-        val rule = AlertRule(stationId = StationId("noaa/9449880"), trigger = AlertTrigger.TideExtreme(high = true))
+        // Highs here can fall more than a day apart (NEXT_HIGH_SEARCH), so no fixed lead keeps the next reminder inside
+        // the 24-hour free day. Lead from the next high so it fires an hour from now; the planner must drop the
+        // reminders that fall after the free day ends.
+        val high = AlertRule(stationId = StationId("noaa/9449880"), trigger = AlertTrigger.TideExtreme(high = true))
+        val now = Instant.now()
+        val next = runBlocking {
+            OccurrenceResolver.resolve(high, AndroidPredictionRepository(app), TimeSpan(now.plusSeconds(7200), now.plus(NEXT_HIGH_SEARCH)),
+                ZoneOffset.UTC, 48.0, -123.0, 0.5).first().event
+        }
+        val rule = high.copy(leadSeconds = next.epochSecond - now.plusSeconds(3600).epochSecond)
         val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
         try {
             runBlocking {
