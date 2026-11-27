@@ -12,7 +12,7 @@ node scripts/sync-upstream.mjs
 ./gradlew :app:connectedDebugAndroidTest
 ```
 
-`sync-upstream.mjs` fills the ignored `vendor/` folder with the pinned sources, and a new worktree needs it before its first Gradle build. The last command needs an emulator or device.
+`sync-upstream.mjs` fills the ignored `vendor/` folder with the pinned sources, and a new worktree needs it before its first Gradle build. Run it again after pulling a change to `upstream.lock.json`: it moves each clean checkout to its new pin. The last command needs an emulator or device.
 
 ## Pull requests
 
