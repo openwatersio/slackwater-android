@@ -9,8 +9,10 @@ android {
         // Play accepts each versionCode once; scripts/version-code.mjs supplies the one an uploaded build carries.
         versionCode = providers.gradleProperty("slackwaterVersionCode").map { it.toInt() }.getOrElse(1)
         versionName = "0.1.0"
-        buildConfigField("boolean", "PREMIUM_ENABLED", "false")
-        manifestPlaceholders["premiumEnabled"] = false
+        // Release and benchmark sell nothing unless a build asks: a Play test build does, to check purchases before the default changes.
+        val sold = providers.gradleProperty("premiumEnabled").map { it.toBooleanStrict() }.getOrElse(false)
+        buildConfigField("boolean", "PREMIUM_ENABLED", sold.toString())
+        manifestPlaceholders["premiumEnabled"] = sold
         testInstrumentationRunner = "io.openwaters.slackwater.android.SlackwaterTestRunner"
     }
     buildTypes.getByName("debug") {

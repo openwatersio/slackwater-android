@@ -3,6 +3,8 @@ package io.openwaters.slackwater.android
 import android.os.Bundle
 import androidx.test.runner.AndroidJUnitRunner
 import io.openwaters.slackwater.android.data.ListPreferencesStore
+import io.openwaters.slackwater.android.premium.FakePremiumStore
+import io.openwaters.slackwater.android.premium.PremiumStore
 import kotlinx.coroutines.runBlocking
 
 /**
@@ -12,6 +14,8 @@ import kotlinx.coroutines.runBlocking
 class SlackwaterTestRunner : AndroidJUnitRunner() {
     override fun onCreate(arguments: Bundle?) {
         MainActivity.automaticChartDownloads = false
+        // Tests seed the purchase record themselves; the emulator's Play account, which owns nothing, would clear it.
+        PremiumStore.override = FakePremiumStore()
         super.onCreate(arguments)
         if (arguments?.getString("locationPromptPhase") != null &&
             arguments.getString("class")?.substringBefore('#') == FirstLaunchLocationTest::class.java.name) return

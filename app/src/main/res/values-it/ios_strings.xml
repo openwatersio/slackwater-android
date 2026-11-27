@@ -318,4 +318,13 @@
     <string name="premium_next_free_day">"Il tuo prossimo giorno gratuito è il %1$s"</string>
     <string name="premium_purchased">"Hai Premium — grazie."</string>
     <string name="premium_support">"Slackwater è indipendente e open source. Premium è ciò che lo fa andare avanti."</string>
+    <string name="premium_plan_yearly">"Annuale"</string>
+    <string name="premium_plan_yearly_detail">"Si rinnova ogni anno finché non la annulli."</string>
+    <string name="premium_plan_lifetime">"A vita"</string>
+    <string name="premium_plan_lifetime_detail">"Paga una volta, per sempre."</string>
+    <string name="premium_get">"Ottieni Premium"</string>
+    <string name="premium_price_per_year">"%1$s all’anno"</string>
+    <string name="premium_restore">"Ripristina acquisto"</string>
+    <string name="premium_unavailable">"Gli acquisti non sono disponibili al momento."</string>
+    <string name="premium_purchase_failed">"L’acquisto non è riuscito — riprova."</string>
 </resources>
