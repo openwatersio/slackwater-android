@@ -20,22 +20,22 @@
   },
   "resources": {
     "repository": "openwatersio/slackwater-ios",
-    "commit": "e9e49ee1a5d2dd66dfaead1b16880d84c767b8c6",
+    "commit": "b9fb68b7ab4b9f62b854cafc2ccaecd7930d389c",
     "assets": [
       {
         "name": "station-index.json",
         "path": "Slackwater/Resources/station-index.json",
-        "sha256": "99b5e6f64bd32e96cdf776f9d91f637de7dc9bf7f74105a3c8c04b941078b860"
+        "sha256": "6b310efc6df2a37e3d2b4e7a34c9e41fe050cc074f71162bb09fa24bae8543cc"
       },
       {
         "name": "stations.tcdb",
         "path": "Slackwater/Resources/stations.tcdb",
-        "sha256": "741f9ce19b2a677d4e79b32771fc782d9a8bc52da2a3adfc17c08686d0b05774"
+        "sha256": "81a77b3c7f7bb2d2666aa74a3ff846d1d07e540bfaa658bf78046b1242ac2c88"
       },
       {
         "name": "currents.json",
         "path": "Slackwater/Resources/currents.json",
-        "sha256": "395d5738bf93bba73067a49d0bf42242d4edafce2d474e9c3ab815cd98dbbbbc"
+        "sha256": "a2cd0f5026175939e74c578f7dc534d92261b1ab5185a3a174a3d88410b6c7c1"
       },
       {
         "name": "chs-stations.json",
@@ -45,7 +45,7 @@
       {
         "name": "chs-current-gates.json",
         "path": "Slackwater/Resources/chs-current-gates.json",
-        "sha256": "b091e5dc35f6c249bc39732cae133db35987acc9329b429b246e0370a765a204"
+        "sha256": "63a1da533d8b93ee82b1db4b92b28e4f3bd59e13095ad4cee168078556431aad"
       },
       {
         "name": "chs-gates.json",
@@ -60,22 +60,22 @@
       {
         "name": "station-successors.json",
         "path": "Slackwater/Resources/station-successors.json",
-        "sha256": "604c73c4f23275784a3a728cab36fc1477d591e3b26227b91af80c9affc0e6bc"
+        "sha256": "d18ddd129f146f82b8e976de9f72be9c9347ffcfa143f5630c9be2bfe20955e5"
       },
       {
         "name": "station-tombstones.json",
         "path": "Slackwater/Resources/station-tombstones.json",
-        "sha256": "64eb08b8df3d6237e2a73afe68a82673c9a29890a147f7db9e9e1e7fa0076ce6"
+        "sha256": "87878b87c3910f696190ba37ed93d6e4ec9efa6c5d61ace7ae7444882b1af7c1"
       },
       {
         "name": "unavailable-stations.json",
         "path": "Slackwater/Resources/unavailable-stations.json",
-        "sha256": "d0b6b85ae9fb435784a877360885d89e08b4c50b18bbf8df2e6d90b5c163fbe4"
+        "sha256": "92f82d17fb2193d29b558759bfa17062046ddbba888af7844f61afb225e62488"
       },
       {
         "name": "slugs.json",
         "path": "Slackwater/Resources/slugs.json",
-        "sha256": "1c1f313d5fbeee3c80dae3a9bb6fbc31d16bf69c2a16ca6afa3e6938870a8a07"
+        "sha256": "f32e136ddb27f2a76602e6bb1d3ef2508cd64cb2245041ee2cb5643239ad0403"
       },
       {
         "name": "fill-salish.json",

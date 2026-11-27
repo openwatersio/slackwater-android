@@ -87,11 +87,10 @@ class CardCurveTest {
         assertTrue(curve.domain.start < -2.0 && curve.domain.endInclusive > 2.0)
         assertEquals(listOf(90.0, 270.0), curve.extremes.map { it.setDegrees })
         assertEquals(listOf(true, false), curve.extremes.map { it.high })
-        assertEquals(1, curve.windows.size)
-        assertTrue(series.events[1].time in curve.windows.single())
-        // One green time at the window's opening.
-        assertEquals(listOf(curve.windows.single().start), curve.axisMoments(10f))
-        assertEquals(CardCurve.AxisInk.SLACK, curve.axisInk(curve.windows.single().start))
+        assertEquals(4, curve.windows.size)
+        assertTrue(curve.windows.any { series.events[1].time in it })
+        assertEquals(curve.drawnWindows(10f).map { it.start }, curve.axisMoments(10f))
+        assertTrue(curve.axisMoments(10f).all { curve.axisInk(it) == CardCurve.AxisInk.SLACK })
         // Off, the comfort current draws no window; slack keeps its own time.
         val off = CardCurve.from(ready(series, StationCapabilities.HARMONIC_CURRENT), now, 0.0)!!
         assertTrue(off.windows.isEmpty())

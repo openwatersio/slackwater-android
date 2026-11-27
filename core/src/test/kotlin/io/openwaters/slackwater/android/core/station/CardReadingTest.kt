@@ -111,16 +111,17 @@ class CardReadingTest {
         assertEquals(CardCurrentState.EBBING, (cardReading(ready(lulls, StationCapabilities.HARMONIC_CURRENT), at(180)) as CardReading.Current).state)
     }
 
-    @Test fun slackShowsANeutralDotUnlessCrossFlowStillPrints() {
+    @Test fun onlyTrueSlackIsSlackWhenCrossFlowPersists() {
         val slack = cardReading(ready(current(), StationCapabilities.HARMONIC_CURRENT), at(180)) as CardReading.Current
         assertEquals(CardCurrentState.SLACK, slack.state)
         assertNull(slack.setDegrees)
-        // Water still crossing the channel at slack keeps its set; just below the neutral speed it does not.
+        // A zero major axis with cross-flow is not a true slack; weak flow has a neutral set.
         val crossing = cardReading(ready(current(cross = 0.3), StationCapabilities.HARMONIC_CURRENT), at(180)) as CardReading.Current
-        assertEquals(CardCurrentState.SLACK, crossing.state)
+        assertEquals(CardCurrentState.FLOODING, crossing.state)
         assertEquals(0.3, crossing.speedKnots, 1e-9)
         assertNotNull(crossing.setDegrees)
         val faint = cardReading(ready(current(cross = 0.04), StationCapabilities.HARMONIC_CURRENT), at(180)) as CardReading.Current
+        assertEquals(CardCurrentState.FLOODING, faint.state)
         assertNull(faint.setDegrees)
     }
 

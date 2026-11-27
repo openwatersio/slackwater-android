@@ -189,8 +189,11 @@ class ChartScene(
                             series.hasCrossAxis && it.magnitudeKnots * speed.perKnot >= 0.05
                 }
                 ChartLead(
-                    it.state.name.lowercase().replace('_', ' ')
-                    .replaceFirstChar(Char::uppercase),
+                    when (it.state) {
+                        CurrentState.MIN_FLOOD -> "Flooding"
+                        CurrentState.MIN_EBB -> "Ebbing"
+                        else -> it.state.name.lowercase().replace('_', ' ').replaceFirstChar(Char::uppercase)
+                    },
                     formatSpeedValue(it.magnitudeKnots, speed, locale),
                     unit,
                     set?.let { angle -> formatSet(angle, degrees) }.orEmpty(),

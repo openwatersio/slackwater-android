@@ -116,6 +116,13 @@ class CalendarRepository private constructor(private val app: Context) {
             alertInputLock.withLock {
                 access.finishPendingCalendarPurchase()
                 val entitlement = access.current()
+                val successors = state.state.first().subscriptions.mapNotNull { sub ->
+                    val resolution = catalog.resolve(sub.stationId) as? StationResolution.Successor
+                    if (resolution?.target is StationResolution.Live) sub.stationId to resolution.id else null
+                }.toMap()
+                if (successors.isNotEmpty()) state.edit { snapshot ->
+                    snapshot.copy(subscriptions = migrateCalendarSubscriptions(snapshot.subscriptions, successors))
+                }
                 if (entitlement == ReminderEntitlement.Purchased) state.convertPurchased()
                 if (entitlement is ReminderEntitlement.FreeDay) {
                     state.edit { snapshot -> snapshot.copy(subscriptions = snapshot.subscriptions.map { sub ->
@@ -125,7 +132,16 @@ class CalendarRepository private constructor(private val app: Context) {
             }
             updateJobs()
             var success = true
-            for (sub in subscriptions.first()) if (!process(sub.stationId)) success = false
+            val rows = subscriptions.first()
+            val deferred = mutableListOf<StationId>()
+            for (sub in rows) {
+                val target = (catalog.resolve(sub.stationId) as? StationResolution.Successor)?.id
+                if (!sub.pendingDeletion && target != null && rows.any { it.stationId == target && it.pendingDeletion }) {
+                    deferred += target
+                    success = false
+                } else if (!process(sub.stationId)) success = false
+            }
+            if (deferred.any { target -> subscriptions.first().none { it.stationId == target } }) foreground()
             updateJobs()
             success
         }

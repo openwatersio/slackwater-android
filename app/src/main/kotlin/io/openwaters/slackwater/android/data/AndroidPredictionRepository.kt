@@ -245,7 +245,18 @@ internal fun JSONObject.constants(key: String = "constituents"): List<HarmonicCo
     }
 }
 
-internal fun JSONObject.fittedTide() = Station(constants(), getDouble("offset"))
+internal fun JSONObject.rotateLegacyM3() {
+    val terms = optJSONArray("constituents") ?: return
+    for (i in 0 until terms.length()) {
+        val term = terms.optJSONObject(i) ?: continue
+        if (term.optString("name") == "M3") term.put("phase", (term.getDouble("phase") + 180.0) % 360.0)
+    }
+}
+
+internal fun JSONObject.fittedTide(): Station {
+    val record = if (opt(ModelStore.VERSION_FIELD) == 1) JSONObject(toString()).apply { rotateLegacyM3() } else this
+    return Station(record.constants(), record.getDouble("offset"))
+}
 
 internal fun JSONObject.currentStation() = CurrentStation(constants(), optional("floodDirection"), optional("ebbDirection"),
     getDouble("meanFlow"), if (isNull("minorConstituents")) null else constants("minorConstituents"),

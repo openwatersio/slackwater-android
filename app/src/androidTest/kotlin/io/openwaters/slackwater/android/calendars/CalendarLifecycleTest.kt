@@ -17,6 +17,36 @@ import org.junit.Assert.*
 import org.junit.Test
 
 class CalendarLifecycleTest {
+    @Test fun successorReplacesOldCalendarWithoutLosingTheSubscription() = runBlocking {
+        val app = InstrumentationRegistry.getInstrumentation().targetContext
+        grantCalendarPermissions(app)
+        val old = StationId("ticon/sisimiut-296a-dnk-uhslc_rq")
+        val target = StationId("dmi/2991460")
+        val access = ReminderAccessStore.get(app)
+        val prior = access.current()
+        val state = CalendarStateStore.get(app)
+        val provider = StationCalendarProvider(app)
+        val now = Instant.now()
+        val event = StationCalendarEvent(old, "High tide 1.00 m", now.plusSeconds(3600), now.plusSeconds(3660),
+            "", java.time.ZoneOffset.UTC, CalendarEventKind.HIGH_TIDE)
+        val calendar = provider.reconcile(old, null, "Old Sisimiut", listOf(event), now)
+        val repo = CalendarRepository.get(app)
+        try {
+            access.update(ReminderEntitlement.Purchased)
+            state.edit { it.copy(subscriptions = it.subscriptions + StationSubscription(old, calendar, CalendarOrigin.PURCHASED)) }
+            assertTrue(repo.reconcile())
+            assertTrue(repo.subscriptions.first().none { it.stationId == old })
+            assertTrue(repo.subscriptions.first().any { it.stationId == target && !it.pendingDeletion })
+            assertEquals(0, provider.count(old, calendar, Instant.now()))
+            assertTrue(repo.eventCount(target) > 0)
+        } finally {
+            repo.unsubscribe(target)
+            repo.unsubscribe(old)
+            provider.clearFuture(old, calendar, Instant.now(), removeCalendar = true)
+            access.update(prior)
+        }
+    }
+
     @Test fun incompatibleCurrentRecipeClearsOnlyItsPublishedCalendarWithoutAWriteJournal() = runBlocking {
         val instrumentation = InstrumentationRegistry.getInstrumentation()
         val app = instrumentation.targetContext

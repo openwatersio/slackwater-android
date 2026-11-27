@@ -25,10 +25,12 @@ class ChartSceneTest {
         )
         val scene = ChartScene(series, emptyList(), 0.0, false)
         assertEquals(listOf(t(0) to ChartStop.Flood, t(120) to ChartStop.Flood), scene.water.map { it.at to it.stop })
+        assertEquals("Flooding", scene.lead(t(60), false, SpeedUnitKind.KNOTS, false, Locale.US).state)
+        assertEquals("Ebbing", scene.lead(t(180), false, SpeedUnitKind.KNOTS, false, Locale.US).state)
     }
 
     @Test
-    fun weakOneSidedWaterHasNoSlackAndDerivedGatesNeverInventAMagnitude() {
+    fun weakOneSidedWaterHasAWindowButNoSlackAndDerivedGatesNeverInventAMagnitude() {
         val weak = PredictionSeries.Current(
             listOf(CurrentPoint(t(0), 0.1), CurrentPoint(t(60), 0.2)),
             emptyList(),
@@ -36,7 +38,7 @@ class ChartSceneTest {
             270.0
         )
         val scene = ChartScene(weak, emptyList(), 0.5, false)
-        assertTrue(scene.windows.isEmpty())
+        assertEquals(listOf(t(0) to t(60)), scene.windows.map { it.start to it.end })
         assertTrue(scene.water.isEmpty())
         assertEquals(
             "Flooding",

@@ -36,7 +36,7 @@ sealed interface CardReading {
 
     /**
      * [speedKnots] is the full water speed. [setDegrees] is null for the neutral dot: below
-     * [CARD_NEUTRAL_SET_KNOTS], with no known bearing, or at slack when no cross-channel flow prints.
+     * [CARD_NEUTRAL_SET_KNOTS] or with no known bearing.
      * [approximate] marks an early or bounded Canadian model, printed with "~".
      */
     data class Current(
@@ -80,8 +80,6 @@ private fun readSeries(result: PredictionResult.Ready, at: Instant): CardReading
             CurrentState.FLOODING, CurrentState.MAX_FLOOD, CurrentState.MIN_FLOOD -> CardCurrentState.FLOODING
             CurrentState.EBBING, CurrentState.MAX_EBB, CurrentState.MIN_EBB -> CardCurrentState.EBBING
         }
-        // At slack the set shows only while water still crosses the channel at 0.05 kn or more, the threshold the
-        // list contract states in knots whatever the display unit.
         val set = reading.directionDegrees?.takeIf { reading.magnitudeKnots >= CARD_NEUTRAL_SET_KNOTS }
         CardReading.Current(reading.magnitudeKnots, state, set, result.approximate)
     } ?: CardReading.Unavailable

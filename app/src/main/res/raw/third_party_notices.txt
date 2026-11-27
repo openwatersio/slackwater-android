@@ -24,11 +24,13 @@ Stations marked "Predictions unavailable" are named from non-commercial records 
 
 Station names and pairings: Slackwater database (MIT).
 
+Station regions and countries, derived and adapted from: GeoNames (geonames.org, CC BY 4.0); OpenStreetMap contributors (openstreetmap.org, ODbL 1.0); Marine Regions, Flanders Marine Institute (marineregions.org, CC BY 4.0); Wikidata (wikidata.org, CC0 1.0).
+
 Prediction engine and IWLS client: Slackwater (MIT).
 
 Canadian station identities, device-downloaded tide predictions, and current-gate evidence: Canadian Hydrographic Service, Fisheries and Oceans Canada. DFO terms (clause 10). Derived gate evidence is not CHS-published prediction data and is not for navigation. This app target bundles no CHS predictions or user-fitted models.
 
-Station and bathymetry credits follow slackwater-ios/Slackwater/AboutView.swift at 6457d71b46af0e1c3310e1f8688dffc0db102d33.
+Station and bathymetry credits follow slackwater-ios/Slackwater/AboutView.swift at b9fb68b7ab4b9f62b854cafc2ccaecd7930d389c.
 
 SOFTWARE LICENSES
 

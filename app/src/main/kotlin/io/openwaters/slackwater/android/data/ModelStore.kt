@@ -108,7 +108,7 @@ class ModelStore internal constructor(
      * build writes, so a record read from a newer build is never restamped as an older one.
      */
     suspend fun write(id: StationId, kind: ModelKind, record: JSONObject) {
-        val bytes = encode(id, record)
+        val bytes = encode(id, kind, record)
         withContext(Dispatchers.IO) {
             alertInputLock.withLock {
                 writeLocked(id, kind, bytes)
@@ -124,7 +124,7 @@ class ModelStore internal constructor(
         withContext(Dispatchers.IO) {
             alertInputLock.withLock {
                 val next = change(readFile(id, kind)) ?: return@withLock
-                val bytes = encode(id, next)
+                val bytes = encode(id, kind, next)
                 writeLocked(id, kind, bytes)
             }
         }
@@ -159,14 +159,15 @@ class ModelStore internal constructor(
         }
     }
 
-    private fun encode(id: StationId, record: JSONObject): ByteArray {
+    private fun encode(id: StationId, kind: ModelKind, record: JSONObject): ByteArray {
         val stamped = JSONObject(record.toString() ?: throw IllegalArgumentException("Model holds a non-finite number"))
-        if (stamped.has(VERSION_FIELD) && stamped.opt(VERSION_FIELD) != SCHEMA_VERSION) {
+        if (stamped.has(VERSION_FIELD) && (stamped.opt(VERSION_FIELD) as? Int)?.let { it in 1..SCHEMA_VERSION } != true) {
             throw IllegalArgumentException("Cannot write a model of version ${stamped.opt(VERSION_FIELD)}")
         }
         if (stamped.has(STATION_FIELD) && stamped.optString(STATION_FIELD) != id.value) {
             throw IllegalArgumentException("Model for ${stamped.opt(STATION_FIELD)} written as ${id.value}")
         }
+        if (kind == ModelKind.TIDE && stamped.opt(VERSION_FIELD) == 1) stamped.rotateLegacyM3()
         stamped.put(VERSION_FIELD, SCHEMA_VERSION).put(STATION_FIELD, id.value)
         return stamped.toString().toByteArray(Charsets.UTF_8)
     }
@@ -253,7 +254,7 @@ class ModelStore internal constructor(
     internal var afterCommit: () -> Unit = {}
 
     companion object {
-        const val SCHEMA_VERSION = 1
+        const val SCHEMA_VERSION = 2
         const val VERSION_FIELD = "schemaVersion"
         const val STATION_FIELD = "stationId"
         private const val TEMPORARY_PREFIX = ".tmp-"

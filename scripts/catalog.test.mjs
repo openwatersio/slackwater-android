@@ -14,6 +14,9 @@ test('every bundled publisher has an accessible data credit', async () => {
     }
     assert.ok(notices.includes('Canadian Hydrographic Service'));
     assert.ok(notices.includes('CC BY-NC 4.0'));
+    for (const source of ['GeoNames', 'OpenStreetMap contributors', 'Marine Regions', 'Wikidata']) {
+        assert.ok(notices.includes(source), `Missing region credit: ${source}`);
+    }
 });
 
 test('credits include notices for the pinned MapLibre distribution', async () => {
@@ -91,5 +94,5 @@ test('both Maizuru gauges are available with distinct links', async () => {
         assert.ok(!tombstones.some(station => station.id === id), id);
     }
     assert.notEqual(slugs.tide[ids[0]], slugs.tide[ids[1]]);
-    assert.equal(index.tides.find(station => station.id === ids[1]).region, 'Kyoto · Japan Coast Guard');
+    assert.equal(index.tides.find(station => station.id === ids[1]).region, 'Nishimaizuru');
 });
