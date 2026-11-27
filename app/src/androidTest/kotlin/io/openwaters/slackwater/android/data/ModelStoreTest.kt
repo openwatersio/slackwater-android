@@ -41,6 +41,25 @@ class ModelStoreTest {
 
     private fun StoredModel.ready() = (this as? StoredModel.Ready ?: throw AssertionError("expected a model, got $this"))
 
+    @Test fun legacyTideFitKeepsItsPredictionAndNewFitsUseTheCurrentBasis() = withStore { store, directory ->
+        val at = Instant.parse("2026-06-01T00:00:00Z")
+        val legacy = JSONObject().put("schemaVersion", 1).put("stationId", millBay.value).put("offset", 0.2)
+            .put("constituents", JSONArray().put(JSONObject().put("name", "M3").put("amplitude", 0.8).put("phase", 15.0)))
+        directory.mkdirs()
+        File(directory, "chs-mill-bay.tide.json").writeText(legacy.toString())
+        val expected = Station(listOf(HarmonicConstituent("M3", 0.8, 195.0)), 0.2).heights(at, at).single().heightMetres
+        val loaded = store.read(millBay, ModelKind.TIDE).ready().record
+        assertEquals(expected, loaded.fittedTide().heights(at, at).single().heightMetres, 1e-9)
+        store.write(millBay, ModelKind.TIDE, loaded)
+        val rewritten = store.read(millBay, ModelKind.TIDE).ready().record
+        assertEquals(2, rewritten.getInt("schemaVersion"))
+        assertEquals(expected, rewritten.fittedTide().heights(at, at).single().heightMetres, 1e-9)
+        val fresh = JSONObject(legacy.toString()).apply { remove("schemaVersion"); remove("stationId") }
+        store.write(millBay, ModelKind.TIDE, fresh)
+        val expectedFresh = Station(listOf(HarmonicConstituent("M3", 0.8, 15.0)), 0.2).heights(at, at).single().heightMetres
+        assertEquals(expectedFresh, store.read(millBay, ModelKind.TIDE).ready().record.fittedTide().heights(at, at).single().heightMetres, 1e-9)
+    }
+
     @Test fun fullIdsWithSeparatorsRoundTripThroughFileNames() = withStore { store, directory ->
         val ids = listOf(
             StationId("current:noaa/CHB9904"), StationId("noaa/9447130"), StationId("chs-mill-bay"),
@@ -213,7 +232,7 @@ class ModelStoreTest {
             """{"stationId":"chs-mill-bay"}""" to StoredModel.Unavailable.Reason.CORRUPT,
             """{"schemaVersion":"1","stationId":"chs-mill-bay"}""" to StoredModel.Unavailable.Reason.CORRUPT,
             """{"schemaVersion":0,"stationId":"chs-mill-bay"}""" to StoredModel.Unavailable.Reason.UNSUPPORTED_VERSION,
-            """{"schemaVersion":2,"stationId":"chs-mill-bay"}""" to StoredModel.Unavailable.Reason.UNSUPPORTED_VERSION,
+            """{"schemaVersion":3,"stationId":"chs-mill-bay"}""" to StoredModel.Unavailable.Reason.UNSUPPORTED_VERSION,
             """{"schemaVersion":1,"stationId":"chs-fulford-harbour"}""" to StoredModel.Unavailable.Reason.WRONG_STATION,
             """{"schemaVersion":1}""" to StoredModel.Unavailable.Reason.WRONG_STATION,
             """{"schemaVersion":1,"stationId":"chs-mill-bay","samples":[1e309]}""" to StoredModel.Unavailable.Reason.CORRUPT,
@@ -239,7 +258,7 @@ class ModelStoreTest {
 
     @Test fun refusesToRestampAnotherVersionOrStation() = withStore { store, _ ->
         for (record in listOf(
-            model(1.0).put(ModelStore.VERSION_FIELD, 2),
+            model(1.0).put(ModelStore.VERSION_FIELD, 3),
             model(1.0).put(ModelStore.VERSION_FIELD, "1"),
             model(1.0).put(ModelStore.STATION_FIELD, "chs-fulford-harbour"),
         )) {

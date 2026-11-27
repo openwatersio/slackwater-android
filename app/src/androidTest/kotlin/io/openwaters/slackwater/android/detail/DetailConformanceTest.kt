@@ -41,14 +41,15 @@ class DetailConformanceTest {
     @Test fun tidePage() = scene("tide", "noaa/9449880")
     @Test fun measuredCurrentPage() = scene("current", "current:noaa/PCT3896")
     @Test fun longStationName() = scene("long-label", "ticon/sunnyvale_east_channel_below_caribbean_drive-sun-usa-cm")
-    @Test fun vectorCurrentAtSlack() {
+    @Test fun vectorCurrentAtMinimumSpeed() {
         val id = StationId("current:noaa/CHB9904")
         val span = TimeSpan(now, now.plusSeconds(86400))
         val ready = runBlocking { AndroidPredictionRepository(context).load(id, span, PredictionPurpose.DISPLAY) } as PredictionResult.Ready
         val current = ready.series as PredictionSeries.Current
         assertTrue(current.hasCrossAxis)
-        val slack = current.events.first { it.kind == CurrentEventKind.SLACK }
-        scene("vector-slack", id.value, slack.time)
+        val minimum = current.points.minBy { it.magnitudeKnots }
+        assertTrue(minimum.magnitudeKnots > 0.0)
+        scene("vector-current", id.value, minimum.time)
     }
 
     @Test fun completedBoundedGateShowsItsBoundWithoutRequestingMoreData() =
@@ -264,7 +265,7 @@ class DetailConformanceTest {
         plot.assertIsDisplayed()
         val spoken = plot.fetchSemanticsNode().config[SemanticsProperties.StateDescription]
         assertTrue("Missing chart reading on $name", spoken.isNotBlank())
-        if (name == "vector-slack") assertTrue(spoken, spoken.contains("slack", ignoreCase = true))
+        if (name == "vector-current") assertFalse(spoken, spoken.contains("slack", ignoreCase = true))
         if (name == "derived") assertFalse(spoken, spoken.contains(" kn"))
         if (InstrumentationRegistry.getArguments().getString("screenshots") == "true") {
             val instrumentation = InstrumentationRegistry.getInstrumentation()

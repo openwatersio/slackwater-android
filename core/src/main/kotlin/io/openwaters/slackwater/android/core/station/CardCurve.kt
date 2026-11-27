@@ -216,7 +216,7 @@ class CardCurve(
                         // A finite block (an online window) marks its largest sample before a cut as a peak; a peak
                         // on the data's first or last sample is that cut, not the water's turn, so it is dropped.
                         extremes = series.events.filter {
-                            it.kind != CurrentEventKind.SLACK && inSpan(it.time) &&
+                            (it.kind == CurrentEventKind.MAX_FLOOD || it.kind == CurrentEventKind.MAX_EBB) && inSpan(it.time) &&
                                 it.time != points.firstOrNull()?.time && it.time != points.lastOrNull()?.time
                         }.map { event ->
                             val before = points.speedAt(event.time.minus(SAMPLE_STEP))

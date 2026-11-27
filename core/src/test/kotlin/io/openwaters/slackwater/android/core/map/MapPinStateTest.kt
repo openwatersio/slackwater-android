@@ -92,6 +92,25 @@ class MapPinStateTest {
         assertNull(subordinateCurrentSpeed(now, emptyList(), station))
     }
 
+    @Test fun subordinateLullsTakeTheirPhaseOffsetsAndLeaveSlackPhasesToMaxima() {
+        // A strong quarter-diurnal overtide weakens one flood or ebb per tide without reversing it.
+        val start = Instant.ofEpochSecond(now.epochSecond / 1800 * 1800)
+        val kinds = mutableSetOf<CurrentEventKind>()
+        for (overtidePhase in listOf(0.0, 180.0)) {
+            val reference = CurrentStation(listOf(HarmonicConstituent("M2", 1.0, 0.0), HarmonicConstituent("M4", 0.5, overtidePhase)))
+            val station = SubordinateCurrentStation(reference, 120.0, -900.0, 600.0, -300.0, 0.9, 1.1)
+            kinds += reference.events(start, start.plusSeconds(86_400)).map { it.kind }
+            val cache = ReferenceCurrentEvents()
+            for (minutes in 0L until 24 * 60 step 20) {
+                val time = start.plusSeconds(minutes * 60)
+                val events = cache.events(StationId("ref"), time, reference::events)
+                val engine = station.speeds(time, time, 1.0).single().speedKnots
+                assertEquals("$overtidePhase at $time", engine, subordinateCurrentSpeed(time, events, station)!!, 0.002)
+            }
+        }
+        assertTrue(CurrentEventKind.MIN_FLOOD in kinds && CurrentEventKind.MIN_EBB in kinds)
+    }
+
     @Test fun shippedSubordinatesMatchTheEngineAcrossAFullCycleAndBucketBoundaries() {
         val file = File(System.getProperty("mapStationIndex")).resolveSibling("currents.json")
         val rows = file.reader().use { JsonParser.parseReader(it).asJsonArray }

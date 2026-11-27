@@ -14,6 +14,9 @@ test('every bundled publisher has an accessible data credit', async () => {
     }
     assert.ok(notices.includes('Canadian Hydrographic Service'));
     assert.ok(notices.includes('CC BY-NC 4.0'));
+    for (const source of ['GeoNames', 'OpenStreetMap contributors', 'Marine Regions', 'Wikidata']) {
+        assert.ok(notices.includes(source), `Missing region credit: ${source}`);
+    }
 });
 
 test('credits include notices for the pinned MapLibre distribution', async () => {
@@ -76,4 +79,20 @@ test('live station IDs are unique and disjoint from restricted identities', asyn
     for (const row of await read('unavailable-stations')) {
         assert.ok(!ids.has(row.id), `Restricted station in live catalog: ${row.id}`);
     }
+});
+
+
+test('both Maizuru gauges are available with distinct links', async () => {
+    const read = async name => JSON.parse(await readFile(new URL(`app/src/main/assets/slackwater/${name}`, root)));
+    const index = await read('station-index.json');
+    const slugs = await read('slugs.json');
+    const tombstones = await read('station-tombstones.json');
+    const ids = ['jma/MZ', 'ticon/maizuru-hd24-jpn-jodc_jcg'];
+    for (const id of ids) {
+        assert.ok(index.tides.some(station => station.id === id), id);
+        assert.ok(slugs.tide[id], id);
+        assert.ok(!tombstones.some(station => station.id === id), id);
+    }
+    assert.notEqual(slugs.tide[ids[0]], slugs.tide[ids[1]]);
+    assert.equal(index.tides.find(station => station.id === ids[1]).region, 'Nishimaizuru');
 });

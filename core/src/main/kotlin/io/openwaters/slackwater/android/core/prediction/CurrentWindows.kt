@@ -8,7 +8,7 @@ data class CurrentWindow(val start: Instant, val end: Instant, val clipped: Bool
     val duration: Duration? get() = if (clipped || start == end) null else Duration.between(start, end)
 }
 
-/** Only engine slack events can anchor a measured window. A small same-sign speed alone is weak water. */
+/** Low-speed runs can contain a true slack, a same-direction lull, or no event. */
 fun PredictionSeries.Current.windows(thresholdKnots: Double, sampleStep: Duration): List<CurrentWindow> {
     require(thresholdKnots.isFinite() && thresholdKnots >= 0)
     require(!sampleStep.isZero && !sampleStep.isNegative)

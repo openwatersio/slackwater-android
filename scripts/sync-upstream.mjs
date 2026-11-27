@@ -45,6 +45,11 @@ async function main() {
  const dir=join(root,'app/src/main/assets/slackwater');
  if(!check) {
   const ios=await checkout('slackwater-ios',lock.resources,false);
+  if (lock.productDocs) {
+   if (lock.productDocs.repository !== lock.resources.repository || !/^[a-f0-9]{40}$/.test(lock.productDocs.commit)) throw Error('Invalid iOS documentation source');
+   try { git(ios,'cat-file','-e',`${lock.productDocs.commit}^{commit}`); }
+   catch { git(ios,'fetch','--depth=1','origin',lock.productDocs.commit); }
+  }
   await mkdir(dir,{recursive:true});
   for(const entry of lock.resources.assets) {
    if(!/^[\w][\w.-]*$/.test(entry.name)) throw Error('Invalid asset name');

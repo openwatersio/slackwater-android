@@ -43,8 +43,9 @@ class FillFieldTest {
         val field = requireNotNull(FillField.decode(File(dir, "fill-salish.bin").readBytes(), File(dir, "fill-salish.json").readText()))
         val cells = field.cells(Instant.ofEpochSecond(1788220800L))
         assertEquals(13168, cells.size)
-        assertEquals(1.4969466423542093, cells[3597].speedKn, 1e-6)
-        assertEquals(35.747437152706084, cells[3597].bearingDeg, 1e-6)
+        // Swift engine adfa60a evaluated this cell’s packed constituents at the same instant.
+        assertEquals(1.5442288465169678, cells[3597].speedKn, 1e-6)
+        assertEquals(34.49438976263508, cells[3597].bearingDeg, 1e-6)
     }
 
     @Test fun rejectsDigestMismatchAndMalformedChunks() {

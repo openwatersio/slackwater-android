@@ -19,3 +19,29 @@ data class StationSubscription(
 }
 
 data class PredictionInvalidation(val stationId: StationId, val revision: String)
+
+fun migrateCalendarSubscriptions(
+    subscriptions: List<StationSubscription>, successors: Map<StationId, StationId>,
+): List<StationSubscription> {
+    val rows = subscriptions.associateByTo(linkedMapOf()) { it.stationId }
+    for (sub in subscriptions) {
+        val target = successors[sub.stationId] ?: continue
+        if (sub.pendingDeletion || target == sub.stationId) continue
+        val existing = rows[target]
+        if (existing?.pendingDeletion == true) {
+            rows[sub.stationId] = sub.copy(pendingWork = true)
+            continue
+        }
+        val replacement = if (existing == null) {
+            StationSubscription(target, origin = sub.origin, trialEnd = sub.trialEnd)
+        } else if (sub.origin == CalendarOrigin.PURCHASED && existing.origin != CalendarOrigin.PURCHASED) {
+            existing.copy(origin = CalendarOrigin.PURCHASED, trialEnd = null, pendingWork = true)
+        } else if (existing.origin == CalendarOrigin.FREE_DAY && sub.trialEnd != null &&
+            (existing.trialEnd == null || sub.trialEnd > existing.trialEnd)) {
+            existing.copy(trialEnd = sub.trialEnd, pendingWork = true)
+        } else existing
+        rows[target] = replacement
+        rows[sub.stationId] = sub.copy(pendingDeletion = true, pendingWork = true)
+    }
+    return rows.values.toList()
+}

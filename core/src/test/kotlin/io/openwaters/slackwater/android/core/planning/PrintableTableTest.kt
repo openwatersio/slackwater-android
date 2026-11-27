@@ -49,6 +49,19 @@ class PrintableTableTest {
         assertEquals(743L, Duration.between(march.start, march.end).toHours())
     }
 
+    @Test fun lullsAreLeftOutOfTheMaximumFlowRows() {
+        val current = station.copy(kind = StationKind.Current, id = StationId("noaa/PCT1"))
+        val span = printRange(PrintSpan.WEEK, anchor, ZoneId.of("America/Los_Angeles"))
+        val noon = Instant.parse("2025-11-06T20:00:00Z")
+        val events = listOf(CurrentEvent(noon, 2.1, CurrentEventKind.MAX_FLOOD), CurrentEvent(noon.plusSeconds(3600), 0.6, CurrentEventKind.MIN_FLOOD),
+            CurrentEvent(noon.plusSeconds(7200), 1.9, CurrentEventKind.MAX_FLOOD), CurrentEvent(noon.plusSeconds(10800), -0.4, CurrentEventKind.MIN_EBB))
+        val table = make(current, PrintSpan.WEEK) {
+            ready(span, PredictionSeries.Current(emptyList(), events, 90.0, 270.0), StationCapabilities.HARMONIC_CURRENT)
+        }
+        assertEquals(listOf(noon to PrintEventKind.MAX_FLOOD, noon.plusSeconds(7200) to PrintEventKind.MAX_FLOOD),
+            table.days.flatMap { it.entries }.filter { it.kind != PrintEventKind.SOLAR_ECLIPSE && it.kind != PrintEventKind.LUNAR_ECLIPSE }.map { it.time to it.kind })
+    }
+
     @Test fun partialMonthOnlineBlocksPreserveGapsLocalValuesSetsAndBareSlacks() {
         val gate = station.copy(kind = StationKind.CanadianCurrent, id = StationId("chs-current"))
         fun block(start: String, end: String, flood: Double): PredictionResult.Ready {

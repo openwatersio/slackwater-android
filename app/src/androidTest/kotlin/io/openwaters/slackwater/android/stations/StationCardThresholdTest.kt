@@ -119,9 +119,9 @@ class StationCardThresholdTest {
                 SemanticsProperties.IndexForKey in node.config && node.config[SemanticsProperties.IndexForKey]("footer") >= 0
             }
         }
-        val slack = context.getString(R.string.card_slack)
+        val unit = context.getString(R.string.spoken_knots)
         val loadedCard = hasContentDescription(station.name, substring = true) and
-            hasContentDescription(slack, substring = true, ignoreCase = true)
+            hasContentDescription(unit, substring = true, ignoreCase = true)
         compose.waitUntil("Settings and the loaded Tacoma card are both visible", 30_000) {
             list.performScrollToKey("footer")
             compose.onAllNodes(hasText(settings) and hasClickAction()).fetchSemanticsNodes().isNotEmpty() &&

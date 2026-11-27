@@ -6,6 +6,8 @@ import io.openwaters.slackwater.android.core.prediction.PredictionSeries
 import io.openwaters.slackwater.android.core.station.SpeedUnitKind
 import java.time.*
 import java.util.Locale
+import kotlin.math.PI
+import kotlin.math.cos
 import org.junit.Assert.*
 import org.junit.Test
 
@@ -14,7 +16,21 @@ class ChartSceneTest {
     private fun t(minute: Long) = origin.plusSeconds(minute * 60)
 
     @Test
-    fun weakOneSidedWaterHasNoSlackAndDerivedGatesNeverInventAMagnitude() {
+    fun lullsAreNotLabelledAsMaximumFlow() {
+        val series = PredictionSeries.Current(
+            (0..24).map { CurrentPoint(t(it * 10L), 1.5 + 0.8 * cos(PI * it / 6.0)) },
+            listOf(CurrentEvent(t(0), 2.3, CurrentEventKind.MAX_FLOOD), CurrentEvent(t(60), 0.7, CurrentEventKind.MIN_FLOOD),
+                CurrentEvent(t(120), 2.3, CurrentEventKind.MAX_FLOOD), CurrentEvent(t(180), -0.7, CurrentEventKind.MIN_EBB)),
+            90.0, 270.0
+        )
+        val scene = ChartScene(series, emptyList(), 0.0, false)
+        assertEquals(listOf(t(0) to ChartStop.Flood, t(120) to ChartStop.Flood), scene.water.map { it.at to it.stop })
+        assertEquals("Flooding", scene.lead(t(60), false, SpeedUnitKind.KNOTS, false, Locale.US).state)
+        assertEquals("Ebbing", scene.lead(t(180), false, SpeedUnitKind.KNOTS, false, Locale.US).state)
+    }
+
+    @Test
+    fun weakOneSidedWaterHasAWindowButNoSlackAndDerivedGatesNeverInventAMagnitude() {
         val weak = PredictionSeries.Current(
             listOf(CurrentPoint(t(0), 0.1), CurrentPoint(t(60), 0.2)),
             emptyList(),
@@ -22,7 +38,7 @@ class ChartSceneTest {
             270.0
         )
         val scene = ChartScene(weak, emptyList(), 0.5, false)
-        assertTrue(scene.windows.isEmpty())
+        assertEquals(listOf(t(0) to t(60)), scene.windows.map { it.start to it.end })
         assertTrue(scene.water.isEmpty())
         assertEquals(
             "Flooding",

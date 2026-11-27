@@ -59,7 +59,7 @@ internal fun PredictionSeries.waterMarks(): List<WaterMark> = when (this) {
             previous = current
         }
     }
-    is PredictionSeries.Current -> events.filter { it.kind != CurrentEventKind.SLACK }.map {
+    is PredictionSeries.Current -> events.filter { it.kind == CurrentEventKind.MAX_FLOOD || it.kind == CurrentEventKind.MAX_EBB }.map {
         WaterMark(it.time, abs(it.speedKnots), it.kind == CurrentEventKind.MAX_FLOOD)
     }
     is PredictionSeries.Derived -> emptyList()

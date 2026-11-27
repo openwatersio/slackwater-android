@@ -100,16 +100,28 @@ class CardReadingTest {
         assertEquals(270.0, ebbing.setDegrees!!, 1e-6)
     }
 
-    @Test fun slackShowsANeutralDotUnlessCrossFlowStillPrints() {
+    @Test fun aLullReadsAsTheFloodOrEbbItWeakens() {
+        // Flood weakens to 0.7 kn at 1 h and ebb to -0.7 kn at 3 h, neither reversing.
+        val lulls = PredictionSeries.Current(
+            points = (0..24).map { CurrentPoint(at(it * 10L), if (it <= 12) 1.5 - 0.8 * Math.cos(Math.PI * it / 6.0) else -1.5 + 0.8 * Math.cos(Math.PI * it / 6.0)) },
+            events = listOf(CurrentEvent(at(60), 0.7, CurrentEventKind.MIN_FLOOD, 90.0), CurrentEvent(at(180), -0.7, CurrentEventKind.MIN_EBB, 270.0)),
+            floodBearing = 90.0, ebbBearing = 270.0,
+        )
+        assertEquals(CardCurrentState.FLOODING, (cardReading(ready(lulls, StationCapabilities.HARMONIC_CURRENT), at(60)) as CardReading.Current).state)
+        assertEquals(CardCurrentState.EBBING, (cardReading(ready(lulls, StationCapabilities.HARMONIC_CURRENT), at(180)) as CardReading.Current).state)
+    }
+
+    @Test fun onlyTrueSlackIsSlackWhenCrossFlowPersists() {
         val slack = cardReading(ready(current(), StationCapabilities.HARMONIC_CURRENT), at(180)) as CardReading.Current
         assertEquals(CardCurrentState.SLACK, slack.state)
         assertNull(slack.setDegrees)
-        // Water still crossing the channel at slack keeps its set; just below the neutral speed it does not.
+        // A zero major axis with cross-flow is not a true slack; weak flow has a neutral set.
         val crossing = cardReading(ready(current(cross = 0.3), StationCapabilities.HARMONIC_CURRENT), at(180)) as CardReading.Current
-        assertEquals(CardCurrentState.SLACK, crossing.state)
+        assertEquals(CardCurrentState.FLOODING, crossing.state)
         assertEquals(0.3, crossing.speedKnots, 1e-9)
         assertNotNull(crossing.setDegrees)
         val faint = cardReading(ready(current(cross = 0.04), StationCapabilities.HARMONIC_CURRENT), at(180)) as CardReading.Current
+        assertEquals(CardCurrentState.FLOODING, faint.state)
         assertNull(faint.setDegrees)
     }
 
