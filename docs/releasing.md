@@ -4,7 +4,17 @@ The [Play upload workflow](../.github/workflows/release.yml) builds a signed rel
 
 ## One-time setup
 
-The workflow needs three things it cannot create for itself: the upload key, a first bundle uploaded by hand, and permission for GitHub Actions to call the Google Play Developer API. Do the steps in order.
+The workflow needs three things it cannot create for itself: the upload key, a first bundle uploaded by hand, and permission for GitHub Actions to call the Google Play Developer API.
+
+All three are in place for `openwatersio/slackwater-android`, and the workflow uploads to internal testing. The steps below record how the setup was made, for rebuilding it or repeating it for another app. Do them in order.
+
+| What | Where it is |
+| --- | --- |
+| Upload key | The organization's password manager; its three secrets are in the `play` environment |
+| Google Cloud project | `openwaters-ci` (number `95449576797`), in the `openwaters.io` organization |
+| Service account | `play-upload@openwaters-ci.iam.gserviceaccount.com`, invited in Play Console with "Release apps to testing tracks" for Slackwater only |
+| GitHub identity | Pool `github`, provider `slackwater-android`, limited to this repository's `play` environment on `main` |
+| GitHub environment | `play`, deployable from `main` only, holding the secrets and the `PLAY_*` variables |
 
 ### 1. Create the upload key
 
@@ -37,14 +47,26 @@ The Google Play Developer API only changes an app that already has an uploaded b
    ```
 
    The bundle is `app/build/outputs/bundle/release/app-release.aab`. The four `slackwaterUpload*` properties can live in `~/.gradle/gradle.properties` instead of the command line.
-2. In Play Console, open Slackwater, go to **Test and release → Testing → Internal testing**, create a release, upload the bundle and roll it out.
-3. Under **Test and release → App integrity → Play app signing**, check that the upload key certificate's SHA-256 fingerprint matches `keytool -list -v -keystore slackwater-upload.p12 -alias upload`.
+
+   A third way keeps the password out of Gradle, and is what the workflow's `sign` job does: build `./gradlew :app:bundleRelease` with no signing properties, then sign the bundle. `jarsigner` asks for the store password.
+
+   ```sh
+   jarsigner -keystore /absolute/path/to/slackwater-upload.p12 -storetype PKCS12 -sigalg SHA256withRSA -digestalg SHA-256 app/build/outputs/bundle/release/app-release.aab upload
+   jarsigner -verify app/build/outputs/bundle/release/app-release.aab
+   ```
+
+   The second command prints `jar verified.` It also warns that the certificate is self-signed, that its chain cannot be validated and that the signature has no timestamp. All three are normal for an Android upload key, which is never issued by a certificate authority.
+2. In Play Console, open Slackwater, go to **Test and release → Testing → Internal testing**, create a release, upload the bundle and roll it out. If the release reports that it "does not add or remove any app bundles", the bundle did not attach: wait for the upload to finish, or pick it with **Add from library**.
+3. Under **Protected with Play → Play Store protection → Manage Play app signing**, check that the SHA-256 fingerprint in the **Upload key certificate** section matches `keytool -list -v -keystore slackwater-upload.p12 -alias upload`. Play registers the upload key from the first bundle, so the section is empty before that. Play Console has moved this page before; search its help for "Play app signing" if the menu differs.
+4. In-app products can be created only once a build that carries the `com.android.vending.BILLING` permission has been uploaded. The app's products are the subscription `io.openwaters.slackwater.premium.yearly` and the one-time product `io.openwaters.slackwater.premium.lifetime`.
 
 ### 3. Let GitHub Actions call the Play API
 
 The workflow holds no Google key. Its `upload` job presents its GitHub identity to Google Cloud workload identity federation and receives a token for a service account that lasts 15 minutes. Google only accepts that identity from this repository's `play` environment on `main`.
 
-Run these with `gcloud` signed in as an owner of a Google Cloud project that belongs to Open Waters. `PROJECT_ID` is that project's ID and `PROJECT_NUMBER` its number (`gcloud projects describe PROJECT_ID --format='value(projectNumber)'`).
+Run these with `gcloud` signed in as an owner of a Google Cloud project that belongs to Open Waters. `PROJECT_ID` is that project's ID and `PROJECT_NUMBER` its number (`gcloud projects describe PROJECT_ID --format='value(projectNumber)'`). The project needs no billing account.
+
+Two things can stop a first-time setup. An account that has never used Google Cloud must accept its Terms of Service once, by opening the Cloud console in a browser; until then `gcloud projects create` fails with "Callers must accept Terms of Service". And a project created a moment ago can refuse to create the identity pool with a permission error, even for its owner; it works a minute later.
 
 1. Enable the APIs:
 

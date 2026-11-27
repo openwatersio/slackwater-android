@@ -42,7 +42,7 @@ Dependency checksums are in `gradle/verification-metadata.xml`; the wrapper has 
 
 ## Releasing
 
-A nightly workflow uploads a signed bundle of `main` to Google Play internal testing. [Releasing to Google Play](docs/releasing.md) covers its setup, its version codes and how to run it by hand.
+A nightly workflow uploads a signed bundle of `main` to Google Play internal testing. [Releasing to Google Play](docs/releasing.md) covers its setup, its version codes and how to run it by hand, and the [contributing guide](CONTRIBUTING.md#releasing) says what the nightly means for a change.
 
 ## Remaining work
 
