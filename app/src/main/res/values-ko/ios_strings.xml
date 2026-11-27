@@ -200,7 +200,6 @@
     <string name="list_filter_show_currents">"조류 보기"</string>
     <string name="list_search">"검색"</string>
     <string name="list_by_open_waters">"Open Waters 제작"</string>
-    <string name="list_not_for_navigation">"예측 — 항해용이 아님"</string>
     <string name="list_distance_nm">"%1$s nm"</string>
     <string name="card_rising">"상승 중"</string>
     <string name="card_falling">"하강 중"</string>
@@ -327,4 +326,14 @@
     <string name="premium_restore">"구매 복원"</string>
     <string name="premium_unavailable">"일시적으로 구매할 수 없습니다."</string>
     <string name="premium_purchase_failed">"구매가 완료되지 않았습니다. 다시 시도하세요."</string>
+    <string name="footer_downloads_label">"오프라인 다운로드"</string>
+    <string name="footer_downloading">"다운로드 중, %2$d개 중 %1$d개 준비됨"</string>
+    <string name="footer_online_complete">"온라인, 모든 관측소 다운로드됨"</string>
+    <string name="footer_online">"온라인"</string>
+    <string name="footer_offline">"오프라인"</string>
+    <string name="footer_offline_complete">"오프라인, 모든 관측소 다운로드됨"</string>
+    <plurals name="footer_offline_remaining">
+        <item quantity="other">"오프라인, %1$d개 다운로드 남음"</item>
+    </plurals>
+    <string name="footer_supporter">"Slackwater 후원자"</string>
 </resources>

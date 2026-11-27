@@ -260,7 +260,6 @@
     <string name="search_truncated">"Les 60 plus proches — continuez à taper pour préciser"</string>
     <string name="list_catalog_unavailable">"Les données des stations ne sont pas disponibles sur cet appareil."</string>
     <string name="card_spoken_approximate">"environ %1$s"</string>
-    <string name="data_and_licenses">"Données et licences"</string>
     <string name="data_credits">"Sources des données"</string>
     <string name="reminder_channel">"Rappels de stations"</string>
     <string name="notification_window_opens">"La fenêtre d’étale s’ouvre"</string>

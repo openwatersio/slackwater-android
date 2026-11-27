@@ -42,15 +42,17 @@ private const val CARD_REFRESH_MILLIS = 60_000L
  * its own station (list §11).
  */
 @Composable
-fun StationsHome(onCredits: () -> Unit, coveredByAlert: Boolean = false, externalMapFocus: StationIdentity? = null,
+fun StationsHome(onDownloads: () -> Unit, coveredByAlert: Boolean = false, externalMapFocus: StationIdentity? = null,
                  consumeFocus: () -> Unit = {}, linkPending: Boolean = false,
                  linkOpened: Boolean = false,
                  cachedTourCoordinate: (LocationRepository) -> Coordinate? = { it.cachedFix()?.coordinate },
                  model: StationListModel = StationListModel.get(LocalContext.current),
-                 clock: () -> Instant = Instant::now,
-                 footerExtras: @Composable (openSettings: () -> Unit) -> Unit = {}) {
+                 clock: () -> Instant = Instant::now) {
     val context = LocalContext.current
     var settingsOpen by rememberStationDialog(false)
+    // Hosted here, not in the footer: a lazy item leaves composition when the cards above it grow.
+    var premiumOpen by rememberStationDialog(false)
+    if (premiumOpen) io.openwaters.slackwater.android.map.PremiumSheet(onClose = { premiumOpen = false })
     var replayGeneration by rememberSaveable { mutableIntStateOf(0) }
     var searching by rememberSaveable { mutableStateOf(false) }
     var opened by rememberSaveable { mutableStateOf<String?>(null) }
@@ -207,9 +209,9 @@ fun StationsHome(onCredits: () -> Unit, coveredByAlert: Boolean = false, externa
         Row(Modifier.fillMaxSize().then(if (searching) Modifier.clearAndSetSemantics {} else Modifier)) {
             if (listVisible) Box(if (expanded) Modifier.width(320.dp).fillMaxHeight() else Modifier.fillMaxSize()) {
                 pageState.SaveableStateProvider("list") {
-                    StationListScreen(model, ::open, onSearch = { initialChoiceMade = true; searching = true }, onCredits = onCredits,
+                    StationListScreen(model, ::open, onSearch = { initialChoiceMade = true; searching = true }, onDownloads = onDownloads,
                         now = now, showing = showing, onMap = if (expanded && mapShowing && opened == null) null else ::toggleMap,
-                        searchButtonModifier = Modifier.focusRequester(searchButton), onAsk = ask, footerExtras = { footerExtras { settingsOpen = true } })
+                        searchButtonModifier = Modifier.focusRequester(searchButton), onAsk = ask, onSettings = { settingsOpen = true }, onSupport = { premiumOpen = true })
                 }
             }
             if (!coveredByAlert && (expanded || !listVisible)) {

@@ -256,7 +256,6 @@
     <string name="search_truncated">"最寄りの60件 — 入力を続けて絞り込む"</string>
     <string name="list_catalog_unavailable">"このデバイスでは観測地点のデータを利用できません。"</string>
     <string name="card_spoken_approximate">"約%1$s"</string>
-    <string name="data_and_licenses">"データとライセンス"</string>
     <string name="data_credits">"データの提供元"</string>
     <string name="reminder_channel">"観測点のリマインダー"</string>
     <string name="notification_window_opens">"潮止まり時間帯が始まります"</string>

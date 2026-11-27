@@ -254,7 +254,6 @@
   "search_truncated": "가까운 60곳 — 계속 입력하여 범위 좁히기",
   "list_catalog_unavailable": "이 기기에서 관측소 데이터를 사용할 수 없습니다.",
   "card_spoken_approximate": "약 %1$s",
-  "data_and_licenses": "데이터 및 라이선스",
   "data_credits": "데이터 제공",
   "reminder_channel": "관측소 알림",
   "notification_window_opens": "정조 시간대가 시작됩니다",

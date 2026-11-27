@@ -200,7 +200,6 @@
     <string name="list_filter_show_currents">"Stromingen tonen"</string>
     <string name="list_search">"Zoeken"</string>
     <string name="list_by_open_waters">"van Open Waters"</string>
-    <string name="list_not_for_navigation">"Voorspellingen — niet geschikt voor navigatie"</string>
     <string name="list_distance_nm">"%1$s nm"</string>
     <string name="card_rising">"Stijgend"</string>
     <string name="card_falling">"Dalend"</string>
@@ -327,4 +326,15 @@
     <string name="premium_restore">"Aankoop herstellen"</string>
     <string name="premium_unavailable">"Aankopen zijn tijdelijk niet beschikbaar."</string>
     <string name="premium_purchase_failed">"Aankoop is niet voltooid — probeer het opnieuw."</string>
+    <string name="footer_downloads_label">"Offline downloads"</string>
+    <string name="footer_downloading">"Downloaden, %1$d van %2$d gereed"</string>
+    <string name="footer_online_complete">"Online, alle stations gedownload"</string>
+    <string name="footer_online">"Online"</string>
+    <string name="footer_offline">"Offline"</string>
+    <string name="footer_offline_complete">"Offline, alle stations gedownload"</string>
+    <plurals name="footer_offline_remaining">
+        <item quantity="one">"Offline, nog %1$d station te downloaden"</item>
+        <item quantity="other">"Offline, nog %1$d stations te downloaden"</item>
+    </plurals>
+    <string name="footer_supporter">"Slackwater-supporter"</string>
 </resources>

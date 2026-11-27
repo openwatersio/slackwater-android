@@ -200,7 +200,6 @@
     <string name="list_filter_show_currents">"潮流を表示"</string>
     <string name="list_search">"検索"</string>
     <string name="list_by_open_waters">"Open Waters制作"</string>
-    <string name="list_not_for_navigation">"予測値 — 航海には使用できません"</string>
     <string name="list_distance_nm">"%1$s nm"</string>
     <string name="card_rising">"上昇中"</string>
     <string name="card_falling">"下降中"</string>
@@ -327,4 +326,14 @@
     <string name="premium_restore">"購入を復元"</string>
     <string name="premium_unavailable">"現在、購入を利用できません。"</string>
     <string name="premium_purchase_failed">"購入が完了しませんでした。もう一度お試しください。"</string>
+    <string name="footer_downloads_label">"オフライン用ダウンロード"</string>
+    <string name="footer_downloading">"ダウンロード中、%1$d / %2$dか所が利用可能"</string>
+    <string name="footer_online_complete">"オンライン、すべての観測所をダウンロード済み"</string>
+    <string name="footer_online">"オンライン"</string>
+    <string name="footer_offline">"オフライン"</string>
+    <string name="footer_offline_complete">"オフライン、すべての観測所をダウンロード済み"</string>
+    <plurals name="footer_offline_remaining">
+        <item quantity="other">"オフライン、残り%1$dか所をダウンロード"</item>
+    </plurals>
+    <string name="footer_supporter">"Slackwaterサポーター"</string>
 </resources>

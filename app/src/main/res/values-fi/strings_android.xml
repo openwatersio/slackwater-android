@@ -256,7 +256,6 @@
     <string name="search_truncated">"60 lähintä — rajaa hakua jatkamalla kirjoittamista"</string>
     <string name="list_catalog_unavailable">"Asematiedot eivät ole käytettävissä tällä laitteella."</string>
     <string name="card_spoken_approximate">"noin %1$s"</string>
-    <string name="data_and_licenses">"Tiedot ja lisenssit"</string>
     <string name="data_credits">"Tietolähteet"</string>
     <string name="reminder_channel">"Asemamuistutukset"</string>
     <string name="notification_window_opens">"Heikon virtauksen jakso alkaa"</string>

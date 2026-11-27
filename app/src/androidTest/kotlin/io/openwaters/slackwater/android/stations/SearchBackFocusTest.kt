@@ -35,7 +35,7 @@ class SearchBackFocusTest {
         val instrumentation = InstrumentationRegistry.getInstrumentation()
         val label = instrumentation.targetContext.getString(R.string.list_search)
         val button = compose.onNodeWithText(label)
-        compose.setContent { StationsHome(onCredits = {}) }
+        compose.setContent { StationsHome(onDownloads = {}) }
         val model = StationListModel.get(instrumentation.targetContext)
         compose.waitUntil(60_000) { model.state.value != null }
         instrumentation.sendKeyDownUpSync(KeyEvent.KEYCODE_TAB)
@@ -70,7 +70,7 @@ class SearchBackFocusTest {
             compose.setContent {
                 BoxWithConstraints(Modifier.fillMaxSize()) {
                     val density = with(LocalDensity.current) { minOf(maxWidth.toPx() / 720f, maxHeight.toPx() / 500f) }
-                    CompositionLocalProvider(LocalDensity provides Density(density)) { StationsHome(onCredits = {}, model = model) }
+                    CompositionLocalProvider(LocalDensity provides Density(density)) { StationsHome(onDownloads = {}, model = model) }
                 }
             }
             compose.waitUntil(60_000) { model.state.value != null && compose.onAllNodesWithTag("detailTimeline").fetchSemanticsNodes().isNotEmpty() }

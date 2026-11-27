@@ -200,7 +200,6 @@
     <string name="list_filter_show_currents">"Taispeáin sruthanna"</string>
     <string name="list_search">"Cuardaigh"</string>
     <string name="list_by_open_waters">"ó Open Waters"</string>
-    <string name="list_not_for_navigation">"Tuartha — ní le haghaidh loingseoireachta"</string>
     <string name="list_distance_nm">"%1$s nm"</string>
     <string name="card_rising">"Ag líonadh"</string>
     <string name="card_falling">"Ag trá"</string>
@@ -327,4 +326,18 @@
     <string name="premium_restore">"Aischuir an ceannach"</string>
     <string name="premium_unavailable">"Níl ceannacháin ar fáil faoi láthair."</string>
     <string name="premium_purchase_failed">"Níor éirigh leis an gceannach — bain triail eile as."</string>
+    <string name="footer_downloads_label">"Íoslódálacha as líne"</string>
+    <string name="footer_downloading">"Á íoslódáil, %1$d as %2$d réidh"</string>
+    <string name="footer_online_complete">"Ar líne, gach stáisiún íoslódáilte"</string>
+    <string name="footer_online">"Ar líne"</string>
+    <string name="footer_offline">"As líne"</string>
+    <string name="footer_offline_complete">"As líne, gach stáisiún íoslódáilte"</string>
+    <plurals name="footer_offline_remaining">
+        <item quantity="one">"As líne, %1$d fós le híoslódáil"</item>
+        <item quantity="two">"As líne, %1$d fós le híoslódáil"</item>
+        <item quantity="few">"As líne, %1$d fós le híoslódáil"</item>
+        <item quantity="many">"As líne, %1$d fós le híoslódáil"</item>
+        <item quantity="other">"As líne, %1$d fós le híoslódáil"</item>
+    </plurals>
+    <string name="footer_supporter">"Tacadóir Slackwater"</string>
 </resources>

@@ -200,7 +200,6 @@
     <string name="list_filter_show_currents">"Mostrar corrientes"</string>
     <string name="list_search">"Buscar"</string>
     <string name="list_by_open_waters">"por Open Waters"</string>
-    <string name="list_not_for_navigation">"Predicciones — no usar para la navegación"</string>
     <string name="list_distance_nm">"%1$s nm"</string>
     <string name="card_rising">"Subiendo"</string>
     <string name="card_falling">"Bajando"</string>
@@ -327,4 +326,15 @@
     <string name="premium_restore">"Restaurar compra"</string>
     <string name="premium_unavailable">"Las compras no están disponibles temporalmente."</string>
     <string name="premium_purchase_failed">"No se completó la compra. Inténtalo de nuevo."</string>
+    <string name="footer_downloads_label">"Descargas sin conexión"</string>
+    <string name="footer_downloading">"Descargando, %1$d de %2$d listas"</string>
+    <string name="footer_online_complete">"Con conexión, todas las estaciones descargadas"</string>
+    <string name="footer_online">"Con conexión"</string>
+    <string name="footer_offline">"Sin conexión"</string>
+    <string name="footer_offline_complete">"Sin conexión, todas las estaciones descargadas"</string>
+    <plurals name="footer_offline_remaining">
+        <item quantity="one">"Sin conexión, queda %1$d por descargar"</item>
+        <item quantity="other">"Sin conexión, quedan %1$d por descargar"</item>
+    </plurals>
+    <string name="footer_supporter">"Colaborador de Slackwater"</string>
 </resources>

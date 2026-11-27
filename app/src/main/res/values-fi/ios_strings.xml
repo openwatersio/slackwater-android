@@ -200,7 +200,6 @@
     <string name="list_filter_show_currents">"Näytä virtaukset"</string>
     <string name="list_search">"Haku"</string>
     <string name="list_by_open_waters">"Tekijä Open Waters"</string>
-    <string name="list_not_for_navigation">"Ennusteet — ei navigointiin"</string>
     <string name="list_distance_nm">"%1$s nm"</string>
     <string name="card_rising">"Nousee"</string>
     <string name="card_falling">"Laskee"</string>
@@ -327,4 +326,15 @@
     <string name="premium_restore">"Palauta osto"</string>
     <string name="premium_unavailable">"Ostokset eivät ole tilapäisesti käytettävissä."</string>
     <string name="premium_purchase_failed">"Osto epäonnistui — yritä uudelleen."</string>
+    <string name="footer_downloads_label">"Offline-lataukset"</string>
+    <string name="footer_downloading">"Ladataan, %1$d / %2$d valmiina"</string>
+    <string name="footer_online_complete">"Verkossa, kaikki asemat ladattu"</string>
+    <string name="footer_online">"Verkossa"</string>
+    <string name="footer_offline">"Ei verkkoyhteyttä"</string>
+    <string name="footer_offline_complete">"Ei verkkoyhteyttä, kaikki asemat ladattu"</string>
+    <plurals name="footer_offline_remaining">
+        <item quantity="one">"Ei verkkoyhteyttä, %1$d vielä lataamatta"</item>
+        <item quantity="other">"Ei verkkoyhteyttä, %1$d vielä lataamatta"</item>
+    </plurals>
+    <string name="footer_supporter">"Slackwaterin tukija"</string>
 </resources>

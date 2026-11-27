@@ -5,7 +5,11 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.UriHandler
 import androidx.compose.ui.test.junit4.v2.createComposeRule
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasScrollToNodeAction
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performScrollToNode
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.test.platform.app.InstrumentationRegistry
@@ -33,6 +37,8 @@ class AboutSettingsLinksTest {
         node(R.string.about_source).performScrollTo().performClick()
         node(R.string.about_attribution).performScrollTo().performClick()
         compose.onNodeWithText("DATA CREDITS").assertExists()
+        compose.onNode(hasScrollToNodeAction()).performScrollToNode(hasText("Norwegian stations:", substring = true))
+        compose.onNodeWithText("Norwegian stations:", substring = true).assertIsDisplayed()
         compose.runOnIdle {
             assertEquals(listOf("https://slackwater.xyz/support/", "https://slackwater.xyz/privacy",
                 "https://github.com/openwatersio/slackwater-android"), opened)

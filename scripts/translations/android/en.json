@@ -254,7 +254,6 @@
   "search_truncated": "Nearest 60 — keep typing to narrow",
   "list_catalog_unavailable": "Station data is unavailable on this device.",
   "card_spoken_approximate": "approximately %1$s",
-  "data_and_licenses": "Data and licenses",
   "data_credits": "Data credits",
   "reminder_channel": "Station reminders",
   "notification_window_opens": "Slack window opens",

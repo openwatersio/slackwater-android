@@ -200,7 +200,6 @@
     <string name="list_filter_show_currents">"Mostra correnti"</string>
     <string name="list_search">"Cerca"</string>
     <string name="list_by_open_waters">"di Open Waters"</string>
-    <string name="list_not_for_navigation">"Previsioni — non destinate alla navigazione"</string>
     <string name="list_distance_nm">"%1$s nm"</string>
     <string name="card_rising">"In salita"</string>
     <string name="card_falling">"In discesa"</string>
@@ -327,4 +326,15 @@
     <string name="premium_restore">"Ripristina acquisto"</string>
     <string name="premium_unavailable">"Gli acquisti non sono disponibili al momento."</string>
     <string name="premium_purchase_failed">"L’acquisto non è riuscito — riprova."</string>
+    <string name="footer_downloads_label">"Download offline"</string>
+    <string name="footer_downloading">"Download in corso, %1$d di %2$d pronte"</string>
+    <string name="footer_online_complete">"Online, tutte le stazioni scaricate"</string>
+    <string name="footer_online">"Online"</string>
+    <string name="footer_offline">"Offline"</string>
+    <string name="footer_offline_complete">"Offline, tutte le stazioni scaricate"</string>
+    <plurals name="footer_offline_remaining">
+        <item quantity="one">"Offline, ancora %1$d da scaricare"</item>
+        <item quantity="other">"Offline, ancora %1$d da scaricare"</item>
+    </plurals>
+    <string name="footer_supporter">"Sostenitore di Slackwater"</string>
 </resources>

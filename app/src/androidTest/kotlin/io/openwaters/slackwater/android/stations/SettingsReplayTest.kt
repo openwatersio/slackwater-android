@@ -50,17 +50,7 @@ class SettingsReplayTest {
     }
 
     private fun replay(coordinate: Coordinate?) {
-        val settings = context.getString(R.string.settings_title)
-        var mountedSettings: (() -> Unit)? = null
-        compose.setContent {
-            StationsHome(onCredits = {}, cachedTourCoordinate = { coordinate }) { openSettings ->
-                DisposableEffect(openSettings) {
-                    mountedSettings = openSettings
-                    onDispose { mountedSettings = null }
-                }
-                TextButton(onClick = openSettings) { Text(settings) }
-            }
-        }
+        compose.setContent { StationsHome(onDownloads = {}, cachedTourCoordinate = { coordinate }) }
         val list = compose.onNode(hasScrollAction())
         compose.waitUntil("Station list has a footer", 60_000) {
             compose.onAllNodes(hasScrollAction()).fetchSemanticsNodes().any { node ->
@@ -70,9 +60,8 @@ class SettingsReplayTest {
         compose.waitUntil("Settings footer is available", 30_000) {
             // Card heights can change while predictions load, moving the footer out of composition.
             list.performScrollToKey("footer")
-            compose.runOnIdle {
-                mountedSettings?.let { open -> open(); true } ?: false
-            }
+            val row = compose.onAllNodesWithTag("footerSettings")
+            if (row.fetchSemanticsNodes().isEmpty()) false else { row[0].performClick(); true }
         }
         compose.onNodeWithText(context.getString(R.string.tour_replay_title)).performScrollTo().performClick()
     }

@@ -256,7 +256,6 @@
     <string name="search_truncated">"Die nächsten 60 — zum Eingrenzen weiterschreiben"</string>
     <string name="list_catalog_unavailable">"Stationsdaten sind auf diesem Gerät nicht verfügbar."</string>
     <string name="card_spoken_approximate">"ungefähr %1$s"</string>
-    <string name="data_and_licenses">"Daten und Lizenzen"</string>
     <string name="data_credits">"Datenquellen"</string>
     <string name="reminder_channel">"Stationserinnerungen"</string>
     <string name="notification_window_opens">"Stauwasserfenster öffnet sich"</string>

@@ -70,7 +70,10 @@ export function renderResource(name, key, entry, locale) {
   return `    <plurals name="${name}">\n${items.join('\n')}\n    </plurals>`;
  }
  const text = format(localization.stringUnit);
- return text === null ? null : `    <string name="${name}">${text}</string>`;
+ if (text === null) return null;
+ // A language with one plural form has a plain string in the catalog. Android needs the same resource type in every locale.
+ if (source?.variations?.plural) return `    <plurals name="${name}">\n        <item quantity="other">${text}</item>\n    </plurals>`;
+ return `    <string name="${name}">${text}</string>`;
 }
 
 export function renderAndroidResource(name, source, translated, locale) {

@@ -24,6 +24,12 @@ test('preserves Irish plurals, XML entities, apostrophes, Unicode and whitespace
  assert.throws(()=>renderResource('broken','Hello %@',{localizations:{ga:{stringUnit:{state:'translated',value:'Dia duit'}}}},'ga'),/placeholder/i);
 });
 
+test('a plain translation of an English plural stays a plural', () => {
+ const unit=value=>({stringUnit:{state:'translated',value}});
+ const entry={localizations:{en:{variations:{plural:{one:unit('%lld left'),other:unit('%lld left')}}},ja:unit('残り%lld')}};
+ assert.equal(renderResource('left','%lld left',entry,'ja'), '    <plurals name="left">\n        <item quantity="other">"残り%1$d"</item>\n    </plurals>');
+});
+
 test('English source remains usable when Xcode marks its string unit new', () => {
  assert.equal(renderResource('pair','%@ %@',{localizations:{en:{stringUnit:{state:'new',value:'%1$@ %2$@'}}}},'en'), '    <string name="pair">"%1$s %2$s"</string>');
 });

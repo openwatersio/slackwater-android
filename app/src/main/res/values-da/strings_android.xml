@@ -256,7 +256,6 @@
     <string name="search_truncated">"De nærmeste 60 — skriv videre for at afgrænse"</string>
     <string name="list_catalog_unavailable">"Stationsdata er ikke tilgængelige på denne enhed."</string>
     <string name="card_spoken_approximate">"cirka %1$s"</string>
-    <string name="data_and_licenses">"Data og licenser"</string>
     <string name="data_credits">"Datakilder"</string>
     <string name="reminder_channel">"Stationspåmindelser"</string>
     <string name="notification_window_opens">"Vinduet med svag strøm begynder"</string>

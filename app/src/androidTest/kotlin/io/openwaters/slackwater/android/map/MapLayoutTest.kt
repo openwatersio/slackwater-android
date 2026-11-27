@@ -96,7 +96,7 @@ class MapLayoutTest {
                 val density = LocalDensity.current
                 val scale = with(density) { maxWidth.toPx() } / 720f
                 CompositionLocalProvider(LocalDensity provides Density(scale)) {
-                    Box(Modifier.width(if (wide.value) 720.dp else 390.dp)) { StationsHome(onCredits = {}) }
+                    Box(Modifier.width(if (wide.value) 720.dp else 390.dp)) { StationsHome(onDownloads = {}) }
                 }
             }
         }

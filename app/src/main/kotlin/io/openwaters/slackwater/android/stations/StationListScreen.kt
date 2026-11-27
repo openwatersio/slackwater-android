@@ -87,14 +87,15 @@ fun StationListScreen(
     model: StationListModel,
     onOpen: (StationId) -> Unit,
     onSearch: () -> Unit,
-    onCredits: () -> Unit,
+    onDownloads: () -> Unit,
     now: Instant,
     showing: Boolean = true,
     onMap: (() -> Unit)? = null,
     /** Raises the location prompt; a host that asks from above the list passes its own. */
     onAsk: (() -> Unit)? = null,
     searchButtonModifier: Modifier = Modifier,
-    footerExtras: @Composable () -> Unit = {},
+    onSettings: () -> Unit = {},
+    onSupport: () -> Unit = {},
 ) {
     val context = LocalContext.current
     val state by model.state.collectAsState()
@@ -129,7 +130,7 @@ fun StationListScreen(
                 }
                 savedSection(R.string.list_recents, current.sections.recents, current, model, readingPreferences, now, onOpen,
                     onRemoved = { chooser = it.id.value }, isFavorites = false)
-                footer(onCredits, footerExtras)
+                listFooter(onDownloads, onSettings, onSupport)
             }
         }
         if (onMap != null) ExtendedFloatingActionButton(
@@ -395,23 +396,6 @@ private fun ReplacementChooser(
         },
         confirmButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.close)) } },
     )
-}
-
-private fun LazyListScope.footer(onCredits: () -> Unit, extras: @Composable () -> Unit) {
-    item(key = "footer") {
-        Column(Modifier.fillMaxWidth().padding(top = 8.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            Surface(shape = RoundedCornerShape(24.dp), tonalElevation = 1.dp, modifier = Modifier.fillMaxWidth()) {
-                TextButton(onClick = onCredits, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
-                    Text(stringResource(R.string.data_and_licenses))
-                }
-            }
-            extras()
-            Spacer(Modifier.height(12.dp))
-            Text(stringResource(R.string.list_wordmark), style = MaterialTheme.typography.titleMedium)
-            Text(stringResource(R.string.list_by_open_waters), style = MaterialTheme.typography.bodySmall)
-            Text(stringResource(R.string.list_not_for_navigation), style = MaterialTheme.typography.bodySmall)
-        }
-    }
 }
 
 /**
