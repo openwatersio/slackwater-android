@@ -338,6 +338,195 @@ class TidePreviewDownloadsTest {
         queue.progress.first { it == null }
     }
 
+    @Test fun aVisitRetriesAStationThatFailedWhileTheLoopKeptRunning() = withQueue { worker, catalog, store, models ->
+        val calls = AtomicInteger()
+        val queue = TidePreviewDownloads(worker, store, models, catalog, MutableStateFlow(null),
+            AndroidPredictionRepository(context, models), fit = { _, _, _ -> }) { _, _ ->
+            if (calls.incrementAndGet() == 1) throw IwlsException.Permanent("unavailable")
+            points
+        }
+        queue.activityStarted()
+        // A background run keeps the loop going after the activity stops.
+        queue.backgroundStarted()
+        val automatic = worker.launch { queue.fitWhileStarted(MutableStateFlow(listOf(station))) }
+        queue.progress.first { it?.failed == setOf(station) }
+        assertEquals(TideDownloadState.RETRY, queue.states.value[station])
+        // A rotation is not a visit either.
+        queue.activityStopped(changingConfigurations = true)
+        queue.activityStarted()
+        delay(300)
+        assertEquals(1, calls.get())
+        queue.activityStopped()
+        // The run starting or ending is not a visit.
+        queue.backgroundStarted()
+        queue.backgroundStopped()
+        delay(300)
+        assertEquals(1, calls.get())
+        queue.activityStarted()
+        queue.progress.first { it != null && it.failed.isEmpty() && it.pending.isEmpty() }
+        assertEquals(2, calls.get())
+        assertNull(queue.states.value[station])
+        automatic.cancelAndJoin()
+    }
+
+    private val fittedTide = org.json.JSONObject("""{"offset":2.0,"constituents":[{"name":"M2","amplitude":1.0,"phase":15}]}""")
+    private fun ready(queue: TidePreviewDownloads) = BackgroundDownloadCount.of(queue.progress.value, queue.states.value, emptyList(), false).ready
+
+    @Test fun aStationWithARequestedDownloadIsNotReadyUntilThatDownloadEnds() = withQueue { worker, catalog, store, models ->
+        val release = CompletableDeferred<Unit>()
+        val fits = AtomicInteger()
+        val queue = TidePreviewDownloads(worker, store, models, catalog, MutableStateFlow(null),
+            AndroidPredictionRepository(context, models), fit = { _, _, _ ->
+                fits.incrementAndGet()
+                models.write(station, ModelKind.TIDE, fittedTide)
+            }) { _, _ ->
+            release.await()
+            points
+        }
+        queue.activityStarted()
+        queue.request(station)
+        queue.states.first { it[station] == TideDownloadState.DOWNLOADING }
+        val automatic = worker.launch { queue.fitWhileStarted(MutableStateFlow(listOf(station))) }
+        queue.progress.first { it != null }
+        delay(300)
+        assertEquals(setOf(station), queue.progress.value!!.pending)
+        assertEquals(0, ready(queue))
+        release.complete(Unit)
+        queue.progress.first { it != null && it.pending.isEmpty() }
+        assertEquals(1, ready(queue))
+        // The loop found the requested download's model and did not fit again.
+        assertEquals(1, fits.get())
+        assertNull(queue.states.value[station])
+        automatic.cancelAndJoin()
+    }
+
+    @Test fun aRequestThatReplacesTheLoopsOwnJobKeepsTheStationPending() = withQueue { worker, catalog, store, models ->
+        val release = CompletableDeferred<Unit>()
+        val fits = AtomicInteger()
+        val queue = TidePreviewDownloads(worker, store, models, catalog, MutableStateFlow(null),
+            AndroidPredictionRepository(context, models), fit = { _, _, _ ->
+                fits.incrementAndGet()
+                release.await()
+                models.write(station, ModelKind.TIDE, fittedTide)
+            }) { _, _ -> points }
+        queue.activityStarted()
+        val automatic = worker.launch { queue.fitWhileStarted(MutableStateFlow(listOf(station))) }
+        while (fits.get() < 1) delay(10)
+        queue.request(station)
+        while (fits.get() < 2) delay(10)
+        delay(300)
+        assertEquals(setOf(station), queue.progress.value!!.pending)
+        assertEquals(0, ready(queue))
+        release.complete(Unit)
+        queue.progress.first { it != null && it.pending.isEmpty() }
+        assertEquals(1, ready(queue))
+        assertEquals(2, fits.get())
+        automatic.cancelAndJoin()
+    }
+
+    @Test fun aStationWhoseRequestWasOnlyAPreviewIsFittedAfterIt() = withQueue { worker, catalog, store, models ->
+        val release = CompletableDeferred<Unit>()
+        val fits = AtomicInteger()
+        store.requestPreviews(listOf(station))
+        val queue = TidePreviewDownloads(worker, store, models, catalog, MutableStateFlow(null),
+            AndroidPredictionRepository(context, models), fit = { _, _, _ ->
+                fits.incrementAndGet()
+                models.write(station, ModelKind.TIDE, fittedTide)
+            }) { _, _ ->
+            release.await()
+            points
+        }
+        queue.activityStarted()
+        queue.states.first { it[station] == TideDownloadState.DOWNLOADING }
+        val automatic = worker.launch { queue.fitWhileStarted(MutableStateFlow(listOf(station))) }
+        queue.progress.first { it != null }
+        delay(300)
+        assertEquals(0, fits.get())
+        assertEquals(0, ready(queue))
+        release.complete(Unit)
+        queue.progress.first { it != null && it.pending.isEmpty() }
+        assertEquals(1, fits.get())
+        assertEquals(1, ready(queue))
+        automatic.cancelAndJoin()
+    }
+
+    @Test fun aRequestThatFailedForGoodIsNotTriedAgainUntilTheNextVisit() = withQueue { worker, catalog, store, models ->
+        val release = CompletableDeferred<Unit>()
+        val calls = AtomicInteger()
+        val queue = TidePreviewDownloads(worker, store, models, catalog, MutableStateFlow(null),
+            AndroidPredictionRepository(context, models), fit = { _, _, _ -> }) { _, _ ->
+            if (calls.incrementAndGet() == 1) {
+                release.await()
+                throw IwlsException.Permanent("unavailable")
+            }
+            points
+        }
+        // Two activities, as in split screen.
+        queue.activityStarted()
+        queue.activityStarted()
+        queue.backgroundStarted()
+        queue.request(station)
+        queue.states.first { it[station] == TideDownloadState.DOWNLOADING }
+        val automatic = worker.launch { queue.fitWhileStarted(MutableStateFlow(listOf(station))) }
+        queue.progress.first { it != null }
+        // Progress is published before the loop reaches the station; give it time to find the request there.
+        delay(300)
+        release.complete(Unit)
+        queue.progress.first { it?.failed == setOf(station) }
+        delay(300)
+        assertEquals(1, calls.get())
+        assertEquals(TideDownloadState.RETRY, queue.states.value[station])
+        // Both rotating together is not a visit; the next real start is.
+        queue.activityStopped(changingConfigurations = true)
+        queue.activityStopped(changingConfigurations = true)
+        queue.activityStarted()
+        queue.activityStarted()
+        delay(300)
+        assertEquals(1, calls.get())
+        queue.activityStopped()
+        queue.activityStarted()
+        queue.progress.first { it != null && it.failed.isEmpty() && it.pending.isEmpty() }
+        assertEquals(2, calls.get())
+        automatic.cancelAndJoin()
+    }
+
+    @Test fun aVisitRetriesAFailedStationWhileAnotherWaitsOutItsBackoff() = withQueue { worker, catalog, store, models ->
+        val other = StationId("chs-addenbroke-island")
+        val calls = AtomicInteger()
+        val queue = TidePreviewDownloads(worker, store, models, catalog, MutableStateFlow(null),
+            AndroidPredictionRepository(context, models), fit = { _, _, _ -> }) { identity, _ ->
+            if (identity.id == other) throw IwlsException.Transient("No route")
+            if (calls.incrementAndGet() == 1) throw IwlsException.Permanent("unavailable")
+            points
+        }
+        queue.activityStarted()
+        val automatic = worker.launch { queue.fitWhileStarted(MutableStateFlow(listOf(station, other))) }
+        queue.progress.first { it?.failed == setOf(station) && it.waiting == setOf(other) }
+        // The loop now sleeps until the other station's 60-second backoff ends.
+        queue.backgroundStarted()
+        queue.activityStopped()
+        queue.activityStarted()
+        withTimeout(5_000) { queue.progress.first { it != null && it.failed.isEmpty() && station !in it.pending } }
+        assertEquals(2, calls.get())
+        automatic.cancelAndJoin()
+    }
+
+    @Test fun aRequestedDownloadWaitsToRetryAndRetryNowRestartsIt() = withQueue { worker, catalog, store, models ->
+        val calls = AtomicInteger()
+        val queue = TidePreviewDownloads(worker, store, models, catalog, MutableStateFlow(null),
+            AndroidPredictionRepository(context, models), fit = { _, _, _ -> }) { _, _ ->
+            if (calls.incrementAndGet() == 1) throw IwlsException.Transient("No route")
+            points
+        }
+        queue.activityStarted()
+        queue.request(station)
+        queue.states.first { it[station] == TideDownloadState.WAITING_TO_RETRY }
+        queue.retry(station)
+        // Well inside the job's own 60-second backoff.
+        withTimeout(5_000) { store.state.first { station !in it.getOrThrow().previewRequested } }
+        assertEquals(2, calls.get())
+    }
+
     @Test fun managerRetryRestartsABackedOffManualReference() = withQueue { worker, catalog, store, models ->
         val fits = AtomicInteger()
         store.requestDownloads(listOf(station))
@@ -346,7 +535,7 @@ class TidePreviewDownloadsTest {
                 if (fits.incrementAndGet() == 1) throw IwlsException.Transient("No route")
             }) { _, _ -> error("A reference fit needs no preview") }
         queue.activityStarted()
-        queue.states.first { it[station] == TideDownloadState.RETRY }
+        queue.states.first { it[station] == TideDownloadState.WAITING_TO_RETRY }
         queue.retry(station)
         // Well inside the manual job's own 60-second backoff.
         withTimeout(5_000) { store.state.first { station !in it.getOrThrow().requested } }
@@ -395,7 +584,7 @@ class TidePreviewDownloadsTest {
         }
         queue.activityStarted()
         queue.request(station)
-        queue.states.first { it[station] == TideDownloadState.RETRY }
+        queue.states.first { it[station] == TideDownloadState.WAITING_TO_RETRY }
         network.update(online = true, restricted = false, validated = true)
         network.update(online = true, restricted = false, validated = true)
         assertEquals(1L, network.recovery.value)

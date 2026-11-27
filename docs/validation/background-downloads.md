@@ -14,6 +14,17 @@ With airplane mode on, selecting Within 25 km and pressing Home still scheduled 
 
 Not yet covered: a physical handset, the Task Manager's Stop, a quota limit, Data Saver on a metered network, an always-on VPN, and a station that keeps failing for the full 30 minutes. Android 13 and earlier never schedule the job.
 
+## Behaviors kept as they are
+
+These were raised as low-severity observations when the queue and the background run were reviewed. Each was looked at again and left alone.
+
+- **A manual tide download at a reference port can start a run when only All current stations is selected.** A reference port's tide fit is what its derived gates are fitted through, so the queue counts it as current work whoever asked for it. The run then continues a download the person requested.
+- **The held origin has no age limit while location is allowed.** iOS `LocationService.rankingAnchor` also uses its last fix for as long as location is authorized, with no age limit. The origin is dropped once the app reads location as no longer allowed, which it does only while on screen. A run going at that moment loses its radius.
+- **A requested download that keeps failing on transient errors holds a run open until the 30-minute stall limit.** It counts as waiting to retry, as an automatic one does. While it waits, the notification and the list's Downloads row can show the count, not "Waiting to retry…".
+- **Retry on a reference port's own page repeats only the reference fit after that fit failed for good.** That fit is the port's tide model, so the page gets its predictions from it. Cancel, then Download, also fetches the seven-day preview first.
+- **If the app's network watcher and JobScheduler disagreed for a long time, a visible app would schedule a new run about once a minute.** Each run would end after its 60-second startup window. Both read the default network's validated state, and the job's constraint is `INTERNET & TRUSTED & VALIDATED`. No such disagreement has been seen, and it can only happen while the app is on screen.
+- **The run, the scheduling and the Task Manager's Stop have no automated test.** A user-initiated job can be scheduled only by a visible app, and the run needs IWLS. `BackgroundDownloadsTest` covers the notification's text and progress and its Cancel; the live checks above cover the rest.
+
 ## Reproducing
 
 Use a disposable API 34 or later emulator and clear the app's data. Grant location and notifications, run `adb emu geo fix -123.37 48.42`, and open the app until the list shows Victoria. In Downloads, select Within 25 km, then press Home. Watch `adb shell dumpsys jobscheduler` for job 2403 and `adb shell dumpsys notification --noredact` for notification 2403. To stop the job as the system would, run `adb shell cmd jobscheduler timeout io.openwaters.slackwater.android 2403`. Counts depend on the catalog and the IWLS response.
