@@ -136,6 +136,10 @@ class ChartSceneTest {
         assertEquals(0.0, dallas.frame(t(0))!!.obscuration, 0.0)
         val night = dallas.frame(t(480))!!
         assertTrue(night.stars.size > 20)
+        // The star field can be placed apart from the bodies, and is the same field either way.
+        assertEquals(night.stars, dallas.stars(t(480)))
+        assertEquals(night.copy(stars = emptyList()), dallas.frame(t(480), stars = false))
+        assertTrue(dallas.stars(t(0)).isEmpty())
         assertTrue(SkyScene(-33.9, 151.2, origin, t(1440), emptyList()).peaks.isEmpty())
     }
 

@@ -130,17 +130,23 @@ internal class ChartDrawing(
         pen.clearShadowLayer()
     }
 
-    /** The sky backdrop; with [bodies] off it keeps the gradient and drops the stars, sun and moon (scrubber §14). */
-    fun sky(sky: SkyFrame?, horizon: Float, twinkle: Double, leadWidth: Float, leadHeight: Float, bodies: Boolean = true) {
-        c.drawColor(navy)
+    /**
+     * The sky backdrop; with [bodies] off it keeps the gradient and drops the stars, sun and moon (scrubber §14).
+     * It starts [rise] units above the strip, at the top of the page behind the station header (scrubber §1), and
+     * ends at the strip's [floor].
+     */
+    fun sky(sky: SkyFrame?, horizon: Float, twinkle: Double, leadWidth: Float, leadHeight: Float, bodies: Boolean = true,
+            rise: Float = 0f, floor: Float = horizon + 240) {
+        pen.color = navy
+        c.drawRect(0f, 0f, width, floor, pen)
         if (sky == null) return
         val (top, bottom) = skyColors(sky)
         val alt = sky.sun.altitude + (-9 - sky.sun.altitude) * sky.obscuration.pow(4)
         pen.color = paper
-        pen.shader = LinearGradient(0f, 0f, 0f, horizon, top, bottom, Shader.TileMode.CLAMP)
-        c.drawRect(0f, 0f, width, horizon + 240, pen); pen.shader = null
+        pen.shader = LinearGradient(0f, -rise, 0f, horizon, top, bottom, Shader.TileMode.CLAMP)
+        c.drawRect(0f, -rise, width, floor, pen); pen.shader = null
         if (!bodies) return
-        val bodyLayer = c.saveLayer(0f, 0f, width, horizon + 30, null)
+        val bodyLayer = c.saveLayer(0f, -rise, width, horizon + 30, null)
         fun cx(body: SkyBody, r: Float): Float {
             val px = (body.x * (width + 2 * r) - r).toFloat()
             if (!body.hold || body.altitude <= 0 || width < 4 * r) return px
@@ -207,17 +213,18 @@ internal class ChartDrawing(
                 else -> tilt
             }
             c.save(); c.rotate(Math.toDegrees(angle).toFloat(), mx, my)
-            for (i in -9..9) {
-                val half = sqrt(100.0 - i * i).toFloat()
-                line(
-                    mx + half * (1 - 2 * sky.phase.toFloat()),
-                    my + i,
-                    mx + half,
-                    my + i,
-                    opacity(light, glare.toDouble()),
-                    1.3f
-                )
+            // One filled shape, bright limb to terminator. Separate strokes leave stripes and a ragged limb.
+            val terminator = 10f * (1 - 2 * sky.phase.toFloat())
+            val lit = Path().apply {
+                arcTo(mx - 10f, my - 10f, mx + 10f, my + 10f, -90f, 180f, true)
+                if (abs(terminator) < 0.05f) lineTo(mx, my - 10f)
+                else arcTo(mx - abs(terminator), my - 10f, mx + abs(terminator), my + 10f, 90f,
+                    if (terminator > 0) -180f else 180f, false)
+                close()
             }
+            pen.color = opacity(light, glare.toDouble())
+            // A new moon's two edges coincide, and filling that would leave a hairline on the limb.
+            if (terminator < 9.95f) c.drawPath(lit, pen)
             c.restore()
             if (sky.wash > 0) disc(mx, my, 10f, opacity(0xff6b2a18.toInt(), 0.42 * sky.wash))
             if (sky.umbra > 0) {

@@ -38,6 +38,9 @@ class SkyScene(
     } else emptyList()
     val peaks = (solar.map { it.peak } + lunar.map { it.peak }).sorted()
 
+    // Read the catalogue while the scene is built off the main thread, so the first night frame does not wait on it.
+    init { brightStars }
+
     private data class Arc(
         val start: Instant,
         val end: Instant,
@@ -103,7 +106,23 @@ class SkyScene(
         )
     }
 
-    fun frame(at: Instant): SkyFrame? {
+    /** The star field alone, as [frame] places it. It is the slow part of a night frame. */
+    fun stars(at: Instant): List<SkyStar> {
+        if (at < first || at > last) return emptyList()
+        val sunArc = nearest(sunArcs, at)
+        val sun = body(sunAltAz(at, observer), sunArc)
+        val obscuration = if (solar.none { at >= it.c1 && at <= it.c4 }) 0.0 else solarObscuration(at, observer)
+        return stars(at, sun, sunArc, obscuration)
+    }
+
+    private fun stars(at: Instant, sun: SkyBody, sunArc: Arc?, obscuration: Double) =
+        if (sun.altitude < -6 || obscuration > 0.9) brightStars.mapNotNull { (ra, dec, mag) ->
+            val pos = starAltAz(ra, dec, at, observer)
+            if (pos.altDeg < -10) null else SkyStar(body(pos, sunArc, north), mag)
+        } else emptyList()
+
+    /** With [stars] off the frame carries no star field, for a caller that places it separately. */
+    fun frame(at: Instant, stars: Boolean = true): SkyFrame? {
         if (at < first || at > last) return null
         val sunArc = nearest(sunArcs, at)
         val sun = body(sunAltAz(at, observer), sunArc)
@@ -112,11 +131,7 @@ class SkyScene(
         val lun = lunar.firstOrNull { at >= it.p1 && at <= it.p4 }
         val orientation = moonOrientation(at, observer)
         val obscuration = if (sol == null) 0.0 else solarObscuration(at, observer)
-        val stars =
-            if (sun.altitude < -6 || obscuration > 0.9) brightStars.mapNotNull { (ra, dec, mag) ->
-                val pos = starAltAz(ra, dec, at, observer)
-                if (pos.altDeg < -10) null else SkyStar(body(pos, sunArc, north), mag)
-            } else emptyList()
+        val field = if (stars) stars(at, sun, sunArc, obscuration) else emptyList()
         return SkyFrame(
             sun,
             moon,
@@ -125,7 +140,7 @@ class SkyScene(
             obscuration,
             lun?.let { it.magUmbral * fraction(at, it.u1, it.peak, it.u4) } ?: 0.0,
             lun?.let { min(1.0, it.magPenumbral) * fraction(at, it.p1, it.peak, it.p4) } ?: 0.0,
-            stars)
+            field)
     }
 
     // J2000 rows from the Yale Bright Star Catalog via d3-celestial and the pinned iOS stars.json.
