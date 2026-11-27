@@ -1769,6 +1769,42 @@
       "name": "premium_support",
       "key": "Slackwater is independent and open source. Premium is how it keeps going.",
       "english": "Slackwater is independent and open source. Premium is how it keeps going."
+    },
+    {
+      "name": "premium_plan_yearly",
+      "key": "Yearly"
+    },
+    {
+      "name": "premium_plan_yearly_detail",
+      "key": "Renews every year until you cancel."
+    },
+    {
+      "name": "premium_plan_lifetime",
+      "key": "Lifetime"
+    },
+    {
+      "name": "premium_plan_lifetime_detail",
+      "key": "Pay once, never again."
+    },
+    {
+      "name": "premium_get",
+      "key": "Get Premium"
+    },
+    {
+      "name": "premium_price_per_year",
+      "key": "%@ per year"
+    },
+    {
+      "name": "premium_restore",
+      "key": "Restore purchase"
+    },
+    {
+      "name": "premium_unavailable",
+      "key": "Purchases are temporarily unavailable."
+    },
+    {
+      "name": "premium_purchase_failed",
+      "key": "Purchase didn't go through — try again."
     }
   ],
   "androidDirectory": "scripts/translations/android"

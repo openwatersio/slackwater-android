@@ -1,4 +1,4 @@
-"""Check the built APK against the reviewed resource manifest."""
+"""Check a built APK or app bundle against the reviewed resource manifest."""
 import hashlib
 import json
 import runpy
@@ -25,32 +25,49 @@ def verify_current_ranges(catalog, index):
             raise ValueError(f"Current index points to the wrong record: {station_id}")
 
 
-def verify(apk):
+# A bundle is compressed throughout. Google Play decides what to store uncompressed in the APKs it
+# builds from the globs AGP writes into BundleConfig.pb for each noCompress entry.
+BUNDLE_UNCOMPRESSED = {
+    "stations.tcdb": b"**[tT][cC][dD][bB]",
+    "currents.json": b"**[cC][uU][rR][rR][eE][nN][tT][sS].[jJ][sS][oO][nN]",
+}
+
+
+def verify(package):
     root = Path(__file__).resolve().parent.parent
+    bundle = str(package).endswith(".aab")
+    assets = ("base/" if bundle else "") + "assets/"
     lock = json.loads((root / "upstream.lock.json").read_text())
-    expected = {"assets/slackwater/" + entry["name"]: entry["sha256"] for entry in lock["resources"]["assets"]}
+    expected = {assets + "slackwater/" + entry["name"]: entry["sha256"] for entry in lock["resources"]["assets"]}
     index = runpy.run_path(str(root / "scripts/index-currents.py"))["index_currents"]
     catalog = (root / "app/src/main/assets/slackwater/currents.json").read_bytes()
-    expected["assets/slackwater/current-index.tsv"] = hashlib.sha256(index(catalog)).hexdigest()
-    with zipfile.ZipFile(apk) as archive:
+    expected[assets + "slackwater/current-index.tsv"] = hashlib.sha256(index(catalog)).hexdigest()
+    with zipfile.ZipFile(package) as archive:
         # AGP generates these two ART profiles; neither is a product-data input.
-        profiles = {"assets/dexopt/baseline.prof", "assets/dexopt/baseline.profm"}
-        actual = [item.filename for item in archive.infolist() if item.filename.startswith("assets/") and item.filename not in profiles]
+        profiles = {assets + "dexopt/baseline.prof", assets + "dexopt/baseline.profm"}
+        actual = [item.filename for item in archive.infolist() if item.filename.startswith(assets) and item.filename not in profiles]
         if sorted(actual) != sorted(expected):
-            raise ValueError("APK asset manifest differs from the reviewed allowlist")
+            raise ValueError("Asset manifest differs from the reviewed allowlist")
         for name, digest in expected.items():
             if hashlib.sha256(archive.read(name)).hexdigest() != digest:
-                raise ValueError(f"APK asset hash mismatch: {name}")
-        if archive.getinfo("assets/slackwater/stations.tcdb").compress_type != zipfile.ZIP_STORED:
-            raise ValueError("stations.tcdb must be uncompressed")
-        if archive.getinfo("assets/slackwater/currents.json").compress_type != zipfile.ZIP_STORED:
-            raise ValueError("currents.json must be uncompressed for indexed reads")
-        verify_current_ranges(archive.read("assets/slackwater/currents.json"),
-                              archive.read("assets/slackwater/current-index.tsv"))
+                raise ValueError(f"Asset hash mismatch: {name}")
+        if bundle:
+            config = archive.read("BundleConfig.pb")
+            for name, glob in BUNDLE_UNCOMPRESSED.items():
+                # A protobuf string is stored behind its length, so this matches the whole glob and not a longer one.
+                if bytes([len(glob)]) + glob not in config:
+                    raise ValueError(f"The bundle does not keep {name} uncompressed")
+        else:
+            if archive.getinfo(assets + "slackwater/stations.tcdb").compress_type != zipfile.ZIP_STORED:
+                raise ValueError("stations.tcdb must be uncompressed")
+            if archive.getinfo(assets + "slackwater/currents.json").compress_type != zipfile.ZIP_STORED:
+                raise ValueError("currents.json must be uncompressed for indexed reads")
+        verify_current_ranges(archive.read(assets + "slackwater/currents.json"),
+                              archive.read(assets + "slackwater/current-index.tsv"))
         for name in archive.namelist():
             if name.endswith(".dex") and b"Lio/openwaters/slackwater/android/core/FixtureSmoke;" in archive.read(name):
-                raise ValueError("Test fixture code entered the app APK")
-    print(f"Verified {len(expected)} APK assets, uncompressed TCDB, and fixture exclusion.")
+                raise ValueError("Test fixture code entered the app")
+    print(f"Verified {len(expected)} {'bundle' if bundle else 'APK'} assets, uncompressed TCDB, and fixture exclusion.")
 
 
 if __name__ == "__main__":

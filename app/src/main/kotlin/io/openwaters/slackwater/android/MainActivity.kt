@@ -6,6 +6,7 @@ import io.openwaters.slackwater.android.shortcuts.ShortcutPublisher
 import android.content.Intent
 import android.provider.CalendarContract
 import io.openwaters.slackwater.android.calendars.CalendarRepository
+import io.openwaters.slackwater.android.premium.PremiumStore
 import io.openwaters.slackwater.android.alerts.AlertDestination
 import io.openwaters.slackwater.android.stations.StationPage
 import io.openwaters.slackwater.android.stations.StationListModel
@@ -120,6 +121,8 @@ class MainActivity : ComponentActivity() {
         TidePreviewDownloads.get(applicationContext).activityStarted()
         AlertReconciliation.get(this).foreground()
         CalendarRepository.get(this).foreground()
+        // A purchase, refund or lapse made elsewhere reaches the saved record here.
+        PremiumStore.foreground(this)
     }
 
     override fun onStop() {

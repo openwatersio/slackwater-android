@@ -115,7 +115,7 @@ Translation is pinned to Astronomy Engine commit
     SOFTWARE.
 
 
-AndroidX (including DataStore), Compose, Material, Okio, Kotlin, atomicfu, Kotlin coroutines, Kotlin serialization and Google FlatBuffers — Apache License 2.0
+AndroidX (including DataStore), Compose, Material, Okio, Kotlin, atomicfu, Kotlin coroutines, Kotlin serialization, Google FlatBuffers, and Google DataTransport, Firebase Encoders and javax.inject (dependencies of the Play Billing Library) — Apache License 2.0
 
 
                                  Apache License
@@ -295,6 +295,10 @@ AndroidX (including DataStore), Compose, Material, Okio, Kotlin, atomicfu, Kotli
 
    END OF TERMS AND CONDITIONS
 
+
+
+Google Play Billing Library and the Google Play services libraries it depends on (base, basement, tasks, location, places place report) — Android Software Development Kit License
+https://developer.android.com/studio/terms
 
 
 Slackwater Android — GPL-3.0

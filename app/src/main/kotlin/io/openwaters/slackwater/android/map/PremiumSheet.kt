@@ -49,6 +49,8 @@ internal fun PremiumSheet(onClose: () -> Unit) {
                 FreeDayControl(it, attempt) { save {
                     if (!store.startFreeDay(Instant.now(), ZoneId.systemDefault())) attempt++
                 } }
+                // A supporter is thanked above and is not sold the plans again.
+                if (!it.purchased) PremiumPurchaseControls()
             }
             Text(stringResource(R.string.premium_support), style = MaterialTheme.typography.bodyMedium)
             TextButton(onClick = onClose) { Text(stringResource(R.string.close)) }
