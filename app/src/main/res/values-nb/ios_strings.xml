@@ -200,7 +200,6 @@
     <string name="list_filter_show_currents">"Vis strømmer"</string>
     <string name="list_search">"Søk"</string>
     <string name="list_by_open_waters">"av Open Waters"</string>
-    <string name="list_not_for_navigation">"Prognoser — skal ikke brukes til navigasjon"</string>
     <string name="list_distance_nm">"%1$s nm"</string>
     <string name="card_rising">"Stigende"</string>
     <string name="card_falling">"Synkende"</string>
@@ -327,4 +326,15 @@
     <string name="premium_restore">"Gjenopprett kjøp"</string>
     <string name="premium_unavailable">"Kjøp er midlertidig utilgjengelige."</string>
     <string name="premium_purchase_failed">"Kjøpet ble ikke fullført — prøv igjen."</string>
+    <string name="footer_downloads_label">"Frakoblede nedlastinger"</string>
+    <string name="footer_downloading">"Laster ned, %1$d av %2$d klare"</string>
+    <string name="footer_online_complete">"Tilkoblet, alle stasjoner lastet ned"</string>
+    <string name="footer_online">"Tilkoblet"</string>
+    <string name="footer_offline">"Frakoblet"</string>
+    <string name="footer_offline_complete">"Frakoblet, alle stasjoner lastet ned"</string>
+    <plurals name="footer_offline_remaining">
+        <item quantity="one">"Frakoblet, %1$d gjenstår å laste ned"</item>
+        <item quantity="other">"Frakoblet, %1$d gjenstår å laste ned"</item>
+    </plurals>
+    <string name="footer_supporter">"Slackwater-støttespiller"</string>
 </resources>

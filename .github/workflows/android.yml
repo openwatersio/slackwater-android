@@ -171,7 +171,7 @@ jobs:
             adb uninstall io.openwaters.slackwater.android.test
             adb uninstall io.openwaters.slackwater.android
             ./gradlew :app:connectedDebugAndroidTest
-            if [ "${{ matrix.api }}" = "37.0" ]; then cp -R app/build/reports/androidTests app/build/reports/androidTests-enabled && cp -R app/build/outputs/androidTest-results app/build/outputs/androidTest-results-enabled && ./gradlew -PpremiumEnabled=false :app:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=io.openwaters.slackwater.android.premium.PremiumLinkTest,io.openwaters.slackwater.android.map.FreeDayControlTest,io.openwaters.slackwater.android.calendars.CalendarSettingsTest,io.openwaters.slackwater.android.sharing.StationScheduleTest; fi
+            if [ "${{ matrix.api }}" = "37.0" ]; then cp -R app/build/reports/androidTests app/build/reports/androidTests-enabled && cp -R app/build/outputs/androidTest-results app/build/outputs/androidTest-results-enabled && ./gradlew -PpremiumEnabled=false :app:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=io.openwaters.slackwater.android.premium.PremiumLinkTest,io.openwaters.slackwater.android.map.FreeDayControlTest,io.openwaters.slackwater.android.calendars.CalendarSettingsTest,io.openwaters.slackwater.android.sharing.StationScheduleTest,io.openwaters.slackwater.android.stations.ListFooterTest; fi
       - name: Name the failed device tests
         # Cancelled covers a run that hangs until the job's timeout.
         if: failure() || cancelled()
@@ -244,7 +244,7 @@ jobs:
             adb uninstall io.openwaters.slackwater.android.test
             adb uninstall io.openwaters.slackwater.android
             ./gradlew :app:connectedDebugAndroidTest
-            if [ "${{ matrix.api }}" = "37.0" ]; then cp -R app/build/reports/androidTests app/build/reports/androidTests-enabled && cp -R app/build/outputs/androidTest-results app/build/outputs/androidTest-results-enabled && ./gradlew -PpremiumEnabled=false :app:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=io.openwaters.slackwater.android.premium.PremiumLinkTest,io.openwaters.slackwater.android.map.FreeDayControlTest,io.openwaters.slackwater.android.calendars.CalendarSettingsTest,io.openwaters.slackwater.android.sharing.StationScheduleTest; fi
+            if [ "${{ matrix.api }}" = "37.0" ]; then cp -R app/build/reports/androidTests app/build/reports/androidTests-enabled && cp -R app/build/outputs/androidTest-results app/build/outputs/androidTest-results-enabled && ./gradlew -PpremiumEnabled=false :app:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=io.openwaters.slackwater.android.premium.PremiumLinkTest,io.openwaters.slackwater.android.map.FreeDayControlTest,io.openwaters.slackwater.android.calendars.CalendarSettingsTest,io.openwaters.slackwater.android.sharing.StationScheduleTest,io.openwaters.slackwater.android.stations.ListFooterTest; fi
       - name: Name the failed device tests
         # Cancelled covers a run that hangs until the job's timeout.
         if: failure() || cancelled()

@@ -1202,14 +1202,6 @@
       "english": "by Open Waters"
     },
     {
-      "name": "list_not_for_navigation",
-      "key": "Predictions — not for navigation",
-      "english": "Predictions — not for navigation.",
-      "overrides": {
-        "fr-CA": "Prévisions non destinées à la navigation."
-      }
-    },
-    {
       "name": "list_distance_nm",
       "key": "%@ nm",
       "english": "%1$s nm"
@@ -1805,6 +1797,38 @@
     {
       "name": "premium_purchase_failed",
       "key": "Purchase didn't go through — try again."
+    },
+    {
+      "name": "footer_downloads_label",
+      "key": "Offline downloads"
+    },
+    {
+      "name": "footer_downloading",
+      "key": "Downloading, %lld of %lld ready"
+    },
+    {
+      "name": "footer_online_complete",
+      "key": "Online, all stations downloaded"
+    },
+    {
+      "name": "footer_online",
+      "key": "Online"
+    },
+    {
+      "name": "footer_offline",
+      "key": "Offline"
+    },
+    {
+      "name": "footer_offline_complete",
+      "key": "Offline, all stations downloaded"
+    },
+    {
+      "name": "footer_offline_remaining",
+      "key": "Offline, %lld still to download"
+    },
+    {
+      "name": "footer_supporter",
+      "key": "Slackwater supporter"
     }
   ],
   "androidDirectory": "scripts/translations/android"

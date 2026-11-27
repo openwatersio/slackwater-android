@@ -254,7 +254,6 @@
   "search_truncated": "De närmaste 60 — fortsätt skriva för att avgränsa",
   "list_catalog_unavailable": "Stationsdata är inte tillgängliga på den här enheten.",
   "card_spoken_approximate": "ungefär %1$s",
-  "data_and_licenses": "Data och licenser",
   "data_credits": "Datakällor",
   "reminder_channel": "Stationspåminnelser",
   "notification_window_opens": "Perioden med svag ström börjar",

@@ -260,7 +260,6 @@
     <string name="search_truncated">"Le 60 più vicine — continua a scrivere per restringere"</string>
     <string name="list_catalog_unavailable">"I dati delle stazioni non sono disponibili su questo dispositivo."</string>
     <string name="card_spoken_approximate">"circa %1$s"</string>
-    <string name="data_and_licenses">"Dati e licenze"</string>
     <string name="data_credits">"Crediti dei dati"</string>
     <string name="reminder_channel">"Promemoria delle stazioni"</string>
     <string name="notification_window_opens">"Si apre la finestra di stanca"</string>

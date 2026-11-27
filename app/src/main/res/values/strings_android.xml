@@ -256,7 +256,6 @@
     <string name="search_truncated">"Nearest 60 — keep typing to narrow"</string>
     <string name="list_catalog_unavailable">"Station data is unavailable on this device."</string>
     <string name="card_spoken_approximate">"approximately %1$s"</string>
-    <string name="data_and_licenses">"Data and licenses"</string>
     <string name="data_credits">"Data credits"</string>
     <string name="reminder_channel">"Station reminders"</string>
     <string name="notification_window_opens">"Slack window opens"</string>

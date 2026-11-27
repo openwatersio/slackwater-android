@@ -268,7 +268,6 @@
     <string name="search_truncated">"An 60 is gaire — lean ort ag clóscríobh chun an cuardach a chúngú"</string>
     <string name="list_catalog_unavailable">"Níl sonraí stáisiúin ar fáil ar an ngléas seo."</string>
     <string name="card_spoken_approximate">"thart ar %1$s"</string>
-    <string name="data_and_licenses">"Sonraí agus ceadúnais"</string>
     <string name="data_credits">"Admhálacha sonraí"</string>
     <string name="reminder_channel">"Meabhrúcháin stáisiúin"</string>
     <string name="notification_window_opens">"Tosaíonn tréimhse fáfaill"</string>

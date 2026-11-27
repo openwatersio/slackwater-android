@@ -256,7 +256,6 @@
     <string name="search_truncated">"De 60 dichtstbijzijnde — typ verder om te verfijnen"</string>
     <string name="list_catalog_unavailable">"Stationsgegevens zijn niet beschikbaar op dit apparaat."</string>
     <string name="card_spoken_approximate">"ongeveer %1$s"</string>
-    <string name="data_and_licenses">"Gegevens en licenties"</string>
     <string name="data_credits">"Bronvermelding van gegevens"</string>
     <string name="reminder_channel">"Stationsherinneringen"</string>
     <string name="notification_window_opens">"Het kenteringsvenster begint"</string>

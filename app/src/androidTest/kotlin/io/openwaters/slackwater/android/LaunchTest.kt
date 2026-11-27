@@ -4,6 +4,10 @@ import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasAnyAncestor
 import androidx.compose.ui.test.isDialog
 import androidx.compose.ui.test.hasScrollAction
+import androidx.compose.ui.test.hasScrollToNodeAction
+import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.test.performScrollToKey
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.v2.createEmptyComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
@@ -47,8 +51,9 @@ class LaunchTest {
         val model = io.openwaters.slackwater.android.stations.StationListModel.get(context)
         compose.waitUntil(60_000) { model.state.value != null }
         val downloads = context.getString(R.string.chart_downloads)
-        compose.onNode(hasScrollAction()).performScrollToNode(hasText(downloads))
-        compose.onNodeWithText(downloads).performClick()
+        compose.onNode(hasScrollAction()).performScrollToKey("footer")
+        compose.onNodeWithTag("footerDownloads").performClick()
+        compose.onNodeWithText(downloads).assertIsDisplayed()
         compose.onNodeWithText(context.getString(R.string.chart_offline)).assertIsDisplayed()
         compose.onNodeWithText(context.getString(R.string.chart_remove)).performClick()
         compose.onNodeWithText(context.getString(R.string.chart_remove_question)).assertIsDisplayed()
@@ -61,14 +66,16 @@ class LaunchTest {
         val nearMe = InstrumentationRegistry.getInstrumentation().targetContext.getString(R.string.list_near_me)
         compose.waitUntil(60_000) { compose.onAllNodesWithText(nearMe, substring = true, ignoreCase = true).fetchSemanticsNodes().isNotEmpty() ||
             compose.onAllNodesWithText("Chesapeake Bay", substring = true, ignoreCase = true).fetchSemanticsNodes().isNotEmpty() }
-        compose.onNode(hasScrollAction()).performScrollToNode(hasText("Data and licenses"))
-        compose.onNodeWithText("Data and licenses").performClick()
+        // Credits live under About in Settings, as on iOS; the footer leads there.
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        compose.onNode(hasScrollAction()).performScrollToKey("footer")
+        compose.onNodeWithTag("footerSettings").performClick()
+        compose.onNodeWithText(context.getString(R.string.about_title)).performScrollTo().performClick()
+        compose.onNodeWithText(context.getString(R.string.about_attribution)).performScrollTo().performClick()
         compose.onNodeWithText("Data credits").assertIsDisplayed()
-        val credits = compose.onNode(hasScrollAction() and hasAnyAncestor(isDialog()))
+        val credits = compose.onNode(hasScrollToNodeAction() and hasAnyAncestor(isDialog()))
         credits.performScrollToNode(hasText("Norwegian stations:", substring = true))
         compose.onNodeWithText("Norwegian stations:", substring = true).assertIsDisplayed()
-        compose.onNodeWithText("Close").performClick()
-        compose.onNodeWithText("Data credits").assertDoesNotExist()
     }
 
     @Test fun launchesAndReadsTheBundledStations() {

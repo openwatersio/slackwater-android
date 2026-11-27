@@ -200,7 +200,6 @@
     <string name="list_filter_show_currents">"Seall na sruthan"</string>
     <string name="list_search">"Lorg"</string>
     <string name="list_by_open_waters">"le Open Waters"</string>
-    <string name="list_not_for_navigation">"Ro-innsean — chan ann airson seòladh"</string>
     <string name="list_distance_nm">"%1$s nm"</string>
     <string name="card_rising">"Ag èirigh"</string>
     <string name="card_falling">"A\' tuiteam"</string>
@@ -327,4 +326,17 @@
     <string name="premium_restore">"Aisig an ceannach"</string>
     <string name="premium_unavailable">"Chan eil ceannach ri fhaighinn an-dràsta fhèin."</string>
     <string name="premium_purchase_failed">"Cha deach an ceannach troimhe — feuch ris a-rithist."</string>
+    <string name="footer_downloads_label">"Luchdaidhean a-nuas far loidhne"</string>
+    <string name="footer_downloading">"Ga luchdadh a-nuas, %1$d à %2$d deiseil"</string>
+    <string name="footer_online_complete">"Air loidhne, gach stèisean air a luchdadh a-nuas"</string>
+    <string name="footer_online">"Air loidhne"</string>
+    <string name="footer_offline">"Far loidhne"</string>
+    <string name="footer_offline_complete">"Far loidhne, gach stèisean air a luchdadh a-nuas"</string>
+    <plurals name="footer_offline_remaining">
+        <item quantity="one">"Far loidhne, %1$d ri luchdadh a-nuas fhathast"</item>
+        <item quantity="two">"Far loidhne, %1$d ri luchdadh a-nuas fhathast"</item>
+        <item quantity="few">"Far loidhne, %1$d ri luchdadh a-nuas fhathast"</item>
+        <item quantity="other">"Far loidhne, %1$d ri luchdadh a-nuas fhathast"</item>
+    </plurals>
+    <string name="footer_supporter">"Neach-taice Slackwater"</string>
 </resources>

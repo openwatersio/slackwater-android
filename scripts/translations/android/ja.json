@@ -254,7 +254,6 @@
   "search_truncated": "最寄りの60件 — 入力を続けて絞り込む",
   "list_catalog_unavailable": "このデバイスでは観測地点のデータを利用できません。",
   "card_spoken_approximate": "約%1$s",
-  "data_and_licenses": "データとライセンス",
   "data_credits": "データの提供元",
   "reminder_channel": "観測点のリマインダー",
   "notification_window_opens": "潮止まり時間帯が始まります",

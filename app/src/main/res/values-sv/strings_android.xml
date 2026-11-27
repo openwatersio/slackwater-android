@@ -256,7 +256,6 @@
     <string name="search_truncated">"De närmaste 60 — fortsätt skriva för att avgränsa"</string>
     <string name="list_catalog_unavailable">"Stationsdata är inte tillgängliga på den här enheten."</string>
     <string name="card_spoken_approximate">"ungefär %1$s"</string>
-    <string name="data_and_licenses">"Data och licenser"</string>
     <string name="data_credits">"Datakällor"</string>
     <string name="reminder_channel">"Stationspåminnelser"</string>
     <string name="notification_window_opens">"Perioden med svag ström börjar"</string>

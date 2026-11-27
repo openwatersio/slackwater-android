@@ -68,6 +68,7 @@ internal fun MapSettings(replay: (suspend () -> Unit)?, close: () -> Unit,
                     if (!store.changeSkyVisibility(show) { access.current().allows(Instant.now()) }) premiumOpen = true
                 } },
                 onSupport = { premiumOpen = true })
+            io.openwaters.slackwater.android.shortcuts.PredictionShortcutsMenu()
             AboutSettingsLinks()
             var replaying by remember { mutableStateOf(false) }
             val replayEnabled = replay != null && !replaying

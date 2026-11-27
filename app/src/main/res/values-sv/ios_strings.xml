@@ -200,7 +200,6 @@
     <string name="list_filter_show_currents">"Visa strömmar"</string>
     <string name="list_search">"Sök"</string>
     <string name="list_by_open_waters">"av Open Waters"</string>
-    <string name="list_not_for_navigation">"Prognoser — inte för navigation"</string>
     <string name="list_distance_nm">"%1$s M"</string>
     <string name="card_rising">"Stigande"</string>
     <string name="card_falling">"Sjunkande"</string>
@@ -327,4 +326,15 @@
     <string name="premium_restore">"Återställ köp"</string>
     <string name="premium_unavailable">"Köp är tillfälligt otillgängliga."</string>
     <string name="premium_purchase_failed">"Köpet gick inte igenom — försök igen."</string>
+    <string name="footer_downloads_label">"Offlinehämtningar"</string>
+    <string name="footer_downloading">"Hämtar, %1$d av %2$d klara"</string>
+    <string name="footer_online_complete">"Online, alla stationer hämtade"</string>
+    <string name="footer_online">"Online"</string>
+    <string name="footer_offline">"Offline"</string>
+    <string name="footer_offline_complete">"Offline, alla stationer hämtade"</string>
+    <plurals name="footer_offline_remaining">
+        <item quantity="one">"Offline, %1$d återstår att hämta"</item>
+        <item quantity="other">"Offline, %1$d återstår att hämta"</item>
+    </plurals>
+    <string name="footer_supporter">"Slackwater-supporter"</string>
 </resources>

@@ -22,7 +22,6 @@ import kotlinx.coroutines.launch
 import io.openwaters.slackwater.android.detail.DetailRecords
 import io.openwaters.slackwater.android.core.station.StationId
 import android.os.Bundle
-import io.openwaters.slackwater.android.map.DataCreditsDialog
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -168,34 +167,17 @@ class MainActivity : ComponentActivity() {
             SlackwaterTheme {
                 LaunchedEffect(Unit) { withContext(Dispatchers.IO) { ShortcutPublisher.publish(this@MainActivity) } }
                 if (showDownloads) io.openwaters.slackwater.android.map.ChartDownloads(chartPacks) { showDownloads = false }
-                var showCredits by key(dialogSession) { remember { mutableStateOf(false) } }
                 if (badLink) {
                     AlertDialog(onDismissRequest = { badLink = false }, text = { Text(stringResource(R.string.detail_invalid_link)) },
                         confirmButton = { TextButton(onClick = { badLink = false }) { Text(stringResource(R.string.close)) } })
                 }
-                if (showCredits) DataCreditsDialog { showCredits = false }
                 var focusMap by remember { mutableStateOf<io.openwaters.slackwater.android.core.station.StationIdentity?>(null) }
                 Surface(Modifier.fillMaxSize()) {
                     // The list stays composed under an alert's destination, so its scroll, search and page survive.
                     Box(if (destination == null) Modifier.fillMaxSize() else Modifier.fillMaxSize().clearAndSetSemantics {}) {
-                        StationsHome(onCredits = { showCredits = true }, coveredByAlert = destination != null, externalMapFocus = focusMap,
+                        StationsHome(onDownloads = { showDownloads = true }, coveredByAlert = destination != null, externalMapFocus = focusMap,
                             consumeFocus = { focusMap = null },
-                            linkPending = linkPending, linkOpened = linkOpened) { openSettings ->
-                            TextButton(onClick = { showDownloads = true }) { Text(stringResource(R.string.chart_downloads)) }
-                            TextButton(onClick = openSettings) { Text(stringResource(R.string.settings_title)) }
-                            var showQueries by key(dialogSession) { remember { mutableStateOf(false) } }
-                            Box {
-                                OutlinedButton(onClick = { showQueries = true }) { Text(stringResource(R.string.prediction_shortcuts)) }
-                                DropdownMenu(expanded = showQueries, onDismissRequest = { showQueries = false }) {
-                                    ShortcutKind.entries.forEach { kind ->
-                                        DropdownMenuItem(text = { Text(stringResource(kind.label)) }, onClick = {
-                                            showQueries = false
-                                            startActivity(ShortcutPublisher.intent(this@MainActivity, ShortcutRequest(kind)))
-                                        })
-                                    }
-                                }
-                            }
-                        }
+                            linkPending = linkPending, linkOpened = linkOpened)
                     }
                     destination?.let { target ->
                         key(target, dialogSession) {

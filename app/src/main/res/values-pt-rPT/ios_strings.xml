@@ -200,7 +200,6 @@
     <string name="list_filter_show_currents">"Mostrar correntes"</string>
     <string name="list_search">"Pesquisar"</string>
     <string name="list_by_open_waters">"por Open Waters"</string>
-    <string name="list_not_for_navigation">"Previsões — não usar para navegação"</string>
     <string name="list_distance_nm">"%1$s nm"</string>
     <string name="card_rising">"A subir"</string>
     <string name="card_falling">"A descer"</string>
@@ -327,4 +326,16 @@
     <string name="premium_restore">"Restaurar compra"</string>
     <string name="premium_unavailable">"Compras temporariamente indisponíveis."</string>
     <string name="premium_purchase_failed">"A compra não foi concluída — tente novamente."</string>
+    <string name="footer_downloads_label">"Descargas para uso sem ligação"</string>
+    <string name="footer_downloading">"A descarregar, %1$d de %2$d disponíveis"</string>
+    <string name="footer_online_complete">"Com ligação, todas as estações descarregadas"</string>
+    <string name="footer_online">"Com ligação"</string>
+    <string name="footer_offline">"Sem ligação"</string>
+    <string name="footer_offline_complete">"Sem ligação, todas as estações descarregadas"</string>
+    <plurals name="footer_offline_remaining">
+        <item quantity="one">"Sem ligação, falta %1$d descarga"</item>
+        <item quantity="many">"Sem ligação, faltam %1$d de descargas"</item>
+        <item quantity="other">"Sem ligação, faltam %1$d descargas"</item>
+    </plurals>
+    <string name="footer_supporter">"Apoiante do Slackwater"</string>
 </resources>

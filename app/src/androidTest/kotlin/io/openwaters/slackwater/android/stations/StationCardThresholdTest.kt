@@ -107,9 +107,7 @@ class StationCardThresholdTest {
         compose.setContent {
             SlackwaterTheme {
                 Box(Modifier.widthIn(max = 390.dp)) {
-                    StationsHome(onCredits = {}, model = model, clock = { fixed }) { openSettings ->
-                        TextButton(onClick = openSettings) { Text(settings) }
-                    }
+                    StationsHome(onDownloads = {}, model = model, clock = { fixed })
                 }
             }
         }
