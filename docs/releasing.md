@@ -111,4 +111,11 @@ gh workflow run release.yml --ref main -f track=internal
 
 A manual run uploads even when the commit was uploaded before, with a new version code.
 
+Release builds do not sell Premium. To check purchases, run the workflow with `-f premium=true`, which builds with `-PpremiumEnabled=true`.
+
+- Only a Play license tester buys without being charged, and license testers are their own list in Play Console (**Settings → License testing**), separate from any track's testers. Before the run, make sure every internal tester is on it. The workflow cannot check this.
+- Such a build goes to internal testing only, and its Play release name ends in "sells Premium" so it is not promoted to another track by mistake.
+- The next nightly that uploads replaces it with an ordinary build, whether or not the commit was uploaded before. A nightly uploads nothing while Android CI is failing on the head of `main`, so the build that sells Premium stays until then. Do not leave it to the nightly: when the purchase checks are done, start an ordinary run by hand.
+- An ordinary build still asks Play about an account that bought in a test build, so a refund or a lapsed test subscription ends Premium there too.
+
 An upload replaces the track's releases with the new one. On internal testing that is the point. On a closed track it also removes a draft or staged release someone prepared in Play Console, so check the track there first. The open testing track (`beta`) and production are refused.

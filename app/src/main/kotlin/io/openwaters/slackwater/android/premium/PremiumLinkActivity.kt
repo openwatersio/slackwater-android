@@ -21,6 +21,7 @@ class PremiumLinkActivity : ComponentActivity() {
         // A cold link bypasses MainActivity. Its retained reminders and calendars still need to observe the claim.
         AlertReconciliation.get(this).foreground()
         CalendarRepository.get(this).foreground()
+        PremiumStore.foreground(this)
         setContent { SlackwaterTheme { PremiumSheet(onClose = { finish() }) } }
     }
 }

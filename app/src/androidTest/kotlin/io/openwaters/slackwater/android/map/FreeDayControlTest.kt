@@ -80,6 +80,8 @@ class FreeDayControlTest {
             compose.onNodeWithText(context.getString(R.string.schedule_support_title)).assertDoesNotExist()
             compose.onNodeWithText(thanks).performScrollTo().performClick()
             compose.onNodeWithText(context.getString(R.string.premium_support)).assertExists()
+            // A supporter is not sold the plans again.
+            compose.onNodeWithText(context.getString(R.string.premium_get)).assertDoesNotExist()
         }
     }
 

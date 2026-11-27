@@ -318,4 +318,13 @@
     <string name="premium_next_free_day">"次の無料デーは%1$sです"</string>
     <string name="premium_purchased">"Premiumをご利用中です。ありがとうございます。"</string>
     <string name="premium_support">"Slackwaterは独立したオープンソースのアプリです。Premiumが開発を支えています。"</string>
+    <string name="premium_plan_yearly">"年額"</string>
+    <string name="premium_plan_yearly_detail">"解約するまで毎年自動更新されます。"</string>
+    <string name="premium_plan_lifetime">"買い切り"</string>
+    <string name="premium_plan_lifetime_detail">"お支払いは一度だけ。"</string>
+    <string name="premium_get">"Premiumを入手"</string>
+    <string name="premium_price_per_year">"年額%1$s"</string>
+    <string name="premium_restore">"購入を復元"</string>
+    <string name="premium_unavailable">"現在、購入を利用できません。"</string>
+    <string name="premium_purchase_failed">"購入が完了しませんでした。もう一度お試しください。"</string>
 </resources>

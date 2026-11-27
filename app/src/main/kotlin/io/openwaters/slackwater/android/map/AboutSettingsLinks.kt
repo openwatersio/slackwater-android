@@ -59,7 +59,7 @@ private fun AboutDialog(open: (String) -> Unit, dismiss: () -> Unit) {
             Text(stringResource(R.string.about_chs_predictions))
             Text(stringResource(R.string.about_navigation), style = MaterialTheme.typography.titleSmall)
             TextButton(onClick = { credits = true }) { Text(stringResource(R.string.about_attribution)) }
-            TextButton(onClick = { open("https://slackwater.xyz/privacy") }) { Text(stringResource(R.string.about_privacy)) }
+            TextButton(onClick = { open(PRIVACY_URL) }) { Text(stringResource(R.string.about_privacy)) }
             Text(stringResource(R.string.about_license), style = MaterialTheme.typography.titleSmall)
             Text(stringResource(R.string.about_license_text))
             TextButton(onClick = { open("https://github.com/openwatersio/slackwater-android") }) {

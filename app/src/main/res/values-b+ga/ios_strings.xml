@@ -318,4 +318,13 @@
     <string name="premium_next_free_day">"Is é %1$s do chéad lá saor in aisce eile"</string>
     <string name="premium_purchased">"Tá Premium agat — go raibh maith agat."</string>
     <string name="premium_support">"Tá Slackwater neamhspleách agus foinse oscailte. Is é Premium a choinníonn ag imeacht é."</string>
+    <string name="premium_plan_yearly">"Bliantúil"</string>
+    <string name="premium_plan_yearly_detail">"Athnuaítear gach bliain é go dtí go gcuireann tú ar ceal é."</string>
+    <string name="premium_plan_lifetime">"Go buan"</string>
+    <string name="premium_plan_lifetime_detail">"Íoc uair amháin, agus sin sin."</string>
+    <string name="premium_get">"Faigh Premium"</string>
+    <string name="premium_price_per_year">"%1$s in aghaidh na bliana"</string>
+    <string name="premium_restore">"Aischuir an ceannach"</string>
+    <string name="premium_unavailable">"Níl ceannacháin ar fáil faoi láthair."</string>
+    <string name="premium_purchase_failed">"Níor éirigh leis an gceannach — bain triail eile as."</string>
 </resources>

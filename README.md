@@ -58,7 +58,20 @@ The app follows the device language, or its per-app language setting on Android 
 
 In a debug build, open **Settings → Premium → Try everything free today** to start 24 hours of planning access. The start is saved on this device. Eligibility compares the saved start and the current time in the device’s current calendar and time zone, including after a clock or calendar change. A free day that crosses into the next month runs until its original end. The next month’s offer becomes available after that.
 
-Debug builds enable the Premium sheet and `slackwater://premium` link by default. Build with `-PpremiumEnabled=false` to test the disabled debug variant. Release and benchmark builds keep these entry points disabled. Every build includes the Google Play Billing Library, so Play Console accepts the app for product setup; nothing in the app calls it yet. The library adds the `com.android.vending.BILLING` permission and brings Google Play services and Google's DataTransport reporting library with it, all listed in the in-app notices. Live Play products, purchase acknowledgement and restore are tracked in [#12](https://github.com/openwatersio/slackwater-android/issues/12).
+Debug builds enable the Premium sheet and `slackwater://premium` link by default. Build with `-PpremiumEnabled=false` to test the disabled debug variant. Release and benchmark builds keep these entry points disabled unless built with `-PpremiumEnabled=true`, which is how a Play-distributed test build sells Premium before the release default changes. A build with Premium disabled asks Play about purchases only for an account already saved as a buyer, or to finish an acknowledgement, both of which a test build can leave behind; that is how a refund or lapse still reaches it. Every build includes the Google Play Billing Library. It adds the `com.android.vending.BILLING` permission and brings Google Play services and Google's DataTransport reporting library with it, all listed in the in-app notices.
+
+## Premium purchases
+
+The Premium sheet sells two Play products: a yearly subscription (`io.openwaters.slackwater.premium.yearly`) and a lifetime purchase (`io.openwaters.slackwater.premium.lifetime`), at the prices Play returns for the signed-in account. A plan Play does not return cannot be bought, and the sheet offers a retry. A restore Play cannot answer says that purchases are temporarily unavailable. Purchases belong to the Play account; they are not shared with the App Store.
+
+The app keeps one saved answer to "does this account own Premium", which every gate reads, including reminders that fire with the app closed. It asks Play again each time the app comes to the front, after a purchase, and on **Restore purchase**:
+
+- A paid yearly or lifetime purchase sets the answer and is acknowledged, which Play requires within three days. An acknowledgement that Play refuses, or that could not be attempted because Play did not answer right after the purchase, is retried in the background whenever the device is online, for about four days, and on each return to the app.
+- A pending payment grants nothing until Play reports it paid. While one is pending the app asks Play again twice a day in the background, so a payment that completes with the app closed is still acknowledged in time.
+- When Play answers that the account owns neither product, as after a refund or a lapsed subscription, the answer is cleared.
+- When Play cannot be reached, or only one of its two purchase lists answers and shows nothing, the saved answer stands. An offline launch never ends Premium.
+
+The monthly free day is separate: it runs on the device's clock and needs no connection. Purchase checks run only on the device against Play's own records; there is no Slackwater server. Verifying these flows with Play license testers on a Play-distributed build is tracked in [#12](https://github.com/openwatersio/slackwater-android/issues/12).
 
 ## Android reminders
 

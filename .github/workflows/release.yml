@@ -8,6 +8,10 @@ on:
         description: 'Play testing track: internal, alpha (closed testing) or a custom closed track name'
         type: string
         default: internal
+      premium:
+        description: 'Sell Premium in this build. Internal testing only, and only when every internal tester is also a Play license tester.'
+        type: boolean
+        default: false
 permissions: {}
 concurrency:
   group: play-upload
@@ -57,10 +61,18 @@ jobs:
           if [ "$GITHUB_EVENT_NAME" = schedule ]; then
             # Assigned before the loop so a failed lookup stops the step and decides nothing.
             runs=$(gh api --paginate "repos/$GITHUB_REPOSITORY/actions/workflows/release.yml/runs?head_sha=$GITHUB_SHA&status=success&per_page=100" --jq '.workflow_runs[].id')
+            # Newest first. The latest internal upload of this commit decides: an ordinary one means nothing to do,
+            # and one that sells Premium must be replaced by an ordinary build.
             for run in $runs; do
               # A successful run may have skipped the upload or sent it to another track, so only an internal upload job counts.
-              uploads=$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$run/jobs?per_page=100" --jq '[.jobs[] | select(.name == "Upload to internal" and .conclusion == "success")] | length')
-              if [ "$uploads" != 0 ]; then
+              jobs=$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$run/jobs?per_page=100" --jq '[.jobs[] | select(.conclusion == "success") | .name]')
+              premium=$(jq 'index("Upload to internal (sells Premium)") != null' <<< "$jobs")
+              uploads=$(jq 'index("Upload to internal") != null' <<< "$jobs")
+              if [ "$premium" = true ]; then
+                echo "Run $run uploaded a build of $GITHUB_SHA that sells Premium. Replacing it with an ordinary build." | tee -a "$GITHUB_STEP_SUMMARY"
+                break
+              fi
+              if [ "$uploads" = true ]; then
                 echo "Run $run already uploaded $GITHUB_SHA to internal testing. Nothing to do." | tee -a "$GITHUB_STEP_SUMMARY"
                 echo "upload=false" >> "$GITHUB_OUTPUT"
                 exit 0
@@ -122,10 +134,19 @@ jobs:
       - run: node scripts/sync-upstream.mjs --check
       - name: Build the unsigned bundle
         id: bundle
+        env:
+          PREMIUM: ${{ inputs.premium || false }}
+          TRACK: ${{ inputs.track || 'internal' }}
         run: |
+          # Only a Play license tester buys without being charged. The internal list is the one small enough to keep
+          # matched to the license testers; the workflow cannot check that it is.
+          if [ "$PREMIUM" = true ] && [ "$TRACK" != internal ]; then
+            echo '::error title=Nothing uploaded::A build that sells Premium goes to internal testing only.'
+            exit 1
+          fi
           version_code=$(node scripts/version-code.mjs)
           echo "version_code=$version_code" >> "$GITHUB_OUTPUT"
-          ./gradlew :app:bundleRelease -PslackwaterVersionCode="$version_code"
+          ./gradlew :app:bundleRelease -PslackwaterVersionCode="$version_code" -PpremiumEnabled="$PREMIUM"
       - run: python3 scripts/check-apk.py app/build/outputs/bundle/release/app-release.aab
       - uses: actions/upload-artifact@v4.6.2
         with:
@@ -175,7 +196,8 @@ jobs:
 
   upload:
     # The select job finds earlier internal uploads by this name.
-    name: Upload to ${{ inputs.track || 'internal' }}
+    # A build that sells Premium carries a different name, so the next nightly still uploads an ordinary build of the commit.
+    name: Upload to ${{ inputs.track || 'internal' }}${{ inputs.premium && ' (sells Premium)' || '' }}
     needs: [select, build, sign]
     runs-on: ubuntu-latest
     timeout-minutes: 20
@@ -213,6 +235,8 @@ jobs:
           PLAY_RELEASE_STATUS: ${{ vars.PLAY_RELEASE_STATUS }}
           PLAY_TRACK: ${{ inputs.track || 'internal' }}
           PLAY_VERSION_CODE: ${{ needs.build.outputs.version_code }}
+          PREMIUM_MARK: ${{ inputs.premium && ' sells Premium' || '' }}
         run: |
-          export PLAY_RELEASE_NAME="$PLAY_VERSION_CODE (${GITHUB_SHA:0:7})"
+          # Named apart in Play Console, so a build that sells Premium is not promoted to another track by mistake.
+          export PLAY_RELEASE_NAME="$PLAY_VERSION_CODE (${GITHUB_SHA:0:7})$PREMIUM_MARK"
           node scripts/play-upload.mjs "$RUNNER_TEMP/bundle/app-release.aab"
