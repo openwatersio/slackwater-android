@@ -18,10 +18,14 @@ export async function verifyAssets(directory, entries) {
 const git = (cwd,...args) => execFileSync('git',args,{cwd,maxBuffer:32*1024*1024});
 const remote = source => `https://github.com/${source.repository}.git`;
 const shallow = path => git(path,'rev-parse','--is-shallow-repository').toString().trim() === 'true';
+// Sync marks each pin it checks out here. A fetch by commit ID updates no branch, so without the mark a full
+// clone would see its own last pin as a commit nothing keeps and refuse to move off it.
+const PINS = 'refs/sync-upstream';
 // Whether the commit survives HEAD moving away from it.
 async function kept(path, commit) {
  try { git(path,'symbolic-ref','--quiet','HEAD'); return true; } catch {}
- if (git(path,'for-each-ref','--contains',commit,'--count=1').length) return true;
+ // A stash also holds a ref to its parent commit, but dropping the stash would let that commit go.
+ if (git(path,'for-each-ref','--contains',commit,'--count=1','refs/heads','refs/tags','refs/remotes',PINS).length) return true;
  if (!shallow(path)) return false;
  // A shallow fetch records the commits it stopped at, so one listed there came from upstream and not from an edit here.
  // git answers with a path relative to the checkout, or an absolute one for a linked worktree.
@@ -52,7 +56,7 @@ async function checkout(name, source, check) {
   if (modified()) throw Error(`Modified source: ${name} is at ${head.slice(0,7)}, not the pinned ${source.commit.slice(0,7)}; commit or discard its changes, then run sync again`);
   // A clean tree can still hold commits made in the checkout. Leaving a detached commit that nothing else keeps
   // would strand it in the reflog, so the move needs a branch, a ref, or a commit that came from upstream.
-  if (!(await kept(path, head))) throw Error(`Unsaved commits: ${name} is at ${head}, which no branch keeps; run git -C vendor/${name} switch -c keep, then run sync again`);
+  if (!(await kept(path, head))) throw Error(`Unsaved commits: ${name} is at ${head}, which no branch keeps; run git -C vendor/${name} switch -c keep-${head.slice(0,7)}, then run sync again`);
   try { git(path,'cat-file','-e',`${source.commit}^{commit}`); }
   catch {
    // --depth would cut the history of a full clone, so it is kept for the shallow ones sync makes.
@@ -61,6 +65,7 @@ async function checkout(name, source, check) {
   // Detaching leaves any branch in place. A file git ignores is not in the status above, so the checkout
   // itself must refuse to write over one.
   git(path,'checkout','--quiet','--no-overwrite-ignore','--detach',source.commit);
+  git(path,'update-ref',`${PINS}/${source.commit}`,source.commit);
   console.log(`Moved vendor/${name} from ${head} to ${source.commit}.`);
  }
  if (modified()) throw Error(`Modified source: ${name}`);

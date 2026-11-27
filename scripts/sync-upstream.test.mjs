@@ -181,18 +181,53 @@ test('does not write over an ignored file the new pin starts tracking', async ()
  } finally { await rm(root,{recursive:true,force:true}); }
 });
 
-test('moves a full clone without cutting its history', async () => {
- const { root, env, checkout, head, first, second } = await movedPin();
+test('moves a full clone again and again without cutting its history', async () => {
+ const root = await sandbox();
  try {
-  await rm(checkout,{recursive:true,force:true});
-  execFileSync('git',['clone','--quiet',`file://${root}/remotes/fixture/source.git`,checkout]);
+  const remote = join(root, 'remotes', 'fixture', 'source.git');
+  await mkdir(remote, {recursive:true});
+  const upstream = inCheckout(remote);
+  const publish = async text => {
+   await writeFile(join(remote, 'source.txt'), text);
+   upstream('add', '.'); upstream(...author,'commit','--quiet','-m',text);
+   return upstream('rev-parse','HEAD');
+  };
+  upstream('init', '--quiet');
+  const first = await publish('first');
+  // Cloned before the later commits exist, so each move has to fetch its pin.
+  const checkout = join(root,'vendor/fixture');
+  await mkdir(join(root,'vendor'));
+  execFileSync('git',['clone','--quiet',`file://${remote}`,checkout]);
   const git = inCheckout(checkout);
   git('checkout','--quiet','--detach',first);
+  await mkdir(join(root,'app/src/main/assets/slackwater'),{recursive:true});
+  const env = {GIT_CONFIG_COUNT:'1',GIT_CONFIG_KEY_0:`url.file://${root}/remotes/.insteadOf`,GIT_CONFIG_VALUE_0:'https://github.com/'};
+  let count = 1;
+  for (const text of ['second', 'third']) {
+   const pin = await publish(text);
+   await writeFile(join(root,'upstream.lock.json'),JSON.stringify({sources:{fixture:{repository:'fixture/source',commit:pin}},resources:{repository:'fixture/source',commit:pin,assets:[]}}));
+   const result = run(root, [], env);
+   assert.equal(result.status, 0, result.stderr);
+   assert.equal(git('rev-parse','HEAD'), pin);
+   assert.equal(git('rev-parse','--is-shallow-repository'), 'false');
+   assert.equal(git('rev-list','--count','HEAD'), String(++count));
+  }
+ } finally { await rm(root,{recursive:true,force:true}); }
+});
+
+test('a stash does not count as keeping a commit', async () => {
+ const { root, env, checkout, head } = await movedPin();
+ try {
+  const git = inCheckout(checkout);
+  await writeFile(join(checkout,'source.txt'),'local commit');
+  git(...author,'commit','--quiet','-am','local');
+  const local = head();
+  await writeFile(join(checkout,'source.txt'),'more');
+  git(...author,'stash','--quiet');
   const result = run(root, [], env);
-  assert.equal(result.status, 0, result.stderr);
-  assert.equal(head(), second);
-  assert.equal(git('rev-parse','--is-shallow-repository'), 'false');
-  assert.equal(git('rev-list','--count','HEAD'), '2');
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Unsaved commits/);
+  assert.equal(head(), local);
  } finally { await rm(root,{recursive:true,force:true}); }
 });
 

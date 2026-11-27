@@ -34,7 +34,7 @@ The device check requires an attached emulator/device. CI runs it on API 26 and 
 
 Cards map the uncompressed tide database directly from the APK and look up each station by ID with the pinned Kotlin database reader. Runtime clock injection lives in the pure core. Test data never enters the release APK.
 
-Sync moves a checkout by detaching it at the pinned commit, so a branch you had checked out there stays. To keep commits you made on a detached checkout, put them on a branch first (`git -C vendor/slackwater switch -c keep`); sync names the commit when it refuses. A full clone keeps its history; only the shallow checkouts sync creates are fetched shallow.
+Sync moves a checkout by detaching it at the pinned commit, so a branch you had checked out there stays. To keep commits you made on a detached checkout, put them on a branch first; sync names the commit and the command when it refuses. A stash does not count. Because Gradle runs `--check` on every configuration, a stray untracked file in any checkout, the iOS one included, stops the build until it is removed or ignored. A full clone keeps its history; only the shallow checkouts sync creates are fetched shallow.
 
 Gradle checks the source pins and packaged inputs during configuration, including Android Studio sync. Kotlin compiler scratch files under `kotlin/.kotlin/` are excluded from the source cleanliness check. CI audits the debug, release and optimized benchmark APKs and the release bundle.
 
