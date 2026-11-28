@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.unit.Density
@@ -30,7 +31,7 @@ class LocationHeadingTest {
 
     private fun show(slot: LocationSlot, width: Dp = 360.dp, fontScale: Float = 1f) = compose.setContent {
         CompositionLocalProvider(LocalDensity provides Density(LocalDensity.current.density, fontScale)) {
-            SlackwaterTheme { Box(Modifier.width(width)) { LocationHeading(slot) } }
+            SlackwaterTheme { Box(Modifier.width(width).testTag("row")) { LocationHeading(slot) } }
         }
     }
 
@@ -43,7 +44,8 @@ class LocationHeadingTest {
         val fix = compose.onNodeWithText("48.423°N, 123.371°W").getBoundsInRoot()
         assertTrue("the position starts after the label", fix.left >= label.right)
         assertTrue("the position shares the label's row", fix.top < label.bottom && label.top < fix.bottom)
-        assertEquals(360f, fix.right.value, 1f)
+        // The screen can be narrower than the width asked for, so measure the row itself.
+        assertEquals(compose.onNodeWithTag("row").getBoundsInRoot().right.value, fix.right.value, 1f)
     }
 
     @Test fun aPositionWithNoRoomBesideTheLabelMovesBelowIt() {
