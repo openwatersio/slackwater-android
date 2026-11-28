@@ -28,7 +28,7 @@ def verify_current_ranges(catalog, index):
 # A bundle is compressed throughout. Google Play decides what to store uncompressed in the APKs it
 # builds from the globs AGP writes into BundleConfig.pb for each noCompress entry.
 BUNDLE_UNCOMPRESSED = {
-    "stations.tcdb": b"**[tT][cC][dD][bB]",
+    "station and current TCDBs": b"**[tT][cC][dD][bB]",
     "currents.json": b"**[cC][uU][rR][rR][eE][nN][tT][sS].[jJ][sS][oO][nN]",
 }
 

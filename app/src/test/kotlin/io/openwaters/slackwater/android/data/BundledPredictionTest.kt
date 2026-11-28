@@ -21,12 +21,30 @@ class BundledPredictionTest {
         engineNodeCorrections(DatabaseCorrections.FOREMAN, null)
     }
 
-    @Test fun predictsPackagedTideWithThePinnedReaderAndEngine() {
+    @Test fun predictsPackagedTideLikeTheTypeScriptEngine() {
         val database = StationDatabase.open(File("src/main/assets/slackwater/stations.tcdb"))
         val harbor = requireNotNull(database.station("noaa/9449880"))
-        val at = Instant.parse("2026-07-15T00:00:00Z")
+        val at = Instant.parse("2026-12-19T12:00:00Z")
         val model = tideReference(harbor)
-        assertTrue(model.heights(at, at).single().heightMetres.isFinite())
+        // Slackwater's TypeScript engine at the pinned revision, with the bundled station inputs.
+        assertEquals(1.6079792021908887, model.heights(at, at).single().heightMetres, 1e-6)
+    }
+
+    @Test fun engineAcceptsEveryPackagedTideModel() {
+        val database = StationDatabase.open(File("src/main/assets/slackwater/stations.tcdb"))
+        for (row in database) {
+            try {
+                val offsets = row.tideOffsets
+                if (offsets == null) {
+                    tideReference(row)
+                } else {
+                    val reference = requireNotNull(database.station(offsets.reference))
+                    require(reference.tideOffsets == null)
+                }
+            } catch (error: IllegalArgumentException) {
+                throw AssertionError("Invalid packaged tide model for ${row.id}", error)
+            }
+        }
     }
 
     @Test fun packagesBinaryMetadataForTheHarmonicCurrentReference() {

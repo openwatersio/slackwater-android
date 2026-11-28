@@ -1,12 +1,14 @@
 package io.openwaters.slackwater.android.map
 
 import android.content.Context
+import android.util.LruCache
 import io.openwaters.slackwater.*
 import io.openwaters.slackwater.android.R
 import io.openwaters.slackwater.android.core.map.*
 import io.openwaters.slackwater.android.core.prediction.*
 import io.openwaters.slackwater.android.core.station.*
 import io.openwaters.slackwater.android.data.*
+import io.openwaters.slackwater.database.Station as DatabaseStation
 import java.io.IOException
 import java.time.Instant
 import java.util.concurrent.ConcurrentHashMap
@@ -29,6 +31,8 @@ class StationMapModel(context: Context, private val models: ModelStore = ModelSt
     internal suspend fun currentFields(at: Instant) = fields.evaluate(at)
     val revision = models.revision
     private val referenceEvents = ReferenceCurrentEvents()
+    private val tideReferences = LruCache<String, Station>(192)
+    private val currentReferences = LruCache<String, CurrentStation>(192)
     private val ranks = ConcurrentHashMap<StationId, Double>()
 
     private val currents = BundledCurrentRecords(assets)
@@ -88,12 +92,12 @@ class StationMapModel(context: Context, private val models: ModelStore = ModelSt
         val record = tides.station(id) ?: return MapPinState()
         val offsets = record.tideOffsets
         if (offsets == null) {
-            val station = tideReference(record)
+            val station = tideModel(record)
             val range = tideRangeProxy(record.constituents.associate { it.name to it.amplitude })
             return tidePinState(at, detailed, range, station::heights, station::extremes, format::height)
         }
         val ref = tides.station(StationId(offsets.reference)) ?: return MapPinState()
-        val station = tideSubordinate(record, tideReference(ref))
+        val station = tideSubordinate(record, tideModel(ref))
         return tidePinState(at, detailed, 0.0, station::heights, station::extremes, format::height)
     }
 
@@ -104,16 +108,22 @@ class StationMapModel(context: Context, private val models: ModelStore = ModelSt
         val row = currents[stationId] ?: return MapPinState()
         val reference = row.optString("reference")
         if (reference.isEmpty()) {
-            val station = currents.harmonic(stationId) ?: return MapPinState()
+            val station = currentModel(stationId) ?: return MapPinState()
             return format.current(station.speeds(at, at, 1.0).speedAt(at),
                 station.floodDirectionDegrees, station.ebbDirectionDegrees, detailed)
         }
-        val harmonic = currents.harmonic(reference) ?: return MapPinState()
+        val harmonic = currentModel(reference) ?: return MapPinState()
         val station = row.subordinateCurrent(harmonic)
         val events = cache.events(StationId(reference), at, harmonic::events)
         val speed = subordinateCurrentSpeed(at, events, station) ?: station.speeds(at, at, 1.0).speedAt(at)
         return format.current(speed, station.floodDirectionDegrees, station.ebbDirectionDegrees, detailed)
     }
+
+    private fun tideModel(record: DatabaseStation): Station =
+        tideReferences.get(record.id) ?: tideReference(record).also { tideReferences.put(record.id, it) }
+
+    private fun currentModel(id: String): CurrentStation? =
+        currentReferences.get(id) ?: currents.harmonic(id)?.also { currentReferences.put(id, it) }
 
     private suspend fun canadian(station: StationIdentity, at: Instant, detailed: Boolean, format: PinFormat): StationMapPin {
         if (station.kind == StationKind.CanadianCurrent && gates[station.id]?.online == true) {
