@@ -4,6 +4,8 @@ Android verification is tracked in the [scenario and accessibility matrix](valid
 
 This ledger is the acceptance map for the Android work tracked in [repository issues](https://github.com/openwatersio/slackwater-android/issues) and the [Slackwater Android project](https://github.com/orgs/openwatersio/projects/5); each row names the issues that own it. Its source is the entire iOS tree at [PR #921 merge commit `6457d71b46af0e1c3310e1f8688dffc0db102d33`](https://github.com/openwatersio/slackwater-ios/tree/6457d71b46af0e1c3310e1f8688dffc0db102d33). Rows describe work to implement and verify, not existing Android features.
 
+The pinned iOS documents and string catalog in `upstream.lock.json` are at `96567d88e93baad6cee27ef533a1e99aa1a2f2a0`, later than the commit these rows were reviewed at. That pin carries the corrected My Location wording in list §4, which the Android list follows. The other contract changes between the two commits have not been checked against Android; [#149](https://github.com/openwatersio/slackwater-android/issues/149) lists them. The links in this ledger stay at the reviewed commit until that check is done.
+
 Use the owning product document when its wording differs from incidental iOS code. Source documents that point to moving upstream links must be resolved to reviewed dependency SHAs in `upstream.lock.json` before implementation. Refresh this baseline deliberately; do not make CI compare a pinned export with the latest unreviewed iOS `main`.
 
 ## Contract coverage

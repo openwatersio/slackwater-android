@@ -1,8 +1,8 @@
 {
   "repository": "openwatersio/slackwater-ios",
-  "commit": "6457d71b46af0e1c3310e1f8688dffc0db102d33",
+  "commit": "96567d88e93baad6cee27ef533a1e99aa1a2f2a0",
   "catalog": "Slackwater/Localizable.xcstrings",
-  "sha256": "e4fcb057079ac8a606045667c548332ceb18d53de65bf1100ae5286283eaa182",
+  "sha256": "a92947b3b668a2071ffb6e09f114e65c69a4674611f6385e339ef5bf5f3a6eb2",
   "locales": [
     "en",
     "da",
