@@ -117,7 +117,7 @@ Translation is pinned to Astronomy Engine commit
     SOFTWARE.
 
 
-AndroidX (including DataStore), Compose, Material, Okio, Kotlin, atomicfu, Kotlin coroutines, Kotlin serialization, Google FlatBuffers, and Google DataTransport, Firebase Encoders and javax.inject (dependencies of the Play Billing Library) — Apache License 2.0
+AndroidX (including DataStore), Compose, Material, Material Design Icons, Okio, Kotlin, atomicfu, Kotlin coroutines, Kotlin serialization, Google FlatBuffers, and Google DataTransport, Firebase Encoders and javax.inject (dependencies of the Play Billing Library) — Apache License 2.0
 
 
                                  Apache License

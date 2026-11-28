@@ -34,6 +34,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -57,6 +58,8 @@ import androidx.compose.ui.semantics.customActions
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
@@ -158,15 +161,44 @@ fun StationListScreen(
 }
 
 @Composable
-private fun SectionHeading(text: String, modifier: Modifier = Modifier) {
+private fun SectionHeading(text: String, modifier: Modifier = Modifier, color: Color = GoGreen) {
     // Uppercase is visual only: assistive technology hears the heading as written.
     Text(
         text.uppercase(),
         style = MaterialTheme.typography.labelLarge,
         fontFamily = FontFamily.Monospace,
-        color = GoGreen,
+        color = color,
         modifier = modifier.semantics { heading(); contentDescription = text },
     )
+}
+
+/**
+ * The My Location heading (list §4). With a fix, the position sits opposite the label on the same
+ * row and the hero cards follow directly; the position has no card of its own. A position with no
+ * room beside the label moves to the next line, at the leading edge.
+ */
+@Composable
+internal fun LocationHeading(slot: LocationSlot) {
+    if (slot == LocationSlot.Denied || slot == LocationSlot.NotDetermined) {
+        SectionHeading(stringResource(R.string.list_my_location))
+        return
+    }
+    val foreground = MaterialTheme.colorScheme.onSurface
+    // A flow, not a row: a long translation or large text would otherwise squeeze the position into
+    // a column of characters beside the label.
+    FlowRow(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, itemVerticalAlignment = Alignment.CenterVertically) {
+        Row(Modifier.padding(end = 8.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+            Icon(painterResource(R.drawable.ic_location_arrow), contentDescription = null, tint = foreground, modifier = Modifier.size(14.dp))
+            SectionHeading(stringResource(R.string.list_my_location), color = foreground)
+        }
+        if (slot is LocationSlot.Located) Text(
+            if (slot.approximate) stringResource(R.string.list_approximate_location) else formatCoordinate(slot.fix.coordinate),
+            style = MaterialTheme.typography.labelMedium,
+            fontFamily = FontFamily.Monospace,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.testTag("location-position"),
+        )
+    }
 }
 
 private fun fallbackPlace(state: StationListState, firstRun: String) = state.lastOpenedName ?: firstRun
@@ -180,15 +212,12 @@ private fun LazyListScope.locationSlot(
     onAsk: () -> Unit,
     onSettings: () -> Unit,
 ) {
-    item(key = "location-heading") { SectionHeading(stringResource(R.string.list_my_location)) }
-    item(key = "location-slot") {
+    item(key = "location-heading") { LocationHeading(state.slot) }
+    if (state.slot !is LocationSlot.Located) item(key = "location-slot") {
         val firstRun = stringResource(R.string.list_first_run_region)
         val fallback = stringResource(R.string.list_showing_near, fallbackPlace(state, firstRun))
-        when (val slot = state.slot) {
-            is LocationSlot.Located -> SlotTile(
-                if (slot.approximate) stringResource(R.string.list_approximate_location) else formatCoordinate(slot.fix.coordinate),
-                monospace = !slot.approximate,
-            )
+        when (state.slot) {
+            is LocationSlot.Located -> Unit
             LocationSlot.Locating -> SlotTile(stringResource(R.string.list_finding_location), spinner = true)
             LocationSlot.Failed -> NoticeCard(stringResource(R.string.list_location_unavailable), fallback, null, null, AttentionAmber)
             LocationSlot.Denied -> NoticeCard(stringResource(R.string.list_location_unavailable), fallback,
@@ -203,11 +232,11 @@ private fun LazyListScope.locationSlot(
 }
 
 @Composable
-private fun SlotTile(text: String, spinner: Boolean = false, monospace: Boolean = false) {
+private fun SlotTile(text: String, spinner: Boolean = false) {
     Surface(shape = RoundedCornerShape(24.dp), tonalElevation = 1.dp, modifier = Modifier.fillMaxWidth().heightIn(min = 96.dp)) {
         Row(Modifier.padding(20.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             if (spinner) CircularProgressIndicator(Modifier.size(24.dp), strokeWidth = 2.dp)
-            Text(text, style = MaterialTheme.typography.bodyLarge, fontFamily = if (monospace) FontFamily.Monospace else null)
+            Text(text, style = MaterialTheme.typography.bodyLarge)
         }
     }
 }
