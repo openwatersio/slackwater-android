@@ -7,13 +7,14 @@ import io.openwaters.slackwater.database.StationDatabase
 import java.io.FileInputStream
 
 class BundledTideDatabase(private val assets: AssetManager) {
-    private val database by lazy {
-        assets.openFd("slackwater/stations.tcdb").use { asset ->
-            FileInputStream(asset.fileDescriptor).channel.use { channel ->
-                StationDatabase.open(channel, asset.startOffset, asset.length)
-            }
-        }
-    }
+    private val database by lazy { assets.openStationDatabase("stations.tcdb") }
 
     fun station(id: StationId): Station? = database.station(id.value)
 }
+
+internal fun AssetManager.openStationDatabase(fileName: String): StationDatabase =
+    openFd("slackwater/$fileName").use { asset ->
+        FileInputStream(asset.fileDescriptor).channel.use { channel ->
+            StationDatabase.open(channel, asset.startOffset, asset.length)
+        }
+    }

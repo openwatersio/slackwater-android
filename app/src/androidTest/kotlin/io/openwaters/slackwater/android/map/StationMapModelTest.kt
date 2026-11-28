@@ -17,6 +17,19 @@ import org.junit.Assert.*
 import org.junit.Test
 
 class StationMapModelTest {
+    @Test fun bundledReferencesAndSubordinatesKeepTheirReadingsOnWarmRefresh() = runBlocking {
+        val model = StationMapModel(InstrumentationRegistry.getInstrumentation().targetContext)
+        val at = Instant.parse("2026-12-19T12:00:00Z")
+        val bounds = PinBox(0.0, 0.0, 0.01, 0.01)
+        val selected = listOf("noaa/9449880", "noaa/TEC4635", "current:noaa/CHB9904", "current:noaa/PCT3896")
+        for (rawId in selected) {
+            val id = StationId(rawId)
+            val pin = model.pins(bounds, 12.0, null, id, at).single { it.station.id == id }
+            assertNotNull(rawId, pin.state.reading)
+            assertEquals(rawId, pin, model.pins(bounds, 12.0, null, id, at).single { it.station.id == id })
+        }
+    }
+
     @Test fun restrictedGaugeHasAnExplanatoryRingAndNeverGetsPredicted() = runBlocking {
         val model = StationMapModel(InstrumentationRegistry.getInstrumentation().targetContext)
         val pins = model.pins(PinBox(38.257, 22.076, 38.258, 22.077), 12.0, StationSeries.Tide, null, Instant.EPOCH)

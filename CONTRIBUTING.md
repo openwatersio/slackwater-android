@@ -31,7 +31,7 @@ Merging to `main` is releasing to testers. The [Play upload workflow](.github/wo
 What that means for a change:
 
 - **A red `main` ships nothing.** The nightly waits for Android CI on the commit and stops if it failed.
-- **The bundle is checked, not only the APK.** `scripts/check-apk.py` runs on both in CI: the reviewed assets and no others, the tide database and current catalog marked uncompressed, and no test fixture code. A change to packaging has to keep both passing.
+- **CI checks the APK and bundle.** `scripts/check-apk.py` verifies the asset allowlist, the uncompressed tide and current databases and indexed current catalog, and test fixture exclusion.
 - **Premium stays off in release builds** until its purchases have been verified on a Play-distributed build ([#12](https://github.com/openwatersio/slackwater-android/issues/12)). CI checks that.
 - **Closed testing and production are deliberate.** A maintainer promotes a nightly in Play Console, or runs the workflow by hand with a closed track. The workflow refuses open testing and production.
 

@@ -28,7 +28,7 @@ def verify_current_ranges(catalog, index):
 # A bundle is compressed throughout. Google Play decides what to store uncompressed in the APKs it
 # builds from the globs AGP writes into BundleConfig.pb for each noCompress entry.
 BUNDLE_UNCOMPRESSED = {
-    "stations.tcdb": b"**[tT][cC][dD][bB]",
+    "station and current TCDBs": b"**[tT][cC][dD][bB]",
     "currents.json": b"**[cC][uU][rR][rR][eE][nN][tT][sS].[jJ][sS][oO][nN]",
 }
 
@@ -58,8 +58,9 @@ def verify(package):
                 if bytes([len(glob)]) + glob not in config:
                     raise ValueError(f"The bundle does not keep {name} uncompressed")
         else:
-            if archive.getinfo(assets + "slackwater/stations.tcdb").compress_type != zipfile.ZIP_STORED:
-                raise ValueError("stations.tcdb must be uncompressed")
+            for name in ("stations.tcdb", "currents.tcdb"):
+                if archive.getinfo(assets + "slackwater/" + name).compress_type != zipfile.ZIP_STORED:
+                    raise ValueError(f"{name} must be uncompressed")
             if archive.getinfo(assets + "slackwater/currents.json").compress_type != zipfile.ZIP_STORED:
                 raise ValueError("currents.json must be uncompressed for indexed reads")
         verify_current_ranges(archive.read(assets + "slackwater/currents.json"),

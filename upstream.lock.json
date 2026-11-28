@@ -7,7 +7,7 @@
   "sources": {
     "slackwater": {
       "repository": "openwatersio/slackwater",
-      "commit": "adfa60ae3aa6f5127d2bff7136b087de1773346a"
+      "commit": "1b81919a655ba2ddc0d8f3967a940e8d51f81b58"
     },
     "almanac": {
       "repository": "openwatersio/almanac",
@@ -15,7 +15,7 @@
     },
     "slackwater-database": {
       "repository": "openwatersio/slackwater-database",
-      "commit": "9d1cb257114333306a2a1554ca19e4d0af948019"
+      "commit": "c2f4862e3afa6ba064171e8f318fd3d9fff3bea8"
     }
   },
   "resources": {
@@ -36,6 +36,11 @@
         "name": "currents.json",
         "path": "Slackwater/Resources/currents.json",
         "sha256": "a2cd0f5026175939e74c578f7dc534d92261b1ab5185a3a174a3d88410b6c7c1"
+      },
+      {
+        "name": "currents.tcdb",
+        "path": "Slackwater/Resources/currents.tcdb",
+        "sha256": "a30b0d12cbc23cd755c2eeb6509082d4a1a69a1b6e4a263b897401487077cdc5"
       },
       {
         "name": "chs-stations.json",
