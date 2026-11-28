@@ -58,8 +58,9 @@ def verify(package):
                 if bytes([len(glob)]) + glob not in config:
                     raise ValueError(f"The bundle does not keep {name} uncompressed")
         else:
-            if archive.getinfo(assets + "slackwater/stations.tcdb").compress_type != zipfile.ZIP_STORED:
-                raise ValueError("stations.tcdb must be uncompressed")
+            for name in ("stations.tcdb", "currents.tcdb"):
+                if archive.getinfo(assets + "slackwater/" + name).compress_type != zipfile.ZIP_STORED:
+                    raise ValueError(f"{name} must be uncompressed")
             if archive.getinfo(assets + "slackwater/currents.json").compress_type != zipfile.ZIP_STORED:
                 raise ValueError("currents.json must be uncompressed for indexed reads")
         verify_current_ranges(archive.read(assets + "slackwater/currents.json"),

@@ -100,14 +100,15 @@ class StationMapModel(context: Context, private val models: ModelStore = ModelSt
     private fun bundledCurrent(
         id: StationId, at: Instant, detailed: Boolean, format: PinFormat, cache: ReferenceCurrentEvents,
     ): MapPinState {
-        val row = currents[id.value.removePrefix("current:")] ?: return MapPinState()
+        val stationId = id.value.removePrefix("current:")
+        val row = currents[stationId] ?: return MapPinState()
         val reference = row.optString("reference")
         if (reference.isEmpty()) {
-            val station = row.currentStation()
+            val station = currents.harmonic(stationId) ?: return MapPinState()
             return format.current(station.speeds(at, at, 1.0).speedAt(at),
                 station.floodDirectionDegrees, station.ebbDirectionDegrees, detailed)
         }
-        val harmonic = currents[reference]?.currentStation() ?: return MapPinState()
+        val harmonic = currents.harmonic(reference) ?: return MapPinState()
         val station = row.subordinateCurrent(harmonic)
         val events = cache.events(StationId(reference), at, harmonic::events)
         val speed = subordinateCurrentSpeed(at, events, station) ?: station.speeds(at, at, 1.0).speedAt(at)

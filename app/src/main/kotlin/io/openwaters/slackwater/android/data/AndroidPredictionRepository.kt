@@ -6,6 +6,7 @@ import io.openwaters.slackwater.android.core.prediction.*
 import io.openwaters.slackwater.android.core.prediction.PredictionResult.Reason
 import io.openwaters.slackwater.android.core.station.*
 import io.openwaters.slackwater.database.HeightOffsetType
+import io.openwaters.slackwater.database.Station as DatabaseStation
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONArray
@@ -128,15 +129,16 @@ class AndroidPredictionRepository(
     }
 
     private fun bundledCurrent(id: StationId, span: TimeSpan, stepSeconds: Double): PredictionResult {
-        val row = currents[id.value.removePrefix("current:")] ?: bad()
+        val stationId = id.value.removePrefix("current:")
+        val row = currents[stationId] ?: bad()
         val ref = row.optString("reference")
         val (capability, series, model) = if (ref.isEmpty()) {
-            val station = row.currentStation()
+            val station = currents.harmonic(stationId) ?: bad()
             Triple(StationCapabilities.HARMONIC_CURRENT, EngineAdapter.current(station, span, stepSeconds).copy(
                 hasCrossAxis = (row.optJSONArray("minorConstituents")?.length() ?: 0) > 0 || row.optDouble("minorMeanFlow", 0.0) != 0.0,
             ), ChartModel.Current(station::speeds, station::events))
         } else {
-            val station = row.subordinateCurrent(currents[ref]?.currentStation() ?: bad())
+            val station = row.subordinateCurrent(currents.harmonic(ref) ?: bad())
             Triple(StationCapabilities.SUBORDINATE_CURRENT, EngineAdapter.current(station, span, stepSeconds), ChartModel.Current(station::speeds, station::events))
         }
         return PredictionResult.Ready(id, span, "NOAA", capability, series, chartModel = model)
@@ -216,13 +218,15 @@ class AndroidPredictionRepository(
     private fun bad(reason: Reason = Reason.INVALID_MODEL): Nothing = throw BadPrediction(reason)
 }
 
-internal fun tideReference(record: io.openwaters.slackwater.database.Station): Station {
+internal fun tideReference(record: DatabaseStation): Station {
     require(record.tideOffsets == null)
     return Station(record.constituents.map { HarmonicConstituent(it.name, it.amplitude, it.phase) }
-        .also { require(it.isNotEmpty()) }, record.chartDatumShift ?: 0.0)
+        .also { require(it.isNotEmpty()) }, record.chartDatumShift ?: 0.0,
+        definitions = record.engineDefinitions(),
+        nodeCorrections = engineNodeCorrections(record.nodeCorrections, record.nodeCorrectionsLatitude))
 }
 
-internal fun tideSubordinate(record: io.openwaters.slackwater.database.Station, reference: Station): SubordinateTideStation {
+internal fun tideSubordinate(record: DatabaseStation, reference: Station): SubordinateTideStation {
     val offsets = requireNotNull(record.tideOffsets)
     val height = if (offsets.heightType == HeightOffsetType.RATIO) HeightOffset.Ratio(offsets.heightHigh, offsets.heightLow)
         else HeightOffset.Fixed(offsets.heightHigh, offsets.heightLow)
@@ -258,6 +262,23 @@ internal fun JSONObject.fittedTide(): Station {
     return Station(record.constants(), record.getDouble("offset"))
 }
 
-internal fun JSONObject.currentStation() = CurrentStation(constants(), optional("floodDirection"), optional("ebbDirection"),
-    getDouble("meanFlow"), if (isNull("minorConstituents")) null else constants("minorConstituents"),
-    optional("minorMeanFlow") ?: 0.0, optional("azimuth"))
+internal fun JSONObject.currentStation(record: DatabaseStation) =
+    CurrentStation(
+        constants(), optional("floodDirection"), optional("ebbDirection"), getDouble("meanFlow"),
+        if (isNull("minorConstituents")) null else constants("minorConstituents"),
+        optional("minorMeanFlow") ?: 0.0, optional("azimuth"),
+        definitions = record.engineDefinitions(),
+        nodeCorrections = engineNodeCorrections(record.nodeCorrections, record.nodeCorrectionsLatitude),
+    )
+
+internal fun engineNodeCorrections(correction: DatabaseStation.NodeCorrections, latitude: Double?): NodeCorrections =
+    when (correction) {
+        DatabaseStation.NodeCorrections.IHO -> NodeCorrections.Iho
+        DatabaseStation.NodeCorrections.SCHUREMAN -> NodeCorrections.Schureman
+        DatabaseStation.NodeCorrections.FOREMAN -> NodeCorrections.Foreman(requireNotNull(latitude))
+    }
+
+private fun DatabaseStation.engineDefinitions(): List<ConstituentDefinition> = constituentDefinitions.orEmpty().map {
+    ConstituentDefinition(it.name, it.speed, it.coefficients, it.aliases,
+        it.members.map { member -> ConstituentDefinition.Member(member.name, member.factor) })
+}
