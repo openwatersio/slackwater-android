@@ -32,17 +32,15 @@ class BundledPredictionTest {
 
     @Test fun engineAcceptsEveryPackagedTideModel() {
         val database = StationDatabase.open(File("src/main/assets/slackwater/stations.tcdb"))
-        for (row in database) {
+        val groups = database.groupBy { it.tideOffsets?.reference ?: it.id }
+        for ((referenceId, rows) in groups) {
             try {
-                val offsets = row.tideOffsets
-                if (offsets == null) {
-                    tideReference(row)
-                } else {
-                    val reference = requireNotNull(database.station(offsets.reference))
-                    require(reference.tideOffsets == null)
+                val reference = tideReference(requireNotNull(database.station(referenceId)))
+                for (row in rows) {
+                    if (row.tideOffsets != null) tideSubordinate(row, reference)
                 }
             } catch (error: IllegalArgumentException) {
-                throw AssertionError("Invalid packaged tide model for ${row.id}", error)
+                throw AssertionError("Invalid packaged tide model using reference $referenceId", error)
             }
         }
     }

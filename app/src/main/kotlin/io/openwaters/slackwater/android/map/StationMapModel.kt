@@ -31,7 +31,7 @@ class StationMapModel(context: Context, private val models: ModelStore = ModelSt
     internal suspend fun currentFields(at: Instant) = fields.evaluate(at)
     val revision = models.revision
     private val referenceEvents = ReferenceCurrentEvents()
-    private val tideReferences = LruCache<String, Station>(192)
+    private val tideReferences = LruCache<String, Station>(512)
     private val currentReferences = LruCache<String, CurrentStation>(192)
     private val ranks = ConcurrentHashMap<StationId, Double>()
 

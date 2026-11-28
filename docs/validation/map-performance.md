@@ -42,3 +42,14 @@ rtk adb -s SERIAL shell am instrument -w \
 rtk mkdir -p benchmark/build/outputs/map-profile
 rtk adb -s SERIAL pull /sdcard/Android/media/io.openwaters.slackwater.benchmark/. benchmark/build/outputs/map-profile/
 ```
+
+## East Coast reference cache
+
+An API 37 debug emulator probe called the production map selection at zoom 7. The documented East Coast box retained 620 pins, using 368 tide and 114 current reference models. Padding the box by 50% on each edge retained 1,167 pins, using 491 tide and 130 current reference models. These counts use live map ranks and include restricted pins.
+
+| Viewport | Median warm refresh at 192 tide entries | Median warm refresh at 512 tide entries |
+| --- | ---: | ---: |
+| East Coast | 2,303 ms | 366 ms |
+| East Coast, padded | 3,122 ms | 541 ms |
+
+Each median uses three refreshes at one-minute steps after the initial calculation, without basemap drawing. At 512 entries the padded refresh reused all 664 requested tide models. It retained 9.5 MiB more Java heap and 6.8 MiB more process PSS after garbage collection in the probe. The 192-entry current cache handled all 140 current model requests in that viewport.

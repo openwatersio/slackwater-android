@@ -7,7 +7,6 @@ import java.time.Instant
 import org.json.JSONArray
 import org.json.JSONObject
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotNull
 import org.junit.Test
 
 class BundledCurrentRecordsTest {
@@ -33,6 +32,7 @@ class BundledCurrentRecordsTest {
         val row = requireNotNull(records["noaa/PCT3896"])
         val reference = requireNotNull(records.harmonic(row.getString("reference")))
         val station = row.subordinateCurrent(reference)
+        // The engines find reference events separately before interpolating the subordinate speed.
         assertEquals(-0.5131688336090767, station.speeds(at, at, 1.0).single().speedKnots, 2e-4)
     }
 }
@@ -44,6 +44,7 @@ internal fun assertBundledCurrentInputsAgree(assets: AssetManager) {
     val ids = (0 until json.length()).map { json.getJSONObject(it).getString("id") }
     assertEquals(database.size, ids.size)
     assertEquals(database.map { it.id }.toSet(), ids.toSet())
+    val subordinatesByReference = mutableMapOf<String, MutableList<JSONObject>>()
     for ((i, id) in ids.withIndex()) {
         val binary = requireNotNull(database.station(id))
         val current = requireNotNull(binary.current)
@@ -65,12 +66,12 @@ internal fun assertBundledCurrentInputsAgree(assets: AssetManager) {
         assertEquals("$id ebb time", row.integer("ebbTimeOffset"), offsets?.ebbTime?.times(60))
         assertEquals("$id flood speed ratio", row.number("floodSpeedRatio"), offsets?.floodSpeedRatio?.catalogPrecision())
         assertEquals("$id ebb speed ratio", row.number("ebbSpeedRatio"), offsets?.ebbSpeedRatio?.catalogPrecision())
-        if (offsets == null) {
-            assertNotNull("$id harmonic model", records.harmonic(id))
-        } else {
-            val reference = requireNotNull(database.station(offsets.reference))
-            assertNotNull("$id harmonic reference", reference.current?.takeIf { it.offsets == null })
-        }
+        val subordinates = subordinatesByReference.getOrPut(offsets?.reference ?: id) { mutableListOf() }
+        if (offsets != null) subordinates += row
+    }
+    for ((id, subordinates) in subordinatesByReference) {
+        val harmonic = requireNotNull(records.harmonic(id)) { "Missing harmonic current reference $id" }
+        for (row in subordinates) row.subordinateCurrent(harmonic)
     }
 }
 
