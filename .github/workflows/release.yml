@@ -124,7 +124,7 @@ jobs:
           echo "EXPECTED_GRADLE_JAVA=25" >> "$GITHUB_ENV"
       - uses: actions/setup-node@v7.1.0
         with:
-          node-version: '24'
+          node-version-file: mise.toml
       - uses: android-actions/setup-android@v4.0.4
         with:
           cmdline-tools-version: '16111833'
@@ -148,7 +148,7 @@ jobs:
           echo "version_code=$version_code" >> "$GITHUB_OUTPUT"
           ./gradlew :app:bundleRelease -PslackwaterVersionCode="$version_code" -PpremiumEnabled="$PREMIUM"
       - run: python3 scripts/check-apk.py app/build/outputs/bundle/release/app-release.aab
-      - uses: actions/upload-artifact@v4.6.2
+      - uses: actions/upload-artifact@v7.0.2
         with:
           name: bundle-unsigned
           path: app/build/outputs/bundle/release/app-release.aab
@@ -187,7 +187,7 @@ jobs:
           # jarsigner exits 0 for an unsigned file too, so the verdict line is what proves the signature.
           verdict=$(jarsigner -verify "$bundle")
           grep -q '^jar verified' <<< "$verdict"
-      - uses: actions/upload-artifact@v4.6.2
+      - uses: actions/upload-artifact@v7.0.2
         with:
           name: bundle
           path: ${{ runner.temp }}/bundle/app-release.aab
@@ -223,7 +223,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@v7.1.0
         with:
-          node-version: '24'
+          node-version-file: mise.toml
       - uses: actions/download-artifact@v8.0.2
         with:
           name: bundle
